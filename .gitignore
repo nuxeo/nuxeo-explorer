@@ -31,9 +31,3 @@ nashorn_code_cache/
 chromedriver.log
 *.log
 *.pyc
-
-# nuxeo build process
-addons/nuxeo-shell/
-# NXP-27709: to be removed
-nuxeo-jsf-ui/
-marketplace/
