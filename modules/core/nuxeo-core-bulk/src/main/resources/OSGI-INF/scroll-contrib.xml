@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<component name="org.nuxeo.ecm.core.scroll.contrib.default" version="1.0">
-  <require>org.nuxeo.ecm.core.scroll.service</require>
-  <extension point="scroll" target="org.nuxeo.ecm.core.scroll.service">
-    <scroll type="document" name="repository" default="true" class="org.nuxeo.ecm.core.scroll.RepositoryScroll" />
-    <scroll type="static" name="list" class="org.nuxeo.ecm.core.scroll.StaticScroll" />
-  </extension>
-</component>
