@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.nuxeo.ecm.platform</groupId>
-    <artifactId>nuxeo-apidoc-server-parent</artifactId>
-    <version>11.2-SNAPSHOT</version>
+    <artifactId>nuxeo-apidoc-modules-parent</artifactId>
+    <version>20.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>nuxeo-apidoc-repo</artifactId>

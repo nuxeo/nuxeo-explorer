@@ -1,14 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.nuxeo.ecm.platform</groupId>
-    <artifactId>nuxeo-platform-parent</artifactId>
-    <version>11.2-SNAPSHOT</version>
+    <artifactId>nuxeo-explorer-parent</artifactId>
+    <version>20.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>nuxeo-apidoc-server-parent</artifactId>
-  <name>Nuxeo Documentation Server</name>
-  <description>Parent for Documentation Server</description>
+  <artifactId>nuxeo-apidoc-modules-parent</artifactId>
+  <name>Nuxeo Documentation Server Modules</name>
   <packaging>pom</packaging>
 
   <modules>
