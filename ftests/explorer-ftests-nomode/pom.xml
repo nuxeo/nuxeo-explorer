@@ -3,9 +3,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.nuxeo.ftests</groupId>
+    <groupId>org.nuxeo.ecm.platform</groupId>
     <artifactId>nuxeo-explorer-ftests-parent</artifactId>
-    <version>11.2-SNAPSHOT</version>
+    <version>20.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>nuxeo-explorer-ftests-nomode</artifactId>
@@ -24,7 +24,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.nuxeo.ftests</groupId>
+      <groupId>org.nuxeo.ecm.platform</groupId>
       <artifactId>nuxeo-explorer-ftests-base</artifactId>
       <scope>test</scope>
     </dependency>
@@ -49,7 +49,7 @@
         <artifactId>ant-assembly-maven-plugin</artifactId>
         <configuration>
           <buildFiles>
-            <buildFile>${basedir}/../../itests.xml</buildFile>
+            <buildFile>${basedir}/../itests.xml</buildFile>
           </buildFiles>
         </configuration>
         <executions>

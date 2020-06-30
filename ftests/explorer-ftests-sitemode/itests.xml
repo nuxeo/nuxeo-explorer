@@ -3,7 +3,7 @@
   <taskdef resource="org/nuxeo/build/artifact/antlib.xml" uri="urn:nuxeo-artifact" />
   <taskdef resource="net/sf/antcontrib/antlib.xml" />
 
-  <import file="${out.dir}/../../../itests.xml" />
+  <import file="${out.dir}/../../itests.xml" />
 
   <target name="prepare-environment" depends="_init,prepare-db,prepare-tomcat">
     <!-- prevent nuxeoctl from reaching Connect -->

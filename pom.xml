@@ -1,0 +1,107 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.nuxeo</groupId>
+    <artifactId>nuxeo-parent</artifactId>
+    <version>11.2-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.nuxeo.ecm.platform</groupId>
+  <artifactId>nuxeo-explorer-parent</artifactId>
+  <version>20.0.0-SNAPSHOT</version>
+  <name>Nuxeo Explorer Parent</name>
+  <packaging>pom</packaging>
+
+  <properties>
+    <nuxeo.target.version>11.*</nuxeo.target.version>
+  </properties>
+
+  <modules>
+    <module>modules</module>
+    <module>packages</module>
+    <module>ftests</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- modules -->
+      <dependency>
+        <groupId>org.nuxeo.ecm.platform</groupId>
+        <artifactId>nuxeo-apidoc-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.nuxeo.ecm.platform</groupId>
+        <artifactId>nuxeo-apidoc-repo</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.nuxeo.ecm.platform</groupId>
+        <artifactId>nuxeo-apidoc-webengine</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <!-- packages -->
+      <dependency>
+        <groupId>org.nuxeo.packages</groupId>
+        <artifactId>nuxeo-platform-explorer-package</artifactId>
+        <version>${project.version}</version>
+        <type>zip</type>
+      </dependency>
+      <!-- ftests -->
+      <dependency>
+        <groupId>org.nuxeo.ecm.platform</groupId>
+        <artifactId>nuxeo-explorer-ftests-base</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>public</id>
+      <url>https://packages.nuxeo.com/repository/maven-public</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <updatePolicy>always</updatePolicy>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>public</id>
+      <url>https://packages.nuxeo.com/repository/maven-public</url>
+      <name>Nuxeo</name>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <!-- no need to enable snapshots for plugin repository -->
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <distributionManagement>
+    <repository>
+      <id>private-releases</id>
+      <url>https://packages.nuxeo.com/repository/maven-private-releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>private-snapshots</id>
+      <url>https://packages.nuxeo.com/repository/maven-private-snapshots</url>
+      <uniqueVersion>true</uniqueVersion>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <scm>
+    <connection>scm:git:git://github.com/nuxeo/nuxeo-explorer.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:nuxeo/nuxeo-explorer.git</developerConnection>
+    <url>https://github.com/nuxeo/nuxeo-explorer</url>
+  </scm>
+
+</project>
