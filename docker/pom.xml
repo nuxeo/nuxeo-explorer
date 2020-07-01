@@ -1,0 +1,18 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.nuxeo.ecm.platform</groupId>
+    <artifactId>nuxeo-explorer-parent</artifactId>
+    <version>20.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>nuxeo-explorer-docker-parent</artifactId>
+  <packaging>pom</packaging>
+  <name>Nuxeo Explorer Docker Parent</name>
+
+  <modules>
+    <module>nuxeo-explorer-docker</module>
+  </modules>
+
+</project>

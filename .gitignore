@@ -31,3 +31,7 @@ nashorn_code_cache/
 chromedriver.log
 *.log
 *.pyc
+
+# helm
+helm/preview/charts
+helm/preview/requirements.lock
