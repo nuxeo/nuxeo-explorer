@@ -15,12 +15,14 @@
 
   <properties>
     <nuxeo.target.version>11.*</nuxeo.target.version>
+    <dockerfile.maven.version>1.4.12</dockerfile.maven.version>
   </properties>
 
   <modules>
     <module>modules</module>
     <module>packages</module>
     <module>ftests</module>
+    <module>docker</module>
   </modules>
 
   <dependencyManagement>
@@ -87,6 +89,25 @@
         </executions>
       </plugin>
     </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.spotify</groupId>
+          <artifactId>dockerfile-maven-plugin</artifactId>
+          <version>${dockerfile.maven.version}</version>
+          <executions>
+            <execution>
+              <id>default</id>
+              <goals>
+                <goal>build</goal>
+                <goal>tag</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
   <repositories>

@@ -10,7 +10,7 @@
   <groupId>org.nuxeo.packages</groupId>
   <artifactId>nuxeo-platform-explorer-package</artifactId>
   <packaging>zip</packaging>
-  <name>Nuxeo Platform Explorer Package</name>
+  <name>Nuxeo Explorer Package</name>
 
   <dependencies>
     <dependency>
