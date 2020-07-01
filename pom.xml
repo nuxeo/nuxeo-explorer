@@ -57,6 +57,38 @@
     </dependencies>
   </dependencyManagement>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <!-- override default parent doc cond to include this repo README -->
+            <id>copy-readme-parent</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/doc-parent</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/../..</directory>
+                  <includes>
+                    <include>*.md</include>
+                    <include>readme*</include>
+                    <include>ReadMe*</include>
+                    <include>README*</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
   <repositories>
     <repository>
       <id>public</id>
