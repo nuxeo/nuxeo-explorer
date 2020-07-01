@@ -31,7 +31,7 @@ String getCommitSha1() {
 
 pipeline {
   agent {
-    label 'jenkins-nuxeo-platform-11'
+    label 'jenkins-nuxeo-package-11'
   }
   environment {
     APP_NAME = 'nuxeo-explorer'
