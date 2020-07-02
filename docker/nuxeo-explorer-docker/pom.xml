@@ -54,6 +54,7 @@
             <configuration>
               <repository>nuxeo/nuxeo-explorer</repository>
               <tag>${project.version}</tag>
+              <pullNewerImage>false</pullNewerImage>
               <buildArgs>
                 <BASE_IMAGE>nuxeo/nuxeo:11.x</BASE_IMAGE>
                 <BUILD_TAG>local-nuxeo-explorer</BUILD_TAG>
