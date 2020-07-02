@@ -33,6 +33,12 @@ pipeline {
   agent {
     label 'jenkins-nuxeo-package-11'
   }
+  triggers {
+    upstream(
+      threshold: hudson.model.Result.SUCCESS,
+      upstreamProjects: '../nuxeo/${env.BRANCH_NAME}',
+    )
+  }
   environment {
     APP_NAME = 'nuxeo-explorer'
     // waiting for https://github.com/jenkins-x/jx/issues/4076 to put it in Global EnvVars
