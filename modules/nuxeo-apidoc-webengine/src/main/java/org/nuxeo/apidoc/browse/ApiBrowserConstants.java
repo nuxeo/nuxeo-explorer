@@ -70,10 +70,10 @@ public class ApiBrowserConstants {
     /** @since 11.1 */
     public static final String VIEW_PACKAGE = "viewPackage";
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static final String SUCCESS_FEEBACK_MESSAGE_VARIABLE = "successFeedbackMessage";
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static final String ERROR_FEEBACK_MESSAGE_VARIABLE = "errorFeedbackMessage";
 
     public static final boolean check(String url, String view) {

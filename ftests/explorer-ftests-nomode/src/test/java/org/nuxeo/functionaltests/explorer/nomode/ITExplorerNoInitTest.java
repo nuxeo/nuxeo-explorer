@@ -32,7 +32,7 @@ import org.nuxeo.functionaltests.explorer.testing.AbstractExplorerTest;
 /**
  * Checks access to some explorer pages without any persisted distributions.
  *
- * @since 11.2
+ * @since 20.0.0
  */
 public class ITExplorerNoInitTest extends AbstractExplorerTest {
 

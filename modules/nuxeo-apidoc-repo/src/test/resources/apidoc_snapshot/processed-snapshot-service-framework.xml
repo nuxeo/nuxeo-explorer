@@ -87,7 +87,7 @@
       Properties controlling sensitive configuration exposure, when extracted from runtime contributions by
       explorer logics.
 
-      @since 11.2
+      @since 20.0.0
     </documentation>
     <property name="org.nuxeo.apidoc.secure.xml.keywords">
       password, Password, secret, apiKey

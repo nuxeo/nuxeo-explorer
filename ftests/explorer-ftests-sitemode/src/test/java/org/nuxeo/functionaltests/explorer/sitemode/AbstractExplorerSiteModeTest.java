@@ -29,7 +29,7 @@ import org.nuxeo.functionaltests.explorer.testing.AbstractExplorerDownloadTest;
 /**
  * Inits the server with a sample persisted distrib (as live distrib cannot be used in site mode).
  *
- * @since 11.2
+ * @since 20.0.0
  */
 public class AbstractExplorerSiteModeTest extends AbstractExplorerDownloadTest {
 

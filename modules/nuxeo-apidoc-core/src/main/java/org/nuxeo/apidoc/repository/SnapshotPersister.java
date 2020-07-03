@@ -78,7 +78,7 @@ public class SnapshotPersister {
     /** @since 11.1 */
     public static final String PACKAGE_ROOT_NAME = "Packages";
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static final String ROOT_TYPE_NAME = "Workspace";
 
     public DocumentModel getSubRoot(CoreSession session, DocumentModel root, String name) {
@@ -102,7 +102,7 @@ public class SnapshotPersister {
     /**
      * Creates a workspace folder and returns it.
      *
-     * @since 11.2
+     * @since 20.0.0
      */
     public static DocumentModel createRoot(CoreSession session, String parentPath, String name, boolean setAcl) {
         DocumentModel root = session.createDocumentModel(parentPath, name, ROOT_TYPE_NAME);

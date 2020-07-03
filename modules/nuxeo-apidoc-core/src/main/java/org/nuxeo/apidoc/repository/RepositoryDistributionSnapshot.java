@@ -450,7 +450,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     /**
      * Returns a key/value map of properties for update.
      *
-     * @since 11.2
+     * @since 20.0.0
      */
     public Map<String, String> getUpdateProperties() {
         Map<String, String> props = new HashMap<>();
@@ -470,7 +470,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     /**
      * Returns a key/value map of properties for update from request properties.
      *
-     * @since 11.2
+     * @since 20.0.0
      */
     public Map<String, String> getUpdateProperties(Map<String, String[]> formFields) {
         Map<String, String> props = new HashMap<>();
@@ -491,7 +491,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     /**
      * Updates the distribution document metadata.
      *
-     * @since 11.2
+     * @since 20.0.0
      */
     public DocumentModel updateDocument(CoreSession session, Map<String, String> updateProperties, String comment,
             List<String> reservedKeys) throws DocumentValidationException {
@@ -554,7 +554,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     /**
      * Converts string date from request to a date that can be stored.
      *
-     * @since 11.2
+     * @since 20.0.0
      */
     public static final Date convertDate(String date) {
         if (StringUtils.isNotBlank(date)) {

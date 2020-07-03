@@ -52,7 +52,7 @@ import net.jsourcerer.webdriver.jserrorcollector.JavaScriptError;
 /**
  * Abstract explorer test with download FF features and associated helpers.
  *
- * @since 11.2
+ * @since 20.0.0
  */
 public abstract class AbstractExplorerDownloadTest extends AbstractExplorerTest {
 

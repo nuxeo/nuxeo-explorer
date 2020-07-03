@@ -96,44 +96,44 @@ public class Distribution extends ModuleRoot {
 
     private static final Logger log = LogManager.getLogger(Distribution.class);
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static final String TYPE = "distribution";
 
     public static final String DIST_ID = "distId";
 
     protected static final String DIST = "distribution";
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static final String VIEW_ADMIN = "_admin";
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static final String SAVE_ACTION = "save";
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static final String SAVE_EXTENDED_ACTION = "saveExtended";
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static final String JSON_ACTION = "json";
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static final String DOWNLOAD_ACTION = "download";
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static final String UPLOAD_ACTION = "uploadDistrib";
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static final String UPLOAD_TMP_ACTION = "uploadDistribTmp";
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static final String UPLOAD_TMP_VALID_ACTION = "uploadDistribTmpValid";
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static final String REINDEX_ACTION = "_reindex";
 
     /**
      * List of subviews, used for validation of distribution names and aliases.
      *
-     * @since 11.2
+     * @since 20.0.0
      */
     protected static final List<String> SUB_DISTRIBUTION_PATH_RESERVED = List.of(VIEW_ADMIN, SAVE_ACTION,
             SAVE_EXTENDED_ACTION, JSON_ACTION, DOWNLOAD_ACTION, UPLOAD_ACTION, UPLOAD_TMP_ACTION,
@@ -154,7 +154,7 @@ public class Distribution extends ModuleRoot {
     /**
      * Displays a customized 404 page.
      *
-     * @since 11.2
+     * @since 20.0.0
      */
     public Object show404() {
         return Response.status(404).entity(getTemplate("views/error404/error_404.ftl")).type("text/html").build();
@@ -543,7 +543,7 @@ public class Distribution extends ModuleRoot {
     /**
      * Displays the distribution edit form.
      *
-     * @since 11.2
+     * @since 20.0.0
      */
     @GET
     @Path("update/{distributionId}")
@@ -573,7 +573,7 @@ public class Distribution extends ModuleRoot {
     /**
      * Updates the distribution metadata.
      *
-     * @since 11.2
+     * @since 20.0.0
      */
     @POST
     @Path("doUpdate")
@@ -662,7 +662,7 @@ public class Distribution extends ModuleRoot {
     /**
      * Returns true if current user can manage ditributions.
      *
-     * @since 11.2
+     * @since 20.0.0
      */
     public boolean showManageDistributions() {
         return canImportOrExportDistributions();
@@ -671,14 +671,14 @@ public class Distribution extends ModuleRoot {
     /**
      * Returns true if the current {@link RuntimeSnapshot} can be seen by user.
      *
-     * @since 11.2
+     * @since 20.0.0
      */
     public boolean showRuntimeSnapshot() {
         return !isSiteMode() && SecurityHelper.canSnapshotLiveDistribution(getContext().getPrincipal());
     }
 
     /**
-     * @since 11.2
+     * @since 20.0.0
      */
     public boolean isRunningFunctionalTests() {
         return !StringUtils.isBlank(Framework.getProperty(ApiBrowserConstants.PROPERTY_TESTER_NAME));
@@ -697,7 +697,7 @@ public class Distribution extends ModuleRoot {
     /**
      * Returns the webapp name (usually "nuxeo")
      *
-     * @since 11.2
+     * @since 20.0.0
      */
     public String getWebappName() {
         return VirtualHostHelper.getWebAppName(getContext().getRequest());

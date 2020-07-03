@@ -34,7 +34,7 @@ import org.nuxeo.functionaltests.explorer.pages.UploadFragment;
 /**
  * Test Explorer pages usually handled by admins.
  *
- * @since 11.2
+ * @since 20.0.0
  */
 public class ITExplorerAdminSiteModeTest extends AbstractExplorerSiteModeTest {
 
@@ -71,7 +71,7 @@ public class ITExplorerAdminSiteModeTest extends AbstractExplorerSiteModeTest {
 
     @Test
     public void testHomePageCurrentDistrib() {
-        // since 11.2: cannot see current live distrib anymore
+        // since 20.0.0: cannot see current live distrib anymore
         openAndCheck(String.format("%s%s/", ExplorerHomePage.URL, SnapshotManager.DISTRIBUTION_ALIAS_CURRENT), true);
     }
 

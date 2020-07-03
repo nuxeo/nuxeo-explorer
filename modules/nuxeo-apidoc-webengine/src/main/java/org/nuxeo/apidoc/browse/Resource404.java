@@ -27,7 +27,7 @@ import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
 /**
  * Handles 404 redirections.
  *
- * @since 11.2
+ * @since 20.0.0
  */
 @WebObject(type = Resource404.TYPE)
 public class Resource404 extends DefaultObject {

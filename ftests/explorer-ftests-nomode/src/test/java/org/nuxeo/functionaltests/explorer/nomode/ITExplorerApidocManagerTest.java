@@ -30,7 +30,7 @@ import org.nuxeo.functionaltests.explorer.pages.UploadFragment;
 /**
  * Tests features for {@link SecurityHelper#APIDOC_MANAGERS_GROUP} members.
  *
- * @since 11.2
+ * @since 20.0.0
  */
 public class ITExplorerApidocManagerTest extends ITExplorerAdminTest {
 
@@ -64,7 +64,7 @@ public class ITExplorerApidocManagerTest extends ITExplorerAdminTest {
         open(DistribAdminPage.URL);
         DistribAdminPage page = asPage(DistribAdminPage.class);
         page.check();
-        // since 11.2: cannot save anymore
+        // since 20.0.0: cannot save anymore
         page.checkCannotSave();
     }
 
@@ -73,7 +73,7 @@ public class ITExplorerApidocManagerTest extends ITExplorerAdminTest {
     public void testHomePageLiveDistrib() {
         ExplorerHomePage home = goHome();
         home.check();
-        // since 11.2: cannot see current live distrib anymore
+        // since 20.0.0: cannot see current live distrib anymore
         home.checkNoCurrentDistrib();
         UploadFragment.checkCanSee();
     }

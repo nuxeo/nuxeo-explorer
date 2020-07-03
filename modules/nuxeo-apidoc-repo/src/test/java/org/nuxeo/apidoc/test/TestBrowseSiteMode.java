@@ -34,7 +34,7 @@ import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 
 /**
- * @since 11.2
+ * @since 20.0.0
  */
 @RunWith(FeaturesRunner.class)
 @Features(RuntimeSnaphotFeature.class)

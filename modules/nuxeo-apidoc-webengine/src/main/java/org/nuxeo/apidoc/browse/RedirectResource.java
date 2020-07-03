@@ -31,7 +31,7 @@ import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
 @Produces("text/html")
 public class RedirectResource extends DefaultObject {
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static final String TYPE = "redirectWO";
 
     protected String orgDistributionId = null;

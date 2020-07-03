@@ -30,7 +30,7 @@ import org.openqa.selenium.support.FindBy;
 /**
  * Update page for a distribution.
  *
- * @since 11.2
+ * @since 20.0.0
  */
 public class DistributionUpdatePage extends AbstractExplorerPage {
 

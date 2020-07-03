@@ -40,7 +40,7 @@ public interface SnapshotManager {
     /**
      * Name alias for the current "live" distribution retrieval.
      *
-     * @since 11.2
+     * @since 20.0.0
      */
     public static String DISTRIBUTION_ALIAS_CURRENT = "current";
 
@@ -50,7 +50,7 @@ public interface SnapshotManager {
      * Alternative to {@link #DISTRIBUTION_ALIAS_CURRENT} for the distribution to be displayed in "admin" embedded mode
      * without showing explorer headers and such.
      *
-     * @since 11.2
+     * @since 20.0.0
      */
     public static String DISTRIBUTION_ALIAS_ADM = "adm";
 
@@ -59,14 +59,14 @@ public interface SnapshotManager {
      * <p>
      * Distributions are filtered with name starting with "nuxeo platform" (case-insensitive check).
      *
-     * @since 11.2
+     * @since 20.0.0
      */
     public static String DISTRIBUTION_ALIAS_LATEST = "latest";
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static String DISTRIBUTION_ALIAS_LATEST_LTS = "latestLTS";
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static String DISTRIBUTION_ALIAS_LATEST_FT = "latestFT";
 
     public static String PROPERTY_SITE_MODE = "org.nuxeo.apidoc.site.mode";
@@ -176,7 +176,7 @@ public interface SnapshotManager {
     /**
      * Returns true if site mode is enabled: this will prevent access to the live distribution.
      *
-     * @since 11.2
+     * @since 20.0.0
      */
     boolean isSiteMode();
 
