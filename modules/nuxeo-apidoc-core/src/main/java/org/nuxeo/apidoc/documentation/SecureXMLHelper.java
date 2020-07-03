@@ -47,7 +47,7 @@ import org.nuxeo.runtime.services.config.ConfigurationService;
 /**
  * Helper for XML secure content management.
  *
- * @since 11.2
+ * @since 20.0.0
  */
 public class SecureXMLHelper {
 

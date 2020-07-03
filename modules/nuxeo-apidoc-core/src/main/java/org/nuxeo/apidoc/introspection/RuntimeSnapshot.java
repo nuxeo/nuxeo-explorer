@@ -72,7 +72,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSnapshot {
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static final List<String> LIVE_ALIASES = List.of(SnapshotManager.DISTRIBUTION_ALIAS_CURRENT,
             SnapshotManager.DISTRIBUTION_ALIAS_ADM);
 

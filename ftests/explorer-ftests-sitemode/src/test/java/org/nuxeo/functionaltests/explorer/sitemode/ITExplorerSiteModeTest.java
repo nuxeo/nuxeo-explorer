@@ -30,7 +30,7 @@ import org.nuxeo.functionaltests.explorer.pages.UploadFragment;
 /**
  * Test explorer in site mode.
  *
- * @since 11.2
+ * @since 20.0.0
  */
 public class ITExplorerSiteModeTest extends AbstractExplorerSiteModeTest {
 
@@ -64,7 +64,7 @@ public class ITExplorerSiteModeTest extends AbstractExplorerSiteModeTest {
 
     @Test
     public void testHomePageCurrentDistrib() {
-        // since 11.2: does not redirect to current live distrib anymore, only available to admins
+        // since 20.0.0: does not redirect to current live distrib anymore, only available to admins
         openAndCheck(String.format("%s%s/", ExplorerHomePage.URL, SnapshotManager.DISTRIBUTION_ALIAS_CURRENT), true);
     }
 

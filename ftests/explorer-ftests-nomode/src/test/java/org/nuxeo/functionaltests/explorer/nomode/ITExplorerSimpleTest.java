@@ -36,7 +36,7 @@ public class ITExplorerSimpleTest extends AbstractExplorerTest {
 
     @Before
     public void before() {
-        // since 11.2: need to be an admin to browse "simple" pages
+        // since 20.0.0: need to be an admin to browse "simple" pages
         loginAsAdmin();
     }
 

@@ -26,7 +26,7 @@ import org.nuxeo.runtime.services.config.ConfigurationService;
 /**
  * Helper for Nuxeo security-related checks on Explorer.
  *
- * @since 11.2
+ * @since 20.0.0
  */
 public class SecurityHelper {
 

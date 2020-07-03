@@ -26,7 +26,7 @@ import org.nuxeo.functionaltests.RestHelper;
 /**
  * Tests features for {@link SecurityHelper#APIDOC_MANAGERS_GROUP} members.
  *
- * @since 11.2
+ * @since 20.0.0
  */
 public class ITExplorerApidocManagerSideModeTest extends ITExplorerAdminSiteModeTest {
 

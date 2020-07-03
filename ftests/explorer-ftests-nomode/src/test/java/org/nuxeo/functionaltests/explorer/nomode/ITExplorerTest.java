@@ -65,7 +65,7 @@ public class ITExplorerTest extends AbstractExplorerTest {
     protected static String liveVersion;
 
     /**
-     * Since 11.2, the live distrib can only be seen by admins --> init one for tests
+     * Since 20.0.0, the live distrib can only be seen by admins --> init one for tests
      */
     @BeforeClass
     public static void initPersistedDistrib() {
@@ -118,13 +118,13 @@ public class ITExplorerTest extends AbstractExplorerTest {
 
     @Test
     public void testHomePageCurrentDistrib() {
-        // since 11.2: does not redirect to current live distrib anymore, only available to admins
+        // since 20.0.0: does not redirect to current live distrib anymore, only available to admins
         openAndCheck(String.format("%s%s/", ExplorerHomePage.URL, SnapshotManager.DISTRIBUTION_ALIAS_CURRENT), true);
     }
 
     @Test
     public void testHomePageLatestDistrib() {
-        // since 11.2: does not redirect to current live distrib anymore, only to first persisted distrib named "nuxeo
+        // since 20.0.0: does not redirect to current live distrib anymore, only to first persisted distrib named "nuxeo
         // platform" and alike (if it exists)
         open(String.format("%s%s/", ExplorerHomePage.URL, SnapshotManager.DISTRIBUTION_ALIAS_LATEST));
         asPage(DistributionHomePage.class).check();

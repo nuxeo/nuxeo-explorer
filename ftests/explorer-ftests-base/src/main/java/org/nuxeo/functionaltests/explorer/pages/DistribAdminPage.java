@@ -45,7 +45,7 @@ public class DistribAdminPage extends AbstractExplorerPage {
 
     public static final String URL = String.format("%s%s/", ExplorerHomePage.URL, Distribution.VIEW_ADMIN);
 
-    /** @since 11.2 */
+    /** @since 20.0.0 */
     public static final String UPDATE_URL = String.format("%supdate/", ExplorerHomePage.URL);
 
     @Required

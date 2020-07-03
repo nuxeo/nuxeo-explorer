@@ -372,7 +372,7 @@ public abstract class AbstractExplorerTest extends AbstractTest {
     }
 
     /**
-     * @since 11.2
+     * @since 20.0.0
      */
     public static String getReferenceContent(Path path) throws IOException {
         try (InputStream stream = getReferenceStream(path)) {
@@ -381,7 +381,7 @@ public abstract class AbstractExplorerTest extends AbstractTest {
     }
 
     /**
-     * @since 11.2
+     * @since 20.0.0
      */
     public static InputStream getReferenceStream(Path path) throws IOException {
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(path.toString());
