@@ -1,6 +1,6 @@
-## About nuxeo-apidoc-server
+## About Explorer
 
-This modules provides an API to browse the Nuxeo distribution tree:
+These modules provide an API to browse the Nuxeo distribution tree:
 
     - BundleGroup (maven group or artificial grouping)
       - Bundle
@@ -9,6 +9,7 @@ This modules provides an API to browse the Nuxeo distribution tree:
           - Extension Points
           - Contributions
     - Operations
+    - Packages
 
 The Nuxeo Distribution can be:
 
@@ -26,10 +27,16 @@ The following documentation items are also extracted:
  - check that a given contribution is deployed
  - play with Nuxeo Runtime
 
-## Parameters
- - `org.nuxeo.apidoc.site.mode`: Enable the site mode with a more user friendly design
- - `org.nuxeo.apidoc.hide.current.distribution`: Hide current distribution from the distribution listing
- - `org.nuxeo.apidoc.hide.seam.components`: Hide Seam components introspection (moved to nuxeo-apidoc-jsf since 11.1)
+## Configuration
+
+The template `explorer-sitemode` enables the nuxeo.conf property `org.nuxeo.apidoc.site.mode` and
+defines an anonymous user.
+The property `org.nuxeo.apidoc.site.mode` comes with a more user friendly design and hides the current
+"live" distribution from display and API.
+
+The template `explorer-virtualadmin` disables the usual `Administrator` user creation at database
+initialization and adds a virtual admin user with name `apidocAdmin`, whose password can be changed using
+nuxeo.conf property `org.nuxeo.apidoc.apidocAdmin.password`.
 
 ## Modules
 
@@ -38,6 +45,3 @@ This plugin is composed of 3 bundles:
  - nuxeo-apidoc-core: for the low level API on the live runtime
  - nuxeo-apidoc-repo: for the persistence of exported content on the Nuxeo repository
  - nuxeo-apidoc-webengine: for JAX-RS API and Webview
-
-As of Nuxeo 11.1, the JSF part (including Seam components introspection and display) have been moved to a dedicated package,
-within the JSF UI GitHub repository, with an additional nuxeo-apidoc-jsf module.

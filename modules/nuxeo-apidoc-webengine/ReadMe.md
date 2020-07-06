@@ -7,5 +7,5 @@ Each object provided by the core layer is wrapped in a WebObject that is then as
 
 The same WebEngine API can be used in 2 mode :
 
- - embedded mode : inside the admin center
- - full model : in /site/distribution/
+ - embedded mode: can be embedded as frames, as it was embedded inside the JSF admin center, for instance
+ - full model: in /site/distribution/
