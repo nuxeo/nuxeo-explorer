@@ -1,4 +1,3 @@
-
 ## About nuxeo-apidoc-core
 
 This bundle provides an API to browse the Nuxeo distribution tree:
@@ -10,6 +9,7 @@ This bundle provides an API to browse the Nuxeo distribution tree:
           - Extension Points
           - Contributions
     - Operations
+    - Packages
 
 This API has 2 implementations:
  - org.nuxeo.apidoc.introspection: Nuxeo Runtime in memory introspection
