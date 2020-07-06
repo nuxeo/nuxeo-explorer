@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.explorer.usermanager.admin.contrib">
+
+  <extension target="org.nuxeo.ecm.platform.usermanager.UserService" point="userManager">
+    <userManager>
+      <users>
+        <virtualUser id="apidocAdmin" searchable="false">
+          <password>${org.nuxeo.apidoc.apidocAdmin.password}</password>
+          <property name="firstName">Apidoc</property>
+          <property name="lastName">Admin</property>
+          <group>administrators</group>
+        </virtualUser>
+      </users>
+      <defaultAdministratorId>apidocAdmin</defaultAdministratorId>
+    </userManager>
+  </extension>
+
+</component>
