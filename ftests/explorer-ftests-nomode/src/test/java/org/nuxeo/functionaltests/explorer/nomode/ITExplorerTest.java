@@ -307,4 +307,21 @@ public class ITExplorerTest extends AbstractExplorerTest {
         switchBackToPreviousWindow();
     }
 
+    /**
+     * Non-regression test for NXP-29378.
+     */
+    @Test
+    public void testPseudoComponent() throws IOException {
+        goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.runtime.started");
+        ComponentArtifactPage apage = asPage(ComponentArtifactPage.class);
+        apage.checkCommon("Component org.nuxeo.runtime.started", "Component org.nuxeo.runtime.started",
+                "In bundle org.nuxeo.runtime", "Registration Order");
+        apage.checkRequirements(null);
+        apage.checkDocumentationText(null);
+        apage.checkImplementationText(null);
+        apage.checkJavadocLink(null);
+        apage.checkRegistrationOrder(true);
+        apage.checkXMLSource(false);
+    }
+
 }

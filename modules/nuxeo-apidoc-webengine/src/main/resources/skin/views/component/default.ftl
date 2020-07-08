@@ -65,10 +65,12 @@
   </ul>
   </#if>
 
-  <h2>XML Source</h2>
-  <div>
-    <pre><code>${nxItem.xmlFileContent?html}</code></pre>
-  </div>
+  <#if nxItem.xmlFileContent?has_content>
+    <h2>XML Source</h2>
+    <div id="xmlSource">
+      <pre><code>${nxItem.xmlFileContent?html}</code></pre>
+    </div>
+  </#if>
 
   <@tocTrigger />
 

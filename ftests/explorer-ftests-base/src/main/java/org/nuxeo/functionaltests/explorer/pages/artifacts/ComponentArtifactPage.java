@@ -19,12 +19,14 @@
 package org.nuxeo.functionaltests.explorer.pages.artifacts;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.functionaltests.Required;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -43,6 +45,9 @@ public class ComponentArtifactPage extends ArtifactPage {
     @Required
     @FindBy(xpath = "//div[@id='registrationOrder']")
     public WebElement registrationOrder;
+
+    @FindBy(xpath = "//div[@id='xmlSource']")
+    public WebElement xmlSource;
 
     public ComponentArtifactPage(WebDriver driver) {
         super(driver);
@@ -65,6 +70,7 @@ public class ComponentArtifactPage extends ArtifactPage {
         checkImplementationText("Javadoc: org.nuxeo.apidoc.snapshot.SnapshotManagerComponent");
         checkJavadocLink("/javadoc/org/nuxeo/apidoc/snapshot/SnapshotManagerComponent.html");
         checkRegistrationOrder(!legacy);
+        checkXMLSource(true);
     }
 
     @Override
@@ -77,6 +83,7 @@ public class ComponentArtifactPage extends ArtifactPage {
         checkImplementationText(null);
         checkJavadocLink(null);
         checkRegistrationOrder(true);
+        checkXMLSource(true);
     }
 
     @Override
@@ -95,6 +102,15 @@ public class ComponentArtifactPage extends ArtifactPage {
 
     public void checkRegistrationOrder(boolean set) {
         assertEquals(!set, StringUtils.isBlank(registrationOrder.getText()));
+    }
+
+    /** @since 20.0.0 */
+    public void checkXMLSource(boolean set) {
+        try {
+            assertEquals(!set, StringUtils.isBlank(xmlSource.getText()));
+        } catch (NoSuchElementException e) {
+            assertFalse(set);
+        }
     }
 
 }
