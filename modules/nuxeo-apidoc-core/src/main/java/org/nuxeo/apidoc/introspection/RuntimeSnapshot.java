@@ -36,6 +36,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
 import org.nuxeo.apidoc.api.BundleGroup;
 import org.nuxeo.apidoc.api.BundleGroupExtractor;
@@ -60,7 +62,6 @@ import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationDocumentation;
 import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.automation.OperationType;
-import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.runtime.api.Framework;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -74,6 +75,8 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSnapshot {
+
+    private static final Logger log = LogManager.getLogger(RuntimeSnapshot.class);
 
     /** @since 20.0.0 */
     public static final List<String> LIVE_ALIASES = List.of(SnapshotManager.DISTRIBUTION_ALIAS_CURRENT,
@@ -378,7 +381,9 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
             try {
                 documentation = op.getDocumentation();
             } catch (OperationException e) {
-                throw new NuxeoException(e);
+                // should not happen anymore since changes for NXP-29499
+                log.error(e, e);
+                continue;
             }
             OperationInfo opi = new OperationInfoImpl(documentation, getVersion(), op.getType().getCanonicalName(),
                     op.getContributingComponent());

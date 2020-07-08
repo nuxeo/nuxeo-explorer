@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.apidoc.test.faultyOperationClass" version="1.0">
+
+  <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="operations">
+    <operation class="org.nuxeo.ecm.automation.core.AutomationComponent" />
+  </extension>
+
+</component>
