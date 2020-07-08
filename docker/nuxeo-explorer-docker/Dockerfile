@@ -14,6 +14,7 @@ LABEL org.nuxeo.explorer.build-tag=${BUILD_TAG}
 # Workaround missing support for --chown flag with COPY instruction in Kaniko
 # TODO: remove and use COPY --chown when fixed in Kaniko, or find a proper way
 COPY --chown=900:0 target/nuxeo-platform-explorer-package-*.zip /packages/nuxeo-platform-explorer-package.zip
+COPY --chown=900:0 target/nuxeo-amazon-s3-package-*.zip /packages/nuxeo-amazon-s3-package.zip
 # Workaround of above permission issues, otherwise we can't clean the package once installed
 USER root
 RUN /install-local-packages.sh /packages
