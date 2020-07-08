@@ -1,0 +1,83 @@
+default.target=.
+
+## all templates to apply on target deployment env
+nuxeo.template.includes=default,docker,s3binaries,postgresql,explorer-sitemode,explorer-virtualadmin
+
+## explorer confs mapping
+
+org.nuxeo.apidoc.apidocAdmin.password=${env:ORG_NUXEO_APIDOC_APIDOCADMIN_PASSWORD}
+
+
+## default confs mapping
+
+# publicly visible URL
+nuxeo.url=${env:NUXEO_URL:http://localhost:8080/nuxeo}
+
+org.nuxeo.ecm.product.name=Nuxeo Explorer
+
+nuxeo.notification.eMailSubjectPrefix=${env:NUXEO_NOTIFICATION_EMAILSUBJECTPREFIX:[Explorer] }
+
+
+## common-base confs mapping
+
+# Mail server
+mail.store.protocol=${env:MAIL_STORE_PROTOCOL:pop3}
+mail.store.host=${env:MAIL_STORE_HOST:localhost}
+mail.store.port=${env:MAIL_STORE_PORT:110}
+mail.store.user=${env:MAIL_STORE_USER:anonymous}
+mail.store.password=${env:MAIL_STORE_PASSWORD:secret}
+# Mail transport
+mail.transport.protocol=${env:MAIL_TRANSPORT_PROTOCOL:smtp}
+mail.transport.host=${env:MAIL_TRANSPORT_HOST:localhost}
+mail.transport.port=${env:MAIL_TRANSPORT_PORT:25}
+mail.transport.user=${env:MAIL_TRANSPORT_USER:anonymous}
+mail.transport.password=${env:MAIL_TRANSPORT_PASSWORD:secret}
+mail.transport.usetls=${env:MAIL_TRANSPORT_USETLS:false}
+mail.transport.auth=${env:MAIL_TRANSPORT_AUTH:false}
+# User who will receive mail
+mail.user=${env:MAIL_USER:nobody}
+# Enable debugging output from the javamail classes
+mail.debug=${env:MAIL_DEBUG:false}
+mail.from=${env:MAIL_FROM:noreply@nuxeo.com}
+
+# disable ES usage
+elasticsearch.enabled=false
+
+
+## aws confs mapping
+
+nuxeo.aws.accessKeyId=${env:NUXEO_AWS_ACCESSKEYID:}
+nuxeo.aws.secretKey=${env:NUXEO_AWS_SECRETKEY:}
+nuxeo.aws.region=${env:NUXEO_AWS_REGION:}
+
+
+## s3binaries confs mapping
+
+# mandatory
+nuxeo.s3storage.bucket=${env:NUXEO_S3STORAGE_BUCKET:}
+
+# usually taken from system environement
+nuxeo.s3storage.awsid=${env:NUXEO_S3STORAGE_AWSID:}
+nuxeo.s3storage.awssecret=${env:NUXEO_S3STORAGE_AWSSECRET:}
+nuxeo.s3storage.awstoken=${env:NUXEO_S3STORAGE_AWSTOKEN:}
+nuxeo.s3storage.region=${env:NUXEO_S3STORAGE_REGION:}
+
+# optional
+nuxeo.s3storage.crypt.keystore.file=${env:NUXEO_S3STORAGE_CRYPT_KEYSTORE_FILE:}
+nuxeo.s3storage.crypt.keystore.password=${env:NUXEO_S3STORAGE_CRYPT_KEYSTORE_PASSWORD:}
+nuxeo.s3storage.crypt.key.alias=${env:NUXEO_S3STORAGE_CRYPT_KEY_ALIAS:}
+nuxeo.s3storage.crypt.key.password=${env:NUXEO_S3STORAGE_CRYPT_KEY_PASSWORD:}
+nuxeo.s3storage.crypt.serverside=${env:NUXEO_S3STORAGE_CRYPT_SERVERSIDE:false}
+
+
+## postgresql confs mapping
+
+nuxeo.db.type=${env:NUXEO_DB_TYPE:postgresql}
+nuxeo.db.host=${env:NUXEO_DB_HOST:localhost}
+nuxeo.db.port=${env:NUXEO_DB_PORT:5432}
+nuxeo.db.name=${env:NUXEO_DB_NAME:nuxeo}
+nuxeo.db.user=${env:NUXEO_DB_USER:nuxeo}
+nuxeo.db.password=${env:NUXEO_DB_PASSWORD:password}
+
+# add transaction timeout conf mapping
+nuxeo.db.transactiontimeout=${env:NUXEO_DB_TRANSACTIONTIMEOUT:300}
