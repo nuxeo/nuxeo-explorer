@@ -5,7 +5,7 @@ nuxeo.template.includes=default,docker,s3binaries,postgresql,explorer-sitemode,e
 
 ## explorer confs mapping
 
-org.nuxeo.apidoc.apidocAdmin.password=${env:ORG_NUXEO_APIDOC_APIDOCADMIN_PASSWORD}
+org.nuxeo.apidoc.apidocAdmin.password=${env:ORG_NUXEO_APIDOC_APIDOCADMIN_PASSWORD:apidocAdmin}
 
 
 ## default confs mapping
