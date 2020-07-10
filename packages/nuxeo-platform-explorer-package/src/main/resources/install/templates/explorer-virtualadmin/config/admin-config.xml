@@ -5,7 +5,7 @@
     <userManager>
       <users>
         <virtualUser id="apidocAdmin" searchable="false">
-          <password>${org.nuxeo.apidoc.apidocAdmin.password}</password>
+          <password>${org.nuxeo.apidoc.apidocAdmin.password:=apidocAdmin}</password>
           <property name="firstName">Apidoc</property>
           <property name="lastName">Admin</property>
           <group>administrators</group>
