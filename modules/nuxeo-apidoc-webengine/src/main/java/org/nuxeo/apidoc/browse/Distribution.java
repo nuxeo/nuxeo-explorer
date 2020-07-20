@@ -119,6 +119,15 @@ public class Distribution extends ModuleRoot {
     public static final String DOWNLOAD_ACTION = "download";
 
     /** @since 20.0.0 */
+    public static final String UPDATE_ACTION = "updateDistrib";
+
+    /** @since 20.0.0 */
+    public static final String DO_UPDATE_ACTION = "doUpdate";
+
+    /** @since 20.0.0 */
+    public static final String DELETE_ACTION = "delete";
+
+    /** @since 20.0.0 */
     public static final String UPLOAD_ACTION = "uploadDistrib";
 
     /** @since 20.0.0 */
@@ -136,8 +145,8 @@ public class Distribution extends ModuleRoot {
      * @since 20.0.0
      */
     protected static final List<String> SUB_DISTRIBUTION_PATH_RESERVED = List.of(VIEW_ADMIN, SAVE_ACTION,
-            SAVE_EXTENDED_ACTION, JSON_ACTION, DOWNLOAD_ACTION, UPLOAD_ACTION, UPLOAD_TMP_ACTION,
-            UPLOAD_TMP_VALID_ACTION, REINDEX_ACTION);
+            SAVE_EXTENDED_ACTION, JSON_ACTION, DOWNLOAD_ACTION, UPDATE_ACTION, DO_UPDATE_ACTION, DELETE_ACTION,
+            UPLOAD_ACTION, UPLOAD_TMP_ACTION, UPLOAD_TMP_VALID_ACTION, REINDEX_ACTION);
 
     protected static final Pattern VERSION_REGEX = Pattern.compile("^(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:-.*)?$",
             Pattern.CASE_INSENSITIVE);
@@ -546,7 +555,7 @@ public class Distribution extends ModuleRoot {
      * @since 20.0.0
      */
     @GET
-    @Path("update/{distributionId}")
+    @Path(UPDATE_ACTION + "/{distributionId}")
     @Produces("text/html")
     public Object updateDistribForm(@PathParam("distributionId") String distribId) {
         return updateDistribForm(distribId, null, null);
@@ -576,7 +585,7 @@ public class Distribution extends ModuleRoot {
      * @since 20.0.0
      */
     @POST
-    @Path("doUpdate")
+    @Path(DO_UPDATE_ACTION)
     @Produces("text/html")
     public Object updateDistrib() {
         if (!showManageDistributions()) {
@@ -701,6 +710,30 @@ public class Distribution extends ModuleRoot {
      */
     public String getWebappName() {
         return VirtualHostHelper.getWebAppName(getContext().getRequest());
+    }
+
+    /**
+     * Deletes the corresponding distribution.
+     *
+     * @since 20.0.0
+     */
+    @GET
+    @Path(DELETE_ACTION + "/{distributionId}")
+    @Produces("text/html")
+    public Object deleteDistrib(@PathParam("distributionId") String distribId) throws IOException {
+        if (!showManageDistributions()) {
+            return show404();
+        }
+
+        CoreSession session = getContext().getCoreSession();
+        RepositoryDistributionSnapshot snapshot = (RepositoryDistributionSnapshot) getSnapshotManager().getSnapshot(
+                distribId, session);
+        session.removeDocument(snapshot.getDoc().getRef());
+        session.save();
+
+        // will trigger retrieval of distributions again
+        return redirect(URIUtils.addParametersToURIQuery(String.format("%s/%s", getPath(), VIEW_ADMIN),
+                Map.of(ApiBrowserConstants.SUCCESS_FEEBACK_MESSAGE_VARIABLE, "Deletion Done.")));
     }
 
 }

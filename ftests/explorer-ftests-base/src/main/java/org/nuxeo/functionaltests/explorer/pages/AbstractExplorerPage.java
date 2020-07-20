@@ -21,6 +21,7 @@ package org.nuxeo.functionaltests.explorer.pages;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.HashMap;
@@ -165,6 +166,20 @@ public abstract class AbstractExplorerPage extends AbstractPage {
         WebElement distrib = Locator.findElementAndWaitUntilEnabled(By.xpath(xpath));
         clickOn(distrib);
         asPage(DistributionHomePage.class).checkHeader(distribId);
+    }
+
+    /**
+     * Shared check from both admin and home pages.
+     *
+     * @since 20.0.0
+     */
+    public void checkPersistedDistribNotPresent(String distribId) {
+        try {
+            checkPersistedDistrib(distribId);
+            fail("Distrib should not be visible anymore on this page");
+        } catch (NoSuchElementException e) {
+            // ok
+        }
     }
 
 }

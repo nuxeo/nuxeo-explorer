@@ -87,7 +87,7 @@ public class ITExplorerApidocManagerTest extends ITExplorerAdminTest {
         // log as admin to perform export of live distrib first
         doLogout();
         loginAsAdmin();
-        String distribId = checkLiveDistribExport(distribName);
+        String distribId = checkLiveDistribExport(distribName, true);
         doLogout();
         doLogin();
         checkLiveDistribImport(distribId);
@@ -106,6 +106,25 @@ public class ITExplorerApidocManagerTest extends ITExplorerAdminTest {
         doLogout();
         doLogin();
         checkLivePartialDistribImport(distribName, distribId);
+    }
+
+    @Override
+    @Test
+    public void testLiveDistribExportAndDelete() {
+        String distribName = "my-server-to-delete";
+        open(DistribAdminPage.URL);
+        asPage(DistribAdminPage.class).checkCannotSave();
+        // log as admin to perform export of live distrib first
+        doLogout();
+        loginAsAdmin();
+        String distribId = checkLiveDistribExport(distribName, false);
+        doLogout();
+        doLogin();
+        open(DistribAdminPage.URL);
+        asPage(DistribAdminPage.class).checkPersistedDistrib(distribId);
+        open(DistribAdminPage.URL);
+        asPage(DistribAdminPage.class).deleteFirstPersistedDistrib();
+        asPage(DistribAdminPage.class).checkPersistedDistribNotPresent(distribId);
     }
 
 }

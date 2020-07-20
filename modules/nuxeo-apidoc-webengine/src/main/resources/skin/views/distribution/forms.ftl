@@ -147,6 +147,11 @@
               Export as zip
             </a>
           </p>
+          <p>
+            <a class="button" href="${Root.path}/delete/${distrib.key}" onclick="if (confirm('Please confirm deletion')) {$.fn.clickButton(this); return true; } else { return false; }">
+              Delete
+            </a>
+          </p>
         </td>
       </tr>
     </#list>

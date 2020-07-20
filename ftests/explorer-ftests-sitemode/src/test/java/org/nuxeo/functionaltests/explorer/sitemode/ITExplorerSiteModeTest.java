@@ -76,6 +76,11 @@ public class ITExplorerSiteModeTest extends AbstractExplorerSiteModeTest {
     }
 
     @Test
+    public void testDeleteDistrib() {
+        openAndCheck(DistribAdminPage.DELETE_URL + getDistribId(DISTRIB_NAME, DISTRIB_VERSION), true);
+    }
+
+    @Test
     public void testSampleDistrib() {
         ExplorerHomePage home = goHome();
         home.check();

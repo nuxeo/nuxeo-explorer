@@ -18,8 +18,6 @@
  */
 package org.nuxeo.functionaltests.explorer.nomode;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -37,7 +35,6 @@ import org.nuxeo.functionaltests.explorer.pages.ExplorerHomePage;
 import org.nuxeo.functionaltests.explorer.pages.UploadFragment;
 import org.nuxeo.functionaltests.explorer.testing.AbstractExplorerDownloadTest;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 
 /**
  * Test Explorer pages usually handled by admins.
@@ -89,12 +86,14 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         checkHomeLiveDistrib();
     }
 
-    protected String checkLiveDistribExport(String distribName) {
+    protected String checkLiveDistribExport(String distribName, boolean fullCheck) {
         open(DistribAdminPage.URL);
         String version = asPage(DistribAdminPage.class).saveCurrentLiveDistrib(distribName, false);
         String distribId = getDistribId(distribName, version);
         asPage(DistribAdminPage.class).checkPersistedDistrib(distribId);
-        checkDistrib(distribId, false, null, false);
+        if (fullCheck) {
+            checkDistrib(distribId, false, null, false);
+        }
         return distribId;
     }
 
@@ -119,7 +118,7 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
     @Test
     public void testLiveDistribExportAndImport() {
         String distribName = "my-server";
-        String distribId = checkLiveDistribExport(distribName);
+        String distribId = checkLiveDistribExport(distribName, true);
         checkLiveDistribImport(distribId);
     }
 
@@ -244,17 +243,21 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         adminPage.checkSuccessMessage("Update Done.");
         adminPage.checkPersistedDistrib(newerDistribId);
         open(ExplorerHomePage.URL);
-        try {
-            asPage(ExplorerHomePage.class).checkPersistedDistrib(newDistribId);
-            fail("Distrib should not be visible anymore from home page");
-        } catch (NoSuchElementException e) {
-            // ok
-        }
+        asPage(ExplorerHomePage.class).checkPersistedDistribNotPresent(newDistribId);
         // check we can still navigate to it
         open(String.format("%s%s/", ExplorerHomePage.URL, newerDistribId));
         asPage(DistributionHomePage.class).checkHeader(newerDistribId);
         open(String.format("%s%s/", ExplorerHomePage.URL, alias1));
         asPage(DistributionHomePage.class).checkHeader(newerDistribId);
+    }
+
+    @Test
+    public void testLiveDistribExportAndDelete() {
+        String distribName = "my-server-to-delete";
+        String distribId = checkLiveDistribExport(distribName, false);
+        open(DistribAdminPage.URL);
+        asPage(DistribAdminPage.class).deleteFirstPersistedDistrib();
+        asPage(DistribAdminPage.class).checkPersistedDistribNotPresent(distribId);
     }
 
 }

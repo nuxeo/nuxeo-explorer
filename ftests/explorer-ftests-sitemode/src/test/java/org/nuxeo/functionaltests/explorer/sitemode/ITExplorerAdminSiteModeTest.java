@@ -137,4 +137,15 @@ public class ITExplorerAdminSiteModeTest extends AbstractExplorerSiteModeTest {
         }
     }
 
+    @Test
+    public void testSampleDistribDelete() throws IOException {
+        open(DistribAdminPage.URL);
+        asPage(DistribAdminPage.class).deleteFirstPersistedDistrib();
+        String distribId = getDistribId(DISTRIB_NAME, DISTRIB_VERSION);
+        asPage(DistribAdminPage.class).checkPersistedDistribNotPresent(distribId);
+        // recreate it deleted sample, as expected by other tests
+        doLogout();
+        ITExplorerApidocManagerSideModeTest.initPersistedDistrib();
+    }
+
 }

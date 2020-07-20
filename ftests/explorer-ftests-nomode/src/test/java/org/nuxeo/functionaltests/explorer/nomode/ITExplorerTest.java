@@ -136,6 +136,11 @@ public class ITExplorerTest extends AbstractExplorerTest {
         openAndCheck(DistribAdminPage.UPDATE_URL + getDistribId(LIVE_NAME, liveVersion), true);
     }
 
+    @Test
+    public void testDeleteDistrib() {
+        openAndCheck(DistribAdminPage.DELETE_URL + getDistribId(LIVE_NAME, liveVersion), true);
+    }
+
     /**
      * Non-regression test for NXP-29193.
      */
