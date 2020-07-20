@@ -58,7 +58,7 @@ pipeline {
   triggers {
     upstream(
       threshold: hudson.model.Result.SUCCESS,
-      upstreamProjects: '../nuxeo/${env.BRANCH_NAME}',
+      upstreamProjects: '/nuxeo/nuxeo/${env.BRANCH_NAME}',
     )
   }
   environment {
