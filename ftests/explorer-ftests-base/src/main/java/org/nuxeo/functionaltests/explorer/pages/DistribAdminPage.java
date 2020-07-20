@@ -26,6 +26,7 @@ import java.io.File;
 import org.nuxeo.apidoc.browse.Distribution;
 import org.nuxeo.functionaltests.Locator;
 import org.nuxeo.functionaltests.Required;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -46,7 +47,10 @@ public class DistribAdminPage extends AbstractExplorerPage {
     public static final String URL = String.format("%s%s/", ExplorerHomePage.URL, Distribution.VIEW_ADMIN);
 
     /** @since 20.0.0 */
-    public static final String UPDATE_URL = String.format("%supdate/", ExplorerHomePage.URL);
+    public static final String UPDATE_URL = String.format("%s%s/", ExplorerHomePage.URL, Distribution.UPDATE_ACTION);
+
+    /** @since 20.0.0 */
+    public static final String DELETE_URL = String.format("%s%s/", ExplorerHomePage.URL, Distribution.DELETE_ACTION);
 
     @Required
     @FindBy(xpath = "//h1")
@@ -57,6 +61,9 @@ public class DistribAdminPage extends AbstractExplorerPage {
 
     @FindBy(linkText = "EXPORT AS ZIP")
     public WebElement firstExportLink;
+
+    @FindBy(linkText = "DELETE")
+    public WebElement firstDeleteLink;
 
     public DistribAdminPage(WebDriver driver) {
         super(driver);
@@ -116,6 +123,20 @@ public class DistribAdminPage extends AbstractExplorerPage {
     public DistributionUpdatePage updateFirstPersistedDistrib() {
         clickOn(firstUpdateLink);
         return asPage(DistributionUpdatePage.class);
+    }
+
+    /**
+     * Deletes first persisted distribution.
+     *
+     * @since 20.0.0
+     */
+    public void deleteFirstPersistedDistrib() {
+        clickOn(firstDeleteLink);
+        Alert confirmRemove = driver.switchTo().alert();
+        confirmRemove.accept();
+        waitForAsyncWork();
+        Locator.waitUntilElementPresent(By.id("successMessage"));
+        checkSuccessMessage("Deletion Done.");
     }
 
     public void checkCanSave() {
