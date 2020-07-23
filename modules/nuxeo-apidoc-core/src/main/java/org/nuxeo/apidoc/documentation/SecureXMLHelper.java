@@ -53,7 +53,8 @@ public class SecureXMLHelper {
 
     protected static final String KEYWORDS_PROPERTY = "org.nuxeo.apidoc.secure.xml.keywords";
 
-    public static final List<String> DEFAULT_KEYWORDS = List.of("password", "Password", "secret", "apiKey");
+    public static final List<String> DEFAULT_KEYWORDS = List.of("password", "Password", "secret", "apiKey", "TMPDIR",
+            "TMP", "TEMP", "TEMPDIR");
 
     protected static final String WHITELISTED_KEYWORDS_PROPERTY = "org.nuxeo.apidoc.secure.xml.keywords.whitelisted";
 
