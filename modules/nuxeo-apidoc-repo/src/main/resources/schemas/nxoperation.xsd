@@ -25,6 +25,7 @@
   <xs:complexType name="nxopparam">
     <xs:sequence>
       <xs:element name="name" type="xs:string" />
+      <xs:element name="description" type="xs:string" />
       <xs:element name="type" type="xs:string" />
       <xs:element name="widget" type="xs:string" />
       <xs:element name="values" type="nxs:stringList" />

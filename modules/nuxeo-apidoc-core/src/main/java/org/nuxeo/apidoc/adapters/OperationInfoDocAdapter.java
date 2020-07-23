@@ -120,6 +120,7 @@ public class OperationInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
                 p.order = order == null ? 0 : order.intValue();
                 Boolean required = (Boolean) map.get(PROP_PARAM_REQUIRED);
                 p.required = required == null ? false : required.booleanValue();
+                p.description = (String) map.get(PROP_PARAM_DESCRIPTION);
                 params.add(p);
             }
         }
@@ -169,6 +170,7 @@ public class OperationInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
             map.put(PROP_PARAM_VALUES, p.getValues());
             map.put(PROP_PARAM_REQUIRED, Boolean.valueOf(p.isRequired()));
             map.put(PROP_PARAM_ORDER, Long.valueOf(p.getOrder()));
+            map.put(PROP_PARAM_DESCRIPTION, p.getDescription());
             params.add(map);
         }
         doc.setPropertyValue(PROP_PARAMS, (Serializable) params);

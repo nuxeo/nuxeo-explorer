@@ -68,6 +68,9 @@ public interface OperationInfo extends NuxeoArtifact, Comparable<OperationInfo> 
 
     String PROP_PARAM_ORDER = "order";
 
+    /** @since 20.0.0 */
+    String PROP_PARAM_DESCRIPTION = "description";
+
     String PROP_OP_CLASS = "operationClass";
 
     String PROP_CONTRIBUTING_COMPONENT = "contributingComponent";
