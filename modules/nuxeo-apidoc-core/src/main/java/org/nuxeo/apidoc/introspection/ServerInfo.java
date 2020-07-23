@@ -504,7 +504,6 @@ public class ServerInfo {
                     ExtensionInfoImpl xtinfo = new ExtensionInfoImpl(component, xt.getExtensionPoint(),
                             comps.get(id).get());
                     xtinfo.setTargetComponentName(xt.getTargetComponent());
-                    xtinfo.setContribution(xt.getContributions());
                     xtinfo.setDocumentation(xt.getDocumentation());
                     xtinfo.setXml(SecureXMLHelper.secure(xt.toXML()));
 
