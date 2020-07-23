@@ -19,6 +19,7 @@
  */
 package org.nuxeo.apidoc.repository;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -57,6 +58,7 @@ import org.nuxeo.apidoc.documentation.JavaDocHelper;
 import org.nuxeo.apidoc.plugin.Plugin;
 import org.nuxeo.apidoc.plugin.PluginSnapshot;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
+import org.nuxeo.apidoc.snapshot.JsonMapper;
 import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.common.utils.Path;
@@ -70,7 +72,13 @@ import org.nuxeo.ecm.core.query.sql.NXQL;
 import org.nuxeo.ecm.platform.thumbnail.ThumbnailConstants;
 import org.nuxeo.runtime.api.Framework;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.PrettyPrinter;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter implements DistributionSnapshot {
 
@@ -425,14 +433,46 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         return Boolean.TRUE.equals(safeGet(PROP_HIDE));
     }
 
+    protected ObjectMapper getJsonMapper(boolean read, SnapshotFilter filter) {
+        ObjectMapper mapper;
+        if (read) {
+            mapper = JsonMapper.basic(null);
+        } else {
+            mapper = JsonMapper.persisted(filter);
+        }
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        for (Plugin<?> plugin : Framework.getService(SnapshotManager.class).getPlugins()) {
+            mapper = plugin.enrishJsonMapper(mapper);
+        }
+        return mapper;
+    }
+
     @Override
     public void writeJson(OutputStream out, SnapshotFilter filter, PrettyPrinter printer) {
-        throw new UnsupportedOperationException();
+        ObjectWriter writer = getJsonMapper(false, filter).writerFor(DistributionSnapshot.class)
+                                                          .withoutRootName()
+                                                          .with(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM)
+                                                          .without(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+        if (printer != null) {
+            writer = writer.with(printer);
+        }
+        try {
+            writer.writeValue(out, this);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public DistributionSnapshot readJson(InputStream in) {
-        throw new UnsupportedOperationException();
+        ObjectReader reader = getJsonMapper(true, null).readerFor(DistributionSnapshot.class)
+                                                       .without(JsonParser.Feature.AUTO_CLOSE_SOURCE)
+                                                       .with(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT);
+        try {
+            return reader.readValue(in);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

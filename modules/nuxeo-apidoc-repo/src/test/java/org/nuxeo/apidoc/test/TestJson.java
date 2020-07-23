@@ -23,7 +23,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -50,6 +49,7 @@ import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.introspection.RuntimeSnapshot;
+import org.nuxeo.apidoc.repository.RepositoryDistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.JsonPrettyPrinter;
 import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
@@ -82,28 +82,25 @@ public class TestJson extends AbstractApidocTest {
     }
 
     @Test
-    public void canSerializeRuntimeAndReadBack() throws IOException {
+    public void canSerializeRuntimeAndReadBackLive() throws IOException {
         DistributionSnapshot snapshot = RuntimeSnapshot.build();
         assertNotNull(snapshot);
-        canSerializeAndReadBack(snapshot);
+        canSerializeAndReadBack(snapshot, false);
     }
 
     @Test
-    public void cannotSerializeRepositoryAndReadBack() throws IOException {
+    public void canSerializeRepositoryAndReadBackPersisted() throws IOException {
         DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session);
-        assertNotNull(snapshot);
-        try {
-            canSerializeAndReadBack(snapshot);
-            fail("should have thrown UnsupportedOperationException");
-        } catch (UnsupportedOperationException e) {
-            // ok
-        }
+
+        assertTrue(snapshot instanceof RepositoryDistributionSnapshot);
+        canSerializeAndReadBack(snapshot, true);
     }
 
-    protected void canSerializeAndReadBack(DistributionSnapshot snap) throws IOException {
+    protected void canSerializeAndReadBack(DistributionSnapshot snap, boolean persisted) throws IOException {
+        checkSnapshot(snap, persisted, false);
         try (ByteArrayOutputStream sink = new ByteArrayOutputStream()) {
             snap.writeJson(sink, null, null);
-            checkSnapshot(snap, false);
+            checkSnapshot(snap, persisted, false);
             try (OutputStream file = Files.newOutputStream(Paths.get(FeaturesRunner.getBuildDirectory() + "/test.json"),
                     StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
                 file.write(sink.toByteArray());
@@ -111,7 +108,7 @@ public class TestJson extends AbstractApidocTest {
             try (ByteArrayInputStream source = new ByteArrayInputStream(sink.toByteArray())) {
                 DistributionSnapshot snapshot = snap.readJson(source);
                 assertNotNull(snapshot);
-                checkSnapshot(snapshot, false);
+                checkSnapshot(snapshot, persisted, false);
             }
         }
     }
@@ -142,6 +139,17 @@ public class TestJson extends AbstractApidocTest {
         checkJsonContentEquals("test-export.json", sink.toString());
     }
 
+    @Test
+    public void canWritePartialPersisted() throws IOException {
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session);
+        assertNotNull(snapshot);
+
+        ByteArrayOutputStream sink = new ByteArrayOutputStream();
+        snapshot.writeJson(sink, getFilter(), new JsonPrettyPrinter());
+
+        checkJsonContentEquals("test-export.json", sink.toString());
+    }
+
     /**
      * Reads a reference export kept in tests, to detect potential compatibility changes.
      *
@@ -155,13 +163,14 @@ public class TestJson extends AbstractApidocTest {
         String export = getReferenceContent(getReferencePath("test-export.json"));
         try (ByteArrayInputStream source = new ByteArrayInputStream(export.getBytes())) {
             DistributionSnapshot snapshot = runtimeSnapshot.readJson(source);
-            checkSnapshot(snapshot, true);
+            checkSnapshot(snapshot, false, true);
         }
     }
 
-    protected void checkSnapshot(DistributionSnapshot snapshot, boolean partial) throws IOException {
+    protected void checkSnapshot(DistributionSnapshot snapshot, boolean persisted, boolean partial) throws IOException {
         assertNotNull(snapshot);
-        assertEquals("Nuxeo", snapshot.getName());
+        String dname = "Nuxeo";
+        assertEquals(dname, snapshot.getName());
         String sVersion = "unknown";
         if (partial) {
             sVersion = "mockTestVersion";
@@ -172,7 +181,7 @@ public class TestJson extends AbstractApidocTest {
         } else {
             assertNotNull(snapshot.getCreationDate());
         }
-        assertEquals("Nuxeo-" + sVersion, snapshot.getKey());
+        assertEquals(String.format("%s-%s", dname, sVersion), snapshot.getKey());
 
         BundleInfo bundle = snapshot.getBundle("org.nuxeo.apidoc.repo");
         assertNotNull(bundle);
@@ -215,12 +224,12 @@ public class TestJson extends AbstractApidocTest {
         // check introspected bundle group
         BundleGroup group = bundle.getBundleGroup();
         assertNotNull(group);
-        assertEquals("grp:org.nuxeo.apidoc", group.getId());
-        assertEquals("org.nuxeo.apidoc", group.getName());
         assertEquals(BundleGroup.TYPE_NAME, group.getArtifactType());
-        assertEquals("/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc", group.getHierarchyPath());
         assertEquals(sVersion, group.getVersion());
         assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"), group.getBundleIds());
+        assertEquals("grp:org.nuxeo.apidoc", group.getId());
+        assertEquals("org.nuxeo.apidoc", group.getName());
+        assertEquals("/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc", group.getHierarchyPath());
         assertEquals(List.of("grp:org.nuxeo.ecm.platform"), group.getParentIds());
         List<Blob> readmes = group.getReadmes();
         assertNotNull(readmes);

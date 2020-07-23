@@ -22,6 +22,14 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import org.nuxeo.apidoc.adapters.BundleGroupDocAdapter;
+import org.nuxeo.apidoc.adapters.BundleInfoDocAdapter;
+import org.nuxeo.apidoc.adapters.ComponentInfoDocAdapter;
+import org.nuxeo.apidoc.adapters.ExtensionInfoDocAdapter;
+import org.nuxeo.apidoc.adapters.ExtensionPointInfoDocAdapter;
+import org.nuxeo.apidoc.adapters.OperationInfoDocAdapter;
+import org.nuxeo.apidoc.adapters.PackageInfoDocAdapter;
+import org.nuxeo.apidoc.adapters.ServiceInfoDocAdapter;
 import org.nuxeo.apidoc.api.BundleGroup;
 import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
@@ -40,10 +48,12 @@ import org.nuxeo.apidoc.introspection.OperationInfoImpl;
 import org.nuxeo.apidoc.introspection.PackageInfoImpl;
 import org.nuxeo.apidoc.introspection.RuntimeSnapshot;
 import org.nuxeo.apidoc.introspection.ServiceInfoImpl;
+import org.nuxeo.apidoc.repository.RepositoryDistributionSnapshot;
 import org.nuxeo.ecm.automation.OperationDocumentation;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CloseableFile;
 import org.nuxeo.ecm.core.api.impl.blob.StringBlob;
+import org.nuxeo.ecm.core.blob.binary.Binary;
 import org.nuxeo.runtime.model.ComponentName;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -65,6 +75,41 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
  */
 public class JsonMapper {
 
+    protected static ObjectMapper createMapper() {
+        final ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
+              .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+        mapper.addMixIn(OperationDocumentation.Param.class, OperationDocParamMixin.class);
+        mapper.addMixIn(ComponentName.class, ComponentNameMixin.class);
+        mapper.addMixIn(Blob.class, BlobMixin.class);
+        return mapper;
+    }
+
+    protected static SimpleModule createModule(SnapshotFilter filter) {
+        if (filter == null) {
+            return new SimpleModule();
+        }
+        return new SimpleModule() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void setupModule(SetupContext context) {
+                super.setupModule(context);
+                context.addBeanSerializerModifier(new BeanSerializerModifier() {
+                    @Override
+                    @SuppressWarnings("unchecked")
+                    public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription desc,
+                            JsonSerializer<?> serializer) {
+                        if (NuxeoArtifact.class.isAssignableFrom(desc.getBeanClass())) {
+                            return new JsonSnapshotSerializer((JsonSerializer<Object>) serializer, filter);
+                        }
+                        return serializer;
+                    }
+                });
+            }
+        };
+    }
+
     /**
      * Returns the default object mapper for distribution artifacts and following filter.
      * <p>
@@ -73,33 +118,8 @@ public class JsonMapper {
      * @since 20.0.0
      */
     public static ObjectMapper basic(SnapshotFilter filter) {
-        final ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
-              .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-        SimpleModule module;
-        if (filter == null) {
-            module = new SimpleModule();
-        } else {
-            module = new SimpleModule() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void setupModule(SetupContext context) {
-                    super.setupModule(context);
-                    context.addBeanSerializerModifier(new BeanSerializerModifier() {
-                        @Override
-                        @SuppressWarnings("unchecked")
-                        public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription desc,
-                                JsonSerializer<?> serializer) {
-                            if (NuxeoArtifact.class.isAssignableFrom(desc.getBeanClass())) {
-                                return new JsonSnapshotSerializer((JsonSerializer<Object>) serializer, filter);
-                            }
-                            return serializer;
-                        }
-                    });
-                }
-            };
-        }
+        final ObjectMapper mapper = createMapper();
+        SimpleModule module = createModule(filter);
         module.addAbstractTypeMapping(DistributionSnapshot.class, RuntimeSnapshot.class)
               .addAbstractTypeMapping(BundleInfo.class, BundleInfoImpl.class)
               .addAbstractTypeMapping(BundleGroup.class, BundleGroupImpl.class)
@@ -111,9 +131,6 @@ public class JsonMapper {
               .addAbstractTypeMapping(PackageInfo.class, PackageInfoImpl.class)
               .addAbstractTypeMapping(Blob.class, StringBlobReader.class);
         mapper.registerModule(module);
-        mapper.addMixIn(OperationDocumentation.Param.class, OperationDocParamMixin.class);
-        mapper.addMixIn(ComponentName.class, ComponentNameMixin.class);
-        mapper.addMixIn(Blob.class, StringBlobMixin.class);
         return mapper;
     }
 
@@ -127,10 +144,12 @@ public class JsonMapper {
         }
     }
 
-    public static abstract class StringBlobMixin {
+    public static abstract class BlobMixin {
         @JsonCreator
-        StringBlobMixin(@JsonProperty("content") String content, @JsonProperty("name") String name) {
+        BlobMixin(@JsonProperty("content") String content, @JsonProperty("name") String name) {
         }
+
+        // string blob
 
         @JsonProperty("content")
         abstract String getString();
@@ -152,6 +171,18 @@ public class JsonMapper {
 
         @JsonIgnore
         abstract CloseableFile getCloseableFile();
+
+        // persisted blob
+
+        @JsonIgnore
+        abstract Binary getBinary();
+
+        @JsonIgnore
+        abstract String getKey();
+
+        @JsonIgnore
+        abstract String getProviderId();
+
     }
 
     public static class StringBlobReader extends StringBlob {
@@ -161,6 +192,29 @@ public class JsonMapper {
         StringBlobReader(@JsonProperty("content") String content, @JsonProperty("name") String name) {
             super(content, "text/plain", StandardCharsets.UTF_8.name(), name);
         }
+    }
+
+    /**
+     * Returns the default object mapper for persisted distribution artifacts.
+     * <p>
+     * Follows annotations on repository implementation.
+     *
+     * @since 20.0.0
+     */
+    public static ObjectMapper persisted(SnapshotFilter filter) {
+        final ObjectMapper mapper = createMapper();
+        SimpleModule module = createModule(filter);
+        module.addAbstractTypeMapping(DistributionSnapshot.class, RepositoryDistributionSnapshot.class)
+              .addAbstractTypeMapping(BundleInfo.class, BundleInfoDocAdapter.class)
+              .addAbstractTypeMapping(BundleGroup.class, BundleGroupDocAdapter.class)
+              .addAbstractTypeMapping(ComponentInfo.class, ComponentInfoDocAdapter.class)
+              .addAbstractTypeMapping(ExtensionPointInfo.class, ExtensionPointInfoDocAdapter.class)
+              .addAbstractTypeMapping(ExtensionInfo.class, ExtensionInfoDocAdapter.class)
+              .addAbstractTypeMapping(OperationInfo.class, OperationInfoDocAdapter.class)
+              .addAbstractTypeMapping(ServiceInfo.class, ServiceInfoDocAdapter.class)
+              .addAbstractTypeMapping(PackageInfo.class, PackageInfoDocAdapter.class);
+        mapper.registerModule(module);
+        return mapper;
     }
 
 }

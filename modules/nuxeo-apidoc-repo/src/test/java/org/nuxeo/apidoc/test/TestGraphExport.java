@@ -31,7 +31,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.apidoc.export.api.Export;
@@ -110,7 +109,6 @@ public class TestGraphExport extends AbstractApidocTest {
         checkDefaultExports(snapshotManager.getRuntimeSnapshot());
     }
 
-    @Ignore("Need to implement persisted distribs serialization")
     @Test
     public void testExportPersisted() throws Exception {
         checkDefaultExports(snapshotManager.persistRuntimeSnapshot(session));
