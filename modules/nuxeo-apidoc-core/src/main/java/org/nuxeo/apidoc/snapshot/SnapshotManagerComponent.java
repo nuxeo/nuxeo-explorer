@@ -187,7 +187,7 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
 
     @Override
     public DistributionSnapshot persistRuntimeSnapshot(CoreSession session, String name,
-            Map<String, Serializable> properties, SnapshotFilter filter) {
+            Map<String, Serializable> properties, PersistSnapshotFilter filter) {
         if (!canSeeRuntimeSnapshot(session)) {
             throw new RuntimeServiceException("Live runtime cannot be snapshotted.");
         }

@@ -45,7 +45,7 @@ import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.repository.RepositoryDistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
-import org.nuxeo.apidoc.snapshot.SnapshotFilter;
+import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.connect.update.PackageException;
 import org.nuxeo.ecm.core.api.Blob;
@@ -118,7 +118,7 @@ public class TestSnapshotPersist extends AbstractApidocTest {
 
     @Test
     public void testPersistPartial() throws IOException {
-        SnapshotFilter filter = new SnapshotFilter("apidoc");
+        PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc");
         filter.addBundlePrefix("org.nuxeo.apidoc");
 
         DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);

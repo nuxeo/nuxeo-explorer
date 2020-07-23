@@ -31,7 +31,6 @@ import org.nuxeo.apidoc.api.NuxeoArtifactComparator;
 import org.nuxeo.ecm.core.api.Blob;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BundleGroupImpl extends BaseNuxeoArtifact implements BundleGroup {
 
@@ -43,7 +42,7 @@ public class BundleGroupImpl extends BaseNuxeoArtifact implements BundleGroup {
 
     protected final List<String> bundleIds = new ArrayList<>();
 
-    protected final String version;
+    protected String version;
 
     protected BundleGroup parentGroup;
 
@@ -51,31 +50,19 @@ public class BundleGroupImpl extends BaseNuxeoArtifact implements BundleGroup {
 
     protected final List<Blob> readmes = new ArrayList<>();
 
-    @JsonCreator
-    private BundleGroupImpl(@JsonProperty("id") String key, @JsonProperty("version") String version,
-            @JsonProperty("parentIds") List<String> parentIds, @JsonProperty("bundleIds") List<String> bundleIds,
-            @JsonProperty("readmes") List<Blob> readmes) {
-        this.key = key;
-        if (key.startsWith(BundleGroup.PREFIX)) {
-            name = key.substring(BundleGroup.PREFIX.length());
+    public BundleGroupImpl(String id) {
+        this.key = id;
+        if (id.startsWith(BundleGroup.PREFIX)) {
+            name = id.substring(BundleGroup.PREFIX.length());
         } else {
-            name = key;
+            name = id;
         }
-        this.version = version;
-        if (parentIds != null) {
-            this.parentIds.addAll(parentIds);
-        }
-        if (bundleIds != null) {
-            this.bundleIds.addAll(bundleIds);
-        }
-        if (readmes != null) {
-            this.readmes.addAll(readmes);
-        }
-        // parent group and subgroups not restored from json
     }
 
-    public BundleGroupImpl(String key, String version) {
-        this(key, version, Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+    @JsonCreator
+    public BundleGroupImpl() {
+        this.key = null;
+        this.name = null;
     }
 
     /**
@@ -83,10 +70,6 @@ public class BundleGroupImpl extends BaseNuxeoArtifact implements BundleGroup {
      */
     public void addParent(String bgId) {
         parentIds.add(bgId);
-    }
-
-    public String getKey() {
-        return key;
     }
 
     @Override
@@ -141,6 +124,10 @@ public class BundleGroupImpl extends BaseNuxeoArtifact implements BundleGroup {
     @Override
     public String getVersion() {
         return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     @Override

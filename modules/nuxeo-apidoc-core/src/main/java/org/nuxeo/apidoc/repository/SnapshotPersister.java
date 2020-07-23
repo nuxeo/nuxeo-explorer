@@ -46,11 +46,10 @@ import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.introspection.BundleGroupImpl;
-import org.nuxeo.apidoc.introspection.OperationInfoImpl;
 import org.nuxeo.apidoc.plugin.Plugin;
 import org.nuxeo.apidoc.security.SecurityHelper;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
-import org.nuxeo.apidoc.snapshot.SnapshotFilter;
+import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
 import org.nuxeo.ecm.core.api.CoreInstance;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -124,7 +123,7 @@ public class SnapshotPersister {
     }
 
     public DistributionSnapshot persist(DistributionSnapshot snapshot, CoreSession session, String label,
-            SnapshotFilter filter, Map<String, Serializable> properties, List<Plugin<?>> plugins) {
+            PersistSnapshotFilter filter, Map<String, Serializable> properties, List<Plugin<?>> plugins) {
 
         RepositoryDistributionSnapshot distribContainer = createDistributionDoc(snapshot, session, label, properties);
 
@@ -136,11 +135,12 @@ public class SnapshotPersister {
         DocumentModel bundleContainer = getSubRoot(session, distribContainer.getDoc(), Bundle_Root_NAME);
 
         if (filter != null) {
-            // create VGroup that contain,s only the target bundles
-            BundleGroupImpl vGroup = new BundleGroupImpl(filter.getBundleGroupName(), snapshot.getVersion());
-            for (String bundleId : snapshot.getBundleIds()) {
-                if (filter.includeBundleId(bundleId)) {
-                    vGroup.add(bundleId);
+            // create VGroup that contains only the target bundles
+            BundleGroupImpl vGroup = new BundleGroupImpl(filter.getName());
+            vGroup.setVersion(snapshot.getVersion());
+            for (BundleInfo bundle : snapshot.getBundles()) {
+                if (filter.accept(bundle)) {
+                    vGroup.add(bundle.getId());
                 }
             }
             persistBundleGroup(snapshot, vGroup, session, label + "-bundles", bundleContainer);
@@ -169,9 +169,9 @@ public class SnapshotPersister {
     }
 
     public void persistOperations(DistributionSnapshot snapshot, List<OperationInfo> operations, CoreSession session,
-            String label, DocumentModel parent, SnapshotFilter filter) {
+            String label, DocumentModel parent, PersistSnapshotFilter filter) {
         for (OperationInfo op : operations) {
-            if (filter == null || op instanceof OperationInfoImpl && filter.includeOperation((OperationInfoImpl) op)) {
+            if (filter == null || filter.accept(op)) {
                 persistOperation(snapshot, op, session, label, parent);
             }
         }
@@ -274,9 +274,9 @@ public class SnapshotPersister {
     }
 
     protected void persistPackages(DistributionSnapshot snapshot, List<PackageInfo> packages, CoreSession session,
-            String label, DocumentModel parent, SnapshotFilter filter) {
+            String label, DocumentModel parent, PersistSnapshotFilter filter) {
         for (PackageInfo pkg : packages) {
-            if (filter == null || filter.includePackage(pkg)) {
+            if (filter == null || filter.accept(pkg)) {
                 PackageInfoDocAdapter.create(pkg, session, parent.getPathAsString());
             }
         }

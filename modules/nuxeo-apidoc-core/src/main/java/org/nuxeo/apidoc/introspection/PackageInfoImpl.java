@@ -26,7 +26,6 @@ import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
 import org.nuxeo.apidoc.api.PackageInfo;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @since 11.1
@@ -51,12 +50,9 @@ public class PackageInfoImpl extends BaseNuxeoArtifact implements PackageInfo {
 
     protected final List<String> conflicts = new ArrayList<>();
 
-    @JsonCreator
-    public PackageInfoImpl(@JsonProperty("id") String id, @JsonProperty("name") String name,
-            @JsonProperty("version") String version, @JsonProperty("title") String title,
-            @JsonProperty("packageType") String packageType, @JsonProperty("dependencies") List<String> dependencies,
-            @JsonProperty("optionalDependencies") List<String> optionalDependencies,
-            @JsonProperty("conflicts") List<String> conflicts, @JsonProperty("bundles") List<String> bundles) {
+    public PackageInfoImpl(String id, String name, String version, String title, String packageType,
+            List<String> dependencies, List<String> optionalDependencies, List<String> conflicts,
+            List<String> bundles) {
         this.id = id;
         this.name = name;
         this.title = title;
@@ -74,6 +70,15 @@ public class PackageInfoImpl extends BaseNuxeoArtifact implements PackageInfo {
         if (bundles != null) {
             this.bundles.addAll(bundles);
         }
+    }
+
+    @JsonCreator
+    private PackageInfoImpl() {
+        this.id = null;
+        this.name = null;
+        this.title = null;
+        this.version = null;
+        this.packageType = null;
     }
 
     @Override

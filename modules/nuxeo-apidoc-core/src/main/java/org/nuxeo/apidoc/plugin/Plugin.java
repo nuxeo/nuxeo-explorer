@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
-import org.nuxeo.apidoc.snapshot.SnapshotFilter;
+import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -97,7 +97,7 @@ public interface Plugin<T extends NuxeoArtifact> {
      * <p>
      * Can do nothing if no persistence is planned.
      */
-    void persist(DistributionSnapshot snapshot, CoreSession session, DocumentModel root, SnapshotFilter filter);
+    void persist(DistributionSnapshot snapshot, CoreSession session, DocumentModel root, PersistSnapshotFilter filter);
 
     /**
      * Allows initializing the plugin web context, in case a request is needed to introspect resources.
@@ -116,7 +116,7 @@ public interface Plugin<T extends NuxeoArtifact> {
      * Returns the persisted exploration of resources for this plugin.
      * <p>
      * Can return null if no persistence is done via
-     * {@link #persist(DistributionSnapshot, CoreSession, DocumentModel, SnapshotFilter)}.
+     * {@link #persist(DistributionSnapshot, CoreSession, DocumentModel, PersistSnapshotFilter)}.
      */
     PluginSnapshot<T> getRepositorySnapshot(DocumentModel root);
 

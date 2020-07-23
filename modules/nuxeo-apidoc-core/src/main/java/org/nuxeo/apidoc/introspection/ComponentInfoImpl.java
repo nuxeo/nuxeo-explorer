@@ -47,7 +47,6 @@ import org.nuxeo.apidoc.documentation.SecureXMLHelper;
 import org.nuxeo.common.utils.Path;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ComponentInfoImpl extends BaseNuxeoArtifact implements ComponentInfo {
 
@@ -79,21 +78,15 @@ public class ComponentInfoImpl extends BaseNuxeoArtifact implements ComponentInf
 
     protected String documentation;
 
-    public ComponentInfoImpl(BundleInfo bundleInfo, String name) {
-        bundle = bundleInfo;
+    public ComponentInfoImpl(BundleInfo bundle, String name) {
+        this.bundle = bundle;
         this.name = name;
     }
 
     @JsonCreator
-    private ComponentInfoImpl(@JsonProperty("bundle") BundleInfo bundle, @JsonProperty("name") String name,
-            @JsonProperty("componentClass") String componentClass, @JsonProperty("documentation") String documentation,
-            @JsonProperty("xmlFileContent") String xmlFileContent) {
-        this.bundle = bundle;
-        this.name = name;
-        this.componentClass = componentClass;
-        this.documentation = documentation;
-        this.xmlFileContent = xmlFileContent;
-        // services, extensions and extension points will be handled by json managed reference
+    private ComponentInfoImpl() {
+        this.bundle = null;
+        this.name = null;
     }
 
     @Override

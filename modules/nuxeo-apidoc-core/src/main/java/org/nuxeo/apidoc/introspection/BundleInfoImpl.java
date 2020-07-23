@@ -32,7 +32,6 @@ import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.ecm.core.api.Blob;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BundleInfoImpl extends BaseNuxeoArtifact implements BundleInfo {
 
@@ -70,31 +69,13 @@ public class BundleInfoImpl extends BaseNuxeoArtifact implements BundleInfo {
     /** @since 11.1 */
     protected final List<String> packages = new ArrayList<>();
 
-    @JsonCreator
-    private BundleInfoImpl(@JsonProperty("bundleId") String bundleId, @JsonProperty("fileName") String fileName,
-            @JsonProperty("manifest") String manifest, @JsonProperty("requirements") List<String> requirements,
-            @JsonProperty("groupId") String groupId, @JsonProperty("artifactId") String artifactId,
-            @JsonProperty("artifactVersion") String artifactVersion,
-            @JsonProperty("bundleGroup") BundleGroup bundleGroup, @JsonProperty("readme") Blob readme,
-            @JsonProperty("parentReadme") Blob parentReadme, @JsonProperty("location") String location) {
-        this.bundleId = bundleId;
-        this.fileName = fileName;
-        this.manifest = manifest;
-        if (requirements != null) {
-            this.requirements.addAll(requirements);
-        }
-        this.groupId = groupId;
-        this.artifactId = artifactId;
-        this.artifactVersion = artifactVersion;
-        this.bundleGroup = bundleGroup;
-        this.readme = readme;
-        this.parentReadme = parentReadme;
-        this.location = location;
-        // components will be handled by json managed reference
-    }
-
     public BundleInfoImpl(String bundleId) {
         this.bundleId = bundleId;
+    }
+
+    @JsonCreator
+    private BundleInfoImpl() {
+        this.bundleId = null;
     }
 
     @Override

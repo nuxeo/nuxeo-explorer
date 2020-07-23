@@ -31,15 +31,14 @@ import org.nuxeo.apidoc.api.VirtualNodesConsts;
 import org.nuxeo.apidoc.documentation.DocumentationHelper;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ExtensionPointInfoImpl extends BaseNuxeoArtifact implements ExtensionPointInfo {
 
-    protected final ComponentInfo component;
+    protected ComponentInfo component;
 
-    protected final String componentId;
+    protected String componentId;
 
-    protected final String name;
+    protected String name;
 
     protected final List<ExtensionInfo> extensions = new ArrayList<>();
 
@@ -56,13 +55,10 @@ public class ExtensionPointInfoImpl extends BaseNuxeoArtifact implements Extensi
     }
 
     @JsonCreator
-    private ExtensionPointInfoImpl(@JsonProperty("componentId") String componentId, @JsonProperty("name") String name,
-            @JsonProperty("descriptors") String[] descriptors, @JsonProperty("documentation") String documentation) {
-        this.component = null; // will be handled by json back reference
-        this.componentId = componentId; // kept here to ensure id resolution during json deserialization
-        this.name = name;
-        this.descriptors = descriptors;
-        this.documentation = documentation;
+    private ExtensionPointInfoImpl() {
+        this.component = null;
+        this.componentId = null;
+        this.name = null;
     }
 
     @Override

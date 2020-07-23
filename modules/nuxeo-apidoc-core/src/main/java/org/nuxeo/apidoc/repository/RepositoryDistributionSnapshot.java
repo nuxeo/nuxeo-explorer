@@ -57,6 +57,7 @@ import org.nuxeo.apidoc.documentation.JavaDocHelper;
 import org.nuxeo.apidoc.plugin.Plugin;
 import org.nuxeo.apidoc.plugin.PluginSnapshot;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
+import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -69,7 +70,7 @@ import org.nuxeo.ecm.core.query.sql.NXQL;
 import org.nuxeo.ecm.platform.thumbnail.ThumbnailConstants;
 import org.nuxeo.runtime.api.Framework;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.PrettyPrinter;
 
 public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter implements DistributionSnapshot {
 
@@ -425,12 +426,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     }
 
     @Override
-    public ObjectMapper getJsonMapper() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void writeJson(OutputStream out) {
+    public void writeJson(OutputStream out, SnapshotFilter filter, PrettyPrinter printer) {
         throw new UnsupportedOperationException();
     }
 

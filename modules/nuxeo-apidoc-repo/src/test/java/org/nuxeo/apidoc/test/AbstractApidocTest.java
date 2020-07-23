@@ -76,18 +76,21 @@ public abstract class AbstractApidocTest {
     @Mock
     protected PackageUpdateService packageUpdateService;
 
+    protected final String MOCK_PACKAGE_NAME = "platform-explorer-mock";
+
+    protected final String MOCK_PACKAGE_VERSION = "1.0.1";
+
+    protected final String MOCK_PACKAGE_ID = MOCK_PACKAGE_NAME + "-" + MOCK_PACKAGE_VERSION;
+
     public void mockPackageServices() throws PackageException, IOException {
-        String mockPackageName = "platform-explorer-mock";
-        String mockPackageVersion = "1.0.1";
-        String mockPackageId = mockPackageName + "-" + mockPackageVersion;
         DownloadablePackage mockPackage = mock(DownloadablePackage.class);
-        when(mockPackage.getId()).thenReturn(mockPackageId);
+        when(mockPackage.getId()).thenReturn(MOCK_PACKAGE_ID);
         when(packageManager.listInstalledPackages()).thenReturn(List.of(mockPackage));
         LocalPackage mockLocalPackage = mock(LocalPackage.class);
-        when(packageUpdateService.getPackage(mockPackageId)).thenReturn(mockLocalPackage);
-        when(mockLocalPackage.getId()).thenReturn(mockPackageId);
-        when(mockLocalPackage.getName()).thenReturn(mockPackageName);
-        when(mockLocalPackage.getVersion()).thenReturn(new Version(mockPackageVersion));
+        when(packageUpdateService.getPackage(MOCK_PACKAGE_ID)).thenReturn(mockLocalPackage);
+        when(mockLocalPackage.getId()).thenReturn(MOCK_PACKAGE_ID);
+        when(mockLocalPackage.getName()).thenReturn(MOCK_PACKAGE_NAME);
+        when(mockLocalPackage.getVersion()).thenReturn(new Version(MOCK_PACKAGE_VERSION));
         when(mockLocalPackage.getTitle()).thenReturn("Platform Explorer Mock");
         when(mockLocalPackage.getType()).thenReturn(PackageType.ADDON);
         // mock dep
@@ -119,9 +122,8 @@ public abstract class AbstractApidocTest {
         checkContentEquals(path, actualContent, UPDATE_REFERENCE_FILES_ON_FAILURE, false, null);
     }
 
-    protected void checkJsonContentEquals(String path, String actualContent, boolean isReference) throws IOException {
-        checkContentEquals(path, actualContent, isReference ? true : UPDATE_REFERENCE_FILES_ON_FAILURE, isReference,
-                getJsonTestUpdater());
+    protected void checkJsonContentEquals(String path, String actualContent) throws IOException {
+        checkContentEquals(path, actualContent, UPDATE_REFERENCE_FILES_ON_FAILURE, false, getJsonTestUpdater());
     }
 
     /**
@@ -132,12 +134,13 @@ public abstract class AbstractApidocTest {
     protected static Function<String, String> getJsonTestUpdater() {
         Function<String, String> function = (String s) -> {
             String res = s;
-            for (String kw : List.of("version", "fileName", "location", "artifactVersion", "xmlFileName")) {
+            for (String kw : List.of("version", "fileName", "location", "artifactVersion", "xmlFileName", "manifest")) {
                 String p = String.format("\"%s\": \"[^\"]*\"", kw);
                 String r = String.format("\"%s\": \"mockTest%s\"", kw,
                         kw.substring(0, 1).toUpperCase(Locale.ENGLISH) + kw.substring(1));
                 res = res.replaceAll(p, r);
             }
+            res = res.replaceAll("\"creationDate\": [0-9]*", "\"creationDate\": null");
             return res;
         };
         return function;
