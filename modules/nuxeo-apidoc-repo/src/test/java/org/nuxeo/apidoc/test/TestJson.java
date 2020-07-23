@@ -184,7 +184,7 @@ public class TestJson extends AbstractApidocTest {
         ReferenceRuntime refSnapshot = new ReferenceRuntime(snapshot);
         ByteArrayOutputStream sink = new ByteArrayOutputStream();
         refSnapshot.writeJson(sink);
-        checkContentEquals("test-export.json", sink.toString(), true, true);
+        checkJsonContentEquals("test-export.json", sink.toString(), true);
     }
 
     /**
@@ -207,16 +207,20 @@ public class TestJson extends AbstractApidocTest {
     protected void checkSnapshot(DistributionSnapshot snapshot, boolean legacy) throws IOException {
         assertNotNull(snapshot);
         assertEquals("Nuxeo", snapshot.getName());
-        assertEquals("unknown", snapshot.getVersion());
+        String sVersion = "unknown";
+        if (legacy) {
+            sVersion = "mockTestVersion";
+        }
+        assertEquals(sVersion, snapshot.getVersion());
         assertNotNull(snapshot.getCreationDate());
-        assertEquals("Nuxeo-unknown", snapshot.getKey());
+        assertEquals("Nuxeo-" + sVersion, snapshot.getKey());
 
         BundleInfo bundle = snapshot.getBundle("org.nuxeo.apidoc.repo");
         assertNotNull(bundle);
         assertEquals("nuxeo-apidoc-repo", bundle.getArtifactId());
         assertEquals(BundleInfo.TYPE_NAME, bundle.getArtifactType());
 
-        String version = "11.1-SNAPSHOT";
+        String version = "mockTestArtifactVersion";
         if (legacy) {
             assertEquals(version, bundle.getArtifactVersion());
         } else {
@@ -266,7 +270,7 @@ public class TestJson extends AbstractApidocTest {
         assertEquals("org.nuxeo.apidoc", group.getName());
         assertEquals(BundleGroup.TYPE_NAME, group.getArtifactType());
         assertEquals("/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc", group.getHierarchyPath());
-        assertEquals("unknown", group.getVersion());
+        assertEquals(sVersion, group.getVersion());
         assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"), group.getBundleIds());
         assertEquals(List.of("grp:org.nuxeo.ecm.platform"), group.getParentIds());
         List<Blob> readmes = group.getReadmes();
@@ -274,7 +278,7 @@ public class TestJson extends AbstractApidocTest {
         assertEquals(1, readmes.size());
         checkContentEquals("apidoc_snapshot/apidoc_readme.txt", readmes.get(0).getString());
         assertEquals(List.of(), group.getSubGroups());
-        assertEquals("unknown", group.getVersion());
+        assertEquals(sVersion, group.getVersion());
         assertNotNull(group.getParentGroup());
         assertEquals("grp:org.nuxeo.ecm.platform", group.getParentGroup().getId());
 
@@ -284,7 +288,7 @@ public class TestJson extends AbstractApidocTest {
         assertEquals("grp:org.nuxeo.ecm.platform", mvnGroup.getId());
         assertEquals("org.nuxeo.ecm.platform", mvnGroup.getName());
         assertEquals(BundleGroup.TYPE_NAME, mvnGroup.getArtifactType());
-        assertEquals("unknown", mvnGroup.getVersion());
+        assertEquals(sVersion, mvnGroup.getVersion());
         assertEquals("/grp:org.nuxeo.ecm.platform", mvnGroup.getHierarchyPath());
         if (legacy) {
             assertEquals(List.of(), mvnGroup.getBundleIds());
@@ -311,7 +315,7 @@ public class TestJson extends AbstractApidocTest {
             assertTrue(sgids.contains("grp:org.nuxeo.ecm.directory"));
             assertTrue(sgids.contains("grp:org.nuxeo.apidoc"));
         }
-        assertEquals("unknown", mvnGroup.getVersion());
+        assertEquals(sVersion, mvnGroup.getVersion());
         assertNull(mvnGroup.getParentGroup());
 
         // check components
@@ -548,7 +552,11 @@ public class TestJson extends AbstractApidocTest {
         assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"), pkg.getBundles());
         assertEquals("platform-explorer-mock-1.0.1", pkg.getId());
         assertEquals("platform-explorer-mock", pkg.getName());
-        assertEquals("1.0.1", pkg.getVersion());
+        if (legacy) {
+            assertEquals("mockTestVersion", pkg.getVersion());
+        } else {
+            assertEquals("1.0.1", pkg.getVersion());
+        }
         assertEquals("Platform Explorer Mock", pkg.getTitle());
         assertEquals(PackageType.ADDON.toString(), pkg.getPackageType());
         assertEquals(List.of("platform-explorer-base"), pkg.getDependencies());
