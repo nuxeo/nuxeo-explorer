@@ -19,6 +19,14 @@
  */
 package org.nuxeo.apidoc.api;
 
+import org.nuxeo.apidoc.adapters.BundleGroupDocAdapter;
+import org.nuxeo.apidoc.adapters.BundleInfoDocAdapter;
+import org.nuxeo.apidoc.adapters.ComponentInfoDocAdapter;
+import org.nuxeo.apidoc.adapters.ExtensionInfoDocAdapter;
+import org.nuxeo.apidoc.adapters.ExtensionPointInfoDocAdapter;
+import org.nuxeo.apidoc.adapters.OperationInfoDocAdapter;
+import org.nuxeo.apidoc.adapters.PackageInfoDocAdapter;
+import org.nuxeo.apidoc.adapters.ServiceInfoDocAdapter;
 import org.nuxeo.apidoc.introspection.BundleGroupImpl;
 import org.nuxeo.apidoc.introspection.BundleInfoImpl;
 import org.nuxeo.apidoc.introspection.ComponentInfoImpl;
@@ -35,6 +43,14 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonSubTypes({ //
+        @JsonSubTypes.Type(value = BundleGroupDocAdapter.class, name = BundleGroup.TYPE_NAME),
+        @JsonSubTypes.Type(value = BundleInfoDocAdapter.class, name = BundleInfo.TYPE_NAME),
+        @JsonSubTypes.Type(value = ComponentInfoDocAdapter.class, name = ComponentInfo.TYPE_NAME),
+        @JsonSubTypes.Type(value = ServiceInfoDocAdapter.class, name = ServiceInfo.TYPE_NAME),
+        @JsonSubTypes.Type(value = ExtensionPointInfoDocAdapter.class, name = ExtensionPointInfo.TYPE_NAME),
+        @JsonSubTypes.Type(value = ExtensionInfoDocAdapter.class, name = ExtensionInfo.TYPE_NAME),
+        @JsonSubTypes.Type(value = OperationInfoDocAdapter.class, name = OperationInfo.TYPE_NAME),
+        @JsonSubTypes.Type(value = PackageInfoDocAdapter.class, name = PackageInfo.TYPE_NAME), //
         @JsonSubTypes.Type(value = BundleGroupImpl.class, name = BundleGroup.TYPE_NAME),
         @JsonSubTypes.Type(value = BundleInfoImpl.class, name = BundleInfo.TYPE_NAME),
         @JsonSubTypes.Type(value = ComponentInfoImpl.class, name = ComponentInfo.TYPE_NAME),

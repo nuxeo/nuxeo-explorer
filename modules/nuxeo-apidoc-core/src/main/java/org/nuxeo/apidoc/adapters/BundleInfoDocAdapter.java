@@ -128,7 +128,8 @@ public class BundleInfoDocAdapter extends BaseNuxeoArtifactDocAdapter implements
 
     @Override
     public String getLocation() {
-        return null;
+        // use empty string instead of null for json default serialization inclusion
+        return "";
     }
 
     @Override

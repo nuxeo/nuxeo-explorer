@@ -39,6 +39,8 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.PropertyException;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
 
     private static final Logger log = LogManager.getLogger(BaseNuxeoArtifactDocAdapter.class);
@@ -80,11 +82,13 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
         return null;
     }
 
+    @JsonIgnore
     @Override
     public int hashCode() {
         return doc.getId().hashCode();
     }
 
+    @JsonIgnore
     public DocumentModel getDoc() {
         return doc;
     }
