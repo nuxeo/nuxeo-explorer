@@ -76,4 +76,5 @@ public class ServiceInfoImpl extends BaseNuxeoArtifact implements ServiceInfo {
     public boolean isOverriden() {
         return overriden;
     }
+
 }
