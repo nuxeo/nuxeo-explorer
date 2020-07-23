@@ -52,6 +52,13 @@
     <object class="org.nuxeo.apidoc.plugin.PluginDescriptor"></object>
   </extension-point>
 
+  <extension-point name="exporters">
+    <documentation>
+      Extension point for pluggable export generation.
+    </documentation>
+    <object class="org.nuxeo.apidoc.export.api.ExporterDescriptor"></object>
+  </extension-point>
+
   <extension point="configuration" target="org.nuxeo.runtime.ConfigurationService">
     <documentation>
       URL base for Javadoc Links.

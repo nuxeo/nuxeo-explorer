@@ -29,6 +29,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.nuxeo.apidoc.api.NuxeoArtifact;
+import org.nuxeo.apidoc.export.api.Exporter;
 import org.nuxeo.apidoc.plugin.Plugin;
 import org.nuxeo.apidoc.security.SecurityHelper;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -179,5 +180,19 @@ public interface SnapshotManager {
      * @since 20.0.0
      */
     boolean isSiteMode();
+
+    /**
+     * Returns exporters list.
+     *
+     * @since 20.0.0
+     */
+    List<Exporter> getExporters();
+
+    /**
+     * Returns exporter with given name.
+     *
+     * @since 20.0.0
+     */
+    Exporter getExporter(String id);
 
 }

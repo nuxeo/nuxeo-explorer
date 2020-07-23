@@ -16,19 +16,23 @@
  * Contributors:
  *     Anahide Tchertchian
  */
-package org.nuxeo.apidoc.plugin;
+package org.nuxeo.apidoc.export.api;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.nuxeo.apidoc.api.Descriptor;
 import org.nuxeo.common.xmap.annotation.XNode;
+import org.nuxeo.common.xmap.annotation.XNodeMap;
 import org.nuxeo.common.xmap.annotation.XObject;
 
 /**
- * Xmap descriptor for {@link Plugin} registration.
+ * Descriptor for export generators.
  *
- * @since 11.1
+ * @since 20.0.0
  */
-@XObject("plugin")
-public class PluginDescriptor implements Descriptor {
+@XObject("exporter")
+public class ExporterDescriptor implements Descriptor {
 
     @XNode("@id")
     String id;
@@ -36,20 +40,8 @@ public class PluginDescriptor implements Descriptor {
     @XNode("@class")
     String klass;
 
-    @XNode("@snapshotClass")
-    String snapshotClass;
-
-    @XNode("ui/viewType")
-    String viewType;
-
-    @XNode("ui/label")
-    String label;
-
-    @XNode("ui/homeView")
-    String homeView;
-
-    @XNode("ui/styleClass")
-    String styleClass;
+    @XNodeMap(value = "properties/property", key = "@name", type = HashMap.class, componentType = String.class)
+    Map<String, String> properties = new HashMap<>();
 
     @Override
     public String getId() {
@@ -61,24 +53,8 @@ public class PluginDescriptor implements Descriptor {
         return klass;
     }
 
-    public String getSnapshotClass() {
-        return snapshotClass;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public String getViewType() {
-        return viewType;
-    }
-
-    public String getHomeView() {
-        return homeView;
-    }
-
-    public String getStyleClass() {
-        return styleClass;
+    public Map<String, String> getProperties() {
+        return properties;
     }
 
 }

@@ -16,6 +16,12 @@ This API has 2 implementations:
  - org.nuxeo.apidoc.adapters: DocumentModel adapters implementing the same API
 
 The following documentation items are also extracted:
-
  - documentation that is built-in Nuxeo Runtime descriptors
  - readme files that may be embedded inside the jar
+
+The service is made pluggable in two ways:
+ - the plugins extension point allows to:
+    - add more introspection to the live runtime
+    - persist this introspection
+    - display this introspection in the webengine UI
+ - the exports extension point allows to generate custom exports from a live distribution
