@@ -77,7 +77,8 @@ public class BundleArtifactPage extends ArtifactPage {
         }
         checkCommon("Bundle org.nuxeo.apidoc.core", "Bundle org.nuxeo.apidoc.core", groupTitle, toc);
         try {
-            String readme = AbstractExplorerTest.getReferenceContent(Paths.get("data/core_readme.txt"));
+            String readme = AbstractExplorerTest.getReferenceContent(
+                    Paths.get(legacy ? "data/core_readme_legacy.txt" : "data/core_readme.txt"));
             String parentReadme = AbstractExplorerTest.getReferenceContent(Paths.get("data/apidoc_readme.txt"));
             checkDocumentationText("ReadMe.md\n" + readme + "\nParent Documentation: ReadMe.md\n" + parentReadme);
         } catch (IOException e) {

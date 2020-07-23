@@ -208,7 +208,8 @@ public abstract class AbstractExplorerTest extends AbstractTest {
                     "ActionService - org.nuxeo.ecm.platform.actions.ActionService");
             listing = listing.filterOn("org.nuxeo.apidoc");
         }
-        listing.checkListing(1, "plugins",
+        listing.toggleSort();
+        listing.checkListing(legacy ? 1 : 2, "plugins",
                 "/viewExtensionPoint/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins",
                 "SnapshotManagerComponent - org.nuxeo.apidoc.snapshot.SnapshotManagerComponent");
 

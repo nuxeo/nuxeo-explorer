@@ -60,7 +60,9 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                 "org.nuxeo.apidoc.test.works"), snapshot.getComponentIds());
         assertEquals(List.of("org.nuxeo.apidoc.search.ArtifactSearcher", "org.nuxeo.apidoc.snapshot.SnapshotManager"),
                 snapshot.getServiceIds());
-        assertEquals(List.of("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins"),
+        assertEquals(
+                List.of("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins"),
                 snapshot.getExtensionPointIds());
         assertEquals(
                 List.of("org.nuxeo.apidoc.adapterContrib--adapters", "org.nuxeo.apidoc.doctypeContrib--doctype",
