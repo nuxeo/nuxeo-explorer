@@ -161,7 +161,8 @@ public class BundleGroupExtractor {
     }
 
     protected BundleGroupImpl buildBundleGroup(String id, String version, boolean isParent) {
-        BundleGroupImpl bGroup = new BundleGroupImpl(id, version);
+        BundleGroupImpl bGroup = new BundleGroupImpl(id);
+        bGroup.setVersion(version);
         for (String aid : getBundleGroupChildren(id)) {
             if (aid.startsWith(BundleGroup.PREFIX)) {
                 BundleGroupImpl newGroup = buildBundleGroup(aid, version, false);

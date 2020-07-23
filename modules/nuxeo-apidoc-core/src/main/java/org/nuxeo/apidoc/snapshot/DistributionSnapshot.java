@@ -19,10 +19,8 @@
  */
 package org.nuxeo.apidoc.snapshot;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -34,29 +32,10 @@ import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
-import org.nuxeo.apidoc.introspection.BundleGroupImpl;
-import org.nuxeo.apidoc.introspection.BundleInfoImpl;
-import org.nuxeo.apidoc.introspection.ComponentInfoImpl;
-import org.nuxeo.apidoc.introspection.ExtensionInfoImpl;
-import org.nuxeo.apidoc.introspection.ExtensionPointInfoImpl;
-import org.nuxeo.apidoc.introspection.OperationInfoImpl;
-import org.nuxeo.apidoc.introspection.PackageInfoImpl;
-import org.nuxeo.apidoc.introspection.RuntimeSnapshot;
-import org.nuxeo.apidoc.introspection.ServiceInfoImpl;
 import org.nuxeo.apidoc.plugin.PluginSnapshot;
-import org.nuxeo.ecm.automation.OperationDocumentation;
-import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.CloseableFile;
-import org.nuxeo.ecm.core.api.impl.blob.StringBlob;
-import org.nuxeo.runtime.model.ComponentName;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.core.PrettyPrinter;
 
 public interface DistributionSnapshot extends DistributionSnapshotDesc {
 
@@ -204,19 +183,11 @@ public interface DistributionSnapshot extends DistributionSnapshotDesc {
     boolean isHidden();
 
     /**
-     * Returns the Json mapper for reading/writing the snapshot in json format.
+     * Serializes in json the current instance, using given filter.
      *
-     * @since 11.1
+     * @since 20.0.0
      */
-    @JsonIgnore
-    ObjectMapper getJsonMapper();
-
-    /**
-     * Serializes in json the current instance.
-     *
-     * @since 11.1
-     */
-    void writeJson(OutputStream out);
+    void writeJson(OutputStream out, SnapshotFilter filter, PrettyPrinter printer);
 
     /**
      * Reads the given json according to current json mapper (see {@link #getJsonMapper()}.
@@ -231,73 +202,5 @@ public interface DistributionSnapshot extends DistributionSnapshotDesc {
      * @since 11.1
      */
     Map<String, PluginSnapshot<?>> getPluginSnapshots();
-
-    static ObjectMapper jsonMapper() {
-        final ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
-              .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-        SimpleModule module = new SimpleModule();
-        module.addAbstractTypeMapping(DistributionSnapshot.class, RuntimeSnapshot.class)
-              .addAbstractTypeMapping(BundleInfo.class, BundleInfoImpl.class)
-              .addAbstractTypeMapping(BundleGroup.class, BundleGroupImpl.class)
-              .addAbstractTypeMapping(ComponentInfo.class, ComponentInfoImpl.class)
-              .addAbstractTypeMapping(ExtensionPointInfo.class, ExtensionPointInfoImpl.class)
-              .addAbstractTypeMapping(ExtensionInfo.class, ExtensionInfoImpl.class)
-              .addAbstractTypeMapping(OperationInfo.class, OperationInfoImpl.class)
-              .addAbstractTypeMapping(ServiceInfo.class, ServiceInfoImpl.class)
-              .addAbstractTypeMapping(PackageInfo.class, PackageInfoImpl.class)
-              .addAbstractTypeMapping(Blob.class, StringBlobReader.class);
-        mapper.registerModule(module);
-        mapper.addMixIn(OperationDocumentation.Param.class, OperationDocParamMixin.class);
-        mapper.addMixIn(ComponentName.class, ComponentNameMixin.class);
-        mapper.addMixIn(Blob.class, StringBlobMixin.class);
-        return mapper;
-    }
-
-    static abstract class OperationDocParamMixin {
-        abstract @JsonProperty("isRequired") String isRequired();
-    }
-
-    static abstract class ComponentNameMixin {
-        @JsonCreator
-        ComponentNameMixin(@JsonProperty("rawName") String rawName) {
-        }
-    }
-
-    static abstract class StringBlobMixin {
-        @JsonCreator
-        StringBlobMixin(@JsonProperty("content") String content, @JsonProperty("name") String name) {
-        }
-
-        @JsonProperty("content")
-        abstract String getString();
-
-        @JsonProperty("name")
-        abstract String getFilename();
-
-        @JsonIgnore
-        abstract InputStream getStream();
-
-        @JsonIgnore
-        abstract byte[] getByteArray();
-
-        @JsonIgnore
-        abstract public File getFile();
-
-        @JsonIgnore
-        abstract String getDigestAlgorithm();
-
-        @JsonIgnore
-        abstract CloseableFile getCloseableFile();
-    }
-
-    static class StringBlobReader extends StringBlob {
-        private static final long serialVersionUID = 1L;
-
-        @JsonCreator
-        StringBlobReader(@JsonProperty("content") String content, @JsonProperty("name") String name) {
-            super(content, "text/plain", StandardCharsets.UTF_8.name(), name);
-        }
-    }
 
 }

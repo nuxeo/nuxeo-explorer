@@ -23,7 +23,7 @@ import org.nuxeo.apidoc.plugin.AbstractPlugin;
 import org.nuxeo.apidoc.plugin.PluginDescriptor;
 import org.nuxeo.apidoc.plugin.PluginSnapshot;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
-import org.nuxeo.apidoc.snapshot.SnapshotFilter;
+import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 
@@ -58,7 +58,7 @@ public class FakePlugin extends AbstractPlugin<FakeNuxeoArtifact> {
     }
 
     @Override
-    public void persist(DistributionSnapshot snapshot, CoreSession session, DocumentModel root, SnapshotFilter filter) {
+    public void persist(DistributionSnapshot snapshot, CoreSession session, DocumentModel root, PersistSnapshotFilter filter) {
         // NOOP
     }
 

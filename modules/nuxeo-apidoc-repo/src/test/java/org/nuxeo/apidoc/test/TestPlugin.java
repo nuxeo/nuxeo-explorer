@@ -119,7 +119,7 @@ public class TestPlugin {
 
         // write to output stream
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        snapshot.writeJson(out);
+        snapshot.writeJson(out, null, null);
 
         // read back and explore plugin resources again
         ByteArrayInputStream source = new ByteArrayInputStream(out.toByteArray());

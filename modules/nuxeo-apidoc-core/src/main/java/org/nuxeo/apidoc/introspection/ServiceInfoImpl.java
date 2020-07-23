@@ -28,18 +28,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ServiceInfoImpl extends BaseNuxeoArtifact implements ServiceInfo {
 
+    @JsonProperty("id")
     protected final String serviceClassName;
 
     protected final ComponentInfo component;
 
     protected final boolean overriden;
 
-    @JsonCreator
-    public ServiceInfoImpl(@JsonProperty("id") String id, @JsonProperty("overriden") boolean overriden,
-            @JsonProperty("component") ComponentInfo component) {
+    public ServiceInfoImpl(String id, boolean overriden, ComponentInfo component) {
         this.serviceClassName = id;
         this.overriden = overriden;
         this.component = component;
+    }
+
+    @JsonCreator
+    private ServiceInfoImpl() {
+        this.serviceClassName = null;
+        this.overriden = false;
+        this.component = null;
     }
 
     @Override

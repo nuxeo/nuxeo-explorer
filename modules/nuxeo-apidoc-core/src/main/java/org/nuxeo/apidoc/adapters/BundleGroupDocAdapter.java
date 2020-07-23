@@ -97,10 +97,6 @@ public class BundleGroupDocAdapter extends BaseNuxeoArtifactDocAdapter implement
                    .collect(Collectors.toList());
     }
 
-    private String getKey() {
-        return safeGet(PROP_KEY, "unknown_bundle_group");
-    }
-
     @Override
     public String getName() {
         return safeGet(PROP_GROUP_NAME, "unknown_bundle_group");
@@ -118,7 +114,7 @@ public class BundleGroupDocAdapter extends BaseNuxeoArtifactDocAdapter implement
 
     @Override
     public String getId() {
-        return getKey();
+        return safeGet(PROP_KEY, "unknown_bundle_group");
     }
 
     @Override

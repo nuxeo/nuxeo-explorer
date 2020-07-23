@@ -32,15 +32,12 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.apidoc.api.BundleGroup;
@@ -48,13 +45,15 @@ import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
+import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.introspection.RuntimeSnapshot;
-import org.nuxeo.apidoc.plugin.PluginSnapshot;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.JsonPrettyPrinter;
+import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
+import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.connect.update.PackageException;
 import org.nuxeo.connect.update.PackageType;
@@ -103,7 +102,7 @@ public class TestJson extends AbstractApidocTest {
 
     protected void canSerializeAndReadBack(DistributionSnapshot snap) throws IOException {
         try (ByteArrayOutputStream sink = new ByteArrayOutputStream()) {
-            snap.writeJson(sink);
+            snap.writeJson(sink, null, null);
             checkSnapshot(snap, false);
             try (OutputStream file = Files.newOutputStream(Paths.get(FeaturesRunner.getBuildDirectory() + "/test.json"),
                     StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
@@ -117,74 +116,30 @@ public class TestJson extends AbstractApidocTest {
         }
     }
 
-    @Ignore("Only useful to update reference test-export.json file")
+    protected SnapshotFilter getFilter() {
+        PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc") {
+            @Override
+            public boolean accept(NuxeoArtifact artifact) {
+                if (artifact instanceof OperationInfo) {
+                    OperationInfo op = (OperationInfo) artifact;
+                    return List.of("Actions.GET", "AttachFiles").contains(op.getName());
+                }
+                return super.accept(artifact);
+            };
+        };
+        filter.addBundlePrefix("org.nuxeo.apidoc");
+        return filter;
+    }
+
     @Test
-    public void doWriteLegacy() throws IOException {
+    public void canWritePartial() throws IOException {
         RuntimeSnapshot snapshot = RuntimeSnapshot.build();
         assertNotNull(snapshot);
 
-        class ReferenceRuntime extends RuntimeSnapshot {
-            RuntimeSnapshot orig;
-
-            public ReferenceRuntime(RuntimeSnapshot orig) {
-                this.orig = orig;
-            }
-
-            @Override
-            public List<OperationInfo> getOperations() {
-                return orig.getOperations().subList(0, 2);
-            }
-
-            @Override
-            public List<BundleInfo> getBundles() {
-                return orig.getBundles().subList(0, 2);
-            }
-
-            @Override
-            protected void initOperations() {
-                // NOOP
-            }
-
-            @Override
-            public void writeJson(OutputStream out) {
-                writeJson(out, new JsonPrettyPrinter());
-            }
-
-            @Override
-            public String getVersion() {
-                return orig.getVersion();
-            }
-
-            @Override
-            public String getName() {
-                return orig.getName();
-            }
-
-            @Override
-            public String getKey() {
-                return orig.getKey();
-            }
-
-            @Override
-            public Date getCreationDate() {
-                return orig.getCreationDate();
-            }
-
-            @Override
-            public Date getReleaseDate() {
-                return orig.getReleaseDate();
-            }
-
-            @Override
-            public Map<String, PluginSnapshot<?>> getPluginSnapshots() {
-                return orig.getPluginSnapshots();
-            }
-        }
-
-        ReferenceRuntime refSnapshot = new ReferenceRuntime(snapshot);
         ByteArrayOutputStream sink = new ByteArrayOutputStream();
-        refSnapshot.writeJson(sink);
-        checkJsonContentEquals("test-export.json", sink.toString(), true);
+        snapshot.writeJson(sink, getFilter(), new JsonPrettyPrinter());
+
+        checkJsonContentEquals("test-export.json", sink.toString());
     }
 
     /**
@@ -195,7 +150,7 @@ public class TestJson extends AbstractApidocTest {
      * @since 11.1
      */
     @Test
-    public void canReadLegacy() throws IOException {
+    public void canReadPartial() throws IOException {
         RuntimeSnapshot runtimeSnapshot = RuntimeSnapshot.build();
         String export = getReferenceContent(getReferencePath("test-export.json"));
         try (ByteArrayInputStream source = new ByteArrayInputStream(export.getBytes())) {
@@ -204,15 +159,19 @@ public class TestJson extends AbstractApidocTest {
         }
     }
 
-    protected void checkSnapshot(DistributionSnapshot snapshot, boolean legacy) throws IOException {
+    protected void checkSnapshot(DistributionSnapshot snapshot, boolean partial) throws IOException {
         assertNotNull(snapshot);
         assertEquals("Nuxeo", snapshot.getName());
         String sVersion = "unknown";
-        if (legacy) {
+        if (partial) {
             sVersion = "mockTestVersion";
         }
         assertEquals(sVersion, snapshot.getVersion());
-        assertNotNull(snapshot.getCreationDate());
+        if (partial) {
+            assertNull(snapshot.getCreationDate());
+        } else {
+            assertNotNull(snapshot.getCreationDate());
+        }
         assertEquals("Nuxeo-" + sVersion, snapshot.getKey());
 
         BundleInfo bundle = snapshot.getBundle("org.nuxeo.apidoc.repo");
@@ -221,7 +180,7 @@ public class TestJson extends AbstractApidocTest {
         assertEquals(BundleInfo.TYPE_NAME, bundle.getArtifactType());
 
         String version = "mockTestArtifactVersion";
-        if (legacy) {
+        if (partial) {
             assertEquals(version, bundle.getArtifactVersion());
         } else {
             version = bundle.getArtifactVersion();
@@ -235,18 +194,8 @@ public class TestJson extends AbstractApidocTest {
                 bundle.getHierarchyPath());
         assertEquals("org.nuxeo.apidoc.repo", bundle.getId());
         assertNull(bundle.getReadme());
-        assertEquals("Manifest-Version: 1.0\n" //
-                + "Bundle-ManifestVersion: 1\n" //
-                + "Bundle-Name: nuxeo api documentation repository\n" //
-                + "Bundle-SymbolicName: org.nuxeo.apidoc.repo;singleton:=true\n" //
-                + "Bundle-Version: 0.0.1\n" //
-                + "Bundle-Vendor: Nuxeo\n" //
-                + "Nuxeo-Component: OSGI-INF/schema-contrib.xml,\n" //
-                + "  OSGI-INF/doctype-contrib.xml,\n" + "  OSGI-INF/life-cycle-contrib.xml,\n" //
-                + "  OSGI-INF/snapshot-service-framework.xml,\n" //
-                + "  OSGI-INF/adapter-contrib.xml,\n" //
-                + "  OSGI-INF/listener-contrib.xml\n"//
-                + "", bundle.getManifest());
+        // manifest replaced in tests as it can differ depending on the jar build
+        assertNotNull(bundle.getManifest());
         Blob parentReadme = bundle.getParentReadme();
         assertNotNull(parentReadme);
         checkContentEquals("apidoc_snapshot/apidoc_readme.txt", parentReadme.getString());
@@ -290,7 +239,7 @@ public class TestJson extends AbstractApidocTest {
         assertEquals(BundleGroup.TYPE_NAME, mvnGroup.getArtifactType());
         assertEquals(sVersion, mvnGroup.getVersion());
         assertEquals("/grp:org.nuxeo.ecm.platform", mvnGroup.getHierarchyPath());
-        if (legacy) {
+        if (partial) {
             assertEquals(List.of(), mvnGroup.getBundleIds());
         } else {
             assertTrue(mvnGroup.getBundleIds().size() > 1);
@@ -300,13 +249,13 @@ public class TestJson extends AbstractApidocTest {
         assertEquals(List.of(), mvnGroup.getParentIds());
         List<Blob> mvnReadmes = mvnGroup.getReadmes();
         assertNotNull(mvnReadmes);
-        if (legacy) {
+        if (partial) {
             assertEquals(0, mvnReadmes.size());
         } else {
             assertEquals(1, mvnReadmes.size());
             checkContentEquals("apidoc_snapshot/apidoc_readme.txt", mvnReadmes.get(0).getString());
         }
-        if (legacy) {
+        if (partial) {
             assertEquals(List.of("grp:org.nuxeo.apidoc"),
                     mvnGroup.getSubGroups().stream().map(BundleGroup::getId).collect(Collectors.toList()));
         } else {
@@ -346,11 +295,7 @@ public class TestJson extends AbstractApidocTest {
         assertEquals("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent", smcomp.getName());
         assertEquals(version, smcomp.getVersion());
         assertFalse(smcomp.isXmlPureComponent());
-        if (legacy) {
-            checkContentEquals("apidoc_snapshot/legacy-snapshot-service-framework.xml", smcomp.getXmlFileContent());
-        } else {
-            checkContentEquals("apidoc_snapshot/processed-snapshot-service-framework.xml", smcomp.getXmlFileContent());
-        }
+        checkContentEquals("apidoc_snapshot/processed-snapshot-service-framework.xml", smcomp.getXmlFileContent());
         assertEquals(List.of(), smcomp.getRequirements());
         assertEquals(Long.valueOf(58), smcomp.getRegistrationOrder());
 
@@ -459,11 +404,7 @@ public class TestJson extends AbstractApidocTest {
 
         // check extensions
         assertNotNull(smcomp.getExtensions());
-        if (legacy) {
-            assertEquals(0, smcomp.getExtensions().size());
-        } else {
-            assertEquals(4, smcomp.getExtensions().size());
-        }
+        assertEquals(4, smcomp.getExtensions().size());
 
         // check another component with contributions
         ComponentInfo smcont = snapshot.getComponent("org.nuxeo.apidoc.doctypeContrib");
@@ -520,7 +461,7 @@ public class TestJson extends AbstractApidocTest {
         // check operations
         List<OperationInfo> operations = snapshot.getOperations();
         assertNotNull(operations);
-        if (legacy) {
+        if (partial) {
             assertEquals(2, operations.size());
         }
         OperationInfo op = operations.get(0);
@@ -552,7 +493,7 @@ public class TestJson extends AbstractApidocTest {
         assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"), pkg.getBundles());
         assertEquals("platform-explorer-mock-1.0.1", pkg.getId());
         assertEquals("platform-explorer-mock", pkg.getName());
-        if (legacy) {
+        if (partial) {
             assertEquals("mockTestVersion", pkg.getVersion());
         } else {
             assertEquals("1.0.1", pkg.getVersion());

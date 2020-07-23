@@ -36,7 +36,7 @@ import org.nuxeo.apidoc.documentation.XMLContributionParser;
 import org.nuxeo.runtime.model.ComponentName;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 public class ExtensionInfoImpl extends BaseNuxeoArtifact implements ExtensionInfo {
 
@@ -46,7 +46,7 @@ public class ExtensionInfoImpl extends BaseNuxeoArtifact implements ExtensionInf
 
     protected final ComponentInfo component;
 
-    protected final String extensionPoint;
+    protected String extensionPoint;
 
     protected String documentation;
 
@@ -67,23 +67,21 @@ public class ExtensionInfoImpl extends BaseNuxeoArtifact implements ExtensionInf
     }
 
     @JsonCreator
-    private ExtensionInfoImpl(@JsonProperty("id") String id, @JsonProperty("extensionPoint") String extensionPoint,
-            @JsonProperty("documentation") String documentation, @JsonProperty("xml") String xml,
-            @JsonProperty("targetComponentName") ComponentName targetComponentName) {
-        this.id = id;
-        this.component = null; // will be handled by json back reference
-        if (extensionPoint != null) {
-            extensionPoint = extensionPoint.substring(extensionPoint.lastIndexOf("--") + 2);
-        }
-        this.extensionPoint = extensionPoint;
-        this.documentation = documentation;
-        this.xml = xml;
-        this.targetComponentName = targetComponentName;
+    private ExtensionInfoImpl() {
+        this.id = null;
+        this.component = null;
     }
 
     @Override
     public String getExtensionPoint() {
         return targetComponentName.getName() + "--" + extensionPoint;
+    }
+
+    @JsonSetter("extensionPoint")
+    private void setExtensionPoint(String xp) {
+        if (xp != null) {
+            this.extensionPoint = xp.substring(xp.lastIndexOf("--") + 2);
+        }
     }
 
     @Override
@@ -146,6 +144,10 @@ public class ExtensionInfoImpl extends BaseNuxeoArtifact implements ExtensionInf
             log.error(e, e);
             return Collections.emptyList();
         }
+    }
+
+    public void setContributionItems(List<ContributionItem> contributions) {
+        // NOOP, useful for jackson deserialization
     }
 
     @Override

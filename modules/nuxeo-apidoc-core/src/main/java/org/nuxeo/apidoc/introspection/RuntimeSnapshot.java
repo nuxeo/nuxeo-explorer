@@ -52,6 +52,8 @@ import org.nuxeo.apidoc.documentation.JavaDocHelper;
 import org.nuxeo.apidoc.plugin.Plugin;
 import org.nuxeo.apidoc.plugin.PluginSnapshot;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
+import org.nuxeo.apidoc.snapshot.JsonMapper;
+import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationDocumentation;
@@ -475,9 +477,8 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
         return Framework.getService(SnapshotManager.class).getPlugins();
     }
 
-    @Override
-    public ObjectMapper getJsonMapper() {
-        ObjectMapper mapper = DistributionSnapshot.jsonMapper();
+    protected ObjectMapper getJsonMapper(SnapshotFilter filter) {
+        ObjectMapper mapper = JsonMapper.basic(filter);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         for (Plugin<?> plugin : getPlugins()) {
             mapper = plugin.enrishJsonMapper(mapper);
@@ -486,15 +487,11 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
     }
 
     @Override
-    public void writeJson(OutputStream out) {
-        writeJson(out, null);
-    }
-
-    protected void writeJson(OutputStream out, PrettyPrinter printer) {
-        ObjectWriter writer = getJsonMapper().writerFor(DistributionSnapshot.class)
-                                             .withoutRootName()
-                                             .with(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM)
-                                             .without(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+    public void writeJson(OutputStream out, SnapshotFilter filter, PrettyPrinter printer) {
+        ObjectWriter writer = getJsonMapper(filter).writerFor(DistributionSnapshot.class)
+                                                   .withoutRootName()
+                                                   .with(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM)
+                                                   .without(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
         if (printer != null) {
             writer = writer.with(printer);
         }
@@ -507,10 +504,10 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
 
     @Override
     public DistributionSnapshot readJson(InputStream in) {
-        ObjectReader reader = getJsonMapper().readerFor(DistributionSnapshot.class)
-                                             .withoutRootName()
-                                             .without(JsonParser.Feature.AUTO_CLOSE_SOURCE)
-                                             .with(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT);
+        ObjectReader reader = getJsonMapper(null).readerFor(DistributionSnapshot.class)
+                                                 .withoutRootName()
+                                                 .without(JsonParser.Feature.AUTO_CLOSE_SOURCE)
+                                                 .with(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT);
         try {
             return reader.readValue(in);
         } catch (IOException e) {
