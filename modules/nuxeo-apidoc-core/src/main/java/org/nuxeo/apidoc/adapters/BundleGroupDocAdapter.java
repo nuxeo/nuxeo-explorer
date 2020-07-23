@@ -87,14 +87,13 @@ public class BundleGroupDocAdapter extends BaseNuxeoArtifactDocAdapter implement
 
     @Override
     public List<String> getBundleIds() {
-        String query = QueryHelper.select(BundleInfo.TYPE_NAME, doc, NXQL.ECM_POS);
-        DocumentModelList docs = getCoreSession().query(query);
-        return docs.stream()
-                   .map(doc -> doc.getAdapter(BundleInfo.class))
-                   .filter(Objects::nonNull)
-                   .map(BundleInfo::getId)
-                   .filter(Predicate.not(Predicate.isEqual(getId())))
-                   .collect(Collectors.toList());
+        List<DocumentModel> children = getCoreSession().getChildren(doc.getRef());
+        return children.stream()
+                       .map(doc -> doc.getAdapter(BundleInfo.class))
+                       .filter(Objects::nonNull)
+                       .map(BundleInfo::getId)
+                       .filter(Predicate.not(Predicate.isEqual(getId())))
+                       .collect(Collectors.toList());
     }
 
     @Override
