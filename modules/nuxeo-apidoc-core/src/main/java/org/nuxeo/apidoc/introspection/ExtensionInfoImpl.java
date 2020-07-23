@@ -36,7 +36,6 @@ import org.nuxeo.apidoc.documentation.XMLContributionParser;
 import org.nuxeo.runtime.model.ComponentName;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ExtensionInfoImpl extends BaseNuxeoArtifact implements ExtensionInfo {
@@ -115,15 +114,6 @@ public class ExtensionInfoImpl extends BaseNuxeoArtifact implements ExtensionInf
         this.targetComponentName = targetComponentName;
     }
 
-    @JsonIgnore
-    public Object[] getContribution() {
-        return contribution;
-    }
-
-    public void setContribution(Object[] contribution) {
-        this.contribution = contribution;
-    }
-
     @Override
     public String getXml() {
         return xml;
@@ -162,4 +152,5 @@ public class ExtensionInfoImpl extends BaseNuxeoArtifact implements ExtensionInf
     public ComponentInfo getComponent() {
         return component;
     }
+
 }
