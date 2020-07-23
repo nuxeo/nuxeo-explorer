@@ -32,6 +32,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Locale;
+import java.util.function.Function;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
@@ -114,11 +116,35 @@ public abstract class AbstractApidocTest {
     }
 
     protected void checkContentEquals(String path, String actualContent) throws IOException {
-        checkContentEquals(path, actualContent, UPDATE_REFERENCE_FILES_ON_FAILURE, false);
+        checkContentEquals(path, actualContent, UPDATE_REFERENCE_FILES_ON_FAILURE, false, null);
     }
 
-    protected void checkContentEquals(String path, String actualContent, boolean updateOnFailure, boolean isReference)
-            throws IOException {
+    protected void checkJsonContentEquals(String path, String actualContent, boolean isReference) throws IOException {
+        checkContentEquals(path, actualContent, isReference ? true : UPDATE_REFERENCE_FILES_ON_FAILURE, isReference,
+                getJsonTestUpdater());
+    }
+
+    /**
+     * Helper that replaces all content that can change within tests by static values.
+     *
+     * @since 20.0.0
+     */
+    protected static Function<String, String> getJsonTestUpdater() {
+        Function<String, String> function = (String s) -> {
+            String res = s;
+            for (String kw : List.of("version", "fileName", "location", "artifactVersion", "xmlFileName")) {
+                String p = String.format("\"%s\": \"[^\"]*\"", kw);
+                String r = String.format("\"%s\": \"mockTest%s\"", kw,
+                        kw.substring(0, 1).toUpperCase(Locale.ENGLISH) + kw.substring(1));
+                res = res.replaceAll(p, r);
+            }
+            return res;
+        };
+        return function;
+    }
+
+    protected void checkContentEquals(String path, String actualContent, boolean updateOnFailure, boolean isReference,
+            Function<String, String> transformer) throws IOException {
         String message = String.format("File '%s' content differs: ", path);
         String expectedPath = getReferencePath(path);
         String expectedContent = getReferenceContent(expectedPath);
@@ -128,6 +154,9 @@ public abstract class AbstractApidocTest {
                 // replace end of lines while testing on windows
                 actualContent = actualContent.replaceAll("\r?\n", "\n");
             }
+        }
+        if (transformer != null) {
+            actualContent = transformer.apply(actualContent);
         }
         try {
             assertEquals(message, expectedContent, actualContent);

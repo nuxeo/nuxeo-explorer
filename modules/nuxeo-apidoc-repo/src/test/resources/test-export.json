@@ -3,7 +3,7 @@
     {
       "@type": "NXBundle",
       "artifactId": "nuxeo-apidoc-core",
-      "artifactVersion": "11.1-SNAPSHOT",
+      "artifactVersion": "mockTestArtifactVersion",
       "bundleGroup": {
         "@type": "NXBundleGroup",
         "bundleIds": [
@@ -24,15 +24,15 @@
             "name": "ReadMe.md"
           }
         ],
-        "version": "unknown",
+        "version": "mockTestVersion",
         "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc",
         "key": "grp:org.nuxeo.apidoc",
         "name": "org.nuxeo.apidoc"
       },
       "bundleId": "org.nuxeo.apidoc.core",
-      "fileName": "nuxeo-apidoc-core-11.1-SNAPSHOT.jar",
+      "fileName": "mockTestFileName",
       "groupId": "org.nuxeo.ecm.platform",
-      "location": "/home/user/ws/nuxeo/modules/platform/nuxeo-apidoc-server/nuxeo-apidoc-core/bin/main",
+      "location": "mockTestLocation",
       "manifest": "Manifest-Version: 1.0\nBundle-SymbolicName: org.nuxeo.apidoc.core;singleton:=true\nBundle-Name: nuxeo api documentation server\nBundle-Version: 0.0.1\nBundle-ManifestVersion: 1\nBundle-Vendor: Nuxeo\n",
       "parentReadme": {
         "content": "## About Explorer\n\nThese modules provide an API to browse the Nuxeo distribution tree:\n\n    - BundleGroup (maven group or artificial grouping)\n      - Bundle\n        - Component\n          - Service\n          - Extension Points\n          - Contributions\n    - Operations\n    - Packages\n\nThe Nuxeo Distribution can be:\n\n - live: in memory (meaning runtime introspection)\n - persisted: saved in Nuxeo Repository as a tree of Documents\n\nThe following documentation items are also extracted:\n\n - documentation that is built-in Nuxeo Runtime descriptors\n - readme files that may be embedded inside the jar\n\n## What it can be used for\n\n - browse you distribution\n - check that a given contribution is deployed\n - play with Nuxeo Runtime\n\n## Configuration\n\nThe template `explorer-sitemode` enables the nuxeo.conf property `org.nuxeo.apidoc.site.mode` and\ndefines an anonymous user.\nThe property `org.nuxeo.apidoc.site.mode` comes with a more user friendly design and hides the current\n\"live\" distribution from display and API.\n\nThe template `explorer-virtualadmin` disables the usual `Administrator` user creation at database\ninitialization and adds a virtual admin user with name `apidocAdmin`, whose password can be changed using\nnuxeo.conf property `org.nuxeo.apidoc.apidocAdmin.password`.\n\n## Modules\n\nThis plugin is composed of 3 bundles:\n\n - nuxeo-apidoc-core: for the low level API on the live runtime\n - nuxeo-apidoc-repo: for the persistence of exported content on the Nuxeo repository\n - nuxeo-apidoc-webengine: for JAX-RS API and Webview\n",
@@ -59,12 +59,12 @@
       "packages": [
         "platform-explorer-mock"
       ],
-      "version": "11.1-SNAPSHOT"
+      "version": "mockTestVersion"
     },
     {
       "@type": "NXBundle",
       "artifactId": "nuxeo-apidoc-repo",
-      "artifactVersion": "11.1-SNAPSHOT",
+      "artifactVersion": "mockTestArtifactVersion",
       "bundleGroup": {
         "@type": "NXBundleGroup",
         "bundleIds": [
@@ -85,15 +85,15 @@
             "name": "ReadMe.md"
           }
         ],
-        "version": "unknown",
+        "version": "mockTestVersion",
         "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc",
         "key": "grp:org.nuxeo.apidoc",
         "name": "org.nuxeo.apidoc"
       },
       "bundleId": "org.nuxeo.apidoc.repo",
-      "fileName": "nuxeo-apidoc-repo-11.1-SNAPSHOT.jar",
+      "fileName": "mockTestFileName",
       "groupId": "org.nuxeo.ecm.platform",
-      "location": "/home/user/ws/nuxeo/modules/platform/nuxeo-apidoc-server/nuxeo-apidoc-repo/bin/main",
+      "location": "mockTestLocation",
       "manifest": "Manifest-Version: 1.0\nBundle-ManifestVersion: 1\nBundle-Name: nuxeo api documentation repository\nBundle-SymbolicName: org.nuxeo.apidoc.repo;singleton:=true\nBundle-Version: 0.0.1\nBundle-Vendor: Nuxeo\nNuxeo-Component: OSGI-INF/schema-contrib.xml,\n  OSGI-INF/doctype-contrib.xml,\n  OSGI-INF/life-cycle-contrib.xml,\n  OSGI-INF/snapshot-service-framework.xml,\n  OSGI-INF/adapter-contrib.xml,\n  OSGI-INF/listener-contrib.xml\n",
       "parentReadme": {
         "content": "## About Explorer\n\nThese modules provide an API to browse the Nuxeo distribution tree:\n\n    - BundleGroup (maven group or artificial grouping)\n      - Bundle\n        - Component\n          - Service\n          - Extension Points\n          - Contributions\n    - Operations\n    - Packages\n\nThe Nuxeo Distribution can be:\n\n - live: in memory (meaning runtime introspection)\n - persisted: saved in Nuxeo Repository as a tree of Documents\n\nThe following documentation items are also extracted:\n\n - documentation that is built-in Nuxeo Runtime descriptors\n - readme files that may be embedded inside the jar\n\n## What it can be used for\n\n - browse you distribution\n - check that a given contribution is deployed\n - play with Nuxeo Runtime\n\n## Configuration\n\nThe template `explorer-sitemode` enables the nuxeo.conf property `org.nuxeo.apidoc.site.mode` and\ndefines an anonymous user.\nThe property `org.nuxeo.apidoc.site.mode` comes with a more user friendly design and hides the current\n\"live\" distribution from display and API.\n\nThe template `explorer-virtualadmin` disables the usual `Administrator` user creation at database\ninitialization and adds a virtual admin user with name `apidocAdmin`, whose password can be changed using\nnuxeo.conf property `org.nuxeo.apidoc.apidocAdmin.password`.\n\n## Modules\n\nThis plugin is composed of 3 bundles:\n\n - nuxeo-apidoc-core: for the low level API on the live runtime\n - nuxeo-apidoc-repo: for the persistence of exported content on the Nuxeo repository\n - nuxeo-apidoc-webengine: for JAX-RS API and Webview\n",
@@ -151,15 +151,15 @@
               ],
               "documentationHtml": "<p/>\nThese contributions are used for latest distribution flag update and XML attributes extractions in\nextension points.\n<p/>",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.listener.contrib/Contributions/org.nuxeo.apidoc.listener.contrib--listener",
-              "version": "11.1-SNAPSHOT"
+              "version": "mockTestVersion"
             }
           ],
           "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.listener.contrib",
           "registrationOrder": 5,
           "requirements": [],
           "services": [],
-          "version": "11.1-SNAPSHOT",
-          "xmlFileName": "/home/user/ws/nuxeo/modules/platform/nuxeo-apidoc-server/nuxeo-apidoc-repo/bin/main/OSGI-INF/listener-contrib.xml",
+          "version": "mockTestVersion",
+          "xmlFileName": "mockTestXmlFileName",
           "xmlPureComponent": true
         },
         {
@@ -305,15 +305,15 @@
               ],
               "documentationHtml": "<p/>\nThese contributions provide a mapping between live introspections and persisted representations of a\ndistribution.\n<p/>",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.adapterContrib/Contributions/org.nuxeo.apidoc.adapterContrib--adapters",
-              "version": "11.1-SNAPSHOT"
+              "version": "mockTestVersion"
             }
           ],
           "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.adapterContrib",
           "registrationOrder": 11,
           "requirements": [],
           "services": [],
-          "version": "11.1-SNAPSHOT",
-          "xmlFileName": "/home/user/ws/nuxeo/modules/platform/nuxeo-apidoc-server/nuxeo-apidoc-repo/bin/main/OSGI-INF/adapter-contrib.xml",
+          "version": "mockTestVersion",
+          "xmlFileName": "mockTestXmlFileName",
           "xmlPureComponent": true
         },
         {
@@ -336,7 +336,7 @@
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/ExtensionPoints/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins",
               "id": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins",
               "label": "plugins (org.nuxeo.apidoc.snapshot.SnapshotManagerComponent)",
-              "version": "11.1-SNAPSHOT"
+              "version": "mockTestVersion"
             }
           ],
           "extensions": [],
@@ -350,7 +350,7 @@
               "overriden": false,
               "componentId": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/Services/org.nuxeo.apidoc.snapshot.SnapshotManager",
-              "version": "11.1-SNAPSHOT"
+              "version": "mockTestVersion"
             },
             {
               "@type": "NXService",
@@ -358,11 +358,11 @@
               "overriden": false,
               "componentId": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/Services/org.nuxeo.apidoc.search.ArtifactSearcher",
-              "version": "11.1-SNAPSHOT"
+              "version": "mockTestVersion"
             }
           ],
-          "version": "11.1-SNAPSHOT",
-          "xmlFileName": "/home/user/ws/nuxeo/modules/platform/nuxeo-apidoc-server/nuxeo-apidoc-repo/bin/main/OSGI-INF/snapshot-service-framework.xml",
+          "version": "mockTestVersion",
+          "xmlFileName": "mockTestXmlFileName",
           "xmlPureComponent": false
         },
         {
@@ -452,15 +452,15 @@
               ],
               "documentationHtml": "<p/>\nThese contributions provide document types that handle persistence of introspected distributions.\n<p/>",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.doctypeContrib/Contributions/org.nuxeo.apidoc.doctypeContrib--doctype",
-              "version": "11.1-SNAPSHOT"
+              "version": "mockTestVersion"
             }
           ],
           "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.doctypeContrib",
           "registrationOrder": 83,
           "requirements": [],
           "services": [],
-          "version": "11.1-SNAPSHOT",
-          "xmlFileName": "/home/user/ws/nuxeo/modules/platform/nuxeo-apidoc-server/nuxeo-apidoc-repo/bin/main/OSGI-INF/doctype-contrib.xml",
+          "version": "mockTestVersion",
+          "xmlFileName": "mockTestXmlFileName",
           "xmlPureComponent": true
         },
         {
@@ -494,15 +494,15 @@
               ],
               "documentationHtml": "",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.lifecycle.contrib/Contributions/org.nuxeo.apidoc.lifecycle.contrib--types",
-              "version": "11.1-SNAPSHOT"
+              "version": "mockTestVersion"
             }
           ],
           "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.lifecycle.contrib",
           "registrationOrder": 107,
           "requirements": [],
           "services": [],
-          "version": "11.1-SNAPSHOT",
-          "xmlFileName": "/home/user/ws/nuxeo/modules/platform/nuxeo-apidoc-server/nuxeo-apidoc-repo/bin/main/OSGI-INF/life-cycle-contrib.xml",
+          "version": "mockTestVersion",
+          "xmlFileName": "mockTestXmlFileName",
           "xmlPureComponent": true
         },
         {
@@ -599,7 +599,7 @@
               ],
               "documentationHtml": "",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.schemaContrib/Contributions/org.nuxeo.apidoc.schemaContrib--schema",
-              "version": "11.1-SNAPSHOT"
+              "version": "mockTestVersion"
             }
           ],
           "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.schemaContrib",
@@ -608,8 +608,8 @@
             "org.nuxeo.ecm.core.CoreExtensions"
           ],
           "services": [],
-          "version": "11.1-SNAPSHOT",
-          "xmlFileName": "/home/user/ws/nuxeo/modules/platform/nuxeo-apidoc-server/nuxeo-apidoc-repo/bin/main/OSGI-INF/schema-contrib.xml",
+          "version": "mockTestVersion",
+          "xmlFileName": "mockTestXmlFileName",
           "xmlPureComponent": true
         },
         {
@@ -643,7 +643,7 @@
               ],
               "documentationHtml": "",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.test.works/Contributions/org.nuxeo.apidoc.test.works--queues",
-              "version": "11.1-SNAPSHOT"
+              "version": "mockTestVersion"
             },
             {
               "@type": "NXContribution",
@@ -667,15 +667,15 @@
               ],
               "documentationHtml": "",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.test.works/Contributions/org.nuxeo.apidoc.test.works--queues1",
-              "version": "11.1-SNAPSHOT"
+              "version": "mockTestVersion"
             }
           ],
           "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.test.works",
           "registrationOrder": 187,
           "requirements": [],
           "services": [],
-          "version": "11.1-SNAPSHOT",
-          "xmlFileName": "/home/user/ws/nuxeo/modules/platform/nuxeo-apidoc-server/nuxeo-apidoc-repo/bin/test/apidoc-works-test-contrib.xml",
+          "version": "mockTestVersion",
+          "xmlFileName": "mockTestXmlFileName",
           "xmlPureComponent": true
         }
       ],
@@ -686,7 +686,7 @@
       "packages": [
         "platform-explorer-mock"
       ],
-      "version": "11.1-SNAPSHOT"
+      "version": "mockTestVersion"
     }
   ],
   "creationDate": 1596524804307,
@@ -731,7 +731,7 @@
       ],
       "since": "",
       "url": "Actions.GET",
-      "version": "unknown",
+      "version": "mockTestVersion",
       "hierarchyPath": "/op:Actions.GET"
     },
     {
@@ -753,7 +753,7 @@
       ],
       "since": "",
       "url": "AttachFiles",
-      "version": "unknown",
+      "version": "mockTestVersion",
       "hierarchyPath": "/op:AttachFiles"
     }
   ],
@@ -773,11 +773,11 @@
       "optionalDependencies": [],
       "packageType": "addon",
       "title": "Platform Explorer Mock",
-      "version": "1.0.1",
+      "version": "mockTestVersion",
       "hierarchyPath": "/platform-explorer-mock-1.0.1"
     }
   ],
   "pluginSnapshots": {},
   "releaseDate": null,
-  "version": "unknown"
+  "version": "mockTestVersion"
 }
