@@ -72,6 +72,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                         "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
                         "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
                         "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
                         "org.nuxeo.apidoc.test.works--queues", "org.nuxeo.apidoc.test.works--queues1"),
                 snapshot.getContributionIds());
         assertEquals(0, snapshot.getOperations().size());
