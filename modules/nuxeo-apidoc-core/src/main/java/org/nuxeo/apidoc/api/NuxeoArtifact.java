@@ -25,6 +25,7 @@ import org.nuxeo.apidoc.introspection.ComponentInfoImpl;
 import org.nuxeo.apidoc.introspection.ExtensionInfoImpl;
 import org.nuxeo.apidoc.introspection.ExtensionPointInfoImpl;
 import org.nuxeo.apidoc.introspection.OperationInfoImpl;
+import org.nuxeo.apidoc.introspection.PackageInfoImpl;
 import org.nuxeo.apidoc.introspection.ServiceInfoImpl;
 import org.nuxeo.ecm.platform.dublincore.constants.DublinCoreConstants;
 
@@ -40,7 +41,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = ServiceInfoImpl.class, name = ServiceInfo.TYPE_NAME),
         @JsonSubTypes.Type(value = ExtensionPointInfoImpl.class, name = ExtensionPointInfo.TYPE_NAME),
         @JsonSubTypes.Type(value = ExtensionInfoImpl.class, name = ExtensionInfo.TYPE_NAME),
-        @JsonSubTypes.Type(value = OperationInfoImpl.class, name = OperationInfo.TYPE_NAME), //
+        @JsonSubTypes.Type(value = OperationInfoImpl.class, name = OperationInfo.TYPE_NAME),
+        @JsonSubTypes.Type(value = PackageInfoImpl.class, name = PackageInfo.TYPE_NAME), //
 })
 public interface NuxeoArtifact {
 

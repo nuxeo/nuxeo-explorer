@@ -759,7 +759,7 @@
   ],
   "packages": [
     {
-      "@type": "PackageInfoImpl",
+      "@type": "NXPackage",
       "bundles": [
         "org.nuxeo.apidoc.core",
         "org.nuxeo.apidoc.repo"
