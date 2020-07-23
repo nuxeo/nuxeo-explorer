@@ -60,6 +60,11 @@
     <object class="org.nuxeo.apidoc.export.api.ExporterDescriptor" />
   </extension-point>
 
+  <extension target="org.nuxeo.apidoc.snapshot.SnapshotManagerComponent" point="exporters">
+    <exporter id="jsonGraph" class="org.nuxeo.apidoc.export.graphs.plugins.JsonGraphExporter" />
+    <exporter id="dotGraph" class="org.nuxeo.apidoc.export.graphs.plugins.DOTGraphExporter" />
+  </extension>
+
   <extension target="org.nuxeo.runtime.ConfigurationService" point="configuration">
     <documentation>
       URL base for Javadoc Links.

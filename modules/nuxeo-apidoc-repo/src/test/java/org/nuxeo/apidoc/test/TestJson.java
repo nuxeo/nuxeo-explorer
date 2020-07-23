@@ -404,7 +404,7 @@ public class TestJson extends AbstractApidocTest {
 
         // check extensions
         assertNotNull(smcomp.getExtensions());
-        assertEquals(4, smcomp.getExtensions().size());
+        assertEquals(5, smcomp.getExtensions().size());
 
         // check another component with contributions
         ComponentInfo smcont = snapshot.getComponent("org.nuxeo.apidoc.doctypeContrib");

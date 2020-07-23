@@ -113,7 +113,8 @@ public class PackageArtifactPage extends ArtifactPage {
                 + "org.nuxeo.apidoc.search.ArtifactSearcher");
         checkExtensionPoints("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins\n" //
                 + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters");
-        checkContributions("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration\n" //
+        checkContributions("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters\n" //
+                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration\n" //
                 + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1\n" //
                 + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2\n" //
                 + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3\n" //
