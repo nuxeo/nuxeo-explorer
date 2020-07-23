@@ -140,8 +140,12 @@ public class BundleGroupDocAdapter extends BaseNuxeoArtifactDocAdapter implement
     @Override
     public List<String> getParentIds() {
         List<DocumentModel> parents = getCoreSession().getParentDocuments(doc.getRef());
+        Collections.reverse(parents);
+        if (parents.size() > 0) {
+            // remove current document, included by core api
+            parents.remove(0);
+        }
         return parents.stream()
-                      .sorted(Collections.reverseOrder())
                       .map(doc -> doc.getAdapter(BundleGroup.class))
                       .filter(Objects::nonNull)
                       .map(BundleGroup::getId)
