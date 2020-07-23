@@ -100,14 +100,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
 
         assertEquals(List.of("apidoc-pack"),
                 snapshot.getBundleGroups().stream().map(BundleGroup::getId).collect(Collectors.toList()));
-        assertEquals(0, snapshot.getBundleIds().size());
-        assertEquals(0, snapshot.getComponentIds().size());
-        assertEquals(0, snapshot.getServiceIds().size());
-        assertEquals(0, snapshot.getExtensionPointIds().size());
-        assertEquals(0, snapshot.getContributionIds().size());
-        assertEquals(0, snapshot.getOperations().size());
-        assertEquals(List.of(MOCK_PACKAGE_ID),
-                snapshot.getPackages().stream().map(PackageInfo::getId).collect(Collectors.toList()));
+        checkApiDoc(snapshot);
     }
 
     @Test

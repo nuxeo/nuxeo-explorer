@@ -127,7 +127,7 @@ public class TestJson extends AbstractApidocTest {
                 return super.accept(artifact);
             };
         };
-        filter.addBundlePrefix("org.nuxeo.apidoc");
+        filter.addNuxeoPackagePrefix(MOCK_PACKAGE_NAME);
         return filter;
     }
 

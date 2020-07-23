@@ -119,7 +119,7 @@ public class TestSnapshotPersist extends AbstractApidocTest {
     @Test
     public void testPersistPartial() throws IOException {
         PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc");
-        filter.addBundlePrefix("org.nuxeo.apidoc");
+        filter.addNuxeoPackagePrefix(MOCK_PACKAGE_NAME);
 
         DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
         assertNotNull(snapshot);

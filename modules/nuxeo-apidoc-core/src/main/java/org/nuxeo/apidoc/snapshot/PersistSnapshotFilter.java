@@ -102,6 +102,11 @@ public class PersistSnapshotFilter implements SnapshotFilter {
                 return true;
             }
         }
+        for (String pprefix : nxpackagePrefixes) {
+            if (bundle.getPackages().stream().anyMatch(s -> s.startsWith(pprefix))) {
+                return true;
+            }
+        }
         return false;
     }
 
