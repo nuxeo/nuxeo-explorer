@@ -18,7 +18,7 @@ build:
         buildContext:
           localDir: {}
         buildArgs:
-          BASE_IMAGE: ${DOCKER_REGISTRY}/${ORG}/nuxeo:11.x
+          BASE_IMAGE: ${DOCKER_REGISTRY}/${ORG}/nuxeo:${NUXEO_IMAGE_VERSION}
           BUILD_TAG: "{{.BUILD_TAG}}"
           SCM_REF: "{{.SCM_REF}}"
           VERSION: "{{.VERSION}}"
