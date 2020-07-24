@@ -24,14 +24,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.nuxeo.functionaltests.AbstractTest;
 import org.nuxeo.functionaltests.Locator;
 import org.nuxeo.functionaltests.Required;
-import org.nuxeo.functionaltests.RestHelper;
+import org.nuxeo.functionaltests.explorer.testing.AbstractExplorerTest;
 import org.nuxeo.functionaltests.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -118,12 +116,8 @@ public abstract class AbstractExplorerPage extends AbstractPage {
     /**
      * Waits for indexing to be done.
      */
-    public void waitForAsyncWork() {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("timeoutSecond", Integer.valueOf(110));
-        parameters.put("refresh", Boolean.TRUE);
-        parameters.put("waitForAudit", Boolean.TRUE);
-        RestHelper.operation("Elasticsearch.WaitForIndexing", parameters);
+    public static void waitForAsyncWork() {
+        AbstractExplorerTest.waitForAsyncWork();
     }
 
     /**
