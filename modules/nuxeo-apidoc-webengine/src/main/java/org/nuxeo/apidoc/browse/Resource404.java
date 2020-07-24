@@ -32,7 +32,7 @@ import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
 @WebObject(type = Resource404.TYPE)
 public class Resource404 extends DefaultObject {
 
-    public static final String TYPE = "error404";
+    public static final String TYPE = "error";
 
     @GET
     @Produces("text/html")
