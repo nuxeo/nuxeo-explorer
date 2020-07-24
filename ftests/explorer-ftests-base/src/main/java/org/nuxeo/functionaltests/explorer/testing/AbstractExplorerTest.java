@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
@@ -98,12 +100,27 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         }
     }
 
+    /**
+     * Waits for indexing to be done.
+     *
+     * @since 20.0.0
+     */
+    public static void waitForAsyncWork() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("timeoutSecond", Integer.valueOf(110));
+        parameters.put("refresh", Boolean.TRUE);
+        parameters.put("waitForAudit", Boolean.TRUE);
+        RestHelper.operation("Elasticsearch.WaitForIndexing", parameters);
+    }
+
     protected static void cleanupPersistedDistributions() {
         RestHelper.deleteDocument(SnapshotPersister.Root_PATH + SnapshotPersister.Root_NAME);
+        waitForAsyncWork();
     }
 
     protected static void cleanupPersistedDistribution(String name) {
         RestHelper.deleteDocument(SnapshotPersister.Root_PATH + SnapshotPersister.Root_NAME + "/" + name);
+        waitForAsyncWork();
     }
 
     protected String getDistribId(String name, String version) {
