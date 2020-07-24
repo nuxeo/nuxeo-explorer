@@ -155,9 +155,9 @@ public class Distribution extends ModuleRoot {
     public Object handleError(Throwable t) {
         if (t instanceof WebResourceNotFoundException || t instanceof NotFoundException) {
             return show404();
-        } else {
-            return super.handleError(t);
         }
+        log.error(t, t);
+        return Response.status(500).entity(getTemplate("views/error/error.ftl")).type("text/html").build();
     }
 
     /**
@@ -166,7 +166,7 @@ public class Distribution extends ModuleRoot {
      * @since 20.0.0
      */
     public Object show404() {
-        return Response.status(404).entity(getTemplate("views/error404/error_404.ftl")).type("text/html").build();
+        return Response.status(404).entity(getTemplate("views/error/error_404.ftl")).type("text/html").build();
     }
 
     protected static SnapshotManager getSnapshotManager() {
