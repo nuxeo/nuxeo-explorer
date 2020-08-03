@@ -34,19 +34,6 @@
 
   </div>
 
-  <h2>Bundles</h2>
-  <div id="bundles">
-  <#if nxItem.bundles?size gt 0>
-    <ul>
-      <#list nxItem.bundles as bundle>
-      <li><a class="bundles" href="${Root.path}/${distId}/viewBundle/${bundle}">${bundle}</a></li>
-      </#list>
-    </ul>
-  <#else>
-    <div>No bundles.</div>
-  </#if>
-  </div>
-
   <#if nxItem.dependencies?size gt 0 || nxItem.optionalDependencies?size gt 0 || nxItem.conflicts?size gt 0>
   <div id="alldependencies">
     <#if nxItem.dependencies?size gt 0>
@@ -74,6 +61,67 @@
     <ul>
     </#if>
   </div>
+  </#if>
+
+  <h2>Bundles</h2>
+  <div id="bundles">
+  <#if nxItem.bundles?size gt 0>
+    <ul>
+      <#list nxItem.bundles as bundle>
+        <#if bundles[bundle]??>
+          <li><a class="bundles" href="${Root.path}/${distId}/viewBundle/${bundle}">${bundle}</a></li>
+        <#else>
+          <li><span class="bundles">${bundle}</span></li>
+        </#if>
+      </#list>
+    </ul>
+  <#else>
+    <div>No bundles.</div>
+  </#if>
+  </div>
+
+  <#if components?size gt 0>
+    <h2>Components</h2>
+    <div id="components">
+      <ul>
+        <#list components as component>
+        <li><a class="components" href="${Root.path}/${distId}/viewComponent/${component.id}">${component.id}</a></li>
+        </#list>
+      </ul>
+    </div>
+  </#if>
+
+  <#if services?size gt 0>
+    <h2>Services</h2>
+    <div id="services">
+      <ul>
+        <#list services as service>
+        <li><a class="services" href="${Root.path}/${distId}/viewService/${service.id}">${service.id}</a></li>
+        </#list>
+      </ul>
+    </div>
+  </#if>
+
+  <#if extensionpoints?size gt 0>
+    <h2>Extension Points</h2>
+    <div id="extensionpoints">
+      <ul>
+        <#list extensionpoints as xp>
+        <li><a class="extensions" href="${Root.path}/${distId}/viewExtensionPoint/${xp.id}">${xp.id}</a></li>
+        </#list>
+      </ul>
+    </div>
+  </#if>
+
+  <#if contributions?size gt 0>
+    <h2>Contributions</h2>
+    <div id="contributions">
+      <ul>
+        <#list contributions as contribution>
+        <li><a class="contributions" href="${Root.path}/${distId}/viewContribution/${contribution.id}">${contribution.id}</a></li>
+        </#list>
+      </ul>
+    </div>
   </#if>
 
 <@tocTrigger />
