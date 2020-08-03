@@ -48,10 +48,6 @@ public class PackageArtifactPage extends ArtifactPage {
     @FindBy(xpath = "//a[@id='marketplaceLink']")
     public WebElement marketplaceLink;
 
-    @Required
-    @FindBy(xpath = "//div[@id='bundles']")
-    public WebElement bundles;
-
     @FindBy(xpath = "//ul[@id='dependencies']")
     public WebElement dependencies;
 
@@ -61,6 +57,26 @@ public class PackageArtifactPage extends ArtifactPage {
     @FindBy(xpath = "//ul[@id='conflicts']")
     public WebElement conflicts;
 
+    @Required
+    @FindBy(xpath = "//div[@id='bundles']")
+    public WebElement bundles;
+
+    /** @since 20.0.0 */
+    @FindBy(xpath = "//div[@id='components']")
+    public WebElement components;
+
+    /** @since 20.0.0 */
+    @FindBy(xpath = "//div[@id='services']")
+    public WebElement services;
+
+    /** @since 20.0.0 */
+    @FindBy(xpath = "//div[@id='extensionpoints']")
+    public WebElement extensionpoints;
+
+    /** @since 20.0.0 */
+    @FindBy(xpath = "//div[@id='contributions']")
+    public WebElement contributions;
+
     public PackageArtifactPage(WebDriver driver) {
         super(driver);
     }
@@ -68,18 +84,43 @@ public class PackageArtifactPage extends ArtifactPage {
     @Override
     public void checkReference(boolean partial, boolean legacy) {
         checkCommon("Package Platform Explorer", "Package Platform Explorer (platform-explorer)", null,
-                "General Information\n" + "Bundles");
+                "General Information\n" //
+                        + "Bundles\n" //
+                        + "Components\n" //
+                        + "Services\n" //
+                        + "Extension Points\n" //
+                        + "Contributions");
         String version = packageVersion.getText();
         assertFalse(StringUtils.isBlank(version));
         checkPackageId("platform-explorer-" + version);
         checkPackageName("platform-explorer");
         checkMarketplaceLink(
                 "https://connect.nuxeo.com/nuxeo/site/marketplace/package/platform-explorer?version=" + version);
-        checkBundles("org.nuxeo.apidoc.core\n" + "org.nuxeo.apidoc.repo\n" + "org.nuxeo.apidoc.webengine\n"
-                + "org.nuxeo.ecm.webengine.ui");
         checkDependencies(null);
         checkOptionalDependencies(null);
         checkConflicts(null);
+        checkBundles("org.nuxeo.apidoc.core\n" //
+                + "org.nuxeo.apidoc.repo\n" //
+                + "org.nuxeo.apidoc.webengine\n"//
+                + "org.nuxeo.ecm.webengine.ui");
+        checkComponents("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent\n" //
+                + "org.nuxeo.apidoc.lifecycle.contrib\n" //
+                + "org.nuxeo.apidoc.schemaContrib\n" //
+                + "org.nuxeo.apidoc.listener.contrib\n" //
+                + "org.nuxeo.apidoc.adapterContrib\n" //
+                + "org.nuxeo.apidoc.doctypeContrib");
+        checkServices("org.nuxeo.apidoc.snapshot.SnapshotManager\n" //
+                + "org.nuxeo.apidoc.search.ArtifactSearcher");
+        checkExtensionPoints("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins");
+        checkContributions("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration\n" //
+                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1\n" //
+                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2\n" //
+                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3\n" //
+                + "org.nuxeo.apidoc.lifecycle.contrib--types\n" //
+                + "org.nuxeo.apidoc.schemaContrib--schema\n" //
+                + "org.nuxeo.apidoc.listener.contrib--listener\n" //
+                + "org.nuxeo.apidoc.adapterContrib--adapters\n" //
+                + "org.nuxeo.apidoc.doctypeContrib--doctype");
     }
 
     @Override
@@ -123,6 +164,26 @@ public class PackageArtifactPage extends ArtifactPage {
 
     public void checkConflicts(String expected) {
         checkTextIfExists(expected, conflicts);
+    }
+
+    /** @since 20.0.0 */
+    public void checkComponents(String expected) {
+        checkTextIfExists(expected, components);
+    }
+
+    /** @since 20.0.0 */
+    public void checkServices(String expected) {
+        checkTextIfExists(expected, services);
+    }
+
+    /** @since 20.0.0 */
+    public void checkExtensionPoints(String expected) {
+        checkTextIfExists(expected, extensionpoints);
+    }
+
+    /** @since 20.0.0 */
+    public void checkContributions(String expected) {
+        checkTextIfExists(expected, contributions);
     }
 
 }

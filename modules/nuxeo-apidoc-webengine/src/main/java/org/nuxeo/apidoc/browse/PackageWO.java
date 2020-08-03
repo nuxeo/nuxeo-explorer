@@ -18,10 +18,23 @@
  */
 package org.nuxeo.apidoc.browse;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import javax.ws.rs.Produces;
 
+import org.nuxeo.apidoc.api.BundleInfo;
+import org.nuxeo.apidoc.api.ComponentInfo;
+import org.nuxeo.apidoc.api.ExtensionInfo;
+import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.PackageInfo;
+import org.nuxeo.apidoc.api.ServiceInfo;
+import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
@@ -37,19 +50,63 @@ public class PackageWO extends NuxeoArtifactWebObject {
 
     @Override
     public NuxeoArtifact getNxArtifact() {
-        return getTargetPackageInfo();
+        return getTargetPackageInfo(getSnapshot());
     }
 
-    protected PackageInfo getTargetPackageInfo() {
-        return getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession()).getPackage(nxArtifactId);
+    protected DistributionSnapshot getSnapshot() {
+        return getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession());
+    }
+
+    protected PackageInfo getTargetPackageInfo(DistributionSnapshot snapshot) {
+        return snapshot.getPackage(nxArtifactId);
+    }
+
+    protected Map<String, BundleInfo> getBundleInfo(DistributionSnapshot snapshot, List<String> bundles) {
+        var res = new LinkedHashMap<String, BundleInfo>();
+        bundles.forEach(bid -> res.put(bid, snapshot.getBundle(bid)));
+        return res;
+    }
+
+    protected List<ComponentInfo> getComponentInfo(List<BundleInfo> bundles) {
+        var res = new ArrayList<ComponentInfo>();
+        bundles.forEach(b -> res.addAll(b.getComponents()));
+        return res;
+    }
+
+    protected List<ServiceInfo> getServiceInfo(List<ComponentInfo> components) {
+        var res = new ArrayList<ServiceInfo>();
+        components.forEach(c -> res.addAll(c.getServices()));
+        return res;
+    }
+
+    protected List<ExtensionPointInfo> getExtensionPointInfo(List<ComponentInfo> components) {
+        var res = new ArrayList<ExtensionPointInfo>();
+        components.forEach(c -> res.addAll(c.getExtensionPoints()));
+        return res;
+    }
+
+    protected List<ExtensionInfo> getContributionInfo(List<ComponentInfo> components) {
+        var res = new ArrayList<ExtensionInfo>();
+        components.forEach(c -> res.addAll(c.getExtensions()));
+        return res;
     }
 
     @Produces("text/html")
     @Override
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();
-        String marketplaceURL = PackageInfo.getMarketplaceURL(getTargetPackageInfo(), true);
+        DistributionSnapshot snapshot = getSnapshot();
+        PackageInfo pkg = getTargetPackageInfo(snapshot);
+        String marketplaceURL = PackageInfo.getMarketplaceURL(pkg, true);
         t.arg("marketplaceURL", marketplaceURL);
+        Map<String, BundleInfo> binfo = getBundleInfo(snapshot, pkg.getBundles());
+        t.arg("bundles", binfo);
+        List<ComponentInfo> components = getComponentInfo(
+                binfo.values().stream().filter(Objects::nonNull).collect(Collectors.toList()));
+        t.arg("components", components);
+        t.arg("services", getServiceInfo(components));
+        t.arg("extensionpoints", getExtensionPointInfo(components));
+        t.arg("contributions", getContributionInfo(components));
         return t;
     }
 
