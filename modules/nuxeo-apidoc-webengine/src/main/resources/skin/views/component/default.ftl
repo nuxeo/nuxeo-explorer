@@ -30,6 +30,11 @@
   <div id="registrationOrder">
     ${nxItem.registrationOrder}
   </div>
+  <small id="registrationOrderHelp">
+    The registration order represents the order in which this component has been deployed by the Nuxeo Runtime framework.
+    <br />
+    You can influence this order by adding "require" tags in your component declaration, to make sure it is deployed after another component.
+  </small>
 
   <#if !nxItem.xmlPureComponent>
     <h2>Implementation</h2>
