@@ -101,6 +101,7 @@ pipeline {
           echo "MAVEN_OPTS=$MAVEN_OPTS"
           sh 'mvn -B -nsu -DskipDocker install'
         }
+        findText regexp: ".*ERROR.*", fileSet: "ftests/**/log/server.log", unstableIfFound: true
       }
       post {
         always {
