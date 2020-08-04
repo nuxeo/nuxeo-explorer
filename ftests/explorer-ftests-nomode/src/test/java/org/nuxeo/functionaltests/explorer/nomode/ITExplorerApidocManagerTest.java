@@ -20,6 +20,7 @@ package org.nuxeo.functionaltests.explorer.nomode;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nuxeo.apidoc.security.SecurityHelper;
 import org.nuxeo.functionaltests.RestHelper;
@@ -108,6 +109,7 @@ public class ITExplorerApidocManagerTest extends ITExplorerAdminTest {
         checkLivePartialDistribImport(distribName, distribId);
     }
 
+    @Ignore("NXP-29433")
     @Override
     @Test
     public void testLiveDistribExportAndDelete() {

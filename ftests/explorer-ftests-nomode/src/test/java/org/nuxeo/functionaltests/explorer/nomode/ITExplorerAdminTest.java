@@ -25,6 +25,7 @@ import java.util.Date;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.functionaltests.Locator;
@@ -251,6 +252,7 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         asPage(DistributionHomePage.class).checkHeader(newerDistribId);
     }
 
+    @Ignore("NXP-29433")
     @Test
     public void testLiveDistribExportAndDelete() {
         String distribName = "my-server-to-delete";
