@@ -16,7 +16,8 @@
   <xs:element name="jarName" type="xs:string" />
 
   <xs:element name="requirements" type="nxbundle:stringList" />
-  <xs:element name="deploymentOrder" type="xs:integer" />
+  <xs:element name="minRegistrationOrder" type="xs:integer" />
+  <xs:element name="maxRegistrationOrder" type="xs:integer" />
   <xs:element name="packages" type="nxbundle:stringList" />
 
   <xs:element name="readme" type="nxbundle:content" />

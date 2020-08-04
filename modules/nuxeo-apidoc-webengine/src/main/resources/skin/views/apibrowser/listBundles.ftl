@@ -18,9 +18,6 @@
       <th>
         <@tableFilterArea "bundle"/>
       </th>
-      <th>
-        Deployment Order
-      </th>
     </tr>
   </thead>
   <tbody>
@@ -30,9 +27,6 @@
         <div>
           <h4><a title="Bundle Name" href="${Root.path}/${distId}/viewBundle/${bundle.id}" class="itemLink">${bundle.label}</a></h4>
         </div>
-      </td>
-      <td>
-        ${bundle.order}
       </td>
     </tr>
     </#list>

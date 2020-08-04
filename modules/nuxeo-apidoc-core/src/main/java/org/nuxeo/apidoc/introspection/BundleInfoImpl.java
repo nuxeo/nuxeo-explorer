@@ -61,8 +61,11 @@ public class BundleInfoImpl extends BaseNuxeoArtifact implements BundleInfo {
 
     protected Blob parentReadme;
 
-    /** @since 11.1 */
-    protected Long deploymentOrder;
+    /** @since 20.0.0 */
+    protected Long minRegistrationOrder;
+
+    /** @since 20.0.0 */
+    protected Long maxRegistrationOrder;
 
     /** @since 11.1 */
     protected final List<String> packages = new ArrayList<>();
@@ -238,13 +241,23 @@ public class BundleInfoImpl extends BaseNuxeoArtifact implements BundleInfo {
     }
 
     @Override
-    public Long getDeploymentOrder() {
-        return deploymentOrder;
+    public Long getMinRegistrationOrder() {
+        return minRegistrationOrder;
     }
 
     @Override
-    public void setDeploymentOrder(Long deploymentOrder) {
-        this.deploymentOrder = deploymentOrder;
+    public void setMinRegistrationOrder(Long minRegistrationOrder) {
+        this.minRegistrationOrder = minRegistrationOrder;
+    }
+
+    @Override
+    public Long getMaxRegistrationOrder() {
+        return maxRegistrationOrder;
+    }
+
+    @Override
+    public void setMaxRegistrationOrder(Long maxRegistrationOrder) {
+        this.maxRegistrationOrder = maxRegistrationOrder;
     }
 
 }

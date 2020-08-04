@@ -49,8 +49,11 @@ public interface BundleInfo extends NuxeoArtifact {
     /** @since 11.1 */
     String PROP_REQUIREMENTS = "nxbundle:requirements";
 
-    /** @since 11.1 */
-    String PROP_DEPLOYMENT_ORDER = "nxbundle:deploymentOrder";
+    /** @since 20.0.0 */
+    String PROP_MIN_REGISTRATION_ORDER = "nxbundle:minRegistrationOrder";
+
+    /** @since 20.0.0 */
+    String PROP_MAX_REGISTRATION_ORDER = "nxbundle:maxRegistrationOrder";
 
     /** @since 11.1 */
     String PROP_PACKAGES = "nxbundle:packages";
@@ -119,18 +122,32 @@ public interface BundleInfo extends NuxeoArtifact {
     Blob getParentReadme();
 
     /**
-     * Returns the deployment order as indicated by the runtime context.
+     * Returns the minimal registration order among this bundle's components.
      *
-     * @since 11.1
+     * @since 20.0.0
      */
-    Long getDeploymentOrder();
+    Long getMinRegistrationOrder();
 
     /**
-     * Sets the deployment order according to runtime context.
+     * Sets the minimal registration order among this bundle's components.
      *
-     * @since 11.1
+     * @since 20.0.0
      */
-    void setDeploymentOrder(Long order);
+    void setMinRegistrationOrder(Long order);
+
+    /**
+     * Returns the maximal registration order among this bundle's components.
+     *
+     * @since 20.0.0
+     */
+    Long getMaxRegistrationOrder();
+
+    /**
+     * Sets the maximal registration order among this bundle's components.
+     *
+     * @since 20.0.0
+     */
+    void setMaxRegistrationOrder(Long order);
 
     /**
      * Returns the list of Nuxeo packages containing this bundle.

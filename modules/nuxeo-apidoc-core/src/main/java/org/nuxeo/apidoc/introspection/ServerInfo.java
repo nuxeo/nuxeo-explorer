@@ -58,6 +58,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.nuxeo.apidoc.api.BundleInfo;
+import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.documentation.SecureXMLHelper;
 import org.nuxeo.common.Environment;
@@ -524,10 +525,9 @@ public class ServerInfo {
 
         // post process all bundles to:
         // - register bundles that contain no components
-        // - set the deployment order as held by the runtime context
+        // - set the bundle min and max registration orders as held by the runtime context
         // - try to match the bundle to a package
         Bundle[] allbundles = runtime.getContext().getBundle().getBundleContext().getBundles();
-        long bindex = 0;
         for (Bundle bundle : allbundles) {
             BundleInfo bi;
             if (!server.bundles.containsKey(bundle.getSymbolicName())) {
@@ -536,7 +536,15 @@ public class ServerInfo {
             } else {
                 bi = server.bundles.get(bundle.getSymbolicName());
             }
-            bi.setDeploymentOrder(bindex++);
+            List<ComponentInfo> components = bi.getComponents();
+            components.stream()
+                      .mapToLong(ComponentInfo::getRegistrationOrder)
+                      .min()
+                      .ifPresent(min -> bi.setMinRegistrationOrder(min));
+            components.stream()
+                      .mapToLong(ComponentInfo::getRegistrationOrder)
+                      .max()
+                      .ifPresent(max -> bi.setMaxRegistrationOrder(max));
             if (!bi.getPackages().isEmpty()) {
                 bi.getPackages().forEach(pkgName -> server.packages.get(pkgName).addBundle(bi.getId()));
             }

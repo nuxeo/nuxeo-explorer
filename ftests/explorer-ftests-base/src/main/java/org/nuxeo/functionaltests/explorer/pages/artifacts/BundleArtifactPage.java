@@ -19,6 +19,7 @@
 package org.nuxeo.functionaltests.explorer.pages.artifacts;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ import org.nuxeo.functionaltests.Required;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
 import org.nuxeo.functionaltests.explorer.testing.AbstractExplorerTest;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -39,9 +41,9 @@ import org.openqa.selenium.support.FindBy;
  */
 public class BundleArtifactPage extends ArtifactPage {
 
-    @Required
-    @FindBy(xpath = "//div[@id='deploymentOrder']")
-    public WebElement deploymentOrder;
+    /** @since 20.0.0 */
+    @FindBy(xpath = "//div[@id='registrationOrder']")
+    public WebElement registrationOrder;
 
     @Required
     @FindBy(xpath = "//table[@class='listTable']")
@@ -57,7 +59,10 @@ public class BundleArtifactPage extends ArtifactPage {
     @Override
     public void checkReference(boolean partial, boolean legacy) {
         String groupTitle = "In bundle group org.nuxeo.apidoc";
-        String toc = "Documentation\n" + "Deployment Order\n" + "Components\n" + "Packages\n" + "Maven Artifact\n"
+        String toc = "Documentation\n" //
+                + "Components\n" //
+                + "Packages\n" //
+                + "Maven Artifact\n"//
                 + "Manifest";
         if (partial) {
             groupTitle = "In bundle group my-partial-server";
@@ -65,7 +70,10 @@ public class BundleArtifactPage extends ArtifactPage {
         if (legacy) {
             groupTitle = "In bundle group apidoc";
             // legacy does not hold packages
-            toc = "Documentation\n" + "Deployment Order\n" + "Components\n" + "Maven Artifact\n" + "Manifest";
+            toc = "Documentation\n" //
+                    + "Components\n" //
+                    + "Maven Artifact\n" //
+                    + "Manifest";
         }
         checkCommon("Bundle org.nuxeo.apidoc.core", "Bundle org.nuxeo.apidoc.core", groupTitle, toc);
         try {
@@ -78,19 +86,38 @@ public class BundleArtifactPage extends ArtifactPage {
         checkGroupId("org.nuxeo.ecm.platform");
         checkArtifactId("nuxeo-apidoc-core");
         checkRequirements(null);
-        checkDeploymentOrder(!legacy);
+        checkRegistrationOrder(false);
         checkPackages(legacy ? null : "platform-explorer");
     }
 
     @Override
     public void checkAlternative() {
         checkCommon("Bundle org.nuxeo.apidoc.webengine", "Bundle org.nuxeo.apidoc.webengine",
-                "In bundle group org.nuxeo.apidoc", "Documentation\n" + "Requirements\n" + "Deployment Order\n"
-                        + "Components\n" + "Packages\n" + "Maven Artifact\n" + "Manifest");
+                "In bundle group org.nuxeo.apidoc", "Documentation\n" //
+                        + "Requirements\n" //
+                        + "Components\n" //
+                        + "Packages\n" //
+                        + "Maven Artifact\n" //
+                        + "Manifest");
         checkGroupId("org.nuxeo.ecm.platform");
         checkArtifactId("nuxeo-apidoc-webengine");
         checkRequirements(List.of("org.nuxeo.ecm.webengine.core", "org.nuxeo.apidoc.core"));
-        checkDeploymentOrder(true);
+        checkRegistrationOrder(false);
+        checkPackages("platform-explorer");
+    }
+
+    public void checkAlternative2() {
+        checkCommon("Bundle org.nuxeo.apidoc.repo", "Bundle org.nuxeo.apidoc.repo", "In bundle group org.nuxeo.apidoc",
+                "Documentation\n" //
+                        + "Registration Order\n" //
+                        + "Components\n" //
+                        + "Packages\n" //
+                        + "Maven Artifact\n" //
+                        + "Manifest");
+        checkGroupId("org.nuxeo.ecm.platform");
+        checkArtifactId("nuxeo-apidoc-repo");
+        checkRequirements(null);
+        checkRegistrationOrder(true);
         checkPackages("platform-explorer");
     }
 
@@ -112,8 +139,13 @@ public class BundleArtifactPage extends ArtifactPage {
         assertEquals(id, artifactId.getText());
     }
 
-    public void checkDeploymentOrder(boolean set) {
-        assertEquals(!set, StringUtils.isBlank(deploymentOrder.getText()));
+    /** @since 20.0.0 */
+    public void checkRegistrationOrder(boolean set) {
+        try {
+            assertEquals(!set, StringUtils.isBlank(registrationOrder.getText()));
+        } catch (NoSuchElementException e) {
+            assertFalse(set);
+        }
     }
 
     public void checkPackages(String expected) {
