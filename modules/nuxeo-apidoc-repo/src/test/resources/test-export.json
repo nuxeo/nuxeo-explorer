@@ -52,9 +52,10 @@
       },
       "requirements": [],
       "components": [],
-      "deploymentOrder": 3,
       "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.core",
       "id": "org.nuxeo.apidoc.core",
+      "maxRegistrationOrder": null,
+      "minRegistrationOrder": null,
       "packages": [
         "platform-explorer-mock"
       ],
@@ -678,16 +679,17 @@
           "xmlPureComponent": true
         }
       ],
-      "deploymentOrder": 21,
       "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo",
       "id": "org.nuxeo.apidoc.repo",
+      "maxRegistrationOrder": 187,
+      "minRegistrationOrder": 5,
       "packages": [
         "platform-explorer-mock"
       ],
       "version": "11.1-SNAPSHOT"
     }
   ],
-  "creationDate": 1594028131755,
+  "creationDate": 1596524804307,
   "key": "Nuxeo-unknown",
   "name": "Nuxeo",
   "operations": [

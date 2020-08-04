@@ -48,10 +48,29 @@
     </ul>
   </#if>
 
-  <h2>Deployment Order</h2>
-  <div id="deploymentOrder">
-    ${nxItem.deploymentOrder}
-  </div>
+  <#if nxItem.minRegistrationOrder??>
+    <h2>Registration Order</h2>
+    <#if nxItem.minRegistrationOrder = nxItem.maxRegistrationOrder>
+      <div id="registrationOrder">
+        ${nxItem.minRegistrationOrder}
+      </div>
+      <small id="registrationOrderHelp">
+        The registration order represents the order in which this bundle's component has been deployed by the Nuxeo Runtime framework.
+        <br />
+        You can influence this order by adding "require" tags in the component declaration, to make sure it is deployed after another component.
+      </small>
+    <#else>
+      <div id="registrationOrder">
+        [${nxItem.minRegistrationOrder}, ${nxItem.maxRegistrationOrder}]
+      </div>
+      <small id="registrationOrderHelp">
+        The registration order represents the order in which components have been deployed by the Nuxeo Runtime framework.
+        This range represents the minimal and maximal orders for this bundle's components.
+        <br />
+        You can influence this order by adding "require" tags in the component declaration, to make sure it is deployed after another component.
+      </small>
+    </#if>
+  </#if>
 
   <h2>Components</h2>
   <#if nxItem.components?size == 0>

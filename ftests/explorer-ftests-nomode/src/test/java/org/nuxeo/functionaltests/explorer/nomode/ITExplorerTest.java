@@ -245,6 +245,13 @@ public class ITExplorerTest extends AbstractExplorerTest {
     }
 
     @Test
+    public void testBundlesAlternative2() {
+        goToArtifact(BundleInfo.TYPE_NAME, "org.nuxeo.apidoc.repo");
+        BundleArtifactPage apage = asPage(BundleArtifactPage.class);
+        apage.checkAlternative2();
+    }
+
+    @Test
     public void testBundleGroups() {
         ExplorerHomePage home = goHome();
         home.clickOn(home.firstPersistedDistrib);

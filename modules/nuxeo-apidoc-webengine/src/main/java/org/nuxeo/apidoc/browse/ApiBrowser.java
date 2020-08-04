@@ -147,10 +147,7 @@ public class ApiBrowser extends DefaultObject {
         List<String> bundleIds = snapshot.getBundleIds();
         List<ArtifactLabel> bundles = new ArrayList<>();
         for (String bid : bundleIds) {
-            BundleInfo bi = snapshot.getBundle(bid);
-            ArtifactLabel label = new ArtifactLabel(bid, bid, null);
-            label.setOrder(bi.getDeploymentOrder());
-            bundles.add(label);
+            bundles.add(new ArtifactLabel(bid, bid, null));
         }
         return getView(ApiBrowserConstants.LIST_BUNDLES).arg("bundles", bundles)
                                                         .arg(Distribution.DIST_ID,

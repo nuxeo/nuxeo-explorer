@@ -56,7 +56,8 @@ public class BundleInfoDocAdapter extends BaseNuxeoArtifactDocAdapter implements
         doc.setPropertyValue(PROP_BUNDLE_ID, bundleInfo.getId());
         doc.setPropertyValue(PROP_JAR_NAME, bundleInfo.getFileName());
         doc.setPropertyValue(PROP_REQUIREMENTS, (Serializable) bundleInfo.getRequirements());
-        doc.setPropertyValue(PROP_DEPLOYMENT_ORDER, bundleInfo.getDeploymentOrder());
+        doc.setPropertyValue(PROP_MIN_REGISTRATION_ORDER, bundleInfo.getMinRegistrationOrder());
+        doc.setPropertyValue(PROP_MAX_REGISTRATION_ORDER, bundleInfo.getMaxRegistrationOrder());
         doc.setPropertyValue(PROP_PACKAGES, (Serializable) bundleInfo.getPackages());
         String manifest = bundleInfo.getManifest();
         if (manifest != null) {
@@ -176,12 +177,22 @@ public class BundleInfoDocAdapter extends BaseNuxeoArtifactDocAdapter implements
     }
 
     @Override
-    public Long getDeploymentOrder() {
-        return safeGet(PROP_DEPLOYMENT_ORDER);
+    public Long getMinRegistrationOrder() {
+        return safeGet(PROP_MIN_REGISTRATION_ORDER);
     }
 
     @Override
-    public void setDeploymentOrder(Long order) {
+    public void setMinRegistrationOrder(Long order) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Long getMaxRegistrationOrder() {
+        return safeGet(PROP_MAX_REGISTRATION_ORDER);
+    }
+
+    @Override
+    public void setMaxRegistrationOrder(Long order) {
         throw new UnsupportedOperationException();
     }
 
