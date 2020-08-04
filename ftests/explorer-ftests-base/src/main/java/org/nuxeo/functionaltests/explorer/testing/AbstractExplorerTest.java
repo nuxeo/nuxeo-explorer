@@ -114,12 +114,14 @@ public abstract class AbstractExplorerTest extends AbstractTest {
     }
 
     protected static void cleanupPersistedDistributions() {
-        RestHelper.deleteDocument(SnapshotPersister.Root_PATH + SnapshotPersister.Root_NAME);
-        waitForAsyncWork();
+        cleanupPersistedDistribution(null);
     }
 
     protected static void cleanupPersistedDistribution(String name) {
-        RestHelper.deleteDocument(SnapshotPersister.Root_PATH + SnapshotPersister.Root_NAME + "/" + name);
+        RestHelper.logOnServer("warn", "Cleanup persisted distribution" + (name == null ? "s" : " " + name));
+        waitForAsyncWork();
+        RestHelper.deleteDocument(
+                SnapshotPersister.Root_PATH + SnapshotPersister.Root_NAME + (name == null ? "" : "/" + name));
         waitForAsyncWork();
     }
 
