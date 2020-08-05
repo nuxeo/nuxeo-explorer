@@ -50,6 +50,8 @@ nuxeo:
         secretKeyRef:
           name: instance-clid
           key: instance.clid
+    customParams: |-
+      ${NUXEO_TEMPLATE_OVERRIDE}
     persistence:
       enabled: ${PERSISTENCE}
   mongodb:
