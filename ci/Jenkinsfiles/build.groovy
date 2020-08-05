@@ -258,7 +258,7 @@ pipeline {
               boolean isReferenceBranch = BRANCH_NAME == REFERENCE_BRANCH
               String previewCommand = isReferenceBranch ?
                 // To avoid jx gc cron job, reference branch previews are deployed by calling jx step helm install instead of jx preview
-                "jx step helm install  --namespace ${PREVIEW_NAMESPACE} --name ${PREVIEW_NAMESPACE} --verbose ."
+                "jx step helm install --namespace ${PREVIEW_NAMESPACE} --name ${PREVIEW_NAMESPACE} --verbose ."
                 // When deploying a pr preview, we use jx preview which gc the merged pull requests
                 : "jx preview --namespace ${PREVIEW_NAMESPACE} --verbose --source-url=https://github.com/nuxeo/nuxeo-explorer --preview-health-timeout 15m ${noCommentOpt}"
 
