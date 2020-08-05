@@ -70,6 +70,8 @@ pipeline {
     SCM_REF = "${getCommitSha1()}"
     VERSION = "${getVersion(REFERENCE_BRANCH)}"
     PERSISTENCE = "${BRANCH_NAME == REFERENCE_BRANCH}"
+    // NXP-29494: override templates to avoid activating s3 in PR preview
+    NUXEO_TEMPLATE_OVERRIDE = "${BRANCH_NAME == REFERENCE_BRANCH ? '' : 'nuxeo.templates=default'}"
     NUXEO_DOCKER_REGISTRY = "docker-private.packages.nuxeo.com"
     PREVIEW_NAMESPACE = "$APP_NAME-${BRANCH_NAME.toLowerCase()}"
     ORG = "nuxeo"
