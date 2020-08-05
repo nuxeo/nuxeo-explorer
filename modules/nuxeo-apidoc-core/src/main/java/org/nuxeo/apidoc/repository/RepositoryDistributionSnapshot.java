@@ -146,14 +146,14 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         String query = QueryHelper.select(docType, doc, idField, id);
         DocumentModelList docs = getCoreSession().query(query);
         if (docs.isEmpty()) {
-            log.error(String.format("Unable to find %s with id '%s'", docType, id));
+            log.debug(String.format("Unable to find %s with id '%s'", docType, id));
+            return null;
         } else if (docs.size() == 1) {
             return docs.get(0).getAdapter(adapter);
         } else {
             log.error(String.format("Multiple match for %s with id '%s'", docType, id));
             return docs.get(0).getAdapter(adapter);
         }
-        return null;
     }
 
     @Override
