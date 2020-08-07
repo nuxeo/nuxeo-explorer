@@ -113,7 +113,7 @@ pipeline {
         success {
           setGitHubBuildStatus('explorer/compile', 'Compile and test', 'SUCCESS')
         }
-        failure {
+        unsuccessful {
           setGitHubBuildStatus('explorer/compile', 'Compile and test', 'FAILURE')
         }
       }
@@ -143,7 +143,7 @@ pipeline {
         success {
           setGitHubBuildStatus('explorer/package/deploy', 'Deploy Nuxeo packages', 'SUCCESS')
         }
-        failure {
+        unsuccessful {
           setGitHubBuildStatus('explorer/package/deploy', 'Deploy Nuxeo packages', 'FAILURE')
         }
       }
@@ -156,7 +156,7 @@ pipeline {
         }
       }
       steps {
-        setGitHubBuildStatus('explorer/docker/build', 'Build and deploy Docker images', 'PENDING')
+        setGitHubBuildStatus('explorer/docker/build', 'Build Docker Images', 'PENDING')
         container('maven') {
           echo """
           ----------------------------------------
@@ -181,10 +181,10 @@ pipeline {
       }
       post {
         success {
-          setGitHubBuildStatus('explorer/docker/build', 'Build and deploy Docker images', 'SUCCESS')
+          setGitHubBuildStatus('explorer/docker/build', 'Build Docker images', 'SUCCESS')
         }
-        failure {
-          setGitHubBuildStatus('explorer/docker/build', 'Build and deploy Docker images', 'FAILURE')
+        unsuccessful {
+          setGitHubBuildStatus('explorer/docker/build', 'Build Docker images', 'FAILURE')
         }
       }
     }
@@ -209,7 +209,7 @@ pipeline {
         success {
           setGitHubBuildStatus('explorer/docker/deploy', 'Deploy Docker images', 'SUCCESS')
         }
-        failure {
+        unsuccessful {
           setGitHubBuildStatus('explorer/docker/deploy', 'Deploy Docker images', 'FAILURE')
         }
       }
@@ -290,7 +290,7 @@ pipeline {
         success {
           setGitHubBuildStatus('explorer/preview/deploy', 'Deploy Explorer Preview', 'SUCCESS')
         }
-        failure {
+        unsuccessful {
           setGitHubBuildStatus('explorer/preview/deploy', 'Deploy Explorer Preview', 'FAILURE')
         }
       }
