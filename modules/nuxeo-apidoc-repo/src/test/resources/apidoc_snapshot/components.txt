@@ -45,7 +45,7 @@ NXComponent: org.nuxeo.ecm.core.automation.core.properties *** /grp:org.nuxeo.ec
 NXComponent: org.nuxeo.ecm.core.automation.coreContrib *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.core/org.nuxeo.ecm.core.automation.coreContrib
 NXComponent: org.nuxeo.ecm.core.automation.features.bindings *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.features/org.nuxeo.ecm.core.automation.features.bindings
 NXComponent: org.nuxeo.ecm.core.automation.features.bulk *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.features/org.nuxeo.ecm.core.automation.features.bulk *** [org.nuxeo.ecm.core.bulk.config]
-NXComponent: org.nuxeo.ecm.core.automation.features.operations *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.features/org.nuxeo.ecm.core.automation.features.operations
+NXComponent: org.nuxeo.ecm.core.automation.features.operations *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.features/org.nuxeo.ecm.core.automation.features.operations *** [org.nuxeo.ecm.core.automation.coreContrib]
 NXComponent: org.nuxeo.ecm.core.automation.marshallers *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.core/org.nuxeo.ecm.core.automation.marshallers
 NXComponent: org.nuxeo.ecm.core.automation.scripting.contextContrib *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.scripting/org.nuxeo.ecm.core.automation.scripting.contextContrib
 NXComponent: org.nuxeo.ecm.core.blob.BlobManager *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.api/org.nuxeo.ecm.core.blob.BlobManager
