@@ -102,7 +102,7 @@ public class ITExplorerApidocManagerTest extends ITExplorerAdminTest {
         // log as admin to perform export of live distrib first
         doLogout();
         loginAsAdmin();
-        String distribId = checkLivePartialDistribExport(distribName);
+        String distribId = checkLivePartialDistribExport(distribName, true);
         doLogout();
         doLogin();
         checkLivePartialDistribImport(distribName, distribId);
@@ -117,7 +117,7 @@ public class ITExplorerApidocManagerTest extends ITExplorerAdminTest {
         // log as admin to perform export of live distrib first
         doLogout();
         loginAsAdmin();
-        String distribId = checkLiveDistribExport(distribName, false);
+        String distribId = checkLivePartialDistribExport(distribName, false);
         doLogout();
         doLogin();
         open(DistribAdminPage.URL);

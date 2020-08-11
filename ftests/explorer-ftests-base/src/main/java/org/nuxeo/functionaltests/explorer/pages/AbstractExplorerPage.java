@@ -157,7 +157,9 @@ public abstract class AbstractExplorerPage extends AbstractPage {
     public void checkPersistedDistrib(String distribId) {
         String xpath = String.format("//a[contains(@class, 'distrib') and contains(@href, '%s%s')]",
                 ExplorerHomePage.URL, distribId);
-        WebElement distrib = Locator.findElementAndWaitUntilEnabled(By.xpath(xpath));
+        // lower page load and enablement timeouts as we're expecting timeout to be thrown in
+        // #checkPersistedDistribNotPresent
+        WebElement distrib = Locator.findElementAndWaitUntilEnabled(By.xpath(xpath), 5 * 1000, 2 * 1000);
         clickOn(distrib);
         asPage(DistributionHomePage.class).checkHeader(distribId);
     }

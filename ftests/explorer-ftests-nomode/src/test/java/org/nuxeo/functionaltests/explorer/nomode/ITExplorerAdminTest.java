@@ -122,12 +122,14 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         checkLiveDistribImport(distribId);
     }
 
-    protected String checkLivePartialDistribExport(String distribName) {
+    protected String checkLivePartialDistribExport(String distribName, boolean fullCheck) {
         open(DistribAdminPage.URL);
         String version = asPage(DistribAdminPage.class).saveCurrentLiveDistrib(distribName, true);
         String distribId = getDistribId(distribName, version);
         asPage(DistribAdminPage.class).checkPersistedDistrib(distribId);
-        checkDistrib(distribId, true, distribName, false);
+        if (fullCheck) {
+            checkDistrib(distribId, true, distribName, false);
+        }
         return distribId;
     }
 
@@ -152,7 +154,7 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
     @Test
     public void testLivePartialDistribExportAndImport() {
         String distribName = "my-partial-server";
-        String distribId = checkLivePartialDistribExport(distribName);
+        String distribId = checkLivePartialDistribExport(distribName, true);
         checkLivePartialDistribImport(distribName, distribId);
     }
 
@@ -254,7 +256,7 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
     @Test
     public void testLiveDistribExportAndDelete() {
         String distribName = "my-server-to-delete";
-        String distribId = checkLiveDistribExport(distribName, false);
+        String distribId = checkLivePartialDistribExport(distribName, false);
         open(DistribAdminPage.URL);
         asPage(DistribAdminPage.class).deleteFirstPersistedDistrib();
         asPage(DistribAdminPage.class).checkPersistedDistribNotPresent(distribId);
