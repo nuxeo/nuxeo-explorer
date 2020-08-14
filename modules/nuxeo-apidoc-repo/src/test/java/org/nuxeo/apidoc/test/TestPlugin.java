@@ -40,6 +40,7 @@ import org.nuxeo.apidoc.plugin.Plugin;
 import org.nuxeo.apidoc.plugin.PluginSnapshot;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
+import org.nuxeo.runtime.RuntimeMessage.Level;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
@@ -68,7 +69,7 @@ public class TestPlugin {
         Plugin<?> bat = snapshotManager.getPlugin("bat");
         assertNull(bat);
 
-        List<String> errors = Framework.getRuntime().getMessageHandler().getErrors();
+        List<String> errors = Framework.getRuntime().getMessageHandler().getMessages(Level.ERROR);
         assertNotNull(errors);
         assertEquals(2, errors.size());
         String error_foo = "Failed to register contribution with id 'foo' on 'org.nuxeo.apidoc.snapshot.SnapshotManagerComponent': "
