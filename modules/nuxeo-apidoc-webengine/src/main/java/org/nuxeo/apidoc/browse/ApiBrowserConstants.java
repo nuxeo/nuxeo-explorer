@@ -71,6 +71,9 @@ public class ApiBrowserConstants {
     public static final String VIEW_PACKAGE = "viewPackage";
 
     /** @since 20.0.0 */
+    public static final String JSON_ACTION = "json";
+
+    /** @since 20.0.0 */
     public static final String SUCCESS_FEEBACK_MESSAGE_VARIABLE = "successFeedbackMessage";
 
     /** @since 20.0.0 */

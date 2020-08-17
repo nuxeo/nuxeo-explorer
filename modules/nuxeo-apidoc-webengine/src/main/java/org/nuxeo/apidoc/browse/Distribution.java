@@ -19,7 +19,6 @@
  */
 package org.nuxeo.apidoc.browse;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -113,9 +112,6 @@ public class Distribution extends ModuleRoot {
     public static final String SAVE_EXTENDED_ACTION = "saveExtended";
 
     /** @since 20.0.0 */
-    public static final String JSON_ACTION = "json";
-
-    /** @since 20.0.0 */
     public static final String DOWNLOAD_ACTION = "download";
 
     /** @since 20.0.0 */
@@ -145,8 +141,8 @@ public class Distribution extends ModuleRoot {
      * @since 20.0.0
      */
     protected static final List<String> SUB_DISTRIBUTION_PATH_RESERVED = List.of(VIEW_ADMIN, SAVE_ACTION,
-            SAVE_EXTENDED_ACTION, JSON_ACTION, DOWNLOAD_ACTION, UPDATE_ACTION, DO_UPDATE_ACTION, DELETE_ACTION,
-            UPLOAD_ACTION, UPLOAD_TMP_ACTION, UPLOAD_TMP_VALID_ACTION, REINDEX_ACTION);
+            SAVE_EXTENDED_ACTION, DOWNLOAD_ACTION, UPDATE_ACTION, DO_UPDATE_ACTION, DELETE_ACTION, UPLOAD_ACTION,
+            UPLOAD_TMP_ACTION, UPLOAD_TMP_VALID_ACTION, REINDEX_ACTION);
 
     protected static final Pattern VERSION_REGEX = Pattern.compile("^(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:-.*)?$",
             Pattern.CASE_INSENSITIVE);
@@ -401,26 +397,6 @@ public class Distribution extends ModuleRoot {
             tx.commit();
         }
         return getView("saved").arg("source", source);
-    }
-
-    /**
-     * Returns the runtime snapshot json export.
-     *
-     * @since 11.1
-     */
-    @GET
-    @Path(JSON_ACTION)
-    @Produces("application/json")
-    public Object getJson() throws IOException {
-        if (!showRuntimeSnapshot()) {
-            return show404();
-        }
-        // init potential resources depending on request
-        getSnapshotManager().initWebContext(getContext().getRequest());
-        DistributionSnapshot snap = getRuntimeDistribution();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        snap.writeJson(out, null, null);
-        return out.toString();
     }
 
     protected File getExportTmpFile() {

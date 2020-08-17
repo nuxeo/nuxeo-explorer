@@ -19,6 +19,8 @@
  */
 package org.nuxeo.apidoc.browse;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -467,6 +469,23 @@ public class ApiBrowser extends DefaultObject {
                                                          .arg(Distribution.DIST_ID,
                                                                  ctx.getProperty(Distribution.DIST_ID))
                                                          .arg("hideNav", Boolean.valueOf(false));
+    }
+
+    /**
+     * Returns the distribution json export.
+     *
+     * @since 20.0.0
+     */
+    @GET
+    @Path(ApiBrowserConstants.JSON_ACTION)
+    @Produces("application/json")
+    public Object getJson() throws IOException {
+        DistributionSnapshot snapshot = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
+        // init potential resources depending on request
+        getSnapshotManager().initWebContext(getContext().getRequest());
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        snapshot.writeJson(out, null, null);
+        return out.toString();
     }
 
 }

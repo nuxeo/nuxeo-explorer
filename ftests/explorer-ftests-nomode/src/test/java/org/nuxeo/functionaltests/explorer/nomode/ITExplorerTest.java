@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -334,6 +335,14 @@ public class ITExplorerTest extends AbstractExplorerTest {
         apage.checkJavadocLink(null);
         apage.checkRegistrationOrder(true);
         apage.checkXMLSource(false);
+    }
+
+    @Test
+    public void testJson() throws IOException {
+        // setup page load timeout of 3 mins as persisted export can take time (default: 1 min)
+        driver.manage().timeouts().pageLoadTimeout(180, TimeUnit.SECONDS);
+        checkJson(getDistribId(LIVE_NAME, liveVersion), false);
+        checkJson(SnapshotManager.DISTRIBUTION_ALIAS_LATEST, false);
     }
 
 }
