@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -430,9 +431,23 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     protected ObjectMapper getJsonMapper(boolean read, SnapshotFilter filter) {
         ObjectMapper mapper;
         if (read) {
-            mapper = JsonMapper.basic(null);
+            mapper = JsonMapper.basic(null, null);
         } else {
-            mapper = JsonMapper.persisted(filter);
+            SnapshotFilter refFilter = null;
+            if (filter != null && filter.getReferenceClass() != null) {
+                // resolve bundle selection to get reference filter
+                var selectedBundles = new ArrayList<NuxeoArtifact>();
+                getBundles().stream().filter(filter::accept).forEach(selectedBundles::add);
+                try {
+                    Constructor<? extends SnapshotFilter> constructor = filter.getReferenceClass()
+                                                                              .getConstructor(String.class, List.class);
+                    refFilter = constructor.newInstance(filter.getName() + SnapshotFilter.REFERENCE_FILTER_NAME_SUFFIX,
+                            selectedBundles);
+                } catch (ReflectiveOperationException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            mapper = JsonMapper.persisted(filter, refFilter);
         }
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         for (Plugin<?> plugin : Framework.getService(SnapshotManager.class).getPlugins()) {

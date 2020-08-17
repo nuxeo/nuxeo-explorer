@@ -85,7 +85,7 @@ public class JsonMapper {
         return mapper;
     }
 
-    protected static SimpleModule createModule(SnapshotFilter filter) {
+    protected static SimpleModule createModule(SnapshotFilter filter, SnapshotFilter refFilter) {
         if (filter == null) {
             return new SimpleModule();
         }
@@ -101,7 +101,7 @@ public class JsonMapper {
                     public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription desc,
                             JsonSerializer<?> serializer) {
                         if (NuxeoArtifact.class.isAssignableFrom(desc.getBeanClass())) {
-                            return new JsonSnapshotSerializer((JsonSerializer<Object>) serializer, filter);
+                            return new JsonSnapshotSerializer((JsonSerializer<Object>) serializer, filter, refFilter);
                         }
                         return serializer;
                     }
@@ -117,9 +117,9 @@ public class JsonMapper {
      *
      * @since 20.0.0
      */
-    public static ObjectMapper basic(SnapshotFilter filter) {
+    public static ObjectMapper basic(SnapshotFilter filter, SnapshotFilter refFilter) {
         final ObjectMapper mapper = createMapper();
-        SimpleModule module = createModule(filter);
+        SimpleModule module = createModule(filter, refFilter);
         module.addAbstractTypeMapping(DistributionSnapshot.class, RuntimeSnapshot.class)
               .addAbstractTypeMapping(BundleInfo.class, BundleInfoImpl.class)
               .addAbstractTypeMapping(BundleGroup.class, BundleGroupImpl.class)
@@ -201,9 +201,9 @@ public class JsonMapper {
      *
      * @since 20.0.0
      */
-    public static ObjectMapper persisted(SnapshotFilter filter) {
+    public static ObjectMapper persisted(SnapshotFilter filter, SnapshotFilter refFilter) {
         final ObjectMapper mapper = createMapper();
-        SimpleModule module = createModule(filter);
+        SimpleModule module = createModule(filter, refFilter);
         module.addAbstractTypeMapping(DistributionSnapshot.class, RepositoryDistributionSnapshot.class)
               .addAbstractTypeMapping(BundleInfo.class, BundleInfoDocAdapter.class)
               .addAbstractTypeMapping(BundleGroup.class, BundleGroupDocAdapter.class)

@@ -55,6 +55,7 @@ import org.nuxeo.apidoc.snapshot.JsonPrettyPrinter;
 import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
+import org.nuxeo.apidoc.snapshot.TargetExtensionPointSnapshotFilter;
 import org.nuxeo.connect.update.PackageException;
 import org.nuxeo.connect.update.PackageType;
 import org.nuxeo.ecm.core.api.Blob;
@@ -113,8 +114,8 @@ public class TestJson extends AbstractApidocTest {
         }
     }
 
-    protected SnapshotFilter getFilter() {
-        PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc") {
+    protected SnapshotFilter getFilter(Class<? extends SnapshotFilter> refFilter) {
+        PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc", refFilter) {
             @Override
             public boolean accept(NuxeoArtifact artifact) {
                 if (artifact instanceof OperationInfo) {
@@ -134,9 +135,20 @@ public class TestJson extends AbstractApidocTest {
         assertNotNull(snapshot);
 
         ByteArrayOutputStream sink = new ByteArrayOutputStream();
-        snapshot.writeJson(sink, getFilter(), new JsonPrettyPrinter());
+        snapshot.writeJson(sink, getFilter(null), new JsonPrettyPrinter());
 
         checkJsonContentEquals("test-export.json", sink.toString());
+    }
+
+    @Test
+    public void canWritePartialRef() throws IOException {
+        RuntimeSnapshot snapshot = RuntimeSnapshot.build();
+        assertNotNull(snapshot);
+
+        ByteArrayOutputStream sink = new ByteArrayOutputStream();
+        snapshot.writeJson(sink, getFilter(TargetExtensionPointSnapshotFilter.class), new JsonPrettyPrinter());
+
+        checkJsonContentEquals("test-export-ref.json", sink.toString());
     }
 
     @Test
@@ -145,9 +157,21 @@ public class TestJson extends AbstractApidocTest {
         assertNotNull(snapshot);
 
         ByteArrayOutputStream sink = new ByteArrayOutputStream();
-        snapshot.writeJson(sink, getFilter(), new JsonPrettyPrinter());
+        snapshot.writeJson(sink, getFilter(null), new JsonPrettyPrinter());
 
         checkJsonContentEquals("test-export.json", sink.toString());
+    }
+
+    @Test
+    public void canWritePartialRefPersisted() throws Exception {
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session);
+        assertNotNull(snapshot);
+
+        ByteArrayOutputStream sink = new ByteArrayOutputStream();
+        snapshot.writeJson(sink, getFilter(TargetExtensionPointSnapshotFilter.class), new JsonPrettyPrinter());
+
+        // ordering is different with persisted distribs --> use JSONAssert comparison instead
+        checkJsonAssertEquals("test-export-ref.json", sink.toString());
     }
 
     /**
