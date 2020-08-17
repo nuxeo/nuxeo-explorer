@@ -57,11 +57,13 @@ public class ITExplorerNoInitSiteModeTest extends AbstractExplorerTest {
         home.checkNoDistrib();
         openAndCheck(LiveSimplePage.URL, true);
         openAndCheck(String.format("%s%s/", ExplorerHomePage.URL, SnapshotManager.DISTRIBUTION_ALIAS_CURRENT), true);
+        checkJson(SnapshotManager.DISTRIBUTION_ALIAS_CURRENT, true);
         openAndCheck(String.format("%s%s/", ExplorerHomePage.URL, SnapshotManager.DISTRIBUTION_ALIAS_LATEST), true);
+        checkJson(SnapshotManager.DISTRIBUTION_ALIAS_LATEST, true);
         openAndCheck(String.format("%s%s/", ExplorerHomePage.URL, "foo-10.10"), true);
+        checkJson("foo-10.10", true);
         openAndCheck(String.format("%s%s/%s", ExplorerHomePage.URL, ApiBrowserConstants.LIST_COMPONENTS, "foo-10.10"),
                 true);
-        checkLiveJson(true);
     }
 
     @Test

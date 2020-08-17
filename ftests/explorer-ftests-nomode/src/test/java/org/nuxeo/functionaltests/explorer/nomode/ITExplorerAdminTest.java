@@ -43,6 +43,13 @@ import org.openqa.selenium.By;
  */
 public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
 
+    /**
+     * Helper method to ease up adaptations of child classes methods.
+     */
+    protected boolean isAdminTest() {
+        return true;
+    }
+
     @Before
     public void before() {
         doLogin();
@@ -74,16 +81,27 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         open(DistribAdminPage.URL);
         DistribAdminPage page = asPage(DistribAdminPage.class);
         page.check();
-        page.checkCanSave();
+        if (isAdminTest()) {
+            page.checkCanSave();
+        } else {
+            // since 20.0.0: cannot save anymore
+            page.checkCannotSave();
+        }
     }
 
     @Test
     public void testHomePageLiveDistrib() {
         ExplorerHomePage home = goHome();
         home.check();
-        home.checkCurrentDistrib();
-        UploadFragment.checkCanSee();
-        checkHomeLiveDistrib();
+        if (isAdminTest()) {
+            home.checkCurrentDistrib();
+            UploadFragment.checkCanSee();
+            checkHomeLiveDistrib();
+        } else {
+            // since 20.0.0: cannot see current live distrib anymore
+            home.checkNoCurrentDistrib();
+            UploadFragment.checkCanSee();
+        }
     }
 
     protected String checkLiveDistribExport(String distribName, boolean fullCheck) {
@@ -260,6 +278,11 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         open(DistribAdminPage.URL);
         asPage(DistribAdminPage.class).deleteFirstPersistedDistrib();
         asPage(DistribAdminPage.class).checkPersistedDistribNotPresent(distribId);
+    }
+
+    @Test
+    public void testJson() throws IOException {
+        checkJson(SnapshotManager.DISTRIBUTION_ALIAS_CURRENT, !isAdminTest());
     }
 
 }

@@ -24,8 +24,6 @@ import org.junit.Test;
 import org.nuxeo.apidoc.security.SecurityHelper;
 import org.nuxeo.functionaltests.RestHelper;
 import org.nuxeo.functionaltests.explorer.pages.DistribAdminPage;
-import org.nuxeo.functionaltests.explorer.pages.ExplorerHomePage;
-import org.nuxeo.functionaltests.explorer.pages.UploadFragment;
 
 /**
  * Tests features for {@link SecurityHelper#APIDOC_MANAGERS_GROUP} members.
@@ -33,6 +31,11 @@ import org.nuxeo.functionaltests.explorer.pages.UploadFragment;
  * @since 20.0.0
  */
 public class ITExplorerApidocManagerTest extends ITExplorerAdminTest {
+
+    @Override
+    protected boolean isAdminTest() {
+        return false;
+    }
 
     @Override
     @Before
@@ -54,28 +57,6 @@ public class ITExplorerApidocManagerTest extends ITExplorerAdminTest {
     @Override
     protected void doLogin() {
         getLoginPage().login(MANAGER_USERNAME, TEST_PASSWORD);
-    }
-
-    @Override
-    @Test
-    public void testDistribAdminPage() {
-        open(ExplorerHomePage.URL);
-        asPage(ExplorerHomePage.class).checkManageLink();
-        open(DistribAdminPage.URL);
-        DistribAdminPage page = asPage(DistribAdminPage.class);
-        page.check();
-        // since 20.0.0: cannot save anymore
-        page.checkCannotSave();
-    }
-
-    @Override
-    @Test
-    public void testHomePageLiveDistrib() {
-        ExplorerHomePage home = goHome();
-        home.check();
-        // since 20.0.0: cannot see current live distrib anymore
-        home.checkNoCurrentDistrib();
-        UploadFragment.checkCanSee();
     }
 
     @Test

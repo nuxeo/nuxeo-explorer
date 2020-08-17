@@ -346,14 +346,17 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         }
     }
 
-    protected void checkLiveJson(boolean check404) {
-        openAndCheck(String.format("%s%s/", ExplorerHomePage.URL, "json"), check404);
+    protected void checkJson(String distributionId, boolean check404) {
+        RestHelper.logOnServer("warn", String.format("Start json export for distribution '%s'", distributionId));
+        openAndCheck(String.format("%s%s/%s/", ExplorerHomePage.URL, distributionId, ApiBrowserConstants.JSON_ACTION),
+                check404);
         if (!check404) {
             String content = driver.findElementByTagName("pre").getText();
             assertNotNull(content);
             content = content.trim();
             assertTrue(content.startsWith("{") && content.endsWith("}"));
         }
+        RestHelper.logOnServer("warn", String.format("End json export for distribution '%s'", distributionId));
     }
 
     protected String previousWindowHandle;
