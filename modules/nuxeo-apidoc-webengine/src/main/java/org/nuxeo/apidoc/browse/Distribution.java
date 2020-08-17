@@ -364,9 +364,10 @@ public class Distribution extends ModuleRoot {
         String bundleList = formData.getString("bundles");
         String javaPkgList = formData.getString("javaPackages");
         String nxPkgList = formData.getString("nxPackages");
+        boolean checkAsPrefixes = "on".equals(formData.getString("checkAsPrefixes"));
         boolean includeReferences = "on".equals(formData.getString("includeReferences"));
 
-        PersistSnapshotFilter filter = new PersistSnapshotFilter(distribLabel, true,
+        PersistSnapshotFilter filter = new PersistSnapshotFilter(distribLabel, checkAsPrefixes,
                 includeReferences ? TargetExtensionPointSnapshotFilter.class : null);
 
         if (bundleList != null) {
