@@ -30,7 +30,6 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -269,15 +268,10 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
 
     @Override
     public List<String> getServiceIds() {
-        String query = QueryHelper.select(ComponentInfo.TYPE_NAME, doc);
-        DocumentModelList components = getCoreSession().query(query);
-        return components.stream()
-                         .map(doc -> doc.getAdapter(ComponentInfo.class))
-                         .filter(Objects::nonNull)
-                         .map(ComponentInfo::getServiceNames)
-                         .flatMap(Collection::stream)
-                         .sorted()
-                         .collect(Collectors.toList());
+        return getChildren(ServiceInfo.class, ServiceInfo.TYPE_NAME).stream()
+                                                                    .map(NuxeoArtifact::getId)
+                                                                    .sorted()
+                                                                    .collect(Collectors.toList());
     }
 
     @Override

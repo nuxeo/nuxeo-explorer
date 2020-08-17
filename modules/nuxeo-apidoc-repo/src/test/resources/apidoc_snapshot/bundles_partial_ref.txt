@@ -1,2 +1,7 @@
 NXBundle: org.nuxeo.apidoc.core *** /apidoc/org.nuxeo.apidoc.core
 NXBundle: org.nuxeo.apidoc.repo *** /apidoc/org.nuxeo.apidoc.repo
+NXBundle: org.nuxeo.ecm.core *** /apidoc-references/org.nuxeo.ecm.core *** [org.nuxeo.ecm.core.api, org.nuxeo.ecm.core.event]
+NXBundle: org.nuxeo.ecm.core.api *** /apidoc-references/org.nuxeo.ecm.core.api
+NXBundle: org.nuxeo.ecm.core.event *** /apidoc-references/org.nuxeo.ecm.core.event
+NXBundle: org.nuxeo.ecm.core.schema *** /apidoc-references/org.nuxeo.ecm.core.schema
+NXBundle: org.nuxeo.runtime *** /apidoc-references/org.nuxeo.runtime

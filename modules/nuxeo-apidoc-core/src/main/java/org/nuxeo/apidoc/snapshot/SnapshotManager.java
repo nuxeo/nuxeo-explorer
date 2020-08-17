@@ -154,7 +154,7 @@ public interface SnapshotManager {
      *             {@link SecurityHelper#canSnapshotLiveDistribution(org.nuxeo.ecm.core.api.NuxeoPrincipal)}
      */
     DistributionSnapshot persistRuntimeSnapshot(CoreSession session, String name, Map<String, Serializable> properties,
-            PersistSnapshotFilter filter);
+            SnapshotFilter filter);
 
     void validateImportedSnapshot(CoreSession session, String name, String version, String pathSegment, String title);
 

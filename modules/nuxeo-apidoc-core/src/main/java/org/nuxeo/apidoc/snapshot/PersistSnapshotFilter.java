@@ -23,9 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nuxeo.apidoc.api.BundleInfo;
+import org.nuxeo.apidoc.api.ComponentInfo;
+import org.nuxeo.apidoc.api.ExtensionInfo;
+import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
+import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
-import org.nuxeo.apidoc.introspection.OperationInfoImpl;
+import org.nuxeo.apidoc.api.ServiceInfo;
 
 /**
  * Filter for persistence of a live runtime snapshot.
@@ -36,14 +40,21 @@ public class PersistSnapshotFilter implements SnapshotFilter {
 
     protected final String bundleGroupName;
 
+    protected final Class<? extends SnapshotFilter> referenceClass;
+
     protected final List<String> bundlePrefixes = new ArrayList<>();
 
     protected final List<String> javaPackagePrefixes = new ArrayList<>();
 
     protected final List<String> nxpackagePrefixes = new ArrayList<>();
 
-    public PersistSnapshotFilter(String groupName) {
-        bundleGroupName = groupName;
+    public PersistSnapshotFilter(String bundleGroupName) {
+        this(bundleGroupName, null);
+    }
+
+    public PersistSnapshotFilter(String bundleGroupName, Class<? extends SnapshotFilter> referenceClass) {
+        this.bundleGroupName = bundleGroupName;
+        this.referenceClass = referenceClass;
     }
 
     @Override
@@ -56,13 +67,30 @@ public class PersistSnapshotFilter implements SnapshotFilter {
         if (artifact instanceof BundleInfo) {
             return includeBundle((BundleInfo) artifact);
         }
-        if (artifact instanceof OperationInfoImpl) {
-            return includeOperation((OperationInfoImpl) artifact);
+        if (artifact instanceof ComponentInfo) {
+            return includeComponent((ComponentInfo) artifact);
+        }
+        if (artifact instanceof ServiceInfo) {
+            return includeComponent(((ServiceInfo) artifact).getComponent());
+        }
+        if (artifact instanceof ExtensionPointInfo) {
+            return includeComponent(((ExtensionPointInfo) artifact).getComponent());
+        }
+        if (artifact instanceof ExtensionInfo) {
+            return includeComponent(((ExtensionInfo) artifact).getComponent());
+        }
+        if (artifact instanceof OperationInfo) {
+            return includeOperation((OperationInfo) artifact);
         }
         if (artifact instanceof PackageInfo) {
             return includePackage((PackageInfo) artifact);
         }
         return true;
+    }
+
+    @Override
+    public Class<? extends SnapshotFilter> getReferenceClass() {
+        return referenceClass;
     }
 
     public String getBundleGroupName() {
@@ -110,12 +138,19 @@ public class PersistSnapshotFilter implements SnapshotFilter {
         return false;
     }
 
+    protected boolean includeComponent(ComponentInfo component) {
+        if (includeBundle(component.getBundle())) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * @implNote checks the operation class against package prefixes. Note some operations are actually not classes, so
      *           it could be possible to filter on contributing component, retrieving its bundle, and checking bundle
      *           prefixes too... (not done).
      */
-    protected boolean includeOperation(OperationInfoImpl op) {
+    protected boolean includeOperation(OperationInfo op) {
         for (String pprefix : javaPackagePrefixes) {
             if (op.getOperationClass().startsWith(pprefix)) {
                 return true;

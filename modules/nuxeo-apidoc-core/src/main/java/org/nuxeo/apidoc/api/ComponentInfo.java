@@ -20,7 +20,6 @@
  */
 package org.nuxeo.apidoc.api;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
@@ -86,7 +85,7 @@ public interface ComponentInfo extends NuxeoArtifact {
 
     String getXmlFileName();
 
-    String getXmlFileContent() throws IOException;
+    String getXmlFileContent();
 
     /**
      * Returns the requirements set in the component declaration.
