@@ -81,16 +81,16 @@
                 <td><input type="date" name="released" /></td>
               </tr>
               <tr>
-                <td class="nowrap">Bundle prefixes</td>
+                <td class="nowrap">Bundles</td>
                 <td><textarea rows="4" cols="30" name="bundles"></textarea></td>
               </tr>
               <tr>
-                <td class="nowrap">JAVA Packages prefixes</td>
-                <td><textarea rows="4" cols="30" name="javaPackages"></textarea></td>
+                <td class="nowrap">Nuxeo Packages</td>
+                <td><textarea rows="4" cols="30" name="nxPackages"></textarea></td>
               </tr>
               <tr>
-                <td class="nowrap">Nuxeo Packages prefixes</td>
-                <td><textarea rows="4" cols="30" name="nxPackages"></textarea></td>
+                <td class="nowrap">JAVA Packages Prefixes</td>
+                <td><textarea rows="4" cols="30" name="javaPackages"></textarea></td>
               </tr>
               <tr>
                 <td class="nowrap">Version</td>

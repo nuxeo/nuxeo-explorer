@@ -82,7 +82,7 @@ public class TestGraphExport extends AbstractApidocTest {
         assertNotNull(snapshot);
 
         PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc");
-        filter.addNuxeoPackagePrefix(MOCK_PACKAGE_NAME);
+        filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
 
         Exporter exporter = snapshotManager.getExporter("jsonGraph");
         Export export = exporter.getExport(snapshot, filter, Map.of("pretty", "true"));

@@ -115,7 +115,7 @@ public class TestJson extends AbstractApidocTest {
     }
 
     protected SnapshotFilter getFilter(Class<? extends SnapshotFilter> refFilter) {
-        PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc", refFilter) {
+        PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc", false, refFilter) {
             @Override
             public boolean accept(NuxeoArtifact artifact) {
                 if (artifact instanceof OperationInfo) {
@@ -125,7 +125,7 @@ public class TestJson extends AbstractApidocTest {
                 return super.accept(artifact);
             };
         };
-        filter.addNuxeoPackagePrefix(MOCK_PACKAGE_NAME);
+        filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
         return filter;
     }
 

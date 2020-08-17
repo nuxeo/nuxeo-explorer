@@ -38,28 +38,36 @@ import org.nuxeo.apidoc.api.ServiceInfo;
  */
 public class PersistSnapshotFilter implements SnapshotFilter {
 
-    protected final String bundleGroupName;
+    protected final String name;
 
     protected final Class<? extends SnapshotFilter> referenceClass;
 
-    protected final List<String> bundlePrefixes = new ArrayList<>();
+    protected final boolean checkAsPrefixes;
+
+    protected final List<String> bundles = new ArrayList<>();
+
+    protected final List<String> nxpackages = new ArrayList<>();
 
     protected final List<String> javaPackagePrefixes = new ArrayList<>();
 
-    protected final List<String> nxpackagePrefixes = new ArrayList<>();
-
     public PersistSnapshotFilter(String bundleGroupName) {
-        this(bundleGroupName, null);
+        this(bundleGroupName, true);
     }
 
-    public PersistSnapshotFilter(String bundleGroupName, Class<? extends SnapshotFilter> referenceClass) {
-        this.bundleGroupName = bundleGroupName;
+    public PersistSnapshotFilter(String bundleGroupName, boolean checkAsPrefixes) {
+        this(bundleGroupName, checkAsPrefixes, null);
+    }
+
+    public PersistSnapshotFilter(String bundleGroupName, boolean checkAsPrefixes,
+            Class<? extends SnapshotFilter> referenceClass) {
+        this.name = bundleGroupName;
+        this.checkAsPrefixes = checkAsPrefixes;
         this.referenceClass = referenceClass;
     }
 
     @Override
     public String getName() {
-        return getBundleGroupName();
+        return name;
     }
 
     @Override
@@ -93,45 +101,32 @@ public class PersistSnapshotFilter implements SnapshotFilter {
         return referenceClass;
     }
 
-    public String getBundleGroupName() {
-        return bundleGroupName;
+    public void addBundle(String bundlePrefix) {
+        bundles.add(bundlePrefix);
     }
 
-    public List<String> getBundlePrefixes() {
-        return bundlePrefixes;
-    }
-
-    public void addBundlePrefix(String bundlePrefix) {
-        bundlePrefixes.add(bundlePrefix);
-    }
-
-    public List<String> getPackagesPrefixes() {
-        return javaPackagePrefixes;
+    public void addNuxeoPackage(String nuxeoPackage) {
+        nxpackages.add(nuxeoPackage);
     }
 
     public void addPackagesPrefix(String packagesPrefix) {
         javaPackagePrefixes.add(packagesPrefix);
     }
 
-    /** @since 11.1 */
-    public List<String> getNuxeoPackagesPrefixes() {
-        return nxpackagePrefixes;
-    }
-
-    /** @since 11.1 */
-    public void addNuxeoPackagePrefix(String packagePrefix) {
-        nxpackagePrefixes.add(packagePrefix);
+    protected boolean check(String candidate, String selection) {
+        return (checkAsPrefixes && candidate.startsWith(selection))
+                || (!checkAsPrefixes && candidate.equals(selection));
     }
 
     protected boolean includeBundle(BundleInfo bundle, boolean checkOps) {
         String bundleId = bundle.getId();
-        for (String bprefix : bundlePrefixes) {
-            if (bundleId.startsWith(bprefix)) {
+        for (String sb : bundles) {
+            if (check(bundleId, sb)) {
                 return true;
             }
         }
-        for (String pprefix : nxpackagePrefixes) {
-            if (bundle.getPackages().stream().anyMatch(s -> s.startsWith(pprefix))) {
+        for (String sp : nxpackages) {
+            if (bundle.getPackages().stream().anyMatch(s -> check(s, sp))) {
                 return true;
             }
         }
@@ -181,14 +176,14 @@ public class PersistSnapshotFilter implements SnapshotFilter {
      * @since 11.1
      */
     protected boolean includePackage(PackageInfo pkg) {
-        for (String pprefix : nxpackagePrefixes) {
-            if (pkg.getId().startsWith(pprefix)) {
+        for (String sp : nxpackages) {
+            if (check(pkg.getName(), sp)) {
                 return true;
             }
         }
         for (String bundle : pkg.getBundles()) {
-            for (String bprefix : bundlePrefixes) {
-                if (bundle.startsWith(bprefix)) {
+            for (String sb : bundles) {
+                if (check(bundle, sb)) {
                     return true;
                 }
             }
