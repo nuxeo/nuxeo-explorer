@@ -40,7 +40,9 @@ import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.apidoc.snapshot.TargetExtensionPointSnapshotFilter;
 import org.nuxeo.connect.update.PackageException;
 import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.runtime.test.runner.Deploy;
 
+@Deploy("org.nuxeo.apidoc.repo:apidoc-automation-test-contrib.xml")
 public class TestSnapshotFilter extends AbstractApidocTest {
 
     @Inject
@@ -67,14 +69,17 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                 snapshot.getBundleGroup(filterName).getBundleIds());
         if (isRef) {
             assertEquals(
-                    List.of("org.nuxeo.ecm.core", "org.nuxeo.ecm.core.api", "org.nuxeo.ecm.core.event",
-                            "org.nuxeo.ecm.core.schema", "org.nuxeo.runtime"),
+                    List.of("org.nuxeo.ecm.automation.core", "org.nuxeo.ecm.automation.scripting", "org.nuxeo.ecm.core",
+                            "org.nuxeo.ecm.core.api", "org.nuxeo.ecm.core.event", "org.nuxeo.ecm.core.schema",
+                            "org.nuxeo.runtime"),
                     snapshot.getBundleGroup(filterName + SnapshotFilter.REFERENCE_FILTER_NAME_SUFFIX).getBundleIds());
         }
         if (isRef) {
-            assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo", "org.nuxeo.ecm.core",
-                    "org.nuxeo.ecm.core.api", "org.nuxeo.ecm.core.event", "org.nuxeo.ecm.core.schema",
-                    "org.nuxeo.runtime"), snapshot.getBundleIds());
+            assertEquals(
+                    List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo", "org.nuxeo.ecm.automation.core",
+                            "org.nuxeo.ecm.automation.scripting", "org.nuxeo.ecm.core", "org.nuxeo.ecm.core.api",
+                            "org.nuxeo.ecm.core.event", "org.nuxeo.ecm.core.schema", "org.nuxeo.runtime"),
+                    snapshot.getBundleIds());
         } else {
             assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"), snapshot.getBundleIds());
         }
@@ -84,17 +89,21 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                     "org.nuxeo.apidoc.adapterContrib", "org.nuxeo.apidoc.doctypeContrib",
                     "org.nuxeo.apidoc.lifecycle.contrib", "org.nuxeo.apidoc.listener.contrib",
                     "org.nuxeo.apidoc.schemaContrib", "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
-                    "org.nuxeo.apidoc.test.works",
+                    "org.nuxeo.apidoc.test.automation", "org.nuxeo.apidoc.test.works",
                     // referenced components
+                    "org.nuxeo.automation.scripting.internals.AutomationScriptingComponent",
                     "org.nuxeo.ecm.core.api.DocumentAdapterService", "org.nuxeo.ecm.core.event.EventServiceComponent",
-                    "org.nuxeo.ecm.core.lifecycle.LifeCycleService", "org.nuxeo.ecm.core.schema.TypeService",
+                    "org.nuxeo.ecm.core.lifecycle.LifeCycleService",
+                    "org.nuxeo.ecm.core.operation.OperationServiceComponent", "org.nuxeo.ecm.core.schema.TypeService",
                     "org.nuxeo.ecm.core.work.service", "org.nuxeo.runtime.ConfigurationService"),
                     snapshot.getComponentIds());
         } else {
-            assertEquals(List.of("org.nuxeo.apidoc.adapterContrib", "org.nuxeo.apidoc.doctypeContrib",
-                    "org.nuxeo.apidoc.lifecycle.contrib", "org.nuxeo.apidoc.listener.contrib",
-                    "org.nuxeo.apidoc.schemaContrib", "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
-                    "org.nuxeo.apidoc.test.works"), snapshot.getComponentIds());
+            assertEquals(
+                    List.of("org.nuxeo.apidoc.adapterContrib", "org.nuxeo.apidoc.doctypeContrib",
+                            "org.nuxeo.apidoc.lifecycle.contrib", "org.nuxeo.apidoc.listener.contrib",
+                            "org.nuxeo.apidoc.schemaContrib", "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+                            "org.nuxeo.apidoc.test.automation", "org.nuxeo.apidoc.test.works"),
+                    snapshot.getComponentIds());
         }
         assertEquals(List.of("org.nuxeo.apidoc.search.ArtifactSearcher", "org.nuxeo.apidoc.snapshot.SnapshotManager"),
                 snapshot.getServiceIds());
@@ -104,9 +113,12 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                     "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
                     "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins",
                     // referenced extension points
+                    "org.nuxeo.automation.scripting.internals.AutomationScriptingComponent--operation",
                     "org.nuxeo.ecm.core.api.DocumentAdapterService--adapters",
                     "org.nuxeo.ecm.core.event.EventServiceComponent--listener",
                     "org.nuxeo.ecm.core.lifecycle.LifeCycleService--types",
+                    "org.nuxeo.ecm.core.operation.OperationServiceComponent--chains",
+                    "org.nuxeo.ecm.core.operation.OperationServiceComponent--operations",
                     "org.nuxeo.ecm.core.schema.TypeService--doctype", "org.nuxeo.ecm.core.schema.TypeService--schema",
                     "org.nuxeo.ecm.core.work.service--queues", "org.nuxeo.runtime.ConfigurationService--configuration"),
                     snapshot.getExtensionPointIds());
@@ -116,18 +128,19 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                             "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins"),
                     snapshot.getExtensionPointIds());
         }
-        assertEquals(
-                List.of("org.nuxeo.apidoc.adapterContrib--adapters", "org.nuxeo.apidoc.doctypeContrib--doctype",
-                        "org.nuxeo.apidoc.lifecycle.contrib--types", "org.nuxeo.apidoc.listener.contrib--listener",
-                        "org.nuxeo.apidoc.schemaContrib--schema",
-                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration",
-                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
-                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
-                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3",
-                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
-                        "org.nuxeo.apidoc.test.works--queues", "org.nuxeo.apidoc.test.works--queues1"),
-                snapshot.getContributionIds());
-        assertEquals(0, snapshot.getOperations().size());
+        assertEquals(List.of("org.nuxeo.apidoc.adapterContrib--adapters", "org.nuxeo.apidoc.doctypeContrib--doctype",
+                "org.nuxeo.apidoc.lifecycle.contrib--types", "org.nuxeo.apidoc.listener.contrib--listener",
+                "org.nuxeo.apidoc.schemaContrib--schema",
+                "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration",
+                "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
+                "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
+                "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3",
+                "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+                "org.nuxeo.apidoc.test.automation--chains", "org.nuxeo.apidoc.test.automation--operation",
+                "org.nuxeo.apidoc.test.automation--operations", "org.nuxeo.apidoc.test.works--queues",
+                "org.nuxeo.apidoc.test.works--queues1"), snapshot.getContributionIds());
+        assertEquals(List.of("Document.Create", "Scripting.HelloWorld", "createDoc"),
+                snapshot.getOperations().stream().map(OperationInfo::getName).collect(Collectors.toList()));
         assertEquals(List.of(MOCK_PACKAGE_ID),
                 snapshot.getPackages().stream().map(PackageInfo::getId).collect(Collectors.toList()));
     }
@@ -185,11 +198,14 @@ public class TestSnapshotFilter extends AbstractApidocTest {
 
         assertEquals(List.of("apidoc-java"),
                 snapshot.getBundleGroups().stream().map(BundleGroup::getId).collect(Collectors.toList()));
-        assertEquals(0, snapshot.getBundleIds().size());
-        assertEquals(0, snapshot.getComponentIds().size());
+        assertEquals(List.of("org.nuxeo.ecm.automation.features"), snapshot.getBundleIds());
+        assertEquals(List.of("org.nuxeo.ecm.core.automation.features.operations"), snapshot.getComponentIds());
         assertEquals(0, snapshot.getServiceIds().size());
         assertEquals(0, snapshot.getExtensionPointIds().size());
-        assertEquals(0, snapshot.getContributionIds().size());
+        assertEquals(
+                List.of("org.nuxeo.ecm.core.automation.features.operations--chains",
+                        "org.nuxeo.ecm.core.automation.features.operations--operations"),
+                snapshot.getContributionIds());
         assertEquals(List.of("Repository.Query", "Repository.ResultSetQuery", "WorkManager.RunWorkInFailure"),
                 snapshot.getOperations().stream().map(OperationInfo::getName).collect(Collectors.toList()));
         assertEquals(0, snapshot.getPackages().size());

@@ -108,4 +108,8 @@ public interface ComponentInfo extends NuxeoArtifact {
      */
     void setRegistrationOrder(Long order);
 
+    /** @since 20.0.0 */
+    @JsonIgnore
+    List<OperationInfo> getOperations();
+
 }

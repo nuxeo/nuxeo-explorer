@@ -65,22 +65,22 @@ public class PersistSnapshotFilter implements SnapshotFilter {
     @Override
     public boolean accept(NuxeoArtifact artifact) {
         if (artifact instanceof BundleInfo) {
-            return includeBundle((BundleInfo) artifact);
+            return includeBundle((BundleInfo) artifact, true);
         }
         if (artifact instanceof ComponentInfo) {
-            return includeComponent((ComponentInfo) artifact);
+            return includeComponent((ComponentInfo) artifact, true);
         }
         if (artifact instanceof ServiceInfo) {
-            return includeComponent(((ServiceInfo) artifact).getComponent());
+            return includeComponent(((ServiceInfo) artifact).getComponent(), false);
         }
         if (artifact instanceof ExtensionPointInfo) {
-            return includeComponent(((ExtensionPointInfo) artifact).getComponent());
+            return includeComponent(((ExtensionPointInfo) artifact).getComponent(), false);
         }
         if (artifact instanceof ExtensionInfo) {
-            return includeComponent(((ExtensionInfo) artifact).getComponent());
+            return includeComponent(((ExtensionInfo) artifact).getComponent(), true);
         }
         if (artifact instanceof OperationInfo) {
-            return includeOperation((OperationInfo) artifact);
+            return includeOperation((OperationInfo) artifact, true);
         }
         if (artifact instanceof PackageInfo) {
             return includePackage((PackageInfo) artifact);
@@ -123,7 +123,7 @@ public class PersistSnapshotFilter implements SnapshotFilter {
         nxpackagePrefixes.add(packagePrefix);
     }
 
-    protected boolean includeBundle(BundleInfo bundle) {
+    protected boolean includeBundle(BundleInfo bundle, boolean checkOps) {
         String bundleId = bundle.getId();
         for (String bprefix : bundlePrefixes) {
             if (bundleId.startsWith(bprefix)) {
@@ -135,12 +135,21 @@ public class PersistSnapshotFilter implements SnapshotFilter {
                 return true;
             }
         }
+        if (checkOps) {
+            return bundle.getComponents()
+                         .stream()
+                         .flatMap(c -> c.getOperations().stream())
+                         .anyMatch(op -> includeOperation(op, false));
+        }
         return false;
     }
 
-    protected boolean includeComponent(ComponentInfo component) {
-        if (includeBundle(component.getBundle())) {
+    protected boolean includeComponent(ComponentInfo component, boolean checkOps) {
+        if (includeBundle(component.getBundle(), false)) {
             return true;
+        }
+        if (checkOps) {
+            return component.getOperations().stream().anyMatch(op -> includeOperation(op, false));
         }
         return false;
     }
@@ -150,10 +159,16 @@ public class PersistSnapshotFilter implements SnapshotFilter {
      *           it could be possible to filter on contributing component, retrieving its bundle, and checking bundle
      *           prefixes too... (not done).
      */
-    protected boolean includeOperation(OperationInfo op) {
+    protected boolean includeOperation(OperationInfo op, boolean checkComponents) {
         for (String pprefix : javaPackagePrefixes) {
             if (op.getOperationClass().startsWith(pprefix)) {
                 return true;
+            }
+        }
+        if (checkComponents) {
+            ComponentInfo comp = op.getComponent();
+            if (comp != null) {
+                return includeComponent(comp, false);
             }
         }
         return false;
