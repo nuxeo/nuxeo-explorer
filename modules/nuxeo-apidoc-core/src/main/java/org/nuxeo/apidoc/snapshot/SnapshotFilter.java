@@ -29,8 +29,28 @@ import org.nuxeo.apidoc.api.NuxeoArtifact;
  */
 public interface SnapshotFilter {
 
+    public static final String REFERENCE_FILTER_NAME_SUFFIX = "-references";
+
+    /**
+     * Returns the filter name.
+     * <p>
+     * Can be used to create a dedicated bundle group for bundles filtering.
+     */
     String getName();
 
+    /**
+     * Returns true if given artifact should be included, false if it should be filtered out.
+     */
     boolean accept(NuxeoArtifact artifact);
+
+    /**
+     * Returns the filter class used to perform references retrieval.
+     * <p>
+     * Can return null, in which can no references should be retrieved.
+     * <p>
+     * Should return a class with a constructor accepting a String name and a list of previously selected Nuxeo
+     * artifacts, see for instance @link {@link TargetExtensionPointSnapshotFilter}.
+     */
+    Class<? extends SnapshotFilter> getReferenceClass();
 
 }

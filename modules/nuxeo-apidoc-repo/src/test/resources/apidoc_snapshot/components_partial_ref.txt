@@ -5,3 +5,9 @@ NXComponent: org.nuxeo.apidoc.listener.contrib *** /apidoc/org.nuxeo.apidoc.repo
 NXComponent: org.nuxeo.apidoc.schemaContrib *** /apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.schemaContrib *** [org.nuxeo.ecm.core.CoreExtensions]
 NXComponent: org.nuxeo.apidoc.snapshot.SnapshotManagerComponent *** /apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent
 NXComponent: org.nuxeo.apidoc.test.works *** /apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.test.works
+NXComponent: org.nuxeo.ecm.core.api.DocumentAdapterService *** /apidoc-references/org.nuxeo.ecm.core.api/org.nuxeo.ecm.core.api.DocumentAdapterService
+NXComponent: org.nuxeo.ecm.core.event.EventServiceComponent *** /apidoc-references/org.nuxeo.ecm.core.event/org.nuxeo.ecm.core.event.EventServiceComponent
+NXComponent: org.nuxeo.ecm.core.lifecycle.LifeCycleService *** /apidoc-references/org.nuxeo.ecm.core/org.nuxeo.ecm.core.lifecycle.LifeCycleService
+NXComponent: org.nuxeo.ecm.core.schema.TypeService *** /apidoc-references/org.nuxeo.ecm.core.schema/org.nuxeo.ecm.core.schema.TypeService *** [org.nuxeo.ecm.core.schema.ObjectResolverService]
+NXComponent: org.nuxeo.ecm.core.work.service *** /apidoc-references/org.nuxeo.ecm.core.event/org.nuxeo.ecm.core.work.service
+NXComponent: org.nuxeo.runtime.ConfigurationService *** /apidoc-references/org.nuxeo.runtime/org.nuxeo.runtime.ConfigurationService

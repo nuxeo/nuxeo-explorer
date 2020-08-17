@@ -19,8 +19,9 @@
  */
 package org.nuxeo.apidoc.repository;
 
-import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,12 +50,11 @@ import org.nuxeo.apidoc.introspection.BundleGroupImpl;
 import org.nuxeo.apidoc.plugin.Plugin;
 import org.nuxeo.apidoc.security.SecurityHelper;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
-import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
+import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.ecm.core.api.CoreInstance;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
-import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.security.ACE;
 import org.nuxeo.ecm.core.api.security.ACL;
@@ -123,9 +123,10 @@ public class SnapshotPersister {
     }
 
     public DistributionSnapshot persist(DistributionSnapshot snapshot, CoreSession session, String label,
-            PersistSnapshotFilter filter, Map<String, Serializable> properties, List<Plugin<?>> plugins) {
+            SnapshotFilter filter, Map<String, Serializable> properties, List<Plugin<?>> plugins) {
 
-        RepositoryDistributionSnapshot distribContainer = createDistributionDoc(snapshot, session, label, properties);
+        RepositoryDistributionSnapshot distribContainer = RepositoryDistributionSnapshot.create(snapshot, session,
+                getDistributionRoot(session).getPathAsString(), label, properties);
 
         if (filter == null) {
             // If no filter, clean old entries
@@ -138,16 +139,41 @@ public class SnapshotPersister {
             // create VGroup that contains only the target bundles
             BundleGroupImpl vGroup = new BundleGroupImpl(filter.getName());
             vGroup.setVersion(snapshot.getVersion());
+            var selectedBundles = new ArrayList<NuxeoArtifact>();
             for (BundleInfo bundle : snapshot.getBundles()) {
                 if (filter.accept(bundle)) {
+                    selectedBundles.add(bundle);
                     vGroup.add(bundle.getId());
                 }
             }
-            persistBundleGroup(snapshot, vGroup, session, label + "-bundles", bundleContainer);
+
+            persistBundleGroup(snapshot, filter, vGroup, session, label + "-bundles", bundleContainer);
+
+            Class<? extends SnapshotFilter> refClass = filter.getReferenceClass();
+            if (refClass != null) {
+                try {
+                    String refFilterName = filter.getName() + SnapshotFilter.REFERENCE_FILTER_NAME_SUFFIX;
+                    Constructor<? extends SnapshotFilter> constructor = refClass.getConstructor(String.class,
+                            List.class);
+                    SnapshotFilter refFilter = constructor.newInstance(refFilterName, selectedBundles);
+                    // create VGroup that contains only the reference bundles
+                    BundleGroupImpl reference = new BundleGroupImpl(refFilterName);
+                    reference.setVersion(snapshot.getVersion());
+                    snapshot.getBundles()
+                            .stream()
+                            .filter(refFilter::accept)
+                            .map(BundleInfo::getId)
+                            .forEach(reference::add);
+                    persistBundleGroup(snapshot, refFilter, reference, session, refFilterName, bundleContainer);
+                } catch (ReflectiveOperationException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
         } else {
             List<BundleGroup> bundleGroups = snapshot.getBundleGroups();
             for (BundleGroup bundleGroup : bundleGroups) {
-                persistBundleGroup(snapshot, bundleGroup, session, label, bundleContainer);
+                persistBundleGroup(snapshot, null, bundleGroup, session, label, bundleContainer);
             }
         }
 
@@ -168,113 +194,77 @@ public class SnapshotPersister {
         return distribContainer;
     }
 
-    public void persistOperations(DistributionSnapshot snapshot, List<OperationInfo> operations, CoreSession session,
-            String label, DocumentModel parent, PersistSnapshotFilter filter) {
-        for (OperationInfo op : operations) {
-            if (filter == null || filter.accept(op)) {
-                persistOperation(snapshot, op, session, label, parent);
+    protected void persistBundleGroup(DistributionSnapshot snapshot, SnapshotFilter filter, BundleGroup bundleGroup,
+            CoreSession session, String label, DocumentModel parent) {
+        if (log.isTraceEnabled()) {
+            log.trace("Persist bundle group " + bundleGroup.getId());
+        }
+        DocumentModel bundleGroupDoc = BundleGroupDocAdapter.create(bundleGroup, session, parent.getPathAsString())
+                                                            .getDoc();
+
+        for (String bundleId : bundleGroup.getBundleIds()) {
+            persistBundle(snapshot, filter, snapshot.getBundle(bundleId), session, label, bundleGroupDoc);
+        }
+
+        for (BundleGroup subGroup : bundleGroup.getSubGroups()) {
+            persistBundleGroup(snapshot, filter, subGroup, session, label, bundleGroupDoc);
+        }
+    }
+
+    protected void persistBundle(DistributionSnapshot snapshot, SnapshotFilter filter, BundleInfo bundleInfo,
+            CoreSession session, String label, DocumentModel parent) {
+        if (log.isTraceEnabled()) {
+            log.trace("Persist bundle " + bundleInfo.getId());
+        }
+        DocumentModel bundleDoc = BundleInfoDocAdapter.create(bundleInfo, session, parent.getPathAsString()).getDoc();
+
+        for (ComponentInfo ci : bundleInfo.getComponents()) {
+            if (filter == null || filter.accept(ci)) {
+                persistComponent(snapshot, filter, ci, session, label, bundleDoc);
             }
         }
     }
 
-    public void persistOperation(DistributionSnapshot snapshot, OperationInfo op, CoreSession session, String label,
-            DocumentModel parent) {
-        OperationInfoDocAdapter.create(op, session, parent.getPathAsString());
-    }
+    protected void persistComponent(DistributionSnapshot snapshot, SnapshotFilter filter, ComponentInfo ci,
+            CoreSession session, String label, DocumentModel parent) {
 
-    public void persistBundleGroup(DistributionSnapshot snapshot, BundleGroup bundleGroup, CoreSession session,
-            String label, DocumentModel parent) {
-        if (log.isTraceEnabled()) {
-            log.trace("Persist bundle group " + bundleGroup.getId());
-        }
-
-        DocumentModel bundleGroupDoc = createBundleGroupDoc(bundleGroup, session, label, parent);
-
-        for (String bundleId : bundleGroup.getBundleIds()) {
-            BundleInfo bi = snapshot.getBundle(bundleId);
-            persistBundle(snapshot, bi, session, label, bundleGroupDoc);
-        }
-
-        for (BundleGroup subGroup : bundleGroup.getSubGroups()) {
-            persistBundleGroup(snapshot, subGroup, session, label, bundleGroupDoc);
-        }
-    }
-
-    public void persistBundle(DistributionSnapshot snapshot, BundleInfo bundleInfo, CoreSession session, String label,
-            DocumentModel parent) {
-        if (log.isTraceEnabled()) {
-            log.trace("Persist bundle " + bundleInfo.getId());
-        }
-        DocumentModel bundleDoc = createBundleDoc(snapshot, session, label, bundleInfo, parent);
-
-        for (ComponentInfo ci : bundleInfo.getComponents()) {
-            persistComponent(snapshot, ci, session, label, bundleDoc);
-        }
-    }
-
-    public void persistComponent(DistributionSnapshot snapshot, ComponentInfo ci, CoreSession session, String label,
-            DocumentModel parent) {
-
-        DocumentModel componentDoc = createComponentDoc(snapshot, session, label, ci, parent);
+        DocumentModel componentDoc = ComponentInfoDocAdapter.create(ci, session, parent.getPathAsString()).getDoc();
+        String componentDocPath = componentDoc.getPathAsString();
 
         for (ExtensionPointInfo epi : ci.getExtensionPoints()) {
-            createExtensionPointDoc(snapshot, session, label, epi, componentDoc);
-        }
-        Map<String, AtomicInteger> comps = new HashMap<>();
-        for (ExtensionInfo ei : ci.getExtensions()) {
-            // handle multiple contributions to the same extension point
-            String id = ei.getId();
-            comps.computeIfAbsent(id, k -> new AtomicInteger(-1)).incrementAndGet();
-            createContributionDoc(snapshot, session, label, ei, comps.get(id).get(), componentDoc);
+            if (filter == null || filter.accept(epi)) {
+                ExtensionPointInfoDocAdapter.create(epi, session, componentDocPath);
+            }
         }
 
         for (ServiceInfo si : ci.getServices()) {
-            createServiceDoc(snapshot, session, label, si, componentDoc);
+            if (filter == null || filter.accept(si)) {
+                ServiceInfoDocAdapter.create(si, session, componentDocPath);
+            }
+        }
+
+        Map<String, AtomicInteger> comps = new HashMap<>();
+        for (ExtensionInfo ei : ci.getExtensions()) {
+            if (filter == null || filter.accept(ei)) {
+                // handle multiple contributions to the same extension point
+                String id = ei.getId();
+                int index = comps.computeIfAbsent(id, k -> new AtomicInteger(-1)).incrementAndGet();
+                ExtensionInfoDocAdapter.create(ei, index, session, componentDocPath);
+            }
         }
     }
 
-    protected DocumentModel createContributionDoc(DistributionSnapshot snapshot, CoreSession session, String label,
-            ExtensionInfo ei, int index, DocumentModel parent) {
-        return ExtensionInfoDocAdapter.create(ei, index, session, parent.getPathAsString()).getDoc();
-    }
-
-    protected DocumentModel createServiceDoc(DistributionSnapshot snapshot, CoreSession session, String label,
-            ServiceInfo si, DocumentModel parent) {
-        return ServiceInfoDocAdapter.create(si, session, parent.getPathAsString()).getDoc();
-    }
-
-    protected DocumentModel createExtensionPointDoc(DistributionSnapshot snapshot, CoreSession session, String label,
-            ExtensionPointInfo epi, DocumentModel parent) {
-        return ExtensionPointInfoDocAdapter.create(epi, session, parent.getPathAsString()).getDoc();
-    }
-
-    protected DocumentModel createComponentDoc(DistributionSnapshot snapshot, CoreSession session, String label,
-            ComponentInfo ci, DocumentModel parent) {
-        try {
-            return ComponentInfoDocAdapter.create(ci, session, parent.getPathAsString()).getDoc();
-        } catch (IOException e) {
-            throw new NuxeoException("Unable to create Component Doc", e);
+    protected void persistOperations(DistributionSnapshot snapshot, List<OperationInfo> operations, CoreSession session,
+            String label, DocumentModel parent, SnapshotFilter filter) {
+        for (OperationInfo op : operations) {
+            if (filter == null || filter.accept(op)) {
+                OperationInfoDocAdapter.create(op, session, parent.getPathAsString());
+            }
         }
-    }
-
-    protected DocumentModel createBundleDoc(DistributionSnapshot snapshot, CoreSession session, String label,
-            BundleInfo bi, DocumentModel parent) {
-        return BundleInfoDocAdapter.create(bi, session, parent.getPathAsString()).getDoc();
-    }
-
-    protected RepositoryDistributionSnapshot createDistributionDoc(DistributionSnapshot snapshot, CoreSession session,
-            String label, Map<String, Serializable> properties) {
-        return RepositoryDistributionSnapshot.create(snapshot, session, getDistributionRoot(session).getPathAsString(),
-                label, properties);
-    }
-
-    protected DocumentModel createBundleGroupDoc(BundleGroup bundleGroup, CoreSession session, String label,
-            DocumentModel parent) {
-        return BundleGroupDocAdapter.create(bundleGroup, session, parent.getPathAsString()).getDoc();
     }
 
     protected void persistPackages(DistributionSnapshot snapshot, List<PackageInfo> packages, CoreSession session,
-            String label, DocumentModel parent, PersistSnapshotFilter filter) {
+            String label, DocumentModel parent, SnapshotFilter filter) {
         for (PackageInfo pkg : packages) {
             if (filter == null || filter.accept(pkg)) {
                 PackageInfoDocAdapter.create(pkg, session, parent.getPathAsString());

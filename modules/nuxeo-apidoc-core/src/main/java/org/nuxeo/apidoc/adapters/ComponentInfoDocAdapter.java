@@ -19,7 +19,6 @@
  */
 package org.nuxeo.apidoc.adapters;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.List;
@@ -54,8 +53,8 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
         super(doc);
     }
 
-    public static ComponentInfoDocAdapter create(ComponentInfo componentInfo, CoreSession session, String containerPath)
-            throws IOException {
+    public static ComponentInfoDocAdapter create(ComponentInfo componentInfo, CoreSession session,
+            String containerPath) {
 
         DocumentModel doc = session.createDocumentModel(TYPE_NAME);
 
@@ -142,7 +141,7 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
     }
 
     @Override
-    public String getXmlFileContent() throws IOException {
+    public String getXmlFileContent() {
         return safeGetContent(safeGet(NuxeoArtifact.CONTENT_PROPERTY_PATH), "");
     }
 

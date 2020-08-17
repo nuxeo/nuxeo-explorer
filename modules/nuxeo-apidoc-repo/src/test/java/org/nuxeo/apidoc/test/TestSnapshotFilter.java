@@ -35,7 +35,9 @@ import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
+import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
+import org.nuxeo.apidoc.snapshot.TargetExtensionPointSnapshotFilter;
 import org.nuxeo.connect.update.PackageException;
 import org.nuxeo.ecm.core.api.CoreSession;
 
@@ -52,18 +54,68 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         mockPackageServices();
     }
 
-    protected void checkApiDoc(DistributionSnapshot snapshot) {
-        assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"), snapshot.getBundleIds());
-        assertEquals(List.of("org.nuxeo.apidoc.adapterContrib", "org.nuxeo.apidoc.doctypeContrib",
-                "org.nuxeo.apidoc.lifecycle.contrib", "org.nuxeo.apidoc.listener.contrib",
-                "org.nuxeo.apidoc.schemaContrib", "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
-                "org.nuxeo.apidoc.test.works"), snapshot.getComponentIds());
+    protected void checkApiDoc(String filterName, DistributionSnapshot snapshot, boolean isRef) {
+        assertNotNull(snapshot);
+        if (isRef) {
+            assertEquals(List.of(filterName, filterName + SnapshotFilter.REFERENCE_FILTER_NAME_SUFFIX),
+                    snapshot.getBundleGroups().stream().map(BundleGroup::getId).collect(Collectors.toList()));
+        } else {
+            assertEquals(List.of(filterName),
+                    snapshot.getBundleGroups().stream().map(BundleGroup::getId).collect(Collectors.toList()));
+        }
+        assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"),
+                snapshot.getBundleGroup(filterName).getBundleIds());
+        if (isRef) {
+            assertEquals(
+                    List.of("org.nuxeo.ecm.core", "org.nuxeo.ecm.core.api", "org.nuxeo.ecm.core.event",
+                            "org.nuxeo.ecm.core.schema", "org.nuxeo.runtime"),
+                    snapshot.getBundleGroup(filterName + SnapshotFilter.REFERENCE_FILTER_NAME_SUFFIX).getBundleIds());
+        }
+        if (isRef) {
+            assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo", "org.nuxeo.ecm.core",
+                    "org.nuxeo.ecm.core.api", "org.nuxeo.ecm.core.event", "org.nuxeo.ecm.core.schema",
+                    "org.nuxeo.runtime"), snapshot.getBundleIds());
+        } else {
+            assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"), snapshot.getBundleIds());
+        }
+        if (isRef) {
+            assertEquals(List.of(
+                    // inner components
+                    "org.nuxeo.apidoc.adapterContrib", "org.nuxeo.apidoc.doctypeContrib",
+                    "org.nuxeo.apidoc.lifecycle.contrib", "org.nuxeo.apidoc.listener.contrib",
+                    "org.nuxeo.apidoc.schemaContrib", "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+                    "org.nuxeo.apidoc.test.works",
+                    // referenced components
+                    "org.nuxeo.ecm.core.api.DocumentAdapterService", "org.nuxeo.ecm.core.event.EventServiceComponent",
+                    "org.nuxeo.ecm.core.lifecycle.LifeCycleService", "org.nuxeo.ecm.core.schema.TypeService",
+                    "org.nuxeo.ecm.core.work.service", "org.nuxeo.runtime.ConfigurationService"),
+                    snapshot.getComponentIds());
+        } else {
+            assertEquals(List.of("org.nuxeo.apidoc.adapterContrib", "org.nuxeo.apidoc.doctypeContrib",
+                    "org.nuxeo.apidoc.lifecycle.contrib", "org.nuxeo.apidoc.listener.contrib",
+                    "org.nuxeo.apidoc.schemaContrib", "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+                    "org.nuxeo.apidoc.test.works"), snapshot.getComponentIds());
+        }
         assertEquals(List.of("org.nuxeo.apidoc.search.ArtifactSearcher", "org.nuxeo.apidoc.snapshot.SnapshotManager"),
                 snapshot.getServiceIds());
-        assertEquals(
-                List.of("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
-                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins"),
-                snapshot.getExtensionPointIds());
+        if (isRef) {
+            assertEquals(List.of(
+                    // inner extension points
+                    "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+                    "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins",
+                    // referenced extension points
+                    "org.nuxeo.ecm.core.api.DocumentAdapterService--adapters",
+                    "org.nuxeo.ecm.core.event.EventServiceComponent--listener",
+                    "org.nuxeo.ecm.core.lifecycle.LifeCycleService--types",
+                    "org.nuxeo.ecm.core.schema.TypeService--doctype", "org.nuxeo.ecm.core.schema.TypeService--schema",
+                    "org.nuxeo.ecm.core.work.service--queues", "org.nuxeo.runtime.ConfigurationService--configuration"),
+                    snapshot.getExtensionPointIds());
+        } else {
+            assertEquals(
+                    List.of("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+                            "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins"),
+                    snapshot.getExtensionPointIds());
+        }
         assertEquals(
                 List.of("org.nuxeo.apidoc.adapterContrib--adapters", "org.nuxeo.apidoc.doctypeContrib--doctype",
                         "org.nuxeo.apidoc.lifecycle.contrib--types", "org.nuxeo.apidoc.listener.contrib--listener",
@@ -82,28 +134,44 @@ public class TestSnapshotFilter extends AbstractApidocTest {
 
     @Test
     public void testFilterBundlePrefix() throws IOException {
-        PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc-bundle");
+        String filterName = "apidoc-bundle";
+        PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName);
         filter.addBundlePrefix("org.nuxeo.apidoc");
 
         DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
         assertNotNull(snapshot);
 
-        assertEquals(List.of("apidoc-bundle"),
-                snapshot.getBundleGroups().stream().map(BundleGroup::getId).collect(Collectors.toList()));
-        checkApiDoc(snapshot);
+        checkApiDoc(filterName, snapshot, false);
+    }
+
+    @Test
+    public void testFilterBundlePrefixReference() throws IOException {
+        String filterName = "apidoc-bundle";
+        PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, TargetExtensionPointSnapshotFilter.class);
+        filter.addBundlePrefix("org.nuxeo.apidoc");
+
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        checkApiDoc(filterName, snapshot, true);
     }
 
     @Test
     public void testFilterNuxeoPackagePrefix() throws IOException {
-        PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc-pack");
+        String filterName = "apidoc-pack";
+        PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName);
         filter.addNuxeoPackagePrefix(MOCK_PACKAGE_NAME);
 
         DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
-        assertNotNull(snapshot);
+        checkApiDoc(filterName, snapshot, false);
+    }
 
-        assertEquals(List.of("apidoc-pack"),
-                snapshot.getBundleGroups().stream().map(BundleGroup::getId).collect(Collectors.toList()));
-        checkApiDoc(snapshot);
+    @Test
+    public void testFilterNuxeoPackagePrefixReference() throws IOException {
+        String filterName = "apidoc-pack";
+        PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, TargetExtensionPointSnapshotFilter.class);
+        filter.addNuxeoPackagePrefix(MOCK_PACKAGE_NAME);
+
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        checkApiDoc(filterName, snapshot, true);
     }
 
     @Test
