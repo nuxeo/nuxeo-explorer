@@ -45,7 +45,7 @@ public class ExtensionPointArtifactPage extends ArtifactPage {
     }
 
     @Override
-    public void checkReference(boolean partial, boolean legacy) {
+    public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
         checkCommon("Extension point org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins",
                 "Extension point plugins", "In component org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
                 "Documentation\n" + "Contribution Descriptors\n" + "Contributions");

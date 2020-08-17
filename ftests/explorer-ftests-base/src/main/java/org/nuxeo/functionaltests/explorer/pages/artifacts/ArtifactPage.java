@@ -62,10 +62,10 @@ public abstract class ArtifactPage extends AbstractExplorerPage {
 
     @Override
     public void check() {
-        checkReference(false, false);
+        checkReference(false, false, false);
     }
 
-    public abstract void checkReference(boolean partial, boolean legacy);
+    public abstract void checkReference(boolean partial, boolean includeReferences, boolean legacy);
 
     public abstract void checkAlternative();
 

@@ -89,7 +89,7 @@ public class ITExplorerSiteModeTest extends AbstractExplorerSiteModeTest {
 
         String distribId = getDistribId(DISTRIB_NAME, DISTRIB_VERSION);
         asPage(ExplorerHomePage.class).checkPersistedDistrib(distribId);
-        checkDistrib(distribId, true, SAMPLE_BUNDLE_GROUP, true);
+        checkDistrib(distribId, true, SAMPLE_BUNDLE_GROUP, false, true);
     }
 
 }

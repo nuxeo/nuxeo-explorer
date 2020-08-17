@@ -93,6 +93,10 @@
                 <td><textarea rows="4" cols="30" name="javaPackages"></textarea></td>
               </tr>
               <tr>
+                <td class="nowrap"><label for="includeReferences">Include References</label></td>
+                <td><input type="checkbox" name="includeReferences" /></td>
+              </tr>
+              <tr>
                 <td class="nowrap">Version</td>
                 <td><span name="version">${rtSnap.version}</span></td>
               </tr>

@@ -44,7 +44,7 @@ public class ServiceArtifactPage extends ArtifactPage {
     }
 
     @Override
-    public void checkReference(boolean partial, boolean legacy) {
+    public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
         checkCommon("Service org.nuxeo.apidoc.snapshot.SnapshotManager",
                 "Service org.nuxeo.apidoc.snapshot.SnapshotManager",
                 "In component org.nuxeo.apidoc.snapshot.SnapshotManagerComponent", null);

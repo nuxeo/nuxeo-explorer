@@ -57,7 +57,7 @@ public class BundleArtifactPage extends ArtifactPage {
     }
 
     @Override
-    public void checkReference(boolean partial, boolean legacy) {
+    public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
         String groupTitle = "In bundle group org.nuxeo.apidoc";
         String toc = "Documentation\n" //
                 + "Components\n" //
@@ -66,6 +66,9 @@ public class BundleArtifactPage extends ArtifactPage {
                 + "Manifest";
         if (partial) {
             groupTitle = "In bundle group my-partial-server";
+        }
+        if (includeReferences) {
+            groupTitle = "In bundle group my-partial-ref-server";
         }
         if (legacy) {
             groupTitle = "In bundle group apidoc";

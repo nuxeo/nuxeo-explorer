@@ -181,26 +181,27 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         header.checkSelectedTab(header.services);
     }
 
-    protected void checkDistrib(String distribId, boolean partial, String partialVirtualGroup, boolean legacy) {
+    protected void checkDistrib(String distribId, boolean partial, String partialVirtualGroup,
+            boolean includeReferences, boolean legacy) {
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_BUNDLEGROUPS);
-        checkBundleGroups(partial, partialVirtualGroup, legacy);
+        checkBundleGroups(partial, partialVirtualGroup, includeReferences, legacy);
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_BUNDLES);
-        checkBundles(partial, legacy);
+        checkBundles(partial, includeReferences, legacy);
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_COMPONENTS);
-        checkComponents(partial, legacy);
+        checkComponents(partial, includeReferences, legacy);
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_EXTENSIONPOINTS);
-        checkExtensionPoints(partial, legacy);
+        checkExtensionPoints(partial, includeReferences, legacy);
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_SERVICES);
         checkServices(partial, legacy);
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_CONTRIBUTIONS);
-        checkContributions(partial, legacy);
+        checkContributions(partial, includeReferences, legacy);
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_OPERATIONS);
         checkOperations(partial, legacy);
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_PACKAGES);
         checkPackages(partial, legacy);
     }
 
-    protected void checkExtensionPoints(boolean partial, boolean legacy) {
+    protected void checkExtensionPoints(boolean partial, boolean includeReferences, boolean legacy) {
         ListingFragment listing = asPage(ListingFragment.class);
         if (!partial) {
             listing.checkListing(-1, "actions",
@@ -209,19 +210,25 @@ public abstract class AbstractExplorerTest extends AbstractTest {
             listing = listing.filterOn("org.nuxeo.apidoc");
         }
         listing.toggleSort();
-        listing.checkListing(legacy ? 1 : 2, "plugins",
-                "/viewExtensionPoint/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins",
-                "SnapshotManagerComponent - org.nuxeo.apidoc.snapshot.SnapshotManagerComponent");
+        if (includeReferences) {
+            listing.checkListing(8, "types", "/viewExtensionPoint/org.nuxeo.ecm.core.lifecycle.LifeCycleService--types",
+                    "LifeCycleService - org.nuxeo.ecm.core.lifecycle.LifeCycleService");
+            listing = listing.filterOn("org.nuxeo.apidoc");
+        } else {
+            listing.checkListing(legacy ? 1 : 2, "plugins",
+                    "/viewExtensionPoint/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins",
+                    "SnapshotManagerComponent - org.nuxeo.apidoc.snapshot.SnapshotManagerComponent");
+        }
 
         listing.navigateToFirstItem();
         ExtensionPointArtifactPage apage = asPage(ExtensionPointArtifactPage.class);
         if (hasNavigationHeader()) {
             apage.checkSelectedTab();
         }
-        apage.checkReference(partial, legacy);
+        apage.checkReference(partial, includeReferences, legacy);
     }
 
-    protected void checkContributions(boolean partial, boolean legacy) {
+    protected void checkContributions(boolean partial, boolean includeReferences, boolean legacy) {
         ListingFragment listing = asPage(ListingFragment.class);
         if (!partial) {
             listing.checkListing(-1, "cluster-config--configuration", "/viewContribution/cluster-config--configuration",
@@ -238,7 +245,7 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         if (hasNavigationHeader()) {
             apage.checkSelectedTab();
         }
-        apage.checkReference(partial, legacy);
+        apage.checkReference(partial, includeReferences, legacy);
     }
 
     protected void checkServices(boolean partial, boolean legacy) {
@@ -258,7 +265,7 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         if (hasNavigationHeader()) {
             apage.checkSelectedTab();
         }
-        apage.checkReference(partial, legacy);
+        apage.checkReference(partial, false, legacy);
     }
 
     protected void checkOperations(boolean partial, boolean legacy) {
@@ -279,10 +286,10 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         if (hasNavigationHeader()) {
             apage.checkSelectedTab();
         }
-        apage.checkReference(partial, legacy);
+        apage.checkReference(partial, false, legacy);
     }
 
-    protected void checkComponents(boolean partial, boolean legacy) {
+    protected void checkComponents(boolean partial, boolean includeReferences, boolean legacy) {
         ListingFragment listing = asPage(ListingFragment.class);
         if (!partial) {
             listing.checkListing(-1, "actions.ActionService",
@@ -291,42 +298,50 @@ public abstract class AbstractExplorerTest extends AbstractTest {
             listing = listing.filterOn("org.nuxeo.apidoc");
         }
         listing = listing.toggleSort();
-        listing.checkListing(6, "apidoc.snapshot.SnapshotManagerComponent",
-                "/viewComponent/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
-                "JAVA org.nuxeo.apidoc.snapshot.SnapshotManagerComponent");
+        if (includeReferences) {
+            listing.checkListing(11, "schema.TypeService", "/viewComponent/org.nuxeo.ecm.core.schema.TypeService",
+                    "JAVA org.nuxeo.ecm.core.schema.TypeService");
+            listing = listing.filterOn("org.nuxeo.apidoc");
+        } else {
+            listing.checkListing(6, "apidoc.snapshot.SnapshotManagerComponent",
+                    "/viewComponent/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+                    "JAVA org.nuxeo.apidoc.snapshot.SnapshotManagerComponent");
+        }
 
         listing.navigateToFirstItem();
         ComponentArtifactPage apage = asPage(ComponentArtifactPage.class);
         if (hasNavigationHeader()) {
             apage.checkSelectedTab();
         }
-        apage.checkReference(partial, legacy);
+        apage.checkReference(partial, includeReferences, legacy);
     }
 
-    protected void checkBundles(boolean partial, boolean legacy) {
+    protected void checkBundles(boolean partial, boolean includeReferences, boolean legacy) {
         ListingFragment listing = asPage(ListingFragment.class);
         if (!partial) {
             listing.checkListing(-1, "org.nuxeo.admin.center", "/viewBundle/org.nuxeo.admin.center", null);
             listing = listing.filterOn("org.nuxeo.apidoc");
         }
-        listing.checkListing(3, "org.nuxeo.apidoc.core", "/viewBundle/org.nuxeo.apidoc.core", null);
+        listing.checkListing(includeReferences ? 8 : 3, "org.nuxeo.apidoc.core", "/viewBundle/org.nuxeo.apidoc.core",
+                null);
 
         listing.navigateToFirstItem();
         BundleArtifactPage apage = asPage(BundleArtifactPage.class);
         if (hasNavigationHeader()) {
             apage.checkSelectedTab();
         }
-        apage.checkReference(partial, legacy);
+        apage.checkReference(partial, includeReferences, legacy);
     }
 
-    protected void checkBundleGroups(boolean partial, String partialVirtualGroup, boolean legacy) {
+    protected void checkBundleGroups(boolean partial, String partialVirtualGroup, boolean includeReferences,
+            boolean legacy) {
         if (partial) {
             Locator.findElementWaitUntilEnabledAndClick(By.linkText(partialVirtualGroup));
         } else {
             Locator.findElementWaitUntilEnabledAndClick(By.linkText("org.nuxeo.ecm.platform"));
         }
         BundleGroupArtifactPage apage = asPage(BundleGroupArtifactPage.class);
-        apage.checkReference(partial, legacy);
+        apage.checkReference(partial, includeReferences, legacy);
     }
 
     protected void checkPackages(boolean partial, boolean legacy) {
@@ -342,7 +357,7 @@ public abstract class AbstractExplorerTest extends AbstractTest {
             if (hasNavigationHeader()) {
                 apage.checkSelectedTab();
             }
-            apage.checkReference(partial, legacy);
+            apage.checkReference(partial, false, legacy);
         }
     }
 

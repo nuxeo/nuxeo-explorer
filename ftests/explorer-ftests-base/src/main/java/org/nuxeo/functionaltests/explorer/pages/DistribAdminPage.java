@@ -78,7 +78,7 @@ public class DistribAdminPage extends AbstractExplorerPage {
     /**
      * Saves current live distribution with given name and returns the version.
      */
-    public String saveCurrentLiveDistrib(String newName, boolean partial) {
+    public String saveCurrentLiveDistrib(String newName, boolean partial, boolean includeReferences) {
         clickOn(driver.findElement(By.id(partial ? "savePartial" : "save")));
         WebElement div = driver.findElement(By.id(partial ? "extendedSave" : "stdSave"));
         if (newName != null) {
@@ -89,6 +89,12 @@ public class DistribAdminPage extends AbstractExplorerPage {
         if (partial) {
             WebElement bundlesInput = div.findElement(By.xpath(".//textarea[@name='bundles']"));
             bundlesInput.sendKeys("org.nuxeo.apidoc");
+        }
+        if (includeReferences) {
+            WebElement includeInput = div.findElement(By.xpath(".//input[@name='includeReferences']"));
+            if (!includeInput.isSelected()) {
+                Locator.scrollAndForceClick(includeInput);
+            }
         }
         String version = div.findElement(By.xpath(".//span[@name='version']")).getText();
         clickOn(driver.findElement(By.id(partial ? "doSaveExtended" : "doSave")));
