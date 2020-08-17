@@ -34,6 +34,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
@@ -50,13 +51,19 @@ import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.search.ArtifactSearcher;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
+import org.nuxeo.apidoc.snapshot.JsonPrettyPrinter;
+import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
+import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
+import org.nuxeo.apidoc.snapshot.TargetExtensionPointSnapshotFilter;
 import org.nuxeo.ecm.platform.htmlsanitizer.HtmlSanitizerService;
 import org.nuxeo.ecm.webengine.model.Resource;
 import org.nuxeo.ecm.webengine.model.WebObject;
 import org.nuxeo.ecm.webengine.model.exceptions.WebResourceNotFoundException;
 import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
 import org.nuxeo.runtime.api.Framework;
+
+import com.fasterxml.jackson.core.PrettyPrinter;
 
 @WebObject(type = ApiBrowser.TYPE)
 public class ApiBrowser extends DefaultObject {
@@ -479,13 +486,46 @@ public class ApiBrowser extends DefaultObject {
     @GET
     @Path(ApiBrowserConstants.JSON_ACTION)
     @Produces("application/json")
-    public Object getJson() throws IOException {
+    public Object getJson(@QueryParam("bundles") List<String> bundles,
+            @QueryParam("nuxeoPackages") List<String> nuxeoPackages,
+            @QueryParam("javaPackagePrefixes") List<String> javaPackagePrefixes,
+            @QueryParam("checkAsPrefixes") Boolean checkAsPrefixes,
+            @QueryParam("includeReferences") Boolean includeReferences, @QueryParam("pretty") Boolean pretty)
+            throws IOException {
         DistributionSnapshot snapshot = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
         // init potential resources depending on request
         getSnapshotManager().initWebContext(getContext().getRequest());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        snapshot.writeJson(out, null, null);
+        SnapshotFilter filter = getSnapshotFilter(bundles, nuxeoPackages, javaPackagePrefixes, checkAsPrefixes,
+                includeReferences);
+        PrettyPrinter printer = Boolean.TRUE.equals(pretty) ? new JsonPrettyPrinter() : null;
+        snapshot.writeJson(out, filter, printer);
         return out.toString();
+    }
+
+    protected SnapshotFilter getSnapshotFilter(List<String> bundlePrefixes, List<String> nuxeoPackagePrefixes,
+            List<String> javaPackagePrefixes, Boolean checkAsPrefixes, Boolean includeReferences) {
+        List<String> bp = getSnapshotFilterCriterion(bundlePrefixes);
+        List<String> np = getSnapshotFilterCriterion(nuxeoPackagePrefixes);
+        List<String> jp = getSnapshotFilterCriterion(javaPackagePrefixes);
+        if (!bp.isEmpty() || !np.isEmpty() || !jp.isEmpty()) {
+            PersistSnapshotFilter filter = new PersistSnapshotFilter("Json Rest Filter",
+                    Boolean.TRUE.equals(checkAsPrefixes),
+                    Boolean.TRUE.equals(includeReferences) ? TargetExtensionPointSnapshotFilter.class : null);
+            bp.forEach(bid -> filter.addBundle(bid));
+            np.forEach(pkg -> filter.addNuxeoPackage(pkg));
+            jp.forEach(pkg -> filter.addPackagesPrefix(pkg));
+            return filter;
+        }
+        return null;
+    }
+
+    protected List<String> getSnapshotFilterCriterion(List<String> queryParam) {
+        var res = new ArrayList<String>();
+        if (queryParam != null) {
+            queryParam.stream().filter(StringUtils::isNotBlank).forEach(res::add);
+        }
+        return res;
     }
 
 }
