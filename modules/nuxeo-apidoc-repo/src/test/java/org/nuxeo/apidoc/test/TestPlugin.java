@@ -71,15 +71,15 @@ public class TestPlugin {
 
         List<String> errors = Framework.getRuntime().getMessageHandler().getMessages(Level.ERROR);
         assertNotNull(errors);
-        assertEquals(2, errors.size());
+        assertTrue(errors.size() >= 2);
         String error_foo = "Failed to register contribution with id 'foo' on 'org.nuxeo.apidoc.snapshot.SnapshotManagerComponent': "
                 + "error initializing class 'org.nuxeo.apidoc.test.FooPlugin' "
                 + "(java.lang.ClassNotFoundException: org.nuxeo.apidoc.test.FooPlugin).";
-        assertEquals(error_foo, errors.get(0));
+        assertTrue(errors.contains(error_foo));
         String error_bar = "Failed to register contribution with id 'bar' on 'org.nuxeo.apidoc.snapshot.SnapshotManagerComponent': "
                 + "error initializing class 'org.nuxeo.apidoc.test.FakeNuxeoArtifact' "
                 + "(java.lang.NoSuchMethodException: org.nuxeo.apidoc.test.FakeNuxeoArtifact.<init>(org.nuxeo.apidoc.plugin.PluginDescriptor)).";
-        assertEquals(error_bar, errors.get(1));
+        assertTrue(errors.contains(error_bar));
         Plugin<?> p = snapshotManager.getPlugin("testPlugin");
         assertNotNull(p);
     }
