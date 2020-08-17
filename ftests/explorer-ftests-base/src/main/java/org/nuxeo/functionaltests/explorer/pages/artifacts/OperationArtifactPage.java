@@ -61,7 +61,7 @@ public class OperationArtifactPage extends ArtifactPage {
     }
 
     @Override
-    public void checkReference(boolean partial, boolean legacy) {
+    public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
         checkCommon("Operation Document.AddFacet", "Operation Document.AddFacet (Add Facet)",
                 "In component org.nuxeo.ecm.core.automation.coreContrib",
                 "Description\n" + "Parameters\n" + "Signature\n" + "Implementation Information\n" + "JSON Definition");

@@ -106,11 +106,11 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
 
     protected String checkLiveDistribExport(String distribName, boolean fullCheck) {
         open(DistribAdminPage.URL);
-        String version = asPage(DistribAdminPage.class).saveCurrentLiveDistrib(distribName, false);
+        String version = asPage(DistribAdminPage.class).saveCurrentLiveDistrib(distribName, false, false);
         String distribId = getDistribId(distribName, version);
         asPage(DistribAdminPage.class).checkPersistedDistrib(distribId);
         if (fullCheck) {
-            checkDistrib(distribId, false, null, false);
+            checkDistrib(distribId, false, null, false, false);
         }
         return distribId;
     }
@@ -130,7 +130,7 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         open(ExplorerHomePage.URL);
         String newDistribId = getDistribId(newDistribName, newVersion);
         asPage(ExplorerHomePage.class).checkPersistedDistrib(newDistribId);
-        checkDistrib(distribId, false, null, false);
+        checkDistrib(distribId, false, null, false, false);
     }
 
     @Test
@@ -140,13 +140,13 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         checkLiveDistribImport(distribId);
     }
 
-    protected String checkLivePartialDistribExport(String distribName, boolean fullCheck) {
+    protected String checkLivePartialDistribExport(String distribName, boolean includeReferences, boolean fullCheck) {
         open(DistribAdminPage.URL);
-        String version = asPage(DistribAdminPage.class).saveCurrentLiveDistrib(distribName, true);
+        String version = asPage(DistribAdminPage.class).saveCurrentLiveDistrib(distribName, true, includeReferences);
         String distribId = getDistribId(distribName, version);
         asPage(DistribAdminPage.class).checkPersistedDistrib(distribId);
         if (fullCheck) {
-            checkDistrib(distribId, true, distribName, false);
+            checkDistrib(distribId, true, distribName, includeReferences, false);
         }
         return distribId;
     }
@@ -166,14 +166,19 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         asPage(ExplorerHomePage.class);
         String newDistribId = getDistribId(newDistribName, newVersion);
         asPage(ExplorerHomePage.class).checkPersistedDistrib(newDistribId);
-        checkDistrib(distribId, true, distribName, false);
+        checkDistrib(distribId, true, distribName, false, false);
     }
 
     @Test
     public void testLivePartialDistribExportAndImport() {
         String distribName = "my-partial-server";
-        String distribId = checkLivePartialDistribExport(distribName, true);
+        String distribId = checkLivePartialDistribExport(distribName, false, true);
         checkLivePartialDistribImport(distribName, distribId);
+    }
+
+    @Test
+    public void testLivePartialRefDistribExport() {
+        checkLivePartialDistribExport("my-partial-ref-server", true, true);
     }
 
     /**
@@ -198,7 +203,7 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         open(ExplorerHomePage.URL);
         String newDistribId = getDistribId(newDistribName, newVersion);
         asPage(ExplorerHomePage.class).checkPersistedDistrib(newDistribId);
-        checkDistrib(newDistribId, true, SAMPLE_BUNDLE_GROUP, true);
+        checkDistrib(newDistribId, true, SAMPLE_BUNDLE_GROUP, false, true);
 
         // edit persisted distrib
         open(DistribAdminPage.URL);
@@ -274,7 +279,7 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
     @Test
     public void testLiveDistribExportAndDelete() {
         String distribName = "my-server-to-delete";
-        String distribId = checkLivePartialDistribExport(distribName, false);
+        String distribId = checkLivePartialDistribExport(distribName, false, false);
         open(DistribAdminPage.URL);
         asPage(DistribAdminPage.class).deleteFirstPersistedDistrib();
         asPage(DistribAdminPage.class).checkPersistedDistribNotPresent(distribId);

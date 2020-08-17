@@ -75,13 +75,13 @@ public class ITExplorerSimpleTest extends AbstractExplorerTest {
     @Test
     public void testExtensionPoints() {
         open(LiveSimplePage.URL + ApiBrowserConstants.LIST_EXTENSIONPOINTS);
-        checkExtensionPoints(false, false);
+        checkExtensionPoints(false, false, false);
     }
 
     @Test
     public void testContributions() {
         open(LiveSimplePage.URL + ApiBrowserConstants.LIST_CONTRIBUTIONS);
-        checkContributions(false, false);
+        checkContributions(false, false, false);
     }
 
     @Test
@@ -99,19 +99,19 @@ public class ITExplorerSimpleTest extends AbstractExplorerTest {
     @Test
     public void testComponents() {
         open(LiveSimplePage.URL + ApiBrowserConstants.LIST_COMPONENTS);
-        checkComponents(false, false);
+        checkComponents(false, false, false);
     }
 
     @Test
     public void testBundles() {
         open(LiveSimplePage.URL + ApiBrowserConstants.LIST_BUNDLES);
-        checkBundles(false, false);
+        checkBundles(false, false, false);
     }
 
     @Test
     public void testBundlesGroups() {
         open(LiveSimplePage.URL + ApiBrowserConstants.LIST_BUNDLEGROUPS);
-        checkBundleGroups(false, null, false);
+        checkBundleGroups(false, null, false, false);
     }
 
     @Test

@@ -42,9 +42,12 @@ public class BundleGroupArtifactPage extends ArtifactPage {
     }
 
     @Override
-    public void checkReference(boolean partial, boolean legacy) {
+    public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
         if (partial) {
             String title = "Bundle Group my-partial-server";
+            if (includeReferences) {
+                title = "Bundle Group my-partial-ref-server";
+            }
             if (legacy) {
                 title = "Bundle Group apidoc";
             }

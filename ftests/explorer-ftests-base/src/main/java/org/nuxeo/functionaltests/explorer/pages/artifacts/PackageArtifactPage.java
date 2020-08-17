@@ -82,7 +82,7 @@ public class PackageArtifactPage extends ArtifactPage {
     }
 
     @Override
-    public void checkReference(boolean partial, boolean legacy) {
+    public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
         checkCommon("Package Platform Explorer", "Package Platform Explorer (platform-explorer)", null,
                 "General Information\n" //
                         + "Bundles\n" //

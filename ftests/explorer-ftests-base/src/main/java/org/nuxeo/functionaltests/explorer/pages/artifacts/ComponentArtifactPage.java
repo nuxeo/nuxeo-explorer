@@ -54,7 +54,7 @@ public class ComponentArtifactPage extends ArtifactPage {
     }
 
     @Override
-    public void checkReference(boolean partial, boolean legacy) {
+    public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
         String toc = "Documentation\n" + "Registration Order\n" + "Implementation\n" + "Services\n"
                 + "Extension Points\n" + "Contributions\n" + "XML Source";
         if (legacy) {

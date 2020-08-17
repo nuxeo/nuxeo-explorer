@@ -91,7 +91,7 @@ public class ITExplorerAdminSiteModeTest extends AbstractExplorerSiteModeTest {
 
         String distribId = getDistribId(DISTRIB_NAME, DISTRIB_VERSION);
         home.checkPersistedDistrib(distribId);
-        checkDistrib(distribId, true, SAMPLE_BUNDLE_GROUP, true);
+        checkDistrib(distribId, true, SAMPLE_BUNDLE_GROUP, false, true);
     }
 
     @Test
@@ -107,7 +107,7 @@ public class ITExplorerAdminSiteModeTest extends AbstractExplorerSiteModeTest {
             open(ExplorerHomePage.URL);
             String newDistribId = getDistribId(newDistribName, newVersion);
             asPage(ExplorerHomePage.class).checkPersistedDistrib(newDistribId);
-            checkDistrib(newDistribId, true, SAMPLE_BUNDLE_GROUP, true);
+            checkDistrib(newDistribId, true, SAMPLE_BUNDLE_GROUP, false, true);
 
             // edit persisted distrib
             open(DistribAdminPage.UPDATE_URL + newDistribId);

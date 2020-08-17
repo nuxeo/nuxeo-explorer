@@ -66,6 +66,7 @@ import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.apidoc.snapshot.SnapshotResolverHelper;
+import org.nuxeo.apidoc.snapshot.TargetExtensionPointSnapshotFilter;
 import org.nuxeo.apidoc.worker.ExtractXmlAttributesWorker;
 import org.nuxeo.common.Environment;
 import org.nuxeo.common.utils.URIUtils;
@@ -363,7 +364,10 @@ public class Distribution extends ModuleRoot {
         String bundleList = formData.getString("bundles");
         String javaPkgList = formData.getString("javaPackages");
         String nxPkgList = formData.getString("nxPackages");
-        PersistSnapshotFilter filter = new PersistSnapshotFilter(distribLabel);
+        boolean includeReferences = "on".equals(formData.getString("includeReferences"));
+
+        PersistSnapshotFilter filter = new PersistSnapshotFilter(distribLabel, true,
+                includeReferences ? TargetExtensionPointSnapshotFilter.class : null);
 
         if (bundleList != null) {
             Arrays.stream(bundleList.split("\n")).filter(StringUtils::isNotBlank).forEach(bid -> filter.addBundle(bid));

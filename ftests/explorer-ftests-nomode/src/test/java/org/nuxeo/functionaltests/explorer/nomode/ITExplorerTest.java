@@ -72,7 +72,7 @@ public class ITExplorerTest extends AbstractExplorerTest {
     public static void initPersistedDistrib() {
         loginAsAdmin();
         open(DistribAdminPage.URL);
-        liveVersion = asPage(DistribAdminPage.class).saveCurrentLiveDistrib(LIVE_NAME, false);
+        liveVersion = asPage(DistribAdminPage.class).saveCurrentLiveDistrib(LIVE_NAME, false, false);
         doLogout();
     }
 
@@ -159,7 +159,7 @@ public class ITExplorerTest extends AbstractExplorerTest {
     public void testExtensionPoints() {
         ExplorerHomePage home = goHome();
         home.clickOn(home.firstExtensionPoints);
-        checkExtensionPoints(false, false);
+        checkExtensionPoints(false, false, false);
     }
 
     @Test
@@ -173,7 +173,7 @@ public class ITExplorerTest extends AbstractExplorerTest {
     public void testContributions() {
         ExplorerHomePage home = goHome();
         home.clickOn(home.firstContributions);
-        checkContributions(false, false);
+        checkContributions(false, false, false);
     }
 
     @Test
@@ -218,7 +218,7 @@ public class ITExplorerTest extends AbstractExplorerTest {
         DistributionHeaderFragment header = asPage(DistributionHeaderFragment.class);
         header = header.navigateTo(header.components);
         header.checkSelectedTab(header.components);
-        checkComponents(false, false);
+        checkComponents(false, false, false);
     }
 
     @Test
@@ -235,7 +235,7 @@ public class ITExplorerTest extends AbstractExplorerTest {
         DistributionHeaderFragment header = asPage(DistributionHeaderFragment.class);
         header = header.navigateTo(header.bundles);
         header.checkSelectedTab(header.bundles);
-        checkBundles(false, false);
+        checkBundles(false, false, false);
     }
 
     @Test
@@ -258,7 +258,7 @@ public class ITExplorerTest extends AbstractExplorerTest {
         home.clickOn(home.firstPersistedDistrib);
         DistributionHomePage dhome = asPage(DistributionHomePage.class);
         dhome.clickOn(dhome.bundleGroups);
-        checkBundleGroups(false, null, false);
+        checkBundleGroups(false, null, false, false);
     }
 
     @Test
