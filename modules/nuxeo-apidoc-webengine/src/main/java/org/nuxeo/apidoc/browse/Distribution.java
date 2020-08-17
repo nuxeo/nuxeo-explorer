@@ -366,9 +366,7 @@ public class Distribution extends ModuleRoot {
         PersistSnapshotFilter filter = new PersistSnapshotFilter(distribLabel);
 
         if (bundleList != null) {
-            Arrays.stream(bundleList.split("\n"))
-                  .filter(StringUtils::isNotBlank)
-                  .forEach(bid -> filter.addBundlePrefix(bid));
+            Arrays.stream(bundleList.split("\n")).filter(StringUtils::isNotBlank).forEach(bid -> filter.addBundle(bid));
         }
         if (javaPkgList != null) {
             Arrays.stream(javaPkgList.split("\n"))
@@ -378,7 +376,7 @@ public class Distribution extends ModuleRoot {
         if (nxPkgList != null) {
             Arrays.stream(nxPkgList.split("\n"))
                   .filter(StringUtils::isNotBlank)
-                  .forEach(pkg -> filter.addNuxeoPackagePrefix(pkg));
+                  .forEach(pkg -> filter.addNuxeoPackage(pkg));
         }
 
         return performSave(filter);
