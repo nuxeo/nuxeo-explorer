@@ -144,9 +144,18 @@ public abstract class AbstractApidocTest {
      */
     protected static Function<String, String> getJsonTestUpdater() {
         Function<String, String> function = (String s) -> {
-            String res = s;
-            for (String kw : List.of("version", "fileName", "location", "artifactVersion", "xmlFileName", "manifest",
-                    "digest")) {
+            String res = "";
+            // deal with manifests (...)
+            String[] lines = s.split("\n");
+            String manifestMatch = "\"manifest\":";
+            for (String line : lines) {
+                if (line.trim().startsWith(manifestMatch)) {
+                    res += line.substring(0, line.indexOf(manifestMatch)) + manifestMatch + " \"mockTestManifest\",\n";
+                } else {
+                    res += line + "\n";
+                }
+            }
+            for (String kw : List.of("version", "fileName", "location", "artifactVersion", "xmlFileName", "digest")) {
                 String p = String.format("\"%s\": \"[^\"]*\"", kw);
                 String r = String.format("\"%s\": \"mockTest%s\"", kw,
                         kw.substring(0, 1).toUpperCase(Locale.ENGLISH) + kw.substring(1));
@@ -156,6 +165,7 @@ public abstract class AbstractApidocTest {
             }
             res = res.replaceAll("\"creationDate\": [0-9]+", "\"creationDate\": null");
             res = res.replaceAll("\"releaseDate\": [0-9]+", "\"releaseDate\": null");
+            res = res.trim();
             return res;
         };
         return function;
