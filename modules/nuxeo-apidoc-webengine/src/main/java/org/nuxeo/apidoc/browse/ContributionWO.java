@@ -27,10 +27,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.apache.commons.lang3.StringUtils;
+import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
+import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.ecm.webengine.forms.FormData;
+import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
 @WebObject(type = "contribution")
@@ -46,14 +49,35 @@ public class ContributionWO extends NuxeoArtifactWebObject {
         return getTargetExtensionInfo();
     }
 
+    protected ExtensionPointInfo getTargetExtensionPoint(DistributionSnapshot snapshot, ExtensionInfo contrib) {
+        String epid = contrib.getExtensionPoint();
+        return getSnapshot().getExtensionPoint(epid);
+    }
+
+    @Override
+    public Object doViewDefault() {
+        Template t = (Template) super.doViewDefault();
+        ExtensionInfo ei = getTargetExtensionInfo();
+        ExtensionPointInfo ep = getTargetExtensionPoint(getSnapshot(), ei);
+        ComponentInfo epcomp = ep != null ? ep.getComponent() : null;
+        t.arg("ep", ep);
+        t.arg("epComp", epcomp);
+
+        String point = ei.getExtensionPoint().split("--")[1];
+        String epCompName = ei.getTargetComponentName().getName();
+        String epCompNameSuffix = epCompName.replaceAll(".*\\.", "");
+        t.arg("point", point);
+        t.arg("epCompName", epCompName);
+        t.arg("epCompNameSuffix", epCompNameSuffix);
+        return t;
+    }
+
     @POST
     @Produces("text/xml")
     @Path("override")
     public Object generateOverride() {
         ExtensionInfo ei = getTargetExtensionInfo();
-        String epid = ei.getExtensionPoint();
-        ExtensionPointInfo ep = getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession())
-                                                    .getExtensionPoint(epid);
+        ExtensionPointInfo ep = getTargetExtensionPoint(getSnapshot(), ei);
 
         FormData formData = ctx.getForm();
         Map<String, String[]> fields = formData.getFormFields();
