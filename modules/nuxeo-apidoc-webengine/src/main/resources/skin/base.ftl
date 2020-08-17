@@ -14,7 +14,6 @@
   <link rel="stylesheet" href="${skinPath}/css/code.css" media="screen" charset="utf-8" />
   <link rel="stylesheet" href="${skinPath}/script/jquery/treeview/jquery.treeview.css" media="screen" charset="utf-8">
   <link rel="stylesheet" href="${skinPath}/css/jquery.magnific.min.css" media="screen" charset="utf-8">
-  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=PT+Sans+Caption:400,700">
   <@block name="stylesheets" />
 
   <script src="${skinPath}/script/jquery/jquery-1.7.2.min.js"></script>
