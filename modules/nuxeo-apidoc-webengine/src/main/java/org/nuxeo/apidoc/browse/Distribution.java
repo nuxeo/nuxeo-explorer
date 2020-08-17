@@ -23,7 +23,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,6 +48,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
@@ -147,22 +150,47 @@ public class Distribution extends ModuleRoot {
     protected static final Pattern VERSION_REGEX = Pattern.compile("^(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:-.*)?$",
             Pattern.CASE_INSENSITIVE);
 
+    /**
+     * Customized error management.
+     * <p>
+     * Do not rely on templates to avoids error "Cannot create a CoreSession when transaction is marked rollback-only"
+     * in some cases, at render time.
+     */
     @Override
     public Object handleError(Throwable t) {
         if (t instanceof WebResourceNotFoundException || t instanceof NotFoundException) {
             return show404();
         }
         log.error(t, t);
-        return Response.status(500).entity(getTemplate("views/error/error.ftl")).type("text/html").build();
+        return showError();
     }
 
-    /**
-     * Displays a customized 404 page.
-     *
-     * @since 20.0.0
-     */
-    public Object show404() {
-        return Response.status(404).entity(getTemplate("views/error/error_404.ftl")).type("text/html").build();
+    protected Object showError() {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        pw.println("<html>");
+        pw.println("<head><title>Server Error</title></head>");
+        pw.println("<body>");
+        pw.println("<h1>Server Error</h1>");
+        pw.println("<p>An error occurred. Please retry or contact your administrator for details in logs.</p>");
+        pw.println("</body>");
+        pw.println("</html>");
+        pw.close();
+        return Response.status(404).type(MediaType.TEXT_HTML_TYPE).entity(sw.toString()).build();
+    }
+
+    protected Object show404() {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        pw.println("<html>");
+        pw.println("<head><title>404 - Resource Not Found</title></head>");
+        pw.println("<body>");
+        pw.println("<h1>404 Resource Not Found</h1>");
+        pw.println("<p>The resource you're trying to access couldn't be found.</p>");
+        pw.println("</body>");
+        pw.println("</html>");
+        pw.close();
+        return Response.status(404).type(MediaType.TEXT_HTML_TYPE).entity(sw.toString()).build();
     }
 
     protected static SnapshotManager getSnapshotManager() {
