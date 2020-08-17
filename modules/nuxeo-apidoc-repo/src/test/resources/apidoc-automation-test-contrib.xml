@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.apidoc.test.automation" version="1.0">
+
+  <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="operations">
+    <operation class="org.nuxeo.ecm.automation.core.operations.document.CreateDocument" replace="true" />
+  </extension>
+
+  <extension point="chains" target="org.nuxeo.ecm.core.operation.OperationServiceComponent">
+    <chain id="createDoc">
+      <operation id="Document.Create">
+      </operation>
+    </chain>
+  </extension>
+
+  <extension target="org.nuxeo.automation.scripting.internals.AutomationScriptingComponent" point="operation">
+    <scriptedOperation id="Scripting.HelloWorld">
+      <inputType>string</inputType>
+      <outputType>string</outputType>
+      <param name="lang" type="string" />
+      <script>
+        function run(input, params) {
+        return "Hello " + input;
+        }
+      </script>
+    </scriptedOperation>
+  </extension>
+
+</component>

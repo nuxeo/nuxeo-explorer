@@ -41,6 +41,7 @@ import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
+import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.documentation.DocumentationHelper;
 import org.nuxeo.apidoc.documentation.SecureXMLHelper;
@@ -77,6 +78,8 @@ public class ComponentInfoImpl extends BaseNuxeoArtifact implements ComponentInf
     protected String componentClass;
 
     protected String documentation;
+
+    protected List<OperationInfo> operations = new ArrayList<>();
 
     public ComponentInfoImpl(BundleInfo bundle, String name) {
         this.bundle = bundle;
@@ -264,6 +267,18 @@ public class ComponentInfoImpl extends BaseNuxeoArtifact implements ComponentInf
     @Override
     public void setRegistrationOrder(Long registrationOrder) {
         this.registrationOrder = registrationOrder;
+    }
+
+    @Override
+    public List<OperationInfo> getOperations() {
+        return Collections.unmodifiableList(operations);
+    }
+
+    public void setOperations(List<OperationInfo> operations) {
+        if (operations != null) {
+            this.operations.clear();
+            this.operations.addAll(operations);
+        }
     }
 
 }

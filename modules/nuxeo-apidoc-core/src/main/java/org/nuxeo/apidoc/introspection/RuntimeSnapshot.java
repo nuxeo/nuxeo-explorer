@@ -37,6 +37,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
 import org.nuxeo.apidoc.api.BundleGroup;
 import org.nuxeo.apidoc.api.BundleGroupExtractor;
@@ -394,6 +395,7 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
         // make sure operations are ordered, as service currently returns any order
         List<OperationType> oops = Arrays.asList(ops);
         oops.sort(Comparator.comparing(OperationType::getId));
+        var bundleToOperations = new HashMap<String, List<OperationInfo>>();
         for (OperationType op : oops) {
             OperationDocumentation documentation;
             try {
@@ -401,10 +403,28 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
             } catch (OperationException e) {
                 throw new NuxeoException(e);
             }
-            this.operations.add(new OperationInfoImpl(documentation, getVersion(), op.getType().getCanonicalName(),
-                    op.getContributingComponent()));
+            OperationInfo opi = new OperationInfoImpl(documentation, getVersion(), op.getType().getCanonicalName(),
+                    op.getContributingComponent());
+            String cid = opi.getContributingComponent();
+            if (StringUtils.isNotBlank(cid) && !OperationInfo.BUILT_IN.equals(cid)) {
+                bundleToOperations.computeIfAbsent(opi.getContributingComponent(), c -> new ArrayList<>()).add(opi);
+            }
+            this.operations.add(opi);
         }
         opsInitialized = true;
+
+        // post process all components to set operations on them
+        for (Map.Entry<String, List<OperationInfo>> e : bundleToOperations.entrySet()) {
+            ComponentInfo c = getComponent(e.getKey());
+            if (c instanceof ComponentInfoImpl) {
+                ((ComponentInfoImpl) c).setOperations(e.getValue());
+            }
+            e.getValue()
+             .stream()
+             .filter(OperationInfoImpl.class::isInstance)
+             .map(OperationInfoImpl.class::cast)
+             .forEach(opi -> opi.setComponent(c));
+        }
     }
 
     @Override

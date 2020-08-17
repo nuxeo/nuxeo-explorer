@@ -23,7 +23,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
+import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.ecm.automation.OperationDocumentation;
 import org.nuxeo.ecm.automation.OperationDocumentation.Param;
@@ -45,6 +47,8 @@ public class OperationInfoImpl extends BaseNuxeoArtifact implements OperationInf
     protected final String operationClass;
 
     protected final String contributingComponent;
+
+    protected ComponentInfo component;
 
     protected final String description;
 
@@ -85,7 +89,7 @@ public class OperationInfoImpl extends BaseNuxeoArtifact implements OperationInf
         }
         this.description = description;
         this.operationClass = operationClass;
-        if (contributingComponent == null || contributingComponent.isEmpty()) {
+        if (StringUtils.isBlank(contributingComponent)) {
             this.contributingComponent = OperationInfo.BUILT_IN;
         } else {
             String[] parts = contributingComponent.split(":");
@@ -194,6 +198,15 @@ public class OperationInfoImpl extends BaseNuxeoArtifact implements OperationInf
     @Override
     public String getContributingComponent() {
         return contributingComponent;
+    }
+
+    @Override
+    public ComponentInfo getComponent() {
+        return component;
+    }
+
+    public void setComponent(ComponentInfo component) {
+        this.component = component;
     }
 
 }

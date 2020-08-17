@@ -72,9 +72,9 @@ public interface OperationInfo extends NuxeoArtifact, Comparable<OperationInfo> 
     /** @since 20.0.0 */
     String PROP_PARAM_DESCRIPTION = "description";
 
-    String PROP_OP_CLASS = "operationClass";
+    String PROP_OP_CLASS = "nxop:operationClass";
 
-    String PROP_CONTRIBUTING_COMPONENT = "contributingComponent";
+    String PROP_CONTRIBUTING_COMPONENT = "nxop:contributingComponent";
 
     String BUILT_IN = "BuiltIn";
 
@@ -108,6 +108,10 @@ public interface OperationInfo extends NuxeoArtifact, Comparable<OperationInfo> 
     String getOperationClass();
 
     String getContributingComponent();
+
+    /** @since 20.0.0 */
+    @JsonIgnore
+    ComponentInfo getComponent();
 
     /**
      * Reconstructs the operation documentation, for json export.

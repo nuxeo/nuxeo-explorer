@@ -32,6 +32,7 @@ import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
+import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.api.QueryHelper;
 import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.documentation.DocumentationHelper;
@@ -208,6 +209,14 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
     @Override
     public void setRegistrationOrder(Long order) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<OperationInfo> getOperations() {
+        String query = QueryHelper.select(OperationInfo.TYPE_NAME, doc, OperationInfo.PROP_CONTRIBUTING_COMPONENT,
+                getName());
+        DocumentModelList docs = getCoreSession().query(query);
+        return docs.stream().map(doc -> doc.getAdapter(OperationInfo.class)).collect(Collectors.toList());
     }
 
 }

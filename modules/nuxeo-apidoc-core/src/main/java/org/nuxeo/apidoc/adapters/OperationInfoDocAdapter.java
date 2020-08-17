@@ -25,8 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.OperationInfo;
+import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.automation.OperationDocumentation.Param;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -191,6 +194,16 @@ public class OperationInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
     @Override
     public String getContributingComponent() {
         return safeGet(PROP_CONTRIBUTING_COMPONENT);
+    }
+
+    @Override
+    public ComponentInfo getComponent() {
+        DistributionSnapshot parentSnapshot = getParentNuxeoArtifact(DistributionSnapshot.class);
+        String cid = getContributingComponent();
+        if (parentSnapshot != null && StringUtils.isNotBlank(cid) && !BUILT_IN.equals(cid)) {
+            return parentSnapshot.getComponent(cid);
+        }
+        return null;
     }
 
 }
