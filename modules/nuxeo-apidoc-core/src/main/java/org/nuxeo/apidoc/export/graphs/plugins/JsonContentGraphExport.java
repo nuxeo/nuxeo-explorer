@@ -55,7 +55,7 @@ public class JsonContentGraphExport extends ContentGraphExport {
     public void updateContent(GraphExport graph) {
         init(graph);
 
-        final ObjectMapper mapper = JsonMapper.basic(null);
+        final ObjectMapper mapper = JsonMapper.basic(null, null);
         mapper.registerModule(new SimpleModule().addAbstractTypeMapping(Node.class, NodeImpl.class)
                                                 .addAbstractTypeMapping(Edge.class, EdgeImpl.class));
         LinkedHashMap<String, Object> values = new LinkedHashMap<>();

@@ -38,6 +38,7 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.json.JSONObject;
 import org.junit.ComparisonFailure;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -55,6 +56,7 @@ import org.nuxeo.runtime.mockito.MockitoFeature;
 import org.nuxeo.runtime.mockito.RuntimeService;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 /**
  * Test class with utility methods.O
@@ -124,6 +126,15 @@ public abstract class AbstractApidocTest {
 
     protected void checkJsonContentEquals(String path, String actualContent) throws IOException {
         checkContentEquals(path, actualContent, UPDATE_REFERENCE_FILES_ON_FAILURE, false, getJsonTestUpdater());
+    }
+
+    protected void checkJsonAssertEquals(String path, String actualContent) throws Exception {
+        String expectedPath = getReferencePath(path);
+        String expectedContent = getReferenceContent(expectedPath);
+        if (actualContent != null) {
+            actualContent = getJsonTestUpdater().apply(actualContent);
+        }
+        JSONAssert.assertEquals(expectedContent, new JSONObject(actualContent), false);
     }
 
     /**

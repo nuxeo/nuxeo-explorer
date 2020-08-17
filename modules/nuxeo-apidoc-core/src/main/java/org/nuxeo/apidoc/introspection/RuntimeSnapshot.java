@@ -22,6 +22,7 @@ package org.nuxeo.apidoc.introspection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,6 +45,7 @@ import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
+import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.NuxeoArtifactComparator;
 import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
@@ -478,7 +480,21 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
     }
 
     protected ObjectMapper getJsonMapper(SnapshotFilter filter) {
-        ObjectMapper mapper = JsonMapper.basic(filter);
+        SnapshotFilter refFilter = null;
+        if (filter != null && filter.getReferenceClass() != null) {
+            // resolve bundle selection to get reference filter
+            var selectedBundles = new ArrayList<NuxeoArtifact>();
+            getBundles().stream().filter(filter::accept).forEach(selectedBundles::add);
+            try {
+                Constructor<? extends SnapshotFilter> constructor = filter.getReferenceClass()
+                                                                          .getConstructor(String.class, List.class);
+                refFilter = constructor.newInstance(filter.getName() + SnapshotFilter.REFERENCE_FILTER_NAME_SUFFIX,
+                        selectedBundles);
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        ObjectMapper mapper = JsonMapper.basic(filter, refFilter);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         for (Plugin<?> plugin : getPlugins()) {
             mapper = plugin.enrishJsonMapper(mapper);

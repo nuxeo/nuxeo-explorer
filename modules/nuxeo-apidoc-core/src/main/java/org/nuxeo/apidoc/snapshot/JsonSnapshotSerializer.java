@@ -41,19 +41,26 @@ public class JsonSnapshotSerializer extends JsonSerializer<NuxeoArtifact> {
 
     protected final SnapshotFilter filter;
 
-    public JsonSnapshotSerializer(JsonSerializer<Object> serializer, SnapshotFilter filter) {
+    protected final SnapshotFilter refFilter;
+
+    public JsonSnapshotSerializer(JsonSerializer<Object> serializer, SnapshotFilter filter, SnapshotFilter refFilter) {
         defaultSerializer = serializer;
         this.filter = filter;
+        this.refFilter = refFilter;
     }
 
-    protected boolean doFilter(Object value) {
-        return (filter != null && value instanceof NuxeoArtifact && !filter.accept((NuxeoArtifact) value));
+    protected boolean doFilterOut(Object value) {
+        if (filter != null && value instanceof NuxeoArtifact) {
+            NuxeoArtifact artifact = (NuxeoArtifact) value;
+            return !filter.accept(artifact) && (refFilter == null || !refFilter.accept(artifact));
+        }
+        return false;
     }
 
     @Override
     public void serialize(NuxeoArtifact value, JsonGenerator jgen, SerializerProvider provider)
             throws IOException, JsonProcessingException {
-        if (doFilter(value)) {
+        if (doFilterOut(value)) {
             return;
         }
         if (value != null) {
@@ -70,7 +77,7 @@ public class JsonSnapshotSerializer extends JsonSerializer<NuxeoArtifact> {
     @Override
     public void serializeWithType(NuxeoArtifact value, JsonGenerator gen, SerializerProvider serializers,
             TypeSerializer typeSer) throws IOException {
-        if (doFilter(value)) {
+        if (doFilterOut(value)) {
             return;
         }
         defaultSerializer.serializeWithType(value, gen, serializers, typeSer);
@@ -78,7 +85,7 @@ public class JsonSnapshotSerializer extends JsonSerializer<NuxeoArtifact> {
 
     @Override
     public boolean isEmpty(SerializerProvider provider, NuxeoArtifact value) {
-        if (doFilter(value)) {
+        if (doFilterOut(value)) {
             return true;
         }
         return defaultSerializer.isEmpty(provider, value);
