@@ -26,6 +26,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 
 import org.nuxeo.apidoc.api.NuxeoArtifact;
+import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
@@ -46,6 +47,10 @@ public abstract class NuxeoArtifactWebObject extends DefaultObject {
 
     protected SnapshotManager getSnapshotManager() {
         return Framework.getService(SnapshotManager.class);
+    }
+
+    protected DistributionSnapshot getSnapshot() {
+        return getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession());
     }
 
     @Override

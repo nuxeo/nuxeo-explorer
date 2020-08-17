@@ -53,10 +53,6 @@ public class PackageWO extends NuxeoArtifactWebObject {
         return getTargetPackageInfo(getSnapshot());
     }
 
-    protected DistributionSnapshot getSnapshot() {
-        return getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession());
-    }
-
     protected PackageInfo getTargetPackageInfo(DistributionSnapshot snapshot) {
         return snapshot.getPackage(nxArtifactId);
     }
