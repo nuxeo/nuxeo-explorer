@@ -5,24 +5,24 @@
 
 <div class="tabscontent">
 
-  <ul class="apibrowser">
-    <li class="bundlestree">
-      <a href="${Root.path}/${distId}/listBundleGroups">Bundle Groups</a>
+  <ul>
+    <li>
+      <a class="bundles" href="${Root.path}/${distId}/listBundleGroups">Bundle Groups</a>
       <ul>
-        <li class="bundletree">
-          <a href="${Root.path}/${distId}/listBundles">Bundles</a>
+        <li>
+          <a class="bundles" href="${Root.path}/${distId}/listBundles">Bundles</a>
           <ul>
-            <li class="componenttree">
-              <a href="${Root.path}/${distId}/listComponents">Components</a>
+            <li>
+              <a class="components" href="${Root.path}/${distId}/listComponents">Components</a>
               <ul>
-                <li class="servicetree">
-                  <a href="${Root.path}/${distId}/listServices">Services</a>
+                <li>
+                  <a class="services" href="${Root.path}/${distId}/listServices">Services</a>
                 </li>
-                <li class="extensiontree">
-                  <a href="${Root.path}/${distId}/listExtensionPoints">Extension Points</a>
+                <li>
+                  <a class="extensions" href="${Root.path}/${distId}/listExtensionPoints">Extension Points</a>
                 </li>
-                <li class="contributiontree">
-                  <a href="${Root.path}/${distId}/listContributions">Contributions</a>
+                <li>
+                  <a class="contributions" href="${Root.path}/${distId}/listContributions">Contributions</a>
                 </li>
               </ul>
             </li>
@@ -30,15 +30,15 @@
         </li>
       </ul>
     </li>
-    <li class="operationstree">
-      <a href="${Root.path}/${distId}/listOperations">Operations</a>
+    <li>
+      <a class="operations" href="${Root.path}/${distId}/listOperations">Operations</a>
     </li>
-    <li class="packagestree">
-      <a href="${Root.path}/${distId}/listPackages">Packages</a>
+    <li>
+      <a class="packages" href="${Root.path}/${distId}/listPackages">Packages</a>
     </li>
     <#list Root.getPluginMenu() as plugin>
-      <li class="${plugin.getStyleClass()}tree">
-        <a href="${Root.path}/${distId}/${plugin.getViewType()}/${plugin.getHomeView()}">${plugin.getLabel()}</a>
+      <li>
+        <a class="${plugin.getStyleClass()}" href="${Root.path}/${distId}/${plugin.getViewType()}/${plugin.getHomeView()}">${plugin.getLabel()}</a>
       </li>
     </#list>
   </ul>
