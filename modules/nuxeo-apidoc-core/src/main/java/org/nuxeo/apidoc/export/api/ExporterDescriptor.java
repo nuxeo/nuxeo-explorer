@@ -18,11 +18,14 @@
  */
 package org.nuxeo.apidoc.export.api;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.nuxeo.apidoc.api.Descriptor;
 import org.nuxeo.common.xmap.annotation.XNode;
+import org.nuxeo.common.xmap.annotation.XNodeList;
 import org.nuxeo.common.xmap.annotation.XNodeMap;
 import org.nuxeo.common.xmap.annotation.XObject;
 
@@ -51,6 +54,9 @@ public class ExporterDescriptor implements Descriptor {
 
     @XNode("mimetype")
     String mimetype;
+
+    @XNodeList(value = "display/on", type = ArrayList.class, componentType = String.class)
+    List<String> displays = new ArrayList<>();
 
     @XNodeMap(value = "properties/property", key = "@name", type = HashMap.class, componentType = String.class)
     Map<String, String> properties = new HashMap<>();
@@ -83,6 +89,10 @@ public class ExporterDescriptor implements Descriptor {
 
     public Map<String, String> getProperties() {
         return properties;
+    }
+
+    public boolean displayOn(String page) {
+        return displays != null && displays.contains(page);
     }
 
 }

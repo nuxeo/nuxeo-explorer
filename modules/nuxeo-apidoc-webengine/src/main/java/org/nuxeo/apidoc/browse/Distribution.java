@@ -449,9 +449,9 @@ public class Distribution extends ModuleRoot {
 
         File tmp = getExportTmpFile();
         tmp.createNewFile();
-        OutputStream out = new FileOutputStream(tmp);
-        getSnapshotManager().exportSnapshot(getContext().getCoreSession(), distribId, out);
-        out.close();
+        try (OutputStream out = new FileOutputStream(tmp)) {
+            getSnapshotManager().exportSnapshot(getContext().getCoreSession(), distribId, out);
+        }
         String fName = "nuxeo-distribution-" + distribId + ".zip";
         fName = fName.replace(" ", "_");
         ArchiveFile aFile = new ArchiveFile(tmp.getAbsolutePath());

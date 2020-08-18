@@ -22,10 +22,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.ws.rs.Produces;
 
 import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
+import org.nuxeo.apidoc.export.api.Exporter;
+import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
 @WebObject(type = "bundle")
@@ -38,6 +43,18 @@ public class BundleWO extends NuxeoArtifactWebObject {
     @Override
     public NuxeoArtifact getNxArtifact() {
         return getTargetBundleInfo();
+    }
+
+    @Produces("text/html")
+    @Override
+    public Object doViewDefault() {
+        Template t = (Template) super.doViewDefault();
+        List<Exporter> exporters = getSnapshotManager().getExporters()
+                                                       .stream()
+                                                       .filter(e -> e.displayOn("bundle"))
+                                                       .collect(Collectors.toList());
+        t.arg("exporters", exporters);
+        return t;
     }
 
     protected class ComponentInfoSorter implements Comparator<ComponentInfo> {

@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.functionaltests.Required;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -77,6 +78,10 @@ public class PackageArtifactPage extends ArtifactPage {
     @FindBy(xpath = "//div[@id='contributions']")
     public WebElement contributions;
 
+    @Required
+    @FindBy(xpath = "//ul[@class='exports']")
+    public WebElement exports;
+
     public PackageArtifactPage(WebDriver driver) {
         super(driver);
     }
@@ -89,7 +94,8 @@ public class PackageArtifactPage extends ArtifactPage {
                         + "Components\n" //
                         + "Services\n" //
                         + "Extension Points\n" //
-                        + "Contributions");
+                        + "Contributions\n" //
+                        + "Exports");
         String version = packageVersion.getText();
         assertFalse(StringUtils.isBlank(version));
         checkPackageId("platform-explorer-" + version);
@@ -123,6 +129,10 @@ public class PackageArtifactPage extends ArtifactPage {
                 + "org.nuxeo.apidoc.listener.contrib--listener\n" //
                 + "org.nuxeo.apidoc.adapterContrib--adapters\n" //
                 + "org.nuxeo.apidoc.doctypeContrib--doctype");
+        WebElement jsonExport = exports.findElement(By.linkText("Json Export"));
+        checkJsonLink(jsonExport);
+        WebElement graphExport = exports.findElement(By.linkText("Json Graph"));
+        checkJsonLink(graphExport);
     }
 
     @Override

@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.nuxeo.functionaltests.Required;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -67,6 +68,14 @@ public class DistributionHomePage extends AbstractExplorerPage {
     @FindBy(xpath = "//div[@class='tabscontent']//a[text()='Packages']")
     public WebElement packages;
 
+    @Required
+    @FindBy(xpath = "//div[@id='tocDiv']")
+    public WebElement toc;
+
+    @Required
+    @FindBy(xpath = "//ul[@class='exports']")
+    public WebElement exports;
+
     public DistributionHomePage(WebDriver driver) {
         super(driver);
     }
@@ -75,6 +84,13 @@ public class DistributionHomePage extends AbstractExplorerPage {
     public void check() {
         checkTitle("Nuxeo Platform Explorer");
         checkHeader(null);
+        assertEquals("Browse\n" //
+                + "Exports", //
+                toc.getText());
+        // check export links presence but do not click (too costly)
+        exports.findElement(By.linkText("Json Export"));
+        exports.findElement(By.linkText("Json Graph"));
+        exports.findElement(By.linkText("DOT Graph"));
     }
 
     public void checkHeader(String distribId) {

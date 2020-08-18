@@ -34,6 +34,7 @@ import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
+import org.nuxeo.apidoc.export.api.Exporter;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
@@ -103,6 +104,12 @@ public class PackageWO extends NuxeoArtifactWebObject {
         t.arg("services", getServiceInfo(components));
         t.arg("extensionpoints", getExtensionPointInfo(components));
         t.arg("contributions", getContributionInfo(components));
+
+        List<Exporter> exporters = getSnapshotManager().getExporters()
+                                                       .stream()
+                                                       .filter(e -> e.displayOn("package"))
+                                                       .collect(Collectors.toList());
+        t.arg("exporters", exporters);
         return t;
     }
 

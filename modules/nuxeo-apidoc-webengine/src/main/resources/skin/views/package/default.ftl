@@ -124,7 +124,21 @@
     </div>
   </#if>
 
-<@tocTrigger />
+  <h2>Exports</h2>
+  <ul class="exports">
+    <li>
+      <a href="${Root.path}/${distId}/json?nuxeoPackages=${nxItem.name}&pretty=true">Json Export</a>
+      <small>Default Json serialization</small>
+    </li>
+    <#list exporters as exporter>
+    <li>
+      <a href="${Root.path}/${distId}/export/${exporter.name}?nuxeoPackages=${nxItem.name}&pretty=true">${exporter.title?html}</a>
+      <#if exporter.description?has_content><small>${exporter.description?html}</small></#if>
+    </li>
+    </#list>
+  </ul>
+
+  <@tocTrigger />
 
 </div>
 </@block>

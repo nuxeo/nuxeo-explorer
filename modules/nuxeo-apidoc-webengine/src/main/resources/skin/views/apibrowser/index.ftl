@@ -1,10 +1,14 @@
 <@extends src="base.ftl">
 
 <@block name="right">
+<#include "/docMacros.ftl">
+
 <h1> Browsing Distribution '${Root.currentDistribution.key}' </h1>
 
 <div class="tabscontent">
+  <@toc />
 
+  <h2>Browse</h2>
   <ul>
     <li>
       <a class="bundles" href="${Root.path}/${distId}/listBundleGroups">Bundle Groups</a>
@@ -42,6 +46,22 @@
       </li>
     </#list>
   </ul>
+
+  <h2>Exports</h2>
+  <ul class="exports">
+    <li>
+      <a href="${Root.path}/${distId}/json?pretty=true">Json Export</a>
+      <small>Default Json serialization</small>
+    </li>
+    <#list exporters as exporter>
+    <li>
+      <a href="${Root.path}/${distId}/export/${exporter.name}?pretty=true">${exporter.title?html}</a>
+      <#if exporter.description?has_content><small>${exporter.description?html}</small></#if>
+    </li>
+    </#list>
+  </ul>
+
+  <@tocTrigger />
 
 </div>
 

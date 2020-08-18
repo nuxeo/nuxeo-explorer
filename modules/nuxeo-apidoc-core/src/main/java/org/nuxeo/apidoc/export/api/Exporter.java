@@ -41,6 +41,8 @@ public interface Exporter {
 
     Map<String, String> getProperties();
 
+    boolean displayOn(String page);
+
     void export(OutputStream out, DistributionSnapshot distribution, SnapshotFilter filter,
             Map<String, String> properties);
 

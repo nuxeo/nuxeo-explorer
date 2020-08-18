@@ -19,8 +19,10 @@
  */
 package org.nuxeo.apidoc.browse;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,6 +51,8 @@ import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
+import org.nuxeo.apidoc.export.ArchiveFile;
+import org.nuxeo.apidoc.export.api.Exporter;
 import org.nuxeo.apidoc.search.ArtifactSearcher;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.JsonPrettyPrinter;
@@ -56,6 +60,7 @@ import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.apidoc.snapshot.TargetExtensionPointSnapshotFilter;
+import org.nuxeo.common.Environment;
 import org.nuxeo.ecm.platform.htmlsanitizer.HtmlSanitizerService;
 import org.nuxeo.ecm.webengine.model.Resource;
 import org.nuxeo.ecm.webengine.model.WebObject;
@@ -110,7 +115,12 @@ public class ApiBrowser extends DefaultObject {
                                          .arg("bundleIds", snap.getBundleIds())
                                          .arg("stats", stats);
         } else {
-            return getView("index").arg(Distribution.DIST_ID, ctx.getProperty(Distribution.DIST_ID));
+            List<Exporter> exporters = getSnapshotManager().getExporters()
+                                                           .stream()
+                                                           .filter(e -> e.displayOn("home"))
+                                                           .collect(Collectors.toList());
+            return getView("index").arg(Distribution.DIST_ID, ctx.getProperty(Distribution.DIST_ID))
+                                   .arg("exporters", exporters);
         }
     }
 
@@ -478,6 +488,15 @@ public class ApiBrowser extends DefaultObject {
                                                          .arg("hideNav", Boolean.valueOf(false));
     }
 
+    protected File getExportTmpFile() throws IOException {
+        File tmpFile = File.createTempFile("apidoc-export", null, Environment.getDefault().getTemp());
+        if (tmpFile.exists()) {
+            tmpFile.delete();
+        }
+        tmpFile.deleteOnExit();
+        return tmpFile;
+    }
+
     /**
      * Returns the distribution json export.
      *
@@ -492,15 +511,62 @@ public class ApiBrowser extends DefaultObject {
             @QueryParam("checkAsPrefixes") Boolean checkAsPrefixes,
             @QueryParam("includeReferences") Boolean includeReferences, @QueryParam("pretty") Boolean pretty)
             throws IOException {
-        DistributionSnapshot snapshot = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
+        SnapshotManager sm = getSnapshotManager();
+        DistributionSnapshot snapshot = sm.getSnapshot(distributionId, ctx.getCoreSession());
         // init potential resources depending on request
-        getSnapshotManager().initWebContext(getContext().getRequest());
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        sm.initWebContext(getContext().getRequest());
+
         SnapshotFilter filter = getSnapshotFilter(bundles, nuxeoPackages, javaPackagePrefixes, checkAsPrefixes,
                 includeReferences);
         PrettyPrinter printer = Boolean.TRUE.equals(pretty) ? new JsonPrettyPrinter() : null;
-        snapshot.writeJson(out, filter, printer);
-        return out.toString();
+        File tmp = getExportTmpFile();
+        try (OutputStream out = new FileOutputStream(tmp)) {
+            snapshot.writeJson(out, filter, printer);
+        }
+
+        ArchiveFile aFile = new ArchiveFile(tmp.getAbsolutePath());
+        return Response.ok(aFile).type("application/json").build();
+    }
+
+    /**
+     * Returns the distribution export with given name
+     *
+     * @since 20.0.0
+     */
+    @GET
+    @Path(ApiBrowserConstants.EXPORT_ACTION + "/{exporter}")
+    public Response getExporters(@PathParam("exporter") String exporterName,
+            @QueryParam("bundles") List<String> bundles, @QueryParam("nuxeoPackages") List<String> nuxeoPackages,
+            @QueryParam("javaPackagePrefixes") List<String> javaPackagePrefixes,
+            @QueryParam("checkAsPrefixes") Boolean checkAsPrefixes,
+            @QueryParam("includeReferences") Boolean includeReferences, @QueryParam("pretty") Boolean pretty)
+            throws IOException {
+        SnapshotManager sm = getSnapshotManager();
+        DistributionSnapshot snapshot = sm.getSnapshot(distributionId, ctx.getCoreSession());
+        // init potential resources depending on request
+        sm.initWebContext(getContext().getRequest());
+
+        Map<String, String> props = Boolean.TRUE.equals(pretty) ? Map.of("pretty", "true") : null;
+        SnapshotFilter filter = getSnapshotFilter(bundles, nuxeoPackages, javaPackagePrefixes, checkAsPrefixes,
+                includeReferences);
+        Exporter exporter = sm.getExporter(exporterName);
+        if (exporter == null) {
+            return Response.status(404).build();
+        }
+        File tmp = getExportTmpFile();
+        try (OutputStream out = new FileOutputStream(tmp)) {
+            exporter.export(out, snapshot, filter, props);
+        }
+
+        ArchiveFile aFile = new ArchiveFile(tmp.getAbsolutePath());
+        if ("application/json".equals(exporter.getMimetype())) {
+            return Response.ok(aFile).type("application/json").build();
+        } else {
+            return Response.ok(aFile)
+                           .header("Content-Disposition", "attachment;filename=" + exporter.getFilename())
+                           .type(exporter.getMimetype())
+                           .build();
+        }
     }
 
     protected SnapshotFilter getSnapshotFilter(List<String> bundlePrefixes, List<String> nuxeoPackagePrefixes,
