@@ -58,7 +58,8 @@ public class JsonGraphExporter extends AbstractGraphExporter {
             Map<String, String> properties) {
         GraphExport graph = getDefaultGraph(distribution, filter, properties);
 
-        final ObjectMapper mapper = JsonMapper.basic(null, null);
+        // avoid serializing full objects as they're all included as nodes
+        final ObjectMapper mapper = JsonMapper.basic(null, null, false);
         mapper.registerModule(new SimpleModule().addAbstractTypeMapping(Node.class, NodeImpl.class)
                                                 .addAbstractTypeMapping(Edge.class, EdgeImpl.class));
         LinkedHashMap<String, Object> values = new LinkedHashMap<>();

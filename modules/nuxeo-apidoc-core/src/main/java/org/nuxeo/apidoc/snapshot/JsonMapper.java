@@ -21,6 +21,7 @@ package org.nuxeo.apidoc.snapshot;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.nuxeo.apidoc.adapters.BundleGroupDocAdapter;
 import org.nuxeo.apidoc.adapters.BundleInfoDocAdapter;
@@ -111,13 +112,24 @@ public class JsonMapper {
     }
 
     /**
-     * Returns the default object mapper for distribution artifacts and following filter.
-     * <p>
-     * Follows annotations on default live implementation.
+     * Returns the default object mapper, recursing.
      *
      * @since 20.0.0
      */
     public static ObjectMapper basic(SnapshotFilter filter, SnapshotFilter refFilter) {
+        return basic(filter, refFilter, true);
+    }
+
+    /**
+     * Returns the default object mapper for distribution artifacts and following filter.
+     * <p>
+     * Follows annotations on default live implementation.
+     * <p>
+     * If recurse is false, will simplify export so that serialized artifacts do not include their sub artifacts.
+     *
+     * @since 20.0.0
+     */
+    public static ObjectMapper basic(SnapshotFilter filter, SnapshotFilter refFilter, boolean recurse) {
         final ObjectMapper mapper = createMapper();
         SimpleModule module = createModule(filter, refFilter);
         module.addAbstractTypeMapping(DistributionSnapshot.class, RuntimeSnapshot.class)
@@ -130,8 +142,28 @@ public class JsonMapper {
               .addAbstractTypeMapping(ServiceInfo.class, ServiceInfoImpl.class)
               .addAbstractTypeMapping(PackageInfo.class, PackageInfoImpl.class)
               .addAbstractTypeMapping(Blob.class, StringBlobReader.class);
+        if (!recurse) {
+            mapper.addMixIn(BundleInfo.class, BundleInfoMixin.class);
+            mapper.addMixIn(ComponentInfo.class, ComponentInfoMixin.class);
+        }
         mapper.registerModule(module);
         return mapper;
+    }
+
+    public static abstract class BundleInfoMixin {
+        @JsonIgnore
+        abstract List<ComponentInfo> getComponents();
+    }
+
+    public static abstract class ComponentInfoMixin {
+        @JsonIgnore
+        abstract List<ExtensionPointInfo> getExtensionPoints();
+
+        @JsonIgnore
+        abstract List<ExtensionInfo> getExtensions();
+
+        @JsonIgnore
+        abstract List<ServiceInfo> getServices();
     }
 
     public static abstract class OperationDocParamMixin {
