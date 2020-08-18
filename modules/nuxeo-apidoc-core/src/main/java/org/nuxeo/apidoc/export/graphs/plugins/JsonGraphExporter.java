@@ -18,19 +18,32 @@
  */
 package org.nuxeo.apidoc.export.graphs.plugins;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.nuxeo.apidoc.export.api.Export;
 import org.nuxeo.apidoc.export.api.ExporterDescriptor;
+import org.nuxeo.apidoc.export.graphs.api.Edge;
 import org.nuxeo.apidoc.export.graphs.api.GraphExport;
 import org.nuxeo.apidoc.export.graphs.api.GraphType;
+import org.nuxeo.apidoc.export.graphs.api.Node;
 import org.nuxeo.apidoc.export.graphs.introspection.AbstractGraphExporter;
+import org.nuxeo.apidoc.export.graphs.introspection.EdgeImpl;
+import org.nuxeo.apidoc.export.graphs.introspection.NodeImpl;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
+import org.nuxeo.apidoc.snapshot.JsonMapper;
+import org.nuxeo.apidoc.snapshot.JsonPrettyPrinter;
 import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.ecm.core.api.NuxeoException;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+
 /**
- * Basic Graph export with json formats.
+ * Basic Graph export with json format.
  *
  * @since 20.0.0
  */
@@ -41,16 +54,39 @@ public class JsonGraphExporter extends AbstractGraphExporter {
     }
 
     @Override
-    public Export getExport(DistributionSnapshot distribution, SnapshotFilter filter, Map<String, String> properties) {
-        GraphExport baseGraph = getDefaultGraph(distribution, filter, properties);
+    public void export(OutputStream out, DistributionSnapshot distribution, SnapshotFilter filter,
+            Map<String, String> properties) {
+        GraphExport graph = getDefaultGraph(distribution, filter, properties);
+
+        final ObjectMapper mapper = JsonMapper.basic(null, null);
+        mapper.registerModule(new SimpleModule().addAbstractTypeMapping(Node.class, NodeImpl.class)
+                                                .addAbstractTypeMapping(Edge.class, EdgeImpl.class));
+        LinkedHashMap<String, Object> values = new LinkedHashMap<>();
+        values.put("name", getName());
+        values.put("title", getTitle());
+        values.put("description", getDescription());
+        values.put("type", GraphType.BASIC.name());
+        if (!getProperties().isEmpty()) {
+            values.put("properties", getProperties());
+        }
+        values.put("nodes", graph.getNodes());
+        values.put("edges", graph.getEdges());
         try {
-            JsonContentGraphExport export = baseGraph.copy(JsonContentGraphExport.class, null);
-            export.update(getName(), "Basic Graph", "Complete graph, with dependencies, without a layout",
-                    GraphType.BASIC.name());
-            return export;
-        } catch (ReflectiveOperationException e) {
+            ObjectWriter writer = mapper.writerFor(LinkedHashMap.class)
+                                        .with(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM)
+                                        .without(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+            if (isPrettyPrint(properties, "false")) {
+                writer = writer.with(new JsonPrettyPrinter());
+            }
+            writer.writeValue(out, values);
+        } catch (IOException e) {
             throw new NuxeoException(e);
         }
+    }
+
+    protected boolean isPrettyPrint(Map<String, String> properties, String defaultValue) {
+        return Boolean.valueOf(getProperties().getOrDefault("pretty", defaultValue))
+                || (properties != null && Boolean.valueOf(properties.getOrDefault("pretty", defaultValue)));
     }
 
 }

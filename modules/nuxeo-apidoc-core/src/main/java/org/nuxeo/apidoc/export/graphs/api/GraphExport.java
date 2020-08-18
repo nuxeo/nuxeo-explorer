@@ -20,12 +20,10 @@ package org.nuxeo.apidoc.export.graphs.api;
 
 import java.util.List;
 
-import org.nuxeo.apidoc.export.api.Export;
-
 /**
  * @since 20.0.0
  */
-public interface GraphExport extends Export {
+public interface GraphExport {
 
     void addEdge(Edge edge);
 

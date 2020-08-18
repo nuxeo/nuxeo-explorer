@@ -40,6 +40,18 @@ public class ExporterDescriptor implements Descriptor {
     @XNode("@class")
     String klass;
 
+    @XNode("title")
+    String title;
+
+    @XNode("description")
+    String description;
+
+    @XNode("filename")
+    String filename;
+
+    @XNode("mimetype")
+    String mimetype;
+
     @XNodeMap(value = "properties/property", key = "@name", type = HashMap.class, componentType = String.class)
     Map<String, String> properties = new HashMap<>();
 
@@ -51,6 +63,22 @@ public class ExporterDescriptor implements Descriptor {
     @Override
     public String getKlass() {
         return klass;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public String getMimetype() {
+        return mimetype;
     }
 
     public Map<String, String> getProperties() {

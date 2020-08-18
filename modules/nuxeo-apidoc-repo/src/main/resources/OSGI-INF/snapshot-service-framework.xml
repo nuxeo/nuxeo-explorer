@@ -61,8 +61,18 @@
   </extension-point>
 
   <extension target="org.nuxeo.apidoc.snapshot.SnapshotManagerComponent" point="exporters">
-    <exporter id="jsonGraph" class="org.nuxeo.apidoc.export.graphs.plugins.JsonGraphExporter" />
-    <exporter id="dotGraph" class="org.nuxeo.apidoc.export.graphs.plugins.DOTGraphExporter" />
+    <exporter id="jsonGraph" class="org.nuxeo.apidoc.export.graphs.plugins.JsonGraphExporter">
+      <title>Json Graph</title>
+      <description>Json dependency graph</description>
+      <filename>graph.json</filename>
+      <mimetype>application/json</mimetype>
+    </exporter>
+    <exporter id="dotGraph" class="org.nuxeo.apidoc.export.graphs.plugins.DOTGraphExporter">
+      <title>DOT Graph</title>
+      <description>Dependency graph exported in DOT format</description>
+      <filename>graph.dot</filename>
+      <mimetype>application/octet-stream</mimetype>
+    </exporter>
   </extension>
 
   <extension target="org.nuxeo.runtime.ConfigurationService" point="configuration">

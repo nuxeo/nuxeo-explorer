@@ -33,12 +33,10 @@ import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.export.api.AbstractExporter;
-import org.nuxeo.apidoc.export.api.Export;
 import org.nuxeo.apidoc.export.api.ExporterDescriptor;
 import org.nuxeo.apidoc.export.graphs.api.Edge;
 import org.nuxeo.apidoc.export.graphs.api.EdgeType;
 import org.nuxeo.apidoc.export.graphs.api.GraphExport;
-import org.nuxeo.apidoc.export.graphs.api.GraphType;
 import org.nuxeo.apidoc.export.graphs.api.Node;
 import org.nuxeo.apidoc.export.graphs.api.NodeAttribute;
 import org.nuxeo.apidoc.export.graphs.api.NodeCategory;
@@ -57,21 +55,6 @@ public abstract class AbstractGraphExporter extends AbstractExporter {
         super(descriptor);
     }
 
-    @Override
-    public Export getExport(DistributionSnapshot distribution, SnapshotFilter filter, Map<String, String> properties) {
-        return getDefaultGraph(distribution, filter, properties);
-    }
-
-    protected GraphExport createDefaultGraph(Map<String, String> properties) {
-        ContentGraphExport graph = new ContentGraphExport();
-        graph.update(getName(), null, null, GraphType.BASIC.name());
-        graph.setProperties(getProperties());
-        if (properties != null) {
-            properties.forEach(graph::setProperty);
-        }
-        return graph;
-    }
-
     /**
      * Introspect the graph, ignoring bundle groups but selecting all other nodes.
      * <ul>
@@ -86,7 +69,7 @@ public abstract class AbstractGraphExporter extends AbstractExporter {
      */
     protected GraphExport getDefaultGraph(DistributionSnapshot distribution, SnapshotFilter filter,
             Map<String, String> properties) {
-        GraphExport graph = createDefaultGraph(properties);
+        GraphExport graph = new DefaultGraphExport();
 
         Map<String, Integer> nodeHits = new HashMap<>();
         Set<String> isolatedBundles = new HashSet<>();

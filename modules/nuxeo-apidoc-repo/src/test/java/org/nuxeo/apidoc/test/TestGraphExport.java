@@ -19,11 +19,11 @@
 package org.nuxeo.apidoc.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +33,7 @@ import javax.inject.Inject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.nuxeo.apidoc.export.api.Export;
 import org.nuxeo.apidoc.export.api.Exporter;
-import org.nuxeo.apidoc.export.graphs.api.GraphType;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
@@ -74,8 +72,24 @@ public class TestGraphExport extends AbstractApidocTest {
     @Test
     public void testGetExporter() throws Exception {
         assertNull(snapshotManager.getExporter("foo"));
-        assertNotNull(snapshotManager.getExporter("jsonGraph"));
-        assertNotNull(snapshotManager.getExporter("dotGraph"));
+
+        Exporter exporter = snapshotManager.getExporter("jsonGraph");
+        assertNotNull(exporter);
+        assertEquals("jsonGraph", exporter.getName());
+        assertEquals("Json Graph", exporter.getTitle());
+        assertEquals("Json dependency graph", exporter.getDescription());
+        assertEquals("graph.json", exporter.getFilename());
+        assertEquals("application/json", exporter.getMimetype());
+        assertTrue(exporter.getProperties().isEmpty());
+
+        exporter = snapshotManager.getExporter("dotGraph");
+        assertNotNull(exporter);
+        assertEquals("dotGraph", exporter.getName());
+        assertEquals("DOT Graph", exporter.getTitle());
+        assertEquals("Dependency graph exported in DOT format", exporter.getDescription());
+        assertEquals("graph.dot", exporter.getFilename());
+        assertEquals("application/octet-stream", exporter.getMimetype());
+        assertTrue(exporter.getProperties().isEmpty());
     }
 
     protected void checkDefaultExports(DistributionSnapshot snapshot) throws Exception {
@@ -85,23 +99,16 @@ public class TestGraphExport extends AbstractApidocTest {
         filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
 
         Exporter exporter = snapshotManager.getExporter("jsonGraph");
-        Export export = exporter.getExport(snapshot, filter, Map.of("pretty", "true"));
-        assertEquals("jsonGraph", export.getName());
-        assertEquals("Basic Graph", export.getTitle());
-        assertEquals("Complete graph, with dependencies, without a layout", export.getDescription());
-        assertEquals(GraphType.BASIC.name(), export.getType());
-        assertFalse(export.getProperties().isEmpty());
-        assertEquals(Map.of("pretty", "true"), export.getProperties());
-        checkJsonContentEquals("export/graphs/basic_graph.json", export.getBlob().getString());
+        try (ByteArrayOutputStream sinkJson = new ByteArrayOutputStream()) {
+            exporter.export(sinkJson, snapshot, filter, Map.of("pretty", "true"));
+            checkJsonContentEquals("export/graphs/basic_graph.json", sinkJson.toString());
+        }
 
         exporter = snapshotManager.getExporter("dotGraph");
-        export = exporter.getExport(snapshot, filter, null);
-        assertEquals("dotGraph", export.getName());
-        assertEquals("DOT Graph", export.getTitle());
-        assertEquals("Complete Graph exported in DOT format", export.getDescription());
-        assertEquals(GraphType.BASIC.name(), export.getType());
-        assertTrue(export.getProperties().isEmpty());
-        checkJsonContentEquals("export/graphs/jgrapht.dot", export.getBlob().getString());
+        try (ByteArrayOutputStream sinkDot = new ByteArrayOutputStream()) {
+            exporter.export(sinkDot, snapshot, filter, null);
+            checkJsonContentEquals("export/graphs/jgrapht.dot", sinkDot.toString());
+        }
     }
 
     @Test

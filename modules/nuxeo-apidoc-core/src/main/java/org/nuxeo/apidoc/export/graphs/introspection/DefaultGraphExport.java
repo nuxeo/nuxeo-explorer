@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.nuxeo.apidoc.export.api.AbstractExport;
 import org.nuxeo.apidoc.export.graphs.api.Edge;
 import org.nuxeo.apidoc.export.graphs.api.GraphExport;
 import org.nuxeo.apidoc.export.graphs.api.Node;
@@ -33,7 +32,7 @@ import org.nuxeo.apidoc.export.graphs.api.NodeFilter;
 /**
  * @since 20.0.0
  */
-public abstract class AbstractGraphExport extends AbstractExport implements GraphExport {
+public class DefaultGraphExport implements GraphExport {
 
     protected final List<Node<?>> nodes = new ArrayList<>();
 
@@ -70,7 +69,7 @@ public abstract class AbstractGraphExport extends AbstractExport implements Grap
     @Override
     public <T extends GraphExport> T copy(Class<T> targetClass, NodeFilter nodeFilter)
             throws ReflectiveOperationException {
-        T graph = super.copy(targetClass);
+        T graph = targetClass.getConstructor().newInstance();
         for (Node<?> node : getNodes()) {
             if (nodeFilter == null || nodeFilter.accept(node)) {
                 graph.addNode(node.copy());
