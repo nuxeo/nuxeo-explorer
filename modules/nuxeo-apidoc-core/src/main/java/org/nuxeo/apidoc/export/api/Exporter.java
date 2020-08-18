@@ -18,6 +18,7 @@
  */
 package org.nuxeo.apidoc.export.api;
 
+import java.io.OutputStream;
 import java.util.Map;
 
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
@@ -30,12 +31,17 @@ public interface Exporter {
 
     String getName();
 
-    void setName(String name);
+    String getTitle();
+
+    String getDescription();
+
+    String getFilename();
+
+    String getMimetype();
 
     Map<String, String> getProperties();
 
-    void setProperties(Map<String, String> properties);
-
-    Export getExport(DistributionSnapshot distribution, SnapshotFilter filter, Map<String, String> properties);
+    void export(OutputStream out, DistributionSnapshot distribution, SnapshotFilter filter,
+            Map<String, String> properties);
 
 }

@@ -19,7 +19,6 @@
 package org.nuxeo.apidoc.export.api;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,39 +28,38 @@ public abstract class AbstractExporter implements Exporter {
 
     protected final ExporterDescriptor descriptor;
 
-    protected String name;
-
-    protected final Map<String, String> properties = new HashMap<>();
-
     public AbstractExporter(ExporterDescriptor descriptor) {
         this.descriptor = descriptor;
-        this.name = descriptor.getId();
-        if (descriptor.getProperties() != null) {
-            this.properties.putAll(descriptor.getProperties());
-        }
     }
 
     @Override
     public String getName() {
-        return name;
+        return descriptor.getId();
     }
 
     @Override
-    public void setName(String name) {
-        this.name = name;
+    public String getTitle() {
+        return descriptor.getTitle();
+    }
+
+    @Override
+    public String getDescription() {
+        return descriptor.getDescription();
+    }
+
+    @Override
+    public String getFilename() {
+        return descriptor.getFilename();
+    }
+
+    @Override
+    public String getMimetype() {
+        return descriptor.getMimetype();
     }
 
     @Override
     public Map<String, String> getProperties() {
-        return Collections.unmodifiableMap(properties);
-    }
-
-    @Override
-    public void setProperties(Map<String, String> properties) {
-        this.properties.clear();
-        if (properties != null) {
-            this.properties.putAll(properties);
-        }
+        return Collections.unmodifiableMap(descriptor.getProperties());
     }
 
 }
