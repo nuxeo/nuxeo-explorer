@@ -66,18 +66,19 @@ pipeline {
     // waiting for https://github.com/jenkins-x/jx/issues/4076 to put it in Global EnvVars
     CONNECT_PROD_UPLOAD = "https://connect.nuxeo.com/nuxeo/site/marketplace/upload?batch=true"
     MAVEN_OPTS = "$MAVEN_OPTS -Xms512m -Xmx3072m"
-    REFERENCE_BRANCH = "master"
+    MAVEN_ARGS = '-B -nsu'
+    REFERENCE_BRANCH = 'master'
     SCM_REF = "${getCommitSha1()}"
     VERSION = "${getVersion(REFERENCE_BRANCH)}"
     PERSISTENCE = "${BRANCH_NAME == REFERENCE_BRANCH}"
     // NXP-29494: override templates to avoid activating s3 in PR preview
     NUXEO_TEMPLATE_OVERRIDE = "${BRANCH_NAME == REFERENCE_BRANCH ? '' : 'nuxeo.templates=default'}"
-    NUXEO_DOCKER_REGISTRY = "docker-private.packages.nuxeo.com"
+    NUXEO_DOCKER_REGISTRY = 'docker-private.packages.nuxeo.com'
     PREVIEW_NAMESPACE = "$APP_NAME-${BRANCH_NAME.toLowerCase()}"
-    ORG = "nuxeo"
+    ORG = 'nuxeo'
   }
   stages {
-    stage('Set labels') {
+    stage('Set Labels') {
       steps {
         container('maven') {
           echo """
@@ -92,29 +93,78 @@ pipeline {
         }
       }
     }
-    stage('Compile and test') {
+    stage('Compile') {
       steps {
-        setGitHubBuildStatus('explorer/compile', 'Compile and test', 'PENDING')
+        setGitHubBuildStatus('explorer/compile', 'Compile', 'PENDING')
         container('maven') {
           echo """
           ----------------------------------------
           Compile
           ----------------------------------------"""
           echo "MAVEN_OPTS=$MAVEN_OPTS"
-          sh 'mvn -B -nsu -DskipDocker install'
+          sh "mvn ${MAVEN_ARGS} -DskipTests -DskipDocker install"
+        }
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: '**/target/*.jar, **/target/*.war, **/target/nuxeo-*-package-*.zip'
+        }
+        success {
+          setGitHubBuildStatus('explorer/compile', 'Compile', 'SUCCESS')
+        }
+        unsuccessful {
+          setGitHubBuildStatus('explorer/compile', 'Compile', 'FAILURE')
+        }
+      }
+    }
+    stage('Run Unit Tests') {
+      steps {
+        setGitHubBuildStatus('explorer/utests', 'Run Unit Tests', 'PENDING')
+        container('maven') {
+          echo """
+          ----------------------------------------
+          Run Unit Tests
+          ----------------------------------------"""
+          echo "MAVEN_OPTS=$MAVEN_OPTS"
+          sh "mvn  ${MAVEN_ARGS} -f modules test"
+        }
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: '**/target/*.jar, **/target/*.war, **/target/nuxeo-*-package-*.zip, **/target/**/*.log, **/target/*.png, **/target/*.html'
+          junit testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: true
+        }
+        success {
+          setGitHubBuildStatus('explorer/utests', 'Run Unit Tests', 'SUCCESS')
+        }
+        unsuccessful {
+          setGitHubBuildStatus('explorer/utests', 'Run Unit Tests', 'FAILURE')
+        }
+      }
+    }
+    stage('Run Functional Tests') {
+      steps {
+        setGitHubBuildStatus('explorer/ftests', 'Run Functional Tests', 'PENDING')
+        container('maven') {
+          echo """
+          ----------------------------------------
+          Run Functional Tests
+          ----------------------------------------"""
+          echo "MAVEN_OPTS=$MAVEN_OPTS"
+          sh "mvn ${MAVEN_ARGS} -f ftests verify"
         }
         findText regexp: ".*ERROR.*", fileSet: "ftests/**/log/server.log", unstableIfFound: true
       }
       post {
         always {
-          archiveArtifacts artifacts: '**/target/*.jar, **/target/*.war, **/target/nuxeo-*-package-*.zip, **/target/**/*.log, **/target/*.png, **/target/*.html'
-          junit testResults: '**/target/surefire-reports/*.xml, **/target/failsafe-reports/*.xml', allowEmptyResults: true
+          archiveArtifacts artifacts: '**/target/**/*.log, **/target/*.png, **/target/*.html'
+          junit testResults: '**/target/failsafe-reports/*.xml', allowEmptyResults: true
         }
         success {
-          setGitHubBuildStatus('explorer/compile', 'Compile and test', 'SUCCESS')
+          setGitHubBuildStatus('explorer/ftests', 'Run Functional Tests', 'SUCCESS')
         }
         unsuccessful {
-          setGitHubBuildStatus('explorer/compile', 'Compile and test', 'FAILURE')
+          setGitHubBuildStatus('explorer/ftests', 'Run Functional Tests', 'FAILURE')
         }
       }
     }
@@ -123,7 +173,7 @@ pipeline {
         branch "${REFERENCE_BRANCH}"
       }
       steps {
-        setGitHubBuildStatus('explorer/package/deploy', 'Deploy Nuxeo packages', 'PENDING')
+        setGitHubBuildStatus('explorer/package/deploy', 'Deploy Nuxeo Packages', 'PENDING')
         container('maven') {
           echo """
           ----------------------------------------
@@ -141,14 +191,14 @@ pipeline {
       }
       post {
         success {
-          setGitHubBuildStatus('explorer/package/deploy', 'Deploy Nuxeo packages', 'SUCCESS')
+          setGitHubBuildStatus('explorer/package/deploy', 'Deploy Nuxeo Packages', 'SUCCESS')
         }
         unsuccessful {
-          setGitHubBuildStatus('explorer/package/deploy', 'Deploy Nuxeo packages', 'FAILURE')
+          setGitHubBuildStatus('explorer/package/deploy', 'Deploy Nuxeo Packages', 'FAILURE')
         }
       }
     }
-    stage('Build Docker images') {
+    stage('Build Docker Images') {
       when {
         anyOf {
           branch 'PR-*'
@@ -181,19 +231,19 @@ pipeline {
       }
       post {
         success {
-          setGitHubBuildStatus('explorer/docker/build', 'Build Docker images', 'SUCCESS')
+          setGitHubBuildStatus('explorer/docker/build', 'Build Docker Images', 'SUCCESS')
         }
         unsuccessful {
-          setGitHubBuildStatus('explorer/docker/build', 'Build Docker images', 'FAILURE')
+          setGitHubBuildStatus('explorer/docker/build', 'Build Docker Images', 'FAILURE')
         }
       }
     }
-    stage('Deploy Docker images') {
+    stage('Deploy Docker Images') {
       when {
         branch "${REFERENCE_BRANCH}"
       }
       steps {
-        setGitHubBuildStatus('explorer/docker/deploy', 'Deploy Docker images', 'PENDING')
+        setGitHubBuildStatus('explorer/docker/deploy', 'Deploy Docker Images', 'PENDING')
         container('maven') {
           echo """
           ----------------------------------------
@@ -207,10 +257,10 @@ pipeline {
       }
       post {
         success {
-          setGitHubBuildStatus('explorer/docker/deploy', 'Deploy Docker images', 'SUCCESS')
+          setGitHubBuildStatus('explorer/docker/deploy', 'Deploy Docker Images', 'SUCCESS')
         }
         unsuccessful {
-          setGitHubBuildStatus('explorer/docker/deploy', 'Deploy Docker images', 'FAILURE')
+          setGitHubBuildStatus('explorer/docker/deploy', 'Deploy Docker Images', 'FAILURE')
         }
       }
     }
@@ -227,7 +277,7 @@ pipeline {
         }
       }
       steps {
-        setGitHubBuildStatus('explorer/preview/deploy', 'Deploy Explorer Preview', 'PENDING')
+        setGitHubBuildStatus('explorer/preview/deploy', 'Deploy Preview', 'PENDING')
         container('maven') {
           dir('helm/preview') {
             echo """
@@ -288,10 +338,10 @@ pipeline {
           archiveArtifacts allowEmptyArchive: true, artifacts: '**/requirements.lock, **/charts/*.tgz, **/target/**/*.yaml'
         }
         success {
-          setGitHubBuildStatus('explorer/preview/deploy', 'Deploy Explorer Preview', 'SUCCESS')
+          setGitHubBuildStatus('explorer/preview/deploy', 'Deploy Preview', 'SUCCESS')
         }
         unsuccessful {
-          setGitHubBuildStatus('explorer/preview/deploy', 'Deploy Explorer Preview', 'FAILURE')
+          setGitHubBuildStatus('explorer/preview/deploy', 'Deploy Preview', 'FAILURE')
         }
       }
     }
