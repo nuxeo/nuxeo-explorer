@@ -62,4 +62,9 @@ public abstract class AbstractExporter implements Exporter {
         return Collections.unmodifiableMap(descriptor.getProperties());
     }
 
+    @Override
+    public boolean displayOn(String page) {
+        return descriptor.displayOn(page);
+    }
+
 }

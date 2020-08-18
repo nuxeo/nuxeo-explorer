@@ -107,6 +107,20 @@
     </div>
   </#if>
 
+  <h2>Exports</h2>
+  <ul class="exports">
+    <li>
+      <a href="${Root.path}/${distId}/json?bundles=${nxItem.id}&pretty=true">Json Export</a>
+      <small>Default Json serialization</small>
+    </li>
+    <#list exporters as exporter>
+    <li>
+      <a href="${Root.path}/${distId}/export/${exporter.name}?bundles=${nxItem.id}&pretty=true">${exporter.title?html}</a>
+      <#if exporter.description?has_content><small>${exporter.description?html}</small></#if>
+    </li>
+    </#list>
+  </ul>
+
   <@tocTrigger />
 
 </div>

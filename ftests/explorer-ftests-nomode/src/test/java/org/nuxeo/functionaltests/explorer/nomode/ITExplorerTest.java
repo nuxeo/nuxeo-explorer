@@ -339,9 +339,13 @@ public class ITExplorerTest extends AbstractExplorerTest {
 
     @Test
     public void testJson() throws IOException {
-        // setup page load timeout of 3 mins as persisted export can take time (default: 1 min)
-        driver.manage().timeouts().pageLoadTimeout(180, TimeUnit.SECONDS);
-        checkJson(getDistribId(LIVE_NAME, liveVersion), false);
+        try {
+            // setup page load timeout of 3 mins as persisted export can take time (default: 1 min)
+            driver.manage().timeouts().pageLoadTimeout(180, TimeUnit.SECONDS);
+            checkJson(getDistribId(LIVE_NAME, liveVersion), false);
+        } finally {
+            driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
+        }
     }
 
 }

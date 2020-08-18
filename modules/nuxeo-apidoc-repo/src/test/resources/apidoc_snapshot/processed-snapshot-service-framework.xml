@@ -65,12 +65,20 @@
       <description>Json dependency graph</description>
       <filename>graph.json</filename>
       <mimetype>application/json</mimetype>
+      <display>
+        <on>home</on>
+        <on>bundle</on>
+        <on>package</on>
+      </display>
     </exporter>
     <exporter id="dotGraph" class="org.nuxeo.apidoc.export.graphs.plugins.DOTGraphExporter">
       <title>DOT Graph</title>
       <description>Dependency graph exported in DOT format</description>
       <filename>graph.dot</filename>
       <mimetype>application/octet-stream</mimetype>
+      <display>
+        <on>home</on>
+      </display>
     </exporter>
   </extension>
 

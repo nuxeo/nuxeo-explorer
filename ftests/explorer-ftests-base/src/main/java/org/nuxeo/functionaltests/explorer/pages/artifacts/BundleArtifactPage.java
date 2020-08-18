@@ -52,6 +52,10 @@ public class BundleArtifactPage extends ArtifactPage {
     @FindBy(xpath = "//ul[contains(@class, 'packages')]")
     public WebElement packages;
 
+    @Required
+    @FindBy(xpath = "//ul[@class='exports']")
+    public WebElement exports;
+
     public BundleArtifactPage(WebDriver driver) {
         super(driver);
     }
@@ -63,7 +67,8 @@ public class BundleArtifactPage extends ArtifactPage {
                 + "Components\n" //
                 + "Packages\n" //
                 + "Maven Artifact\n"//
-                + "Manifest";
+                + "Manifest\n" //
+                + "Exports";
         if (partial) {
             groupTitle = "In bundle group my-partial-server";
         }
@@ -76,7 +81,8 @@ public class BundleArtifactPage extends ArtifactPage {
             toc = "Documentation\n" //
                     + "Components\n" //
                     + "Maven Artifact\n" //
-                    + "Manifest";
+                    + "Manifest\n" //
+                    + "Exports";
         }
         checkCommon("Bundle org.nuxeo.apidoc.core", "Bundle org.nuxeo.apidoc.core", groupTitle, toc);
         try {
@@ -92,6 +98,11 @@ public class BundleArtifactPage extends ArtifactPage {
         checkRequirements(null);
         checkRegistrationOrder(false);
         checkPackages(legacy ? null : "platform-explorer");
+
+        WebElement jsonExport = exports.findElement(By.linkText("Json Export"));
+        checkJsonLink(jsonExport);
+        WebElement graphExport = exports.findElement(By.linkText("Json Graph"));
+        checkJsonLink(graphExport);
     }
 
     @Override
@@ -102,7 +113,8 @@ public class BundleArtifactPage extends ArtifactPage {
                         + "Components\n" //
                         + "Packages\n" //
                         + "Maven Artifact\n" //
-                        + "Manifest");
+                        + "Manifest\n" //
+                        + "Exports");
         checkGroupId("org.nuxeo.ecm.platform");
         checkArtifactId("nuxeo-apidoc-webengine");
         checkRequirements(List.of("org.nuxeo.ecm.webengine.core", "org.nuxeo.apidoc.core"));
@@ -117,7 +129,8 @@ public class BundleArtifactPage extends ArtifactPage {
                         + "Components\n" //
                         + "Packages\n" //
                         + "Maven Artifact\n" //
-                        + "Manifest");
+                        + "Manifest\n" //
+                        + "Exports");
         checkGroupId("org.nuxeo.ecm.platform");
         checkArtifactId("nuxeo-apidoc-repo");
         checkRequirements(null);
