@@ -19,8 +19,6 @@
  */
 package org.nuxeo.apidoc.browse;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,9 +35,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.nuxeo.apidoc.api.BundleGroup;
 import org.nuxeo.apidoc.api.BundleGroupFlatTree;
 import org.nuxeo.apidoc.api.BundleGroupTreeHelper;
@@ -54,7 +49,6 @@ import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.search.ArtifactSearcher;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
-import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.platform.htmlsanitizer.HtmlSanitizerService;
 import org.nuxeo.ecm.webengine.model.Resource;
 import org.nuxeo.ecm.webengine.model.WebObject;
@@ -180,61 +174,6 @@ public class ApiBrowser extends DefaultObject {
         return getView(ApiBrowserConstants.LIST_SERVICES).arg("services", serviceLabels)
                                                          .arg(Distribution.DIST_ID,
                                                                  ctx.getProperty(Distribution.DIST_ID));
-    }
-
-    @GET
-    @Produces("text/plain")
-    @Path("feedServices")
-    public String feedServices() throws JSONException {
-        List<String> serviceIds = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession())
-                                                      .getServiceIds();
-
-        List<ArtifactLabel> serviceLabels = new ArrayList<>();
-
-        for (String id : serviceIds) {
-            serviceLabels.add(ArtifactLabel.createLabelFromService(id));
-        }
-        Collections.sort(serviceLabels);
-
-        JSONArray array = new JSONArray();
-
-        for (ArtifactLabel label : serviceLabels) {
-            JSONObject object = new JSONObject();
-            object.put("id", label.getId());
-            object.put("label", label.getLabel());
-            object.put("url", "http://explorer.nuxeo.org/nuxeo/site/distribution/current/service2Bundle/" + label.id);
-            array.put(object);
-        }
-
-        return array.toString();
-    }
-
-    @GET
-    @Produces("text/plain")
-    @Path("feedExtensionPoints")
-    public String feedExtensionPoints() throws JSONException {
-        List<String> epIds = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession())
-                                                 .getExtensionPointIds();
-
-        List<ArtifactLabel> labels = new ArrayList<>();
-
-        for (String id : epIds) {
-            labels.add(ArtifactLabel.createLabelFromExtensionPoint(id));
-        }
-        Collections.sort(labels);
-
-        JSONArray array = new JSONArray();
-
-        for (ArtifactLabel label : labels) {
-            JSONObject object = new JSONObject();
-            object.put("id", label.getId());
-            object.put("label", label.getLabel());
-            object.put("url",
-                    "http://explorer.nuxeo.org/nuxeo/site/distribution/current/extensionPoint2Component/" + label.id);
-            array.put(object);
-        }
-
-        return array.toString();
     }
 
     @GET
@@ -387,54 +326,6 @@ public class ApiBrowser extends DefaultObject {
     @Path("{pluginId}")
     public Object plugin(@PathParam("pluginId") String pluginId) {
         return ctx.newObject(pluginId, distributionId, embeddedMode);
-    }
-
-    @GET
-    @Produces("text/html")
-    @Path("service2Bundle/{serviceId}")
-    public Object service2Bundle(@PathParam("serviceId") String serviceId) {
-
-        ServiceInfo si = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession()).getService(serviceId);
-        if (si == null) {
-            return null;
-        }
-        String cid = si.getComponentId();
-
-        ComponentInfo ci = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession()).getComponent(cid);
-        String bid = ci.getBundle().getId();
-
-        org.nuxeo.common.utils.Path target = new org.nuxeo.common.utils.Path(getContext().getRoot().getName());
-        target = target.append(distributionId);
-        target = target.append(ApiBrowserConstants.VIEW_BUNDLE);
-        target = target.append(bid).append("#Service.").append(serviceId);
-        try {
-            return Response.seeOther(new URI(target.toString())).build();
-        } catch (URISyntaxException e) {
-            throw new NuxeoException(e);
-        }
-    }
-
-    @GET
-    @Produces("text/html")
-    @Path("extensionPoint2Component/{epId}")
-    public Object extensionPoint2Component(@PathParam("epId") String epId) {
-
-        ExtensionPointInfo epi = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession())
-                                                     .getExtensionPoint(epId);
-        if (epi == null) {
-            return null;
-        }
-        String cid = epi.getComponent().getId();
-
-        org.nuxeo.common.utils.Path target = new org.nuxeo.common.utils.Path(getContext().getRoot().getName());
-        target = target.append(distributionId);
-        target = target.append(ApiBrowserConstants.VIEW_COMPONENT);
-        target = target.append(cid).append("#extensonPoint.").append(epId);
-        try {
-            return Response.seeOther(new URI(target.toString())).build();
-        } catch (URISyntaxException e) {
-            throw new NuxeoException(e);
-        }
     }
 
     @Path(ApiBrowserConstants.VIEW_BUNDLE + "/{bundleId}")
