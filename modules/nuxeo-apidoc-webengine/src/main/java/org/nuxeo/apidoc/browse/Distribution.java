@@ -610,7 +610,7 @@ public class Distribution extends ModuleRoot {
         try {
             repoSnap.updateDocument(getContext().getCoreSession(), updateProperties, formData.getString("comment"),
                     SUB_DISTRIBUTION_PATH_RESERVED);
-        } catch (DocumentValidationException e) {
+        } catch (DocumentValidationException | IllegalArgumentException e) {
             return updateDistribForm(distribId, updateProperties, e.getMessage());
         }
         // will trigger retrieval of distribution again

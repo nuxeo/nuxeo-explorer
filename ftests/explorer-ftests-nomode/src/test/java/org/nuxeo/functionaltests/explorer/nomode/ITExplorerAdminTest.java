@@ -223,14 +223,14 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         upage.updateString(upage.name, "");
         upage.submit();
         upage = asPage(DistributionUpdatePage.class);
-        upage.checkErrorMessage("Constraint violation thrown: 'Please fill all required fields.'");
+        upage.checkErrorMessage("Please fill all required fields.");
 
         // check validation on reserved alias
         upage.updateString(upage.name, newDistribName);
         upage.updateString(upage.aliases, SnapshotManager.DISTRIBUTION_ALIAS_CURRENT);
         upage.submit();
         upage = asPage(DistributionUpdatePage.class);
-        upage.checkErrorMessage("Constraint violation thrown: 'Distribution key or alias is reserved: 'current''");
+        upage.checkErrorMessage("Distribution key or alias is reserved: 'current'");
 
         String newerDistribName = "apidoc-imported-updated";
         String newerVersion = "2.1.0";

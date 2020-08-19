@@ -546,7 +546,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         // validations
         if (Stream.of(TITLE_PROPERTY_PATH, PROP_NAME, PROP_VERSION, PROP_KEY)
                   .anyMatch(p -> updateProperties.containsKey(p) && StringUtils.isBlank(updateProperties.get(p)))) {
-            throw new DocumentValidationException("Please fill all required fields.");
+            throw new IllegalArgumentException("Please fill all required fields.");
         }
         if (updateProperties.containsKey(PROP_KEY)) {
             validateKeyOrAlias(updateProperties.get(PROP_KEY), reservedKeys);
@@ -590,7 +590,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
             forbidden.addAll(reservedKeys);
         }
         if (forbidden.contains(keyOrAlias)) {
-            throw new DocumentValidationException(
+            throw new IllegalArgumentException(
                     String.format("Distribution key or alias is reserved: '%s'", keyOrAlias));
         }
     }
