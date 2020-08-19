@@ -43,7 +43,6 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.query.sql.NXQL;
-import org.nuxeo.ecm.platform.thumbnail.ThumbnailConstants;
 
 public class BundleGroupDocAdapter extends BaseNuxeoArtifactDocAdapter implements BundleGroup {
 
@@ -72,7 +71,7 @@ public class BundleGroupDocAdapter extends BaseNuxeoArtifactDocAdapter implement
         }
         doc.setPropertyValue(PROP_READMES, files);
 
-        doc.putContextData(ThumbnailConstants.DISABLE_THUMBNAIL_COMPUTATION, true);
+        fillContextData(doc);
         if (exist) {
             doc = session.saveDocument(doc);
         } else {

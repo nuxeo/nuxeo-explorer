@@ -69,7 +69,6 @@ import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.validation.DocumentValidationException;
 import org.nuxeo.ecm.core.query.sql.NXQL;
-import org.nuxeo.ecm.platform.thumbnail.ThumbnailConstants;
 import org.nuxeo.runtime.api.Framework;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -122,7 +121,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         doc.setPropertyValue(PROP_VERSION, distrib.getVersion());
 
         DocumentModel ret;
-        doc.putContextData(ThumbnailConstants.DISABLE_THUMBNAIL_COMPUTATION, true);
+        fillContextData(doc);
         if (exist) {
             ret = session.saveDocument(doc);
         } else {
@@ -575,7 +574,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         if (!StringUtils.isBlank(comment)) {
             doc.putContextData("comment", comment);
         }
-        doc.putContextData(ThumbnailConstants.DISABLE_THUMBNAIL_COMPUTATION, true);
+        fillContextData(doc);
         DocumentModel updatedDoc = session.saveDocument(doc);
         session.save();
         return updatedDoc;
