@@ -378,10 +378,12 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     public List<OperationInfo> getOperations() {
         String query = QueryHelper.select(OperationInfo.TYPE_NAME, getDoc(), NXQL.ECM_POS);
         DocumentModelList docs = getCoreSession().query(query);
-        return docs.stream()
-                   .map(doc -> doc.getAdapter(OperationInfo.class))
-                   .filter(Objects::nonNull)
-                   .collect(Collectors.toList());
+        List<OperationInfo> res = docs.stream()
+                                      .map(doc -> doc.getAdapter(OperationInfo.class))
+                                      .filter(Objects::nonNull)
+                                      .collect(Collectors.toList());
+        res.sort(Comparator.comparing(OperationInfo::getId));
+        return res;
     }
 
     @Override
