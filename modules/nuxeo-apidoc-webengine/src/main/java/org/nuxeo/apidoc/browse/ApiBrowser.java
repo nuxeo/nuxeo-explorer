@@ -63,6 +63,7 @@ import org.nuxeo.apidoc.snapshot.TargetExtensionPointSnapshotFilter;
 import org.nuxeo.common.Environment;
 import org.nuxeo.ecm.platform.htmlsanitizer.HtmlSanitizerService;
 import org.nuxeo.ecm.webengine.model.Resource;
+import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 import org.nuxeo.ecm.webengine.model.exceptions.WebResourceNotFoundException;
 import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
@@ -100,28 +101,36 @@ public class ApiBrowser extends DefaultObject {
     @GET
     @Produces("text/html")
     public Object doGet() {
+        String viewId = "index";
+        DistributionSnapshot snap = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
+        List<String> bundleIds = snap.getBundleIds();
+        var stats = new HashMap<String, Integer>();
+        stats.put("bundles", bundleIds.size());
+        stats.put("components", snap.getComponentIds().size());
+        stats.put("services", snap.getServiceIds().size());
+        stats.put("xps", snap.getExtensionPointIds().size());
+        stats.put("contribs", snap.getComponentIds().size());
+        stats.put("operations", snap.getOperations().size());
+        stats.put("packages", snap.getPackages().size());
         if (embeddedMode) {
-            DistributionSnapshot snap = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
-            Map<String, Integer> stats = new HashMap<>();
-            stats.put("bundles", snap.getBundleIds().size());
+            viewId = "indexSimple";
             stats.put("jComponents", snap.getJavaComponentIds().size());
             stats.put("xComponents", snap.getXmlComponentIds().size());
-            stats.put("services", snap.getServiceIds().size());
-            stats.put("xps", snap.getExtensionPointIds().size());
-            stats.put("contribs", snap.getComponentIds().size());
-            stats.put("operations", snap.getOperations().size());
-            stats.put("packages", snap.getPackages().size());
-            return getView("indexSimple").arg(Distribution.DIST_ID, ctx.getProperty(Distribution.DIST_ID))
-                                         .arg("bundleIds", snap.getBundleIds())
-                                         .arg("stats", stats);
+        } else {
+            stats.put("bundlegroups", snap.getBundleGroups().size());
+        }
+        Template view = getView(viewId).arg(Distribution.DIST_ID, ctx.getProperty(Distribution.DIST_ID))
+                                       .arg("stats", stats);
+        if (embeddedMode) {
+            view.arg("bundleIds", bundleIds);
         } else {
             List<Exporter> exporters = getSnapshotManager().getExporters()
                                                            .stream()
                                                            .filter(e -> e.displayOn("home"))
                                                            .collect(Collectors.toList());
-            return getView("index").arg(Distribution.DIST_ID, ctx.getProperty(Distribution.DIST_ID))
-                                   .arg("exporters", exporters);
+            view.arg("exporters", exporters);
         }
+        return view;
     }
 
     @GET

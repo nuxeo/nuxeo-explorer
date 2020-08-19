@@ -12,21 +12,27 @@
   <ul>
     <li>
       <a class="bundles" href="${Root.path}/${distId}/listBundleGroups">Bundle Groups</a>
+      <span class="chip">${stats.bundlegroups}</span>
       <ul>
         <li>
           <a class="bundles" href="${Root.path}/${distId}/listBundles">Bundles</a>
+          <span class="chip">${stats.bundles}</span>
           <ul>
             <li>
               <a class="components" href="${Root.path}/${distId}/listComponents">Components</a>
+              <span class="chip">${stats.components}</span>
               <ul>
                 <li>
                   <a class="services" href="${Root.path}/${distId}/listServices">Services</a>
+                  <span class="chip">${stats.services}</span>
                 </li>
                 <li>
                   <a class="extensions" href="${Root.path}/${distId}/listExtensionPoints">Extension Points</a>
+                  <span class="chip">${stats.xps}</span>
                 </li>
                 <li>
                   <a class="contributions" href="${Root.path}/${distId}/listContributions">Contributions</a>
+                  <span class="chip">${stats.contribs}</span>
                 </li>
               </ul>
             </li>
@@ -36,9 +42,11 @@
     </li>
     <li>
       <a class="operations" href="${Root.path}/${distId}/listOperations">Operations</a>
+      <span class="chip">${stats.operations}</span>
     </li>
     <li>
       <a class="packages" href="${Root.path}/${distId}/listPackages">Packages</a>
+      <span class="chip">${stats.packages}</span>
     </li>
     <#list Root.getPluginMenu() as plugin>
       <li>

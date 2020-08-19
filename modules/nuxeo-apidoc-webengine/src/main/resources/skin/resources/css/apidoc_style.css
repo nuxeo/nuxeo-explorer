@@ -1264,3 +1264,20 @@ table.gsc-table-result td {
 .override {
   font-weight: normal;
 }
+.chip {
+  background-color: #fff;
+  border: 1px solid;
+  border-color: #0079b3;
+  border-radius: 2px;
+  color: #0079b3;
+  line-height: 130%;
+  font-size: .9em;
+  font-weight: bold;
+  margin: 0 .2em .2em 0;
+  padding: .06em .3em;
+  vertical-align: baseline;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border-radius: 35px;
+  padding: 0.1em 0.4em;
+}
