@@ -22,7 +22,7 @@ package org.nuxeo.apidoc.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.util.List;
+import java.util.Arrays;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -321,8 +321,8 @@ public class TestSecureXML {
     @Test
     @Deploy("org.nuxeo.apidoc.repo.test:apidoc-secure-xml-test-contrib.xml")
     public void testSecureXMLOverride() throws Exception {
-        assertEquals(List.of("secret", "apiKey"), SecureXMLHelper.getKeywords());
-        assertEquals(List.of("apiKeyPublic"), SecureXMLHelper.getWhitelistedKeywords());
+        assertEquals(Arrays.asList("secret", "apiKey"), SecureXMLHelper.getKeywords());
+        assertEquals(Arrays.asList("apiKeyPublic"), SecureXMLHelper.getWhitelistedKeywords());
         String xml = "<root>\n" //
                 + " <password>p1</password>\n" //
                 + " <myPassword>p2</myPassword>\n" //

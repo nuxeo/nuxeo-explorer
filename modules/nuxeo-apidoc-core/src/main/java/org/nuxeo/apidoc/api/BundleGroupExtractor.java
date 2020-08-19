@@ -20,6 +20,7 @@ package org.nuxeo.apidoc.api;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -57,9 +58,9 @@ public class BundleGroupExtractor {
 
     public static final String VIRTUAL_BUNDLE_GROUP = BundleGroup.PREFIX + "org.nuxeo.misc";
 
-    protected static final List<String> BLACKLIST_SUFFIX = List.of("test", "tests");
+    protected static final List<String> BLACKLIST_SUFFIX = Arrays.asList("test", "tests");
 
-    protected static final List<String> BLACKLIST = List.of("org", "org.nuxeo", "org.nuxeo.ecm",
+    protected static final List<String> BLACKLIST = Arrays.asList("org", "org.nuxeo", "org.nuxeo.ecm",
             "org.nuxeo.ecm.platform", "com", "com.nuxeo");
 
     public BundleGroupExtractor(Map<String, BundleInfo> bundles, String version) {

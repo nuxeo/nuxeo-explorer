@@ -59,31 +59,31 @@ public class PackageWO extends NuxeoArtifactWebObject {
     }
 
     protected Map<String, BundleInfo> getBundleInfo(DistributionSnapshot snapshot, List<String> bundles) {
-        var res = new LinkedHashMap<String, BundleInfo>();
+        Map<String, BundleInfo> res = new LinkedHashMap<String, BundleInfo>();
         bundles.forEach(bid -> res.put(bid, snapshot.getBundle(bid)));
         return res;
     }
 
     protected List<ComponentInfo> getComponentInfo(List<BundleInfo> bundles) {
-        var res = new ArrayList<ComponentInfo>();
+        List<ComponentInfo> res = new ArrayList<ComponentInfo>();
         bundles.forEach(b -> res.addAll(b.getComponents()));
         return res;
     }
 
     protected List<ServiceInfo> getServiceInfo(List<ComponentInfo> components) {
-        var res = new ArrayList<ServiceInfo>();
+        List<ServiceInfo> res = new ArrayList<ServiceInfo>();
         components.forEach(c -> res.addAll(c.getServices()));
         return res;
     }
 
     protected List<ExtensionPointInfo> getExtensionPointInfo(List<ComponentInfo> components) {
-        var res = new ArrayList<ExtensionPointInfo>();
+        List<ExtensionPointInfo> res = new ArrayList<ExtensionPointInfo>();
         components.forEach(c -> res.addAll(c.getExtensionPoints()));
         return res;
     }
 
     protected List<ExtensionInfo> getContributionInfo(List<ComponentInfo> components) {
-        var res = new ArrayList<ExtensionInfo>();
+        List<ExtensionInfo> res = new ArrayList<ExtensionInfo>();
         components.forEach(c -> res.addAll(c.getExtensions()));
         return res;
     }

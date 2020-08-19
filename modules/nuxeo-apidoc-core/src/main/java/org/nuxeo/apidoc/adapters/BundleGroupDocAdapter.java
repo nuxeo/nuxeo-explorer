@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -63,7 +62,7 @@ public class BundleGroupDocAdapter extends BaseNuxeoArtifactDocAdapter implement
         doc.setPropertyValue(NuxeoArtifact.TITLE_PROPERTY_PATH, bundleGroup.getName());
         doc.setPropertyValue(PROP_GROUP_NAME, bundleGroup.getName());
         doc.setPropertyValue(PROP_KEY, bundleGroup.getId());
-        var files = new ArrayList<Map<String, Serializable>>();
+        ArrayList<Map<String, Serializable>> files = new ArrayList<Map<String, Serializable>>();
         for (Blob blob : bundleGroup.getReadmes()) {
             Map<String, Serializable> item = new HashMap<>();
             item.put("file", (Serializable) blob);
@@ -91,7 +90,7 @@ public class BundleGroupDocAdapter extends BaseNuxeoArtifactDocAdapter implement
                        .map(doc -> doc.getAdapter(BundleInfo.class))
                        .filter(Objects::nonNull)
                        .map(BundleInfo::getId)
-                       .filter(Predicate.not(Predicate.isEqual(getId())))
+                       .filter(id -> !id.equals(getId()))
                        .collect(Collectors.toList());
     }
 

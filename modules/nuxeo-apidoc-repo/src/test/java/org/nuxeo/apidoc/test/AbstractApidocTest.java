@@ -31,7 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.function.Function;
 import java.util.jar.JarOutputStream;
@@ -87,7 +87,7 @@ public abstract class AbstractApidocTest {
     public void mockPackageServices() throws PackageException, IOException {
         DownloadablePackage mockPackage = mock(DownloadablePackage.class);
         when(mockPackage.getId()).thenReturn(MOCK_PACKAGE_ID);
-        when(packageManager.listInstalledPackages()).thenReturn(List.of(mockPackage));
+        when(packageManager.listInstalledPackages()).thenReturn(Arrays.asList(mockPackage));
         LocalPackage mockLocalPackage = mock(LocalPackage.class);
         when(packageUpdateService.getPackage(MOCK_PACKAGE_ID)).thenReturn(mockLocalPackage);
         when(mockLocalPackage.getId()).thenReturn(MOCK_PACKAGE_ID);
@@ -107,7 +107,7 @@ public abstract class AbstractApidocTest {
         Path targetPackageDir = Paths.get("target", "mock_apidoc_package");
         Path targetJarDir = Paths.get(targetPackageDir.toString(), "install", "bundles");
         new File(targetJarDir.toString()).mkdirs();
-        for (String jar : List.of("nuxeo-apidoc-core-11.1-SNAPSHOT", "nuxeo-apidoc-repo-11.1-SNAPSHOT")) {
+        for (String jar : Arrays.asList("nuxeo-apidoc-core-11.1-SNAPSHOT", "nuxeo-apidoc-repo-11.1-SNAPSHOT")) {
             createMockJar(Paths.get(sourceDir.toString(), jar, "MANIFEST.MF"),
                     Paths.get(targetJarDir.toString(), jar + ".jar"));
         }
@@ -155,7 +155,7 @@ public abstract class AbstractApidocTest {
                     res += line + "\n";
                 }
             }
-            for (String kw : List.of("version", "fileName", "location", "artifactVersion", "xmlFileName", "digest")) {
+            for (String kw : Arrays.asList("version", "fileName", "location", "artifactVersion", "xmlFileName", "digest")) {
                 String p = String.format("\"%s\": \"[^\"]*\"", kw);
                 String r = String.format("\"%s\": \"mockTest%s\"", kw,
                         kw.substring(0, 1).toUpperCase(Locale.ENGLISH) + kw.substring(1));

@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.functionaltests.Required;
@@ -117,7 +117,7 @@ public class BundleArtifactPage extends ArtifactPage {
                         + "Exports");
         checkGroupId("org.nuxeo.ecm.platform");
         checkArtifactId("nuxeo-apidoc-webengine");
-        checkRequirements(List.of("org.nuxeo.ecm.webengine.core", "org.nuxeo.apidoc.core"));
+        checkRequirements(Arrays.asList("org.nuxeo.ecm.webengine.core", "org.nuxeo.apidoc.core"));
         checkRegistrationOrder(false);
         checkPackages("platform-explorer");
     }

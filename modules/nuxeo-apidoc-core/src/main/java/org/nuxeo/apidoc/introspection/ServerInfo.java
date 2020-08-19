@@ -224,7 +224,7 @@ public class ServerInfo {
      * @since 11.1
      */
     protected static PackageInfoImpl computePackageInfo(LocalPackage pkg, Map<String, List<LocalPackage>> pkgByBundle) {
-        var bundles = new ArrayList<String>();
+        List<String> bundles = new ArrayList<String>();
         for (File jar : FileUtils.listFiles(pkg.getData().getRoot(), new String[] { "jar" }, true)) {
             Manifest mf = JarUtils.getManifest(jar);
             if (mf != null) {

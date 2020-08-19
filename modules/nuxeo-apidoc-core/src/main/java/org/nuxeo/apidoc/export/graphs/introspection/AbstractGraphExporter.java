@@ -120,7 +120,7 @@ public abstract class AbstractGraphExporter extends AbstractExporter {
                     hit(nodeHits, compNode.getId());
                 }
 
-                var comps = new HashMap<String, Integer>();
+                Map<String, Integer> comps = new HashMap<String, Integer>();
                 for (ExtensionInfo contribution : component.getExtensions()) {
                     if (filter != null && !filter.accept(contribution)) {
                         continue;

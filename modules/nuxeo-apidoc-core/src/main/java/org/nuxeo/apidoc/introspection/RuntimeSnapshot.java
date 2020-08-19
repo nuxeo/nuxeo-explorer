@@ -78,13 +78,12 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSnapshot {
 
     /** @since 20.0.0 */
-    public static final List<String> LIVE_ALIASES = List.of(SnapshotManager.DISTRIBUTION_ALIAS_CURRENT,
+    public static final List<String> LIVE_ALIASES = Arrays.asList(SnapshotManager.DISTRIBUTION_ALIAS_CURRENT,
             SnapshotManager.DISTRIBUTION_ALIAS_ADM);
 
     protected final Date created;
 
     protected final Date released;
-
     protected final String name;
 
     protected final String version;
@@ -395,7 +394,7 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
         // make sure operations are ordered, as service currently returns any order
         List<OperationType> oops = Arrays.asList(ops);
         oops.sort(Comparator.comparing(OperationType::getId));
-        var bundleToOperations = new HashMap<String, List<OperationInfo>>();
+        Map<String, List<OperationInfo>> bundleToOperations = new HashMap<String, List<OperationInfo>>();
         for (OperationType op : oops) {
             OperationDocumentation documentation;
             try {
@@ -503,7 +502,7 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
         SnapshotFilter refFilter = null;
         if (filter != null && filter.getReferenceClass() != null) {
             // resolve bundle selection to get reference filter
-            var selectedBundles = new ArrayList<NuxeoArtifact>();
+            List<NuxeoArtifact> selectedBundles = new ArrayList<NuxeoArtifact>();
             getBundles().stream().filter(filter::accept).forEach(selectedBundles::add);
             try {
                 Constructor<? extends SnapshotFilter> constructor = filter.getReferenceClass()

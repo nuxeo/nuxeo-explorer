@@ -136,7 +136,7 @@ public class SnapshotPersister {
             // create VGroup that contains only the target bundles
             BundleGroupImpl vGroup = new BundleGroupImpl(filter.getName());
             vGroup.setVersion(snapshot.getVersion());
-            var selectedBundles = new ArrayList<NuxeoArtifact>();
+            List<NuxeoArtifact> selectedBundles = new ArrayList<NuxeoArtifact>();
             for (BundleInfo bundle : snapshot.getBundles()) {
                 if (filter.accept(bundle)) {
                     selectedBundles.add(bundle);
