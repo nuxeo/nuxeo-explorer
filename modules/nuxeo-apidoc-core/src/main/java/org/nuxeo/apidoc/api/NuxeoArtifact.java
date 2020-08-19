@@ -35,7 +35,6 @@ import org.nuxeo.apidoc.introspection.ExtensionPointInfoImpl;
 import org.nuxeo.apidoc.introspection.OperationInfoImpl;
 import org.nuxeo.apidoc.introspection.PackageInfoImpl;
 import org.nuxeo.apidoc.introspection.ServiceInfoImpl;
-import org.nuxeo.ecm.platform.dublincore.constants.DublinCoreConstants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -65,7 +64,7 @@ public interface NuxeoArtifact {
     /**
      * @since 11.1
      */
-    public static String TITLE_PROPERTY_PATH = DublinCoreConstants.DUBLINCORE_TITLE_PROPERTY;
+    public static String TITLE_PROPERTY_PATH = "dc:title";
 
     /**
      * @since 11.1
