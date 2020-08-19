@@ -54,7 +54,6 @@ import org.nuxeo.connect.update.PackageException;
 import org.nuxeo.ecm.automation.OperationDocumentation;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
-import org.nuxeo.ecm.core.api.validation.DocumentValidationException;
 import org.nuxeo.ecm.core.test.CoreFeature;
 
 public class TestSnapshotPersist extends AbstractApidocTest {
@@ -104,15 +103,14 @@ public class TestSnapshotPersist extends AbstractApidocTest {
             rsnap.updateDocument(session,
                     Map.of(DistributionSnapshot.PROP_KEY, SnapshotManager.DISTRIBUTION_ALIAS_CURRENT), null, null);
             fail("should have raised a DocumentValidationException");
-        } catch (DocumentValidationException e) {
-            assertEquals("Constraint violation thrown: 'Distribution key or alias is reserved: 'current''",
-                    e.getMessage());
+        } catch (IllegalArgumentException e) {
+            assertEquals("Distribution key or alias is reserved: 'current'", e.getMessage());
         }
         try {
             rsnap.updateDocument(session, Map.of(DistributionSnapshot.PROP_ALIASES, "foo"), null, List.of("foo"));
             fail("should have raised a DocumentValidationException");
-        } catch (DocumentValidationException e) {
-            assertEquals("Constraint violation thrown: 'Distribution key or alias is reserved: 'foo''", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            assertEquals("Distribution key or alias is reserved: 'foo'", e.getMessage());
         }
         rsnap.updateDocument(session, Map.of(DistributionSnapshot.PROP_ALIASES, "foo"), null, null);
         DistributionSnapshot updated = snapshotManager.getSnapshot("foo", session);

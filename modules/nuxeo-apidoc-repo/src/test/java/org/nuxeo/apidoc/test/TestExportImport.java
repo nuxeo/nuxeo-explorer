@@ -47,7 +47,6 @@ import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.PathRef;
-import org.nuxeo.ecm.core.api.validation.DocumentValidationException;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -138,9 +137,8 @@ public class TestExportImport {
             snapshotManager.validateImportedSnapshot(session, distribDocId, updateProps,
                     List.of(SnapshotManager.DISTRIBUTION_ALIAS_CURRENT));
             fail("Should have raised a DocumentValidationException");
-        } catch (DocumentValidationException e) {
-            assertEquals("Constraint violation thrown: 'Distribution key or alias is reserved: 'current''",
-                    e.getMessage());
+        } catch (IllegalArgumentException e) {
+            assertEquals("Distribution key or alias is reserved: 'current'", e.getMessage());
         }
 
         // try again with original test props
