@@ -36,7 +36,7 @@ public class ITExplorerSiteModeTest extends AbstractExplorerSiteModeTest {
 
     @Before
     public void before() {
-        RestHelper.createUserIfDoesNotExist(READER_USERNAME, TEST_PASSWORD, null, null, null, null, null);
+        RestHelper.createUser(READER_USERNAME, TEST_PASSWORD, null, null, null, null, null);
         doLogin();
     }
 
