@@ -73,7 +73,6 @@ import org.nuxeo.ecm.core.io.impl.plugins.DocumentModelWriter;
 import org.nuxeo.ecm.core.io.impl.plugins.DocumentTreeReader;
 import org.nuxeo.ecm.core.io.impl.plugins.NuxeoArchiveReader;
 import org.nuxeo.ecm.core.io.impl.plugins.NuxeoArchiveWriter;
-import org.nuxeo.runtime.RuntimeMessage.Level;
 import org.nuxeo.runtime.RuntimeServiceException;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.model.ComponentContext;
@@ -418,7 +417,7 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
                         "Failed to register contribution with id '%s' on '%s': error initializing class '%s' (%s).",
                         descriptor.getId(), name, descriptor.getKlass(), e.toString());
                 log.error(msg, e);
-                addRuntimeMessage(Level.ERROR, msg);
+                Framework.getRuntime().getMessageHandler().addError(msg);
             }
         }
     }
