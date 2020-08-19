@@ -41,8 +41,6 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.PropertyException;
-import org.nuxeo.ecm.platform.picture.listener.PictureViewsGenerationListener;
-import org.nuxeo.ecm.platform.thumbnail.ThumbnailConstants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -180,12 +178,13 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
     public static void fillContextData(DocumentModel doc) {
         // disable validation
         doc.putContextData(CTX_MAP_KEY, TURN_OFF);
+        // not avail on 10.10:
         // NXP-28928: disable useless thumbnail computation for explorer documents: could be costly and is not needed in
         // this context
-        doc.putContextData(ThumbnailConstants.DISABLE_THUMBNAIL_COMPUTATION, true);
+        // doc.putContextData(ThumbnailConstants.DISABLE_THUMBNAIL_COMPUTATION, true);
         // NXP-29435: disable picture view computation even if explorer documents should not actually go through it,
         // hoping it speeds things in some edge cases (see server logs attached to NXP-29433)
-        doc.putContextData(PictureViewsGenerationListener.DISABLE_PICTURE_VIEWS_GENERATION_LISTENER, true);
+        // doc.putContextData(PictureViewsGenerationListener.DISABLE_PICTURE_VIEWS_GENERATION_LISTENER, true);
     }
 
 }
