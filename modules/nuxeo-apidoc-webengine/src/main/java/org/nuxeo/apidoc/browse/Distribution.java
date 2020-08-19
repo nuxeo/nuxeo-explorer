@@ -493,6 +493,7 @@ public class Distribution extends ModuleRoot {
         try {
             getSnapshotManager().importSnapshot(getContext().getCoreSession(), blob.getStream());
         } catch (IOException | IllegalArgumentException | NuxeoException e) {
+            log.error(e, e);
             return getView("importKO").arg("message", e.getMessage()).arg("source", source);
         }
 
