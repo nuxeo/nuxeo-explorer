@@ -104,7 +104,7 @@ public abstract class AbstractApidocTest {
         when(mockLocalPackage.getData()).thenReturn(mockData);
 
         Path sourceDir = Paths.get(getReferencePath("apidoc_package"));
-        Path targetPackageDir = Paths.get(FeaturesRunner.getBuildDirectory(), "mock_apidoc_package");
+        Path targetPackageDir = Paths.get("target", "mock_apidoc_package");
         Path targetJarDir = Paths.get(targetPackageDir.toString(), "install", "bundles");
         new File(targetJarDir.toString()).mkdirs();
         for (String jar : List.of("nuxeo-apidoc-core-11.1-SNAPSHOT", "nuxeo-apidoc-repo-11.1-SNAPSHOT")) {
