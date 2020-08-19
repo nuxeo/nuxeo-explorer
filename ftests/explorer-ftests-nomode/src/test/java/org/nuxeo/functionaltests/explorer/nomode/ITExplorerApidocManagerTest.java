@@ -41,9 +41,9 @@ public class ITExplorerApidocManagerTest extends ITExplorerAdminTest {
     @Override
     @Before
     public void before() {
-        RestHelper.createGroupIfDoesNotExist(SecurityHelper.DEFAULT_APIDOC_MANAGERS_GROUP, "Apidoc Managers", null,
+        RestHelper.createGroup(SecurityHelper.DEFAULT_APIDOC_MANAGERS_GROUP, "Apidoc Managers", null,
                 null);
-        RestHelper.createUserIfDoesNotExist(MANAGER_USERNAME, TEST_PASSWORD, null, null, null, null,
+        RestHelper.createUser(MANAGER_USERNAME, TEST_PASSWORD, null, null, null, null,
                 SecurityHelper.DEFAULT_APIDOC_MANAGERS_GROUP);
         super.before();
     }
