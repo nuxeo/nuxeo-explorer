@@ -12,7 +12,6 @@
   <link rel="shortcut icon" href="${skinPath}/images/favicon.png" />
   <link rel="stylesheet" href="${skinPath}/css/apidoc_style.css" media="screen" charset="utf-8" />
   <link rel="stylesheet" href="${skinPath}/css/code.css" media="screen" charset="utf-8" />
-  <link rel="stylesheet" href="${skinPath}/script/jquery/treeview/jquery.treeview.css" media="screen" charset="utf-8">
   <link rel="stylesheet" href="${skinPath}/css/jquery.magnific.min.css" media="screen" charset="utf-8">
   <@block name="stylesheets" />
 
@@ -22,8 +21,6 @@
   <script src="${skinPath}/script/java.js"></script>
   <script src="${skinPath}/script/html-xml.js"></script>
   <script src="${skinPath}/script/manifest.js"></script>
-  <script src="${skinPath}/script/jquery/treeview/jquery.treeview.js"></script>
-  <script src="${skinPath}/script/jquery/treeview/jquery.treeview.async.js"></script>
   <script src="${skinPath}/script/jquery.magnific.min.js"></script>
   <script src="${skinPath}/script/quickEditor.js"></script>
   <script src="${skinPath}/script/jquery.highlight-3.js"></script>
