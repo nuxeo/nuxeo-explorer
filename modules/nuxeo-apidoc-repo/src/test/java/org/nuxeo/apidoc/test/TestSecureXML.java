@@ -67,8 +67,8 @@ public class TestSecureXML {
 
     @Test
     public void testSecureXMLNodeDeclaration() throws Exception {
-        check("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<password>********</password>",
-                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<password>p1</password>");
+        check("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<password>********</password>",
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<password>p1</password>");
     }
 
     @Test
