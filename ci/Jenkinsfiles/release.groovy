@@ -28,8 +28,11 @@ void getCurrentVersion() {
   return readMavenPom().getVersion()
 }
 
-void getReleaseVersion(version) {
-  return version.replace('-SNAPSHOT', '')
+void getReleaseVersion(givenVersion, version) {
+  if (givenVersion.isEmpty()) {
+    return version.replace('-SNAPSHOT', '')
+  }
+  return givenVersion
 }
 
 void getNuxeoVersion(version) {
@@ -80,8 +83,10 @@ pipeline {
 
   parameters {
     string(name: 'BRANCH_NAME', defaultValue: 'master', description: 'The branch to release')
+    string(name: 'RELEASE_VERSION', defaultValue: '', description: 'Release Explorer version (optional)')
     string(name: 'NEXT_VERSION', defaultValue: '', description: 'Next Explorer version (next minor version if unset)')
     string(name: 'NUXEO_VERSION', defaultValue: '', description: 'Version of the Nuxeo Server dependency (unchanged if unset)')
+    booleanParam(name: 'NUXEO_VERSION_IS_PROMOTED', defaultValue: true, description: 'Uncheck if releasing a RC version, against a non-promoted Nuxeo build')
     string(name: 'NEXT_NUXEO_VERSION', defaultValue: '', description: 'Next Version of the Nuxeo Server dependency (unchanged if unset)')
     string(name: 'NEXT_NUXEO_IMAGE_VERSION', defaultValue: '', description: 'Next Version of the Nuxeo Server Image dependency (unchanged if unset)')
     string(name: 'JIRA_ISSUE', defaultValue: '', description: 'Id of the Jira issue for this release')
@@ -92,7 +97,7 @@ pipeline {
 
   environment {
     CURRENT_VERSION = getCurrentVersion()
-    RELEASE_VERSION = getReleaseVersion(CURRENT_VERSION)
+    RELEASE_VERSION = getReleaseVersion(params.RELEASE_VERSION, CURRENT_VERSION)
     NUXEO_IMAGE_VERSION = getNuxeoVersion(params.NUXEO_VERSION)
     MAVEN_ARGS = '-B -nsu -Prelease'
     MAVEN_RELEASE_OPTIONS = getMavenReleaseOptions(params.SKIP_TESTS, params.SKIP_FUNCTIONAL_TESTS)
@@ -111,6 +116,11 @@ pipeline {
     stage('Check Parameters') {
       steps {
         script {
+          if (!params.NUXEO_VERSION_IS_PROMOTED && !RELEASE_VERSION.contains('RC')) {
+            currentBuild.result = 'ABORTED';
+            currentBuild.description = "Can only release a RC against a non-promoted Nuxeo version"
+            error(currentBuild.description)
+          }
           echo """
           ----------------------------------------
           Branch name:                '${BRANCH_NAME}'
@@ -164,6 +174,12 @@ pipeline {
             sh """
               git checkout ${BRANCH_NAME}
             """
+            if (!params.NUXEO_VERSION_IS_PROMOTED) {
+              sh """
+                # hack: use nuxeo-ecm instead of nuxeo-parent to retrieve a non-promoted nuxeo version
+                perl -i -pe 's|<artifactId>nuxeo-parent</artifactId>|<artifactId>nuxeo-ecm</artifactId>|' pom.xml
+              """
+            }
             if (!params.NUXEO_VERSION.isEmpty()) {
               sh """
                 # nuxeo version
@@ -311,6 +327,12 @@ pipeline {
             Update ${BRANCH_NAME} version from ${CURRENT_VERSION} to ${nextVersion}
             -----------------------------------------------
             """
+            if (!params.NUXEO_VERSION_IS_PROMOTED) {
+              sh """
+                # hack: replace back nuxeo-ecm replacement
+                perl -i -pe 's|<artifactId>nuxeo-ecm</artifactId>|<artifactId>nuxeo-parent</artifactId>|' pom.xml
+              """
+            }
             def nextNuxeoVersion = "${params.NEXT_NUXEO_VERSION}"
             if (!nextNuxeoVersion.isEmpty()) {
               sh """
