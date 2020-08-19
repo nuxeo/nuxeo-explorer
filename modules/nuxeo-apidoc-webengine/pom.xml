@@ -38,10 +38,12 @@
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-server</artifactId>
     </dependency>
+    <!--
     <dependency>
       <groupId>javax.transaction</groupId>
       <artifactId>javax.transaction-api</artifactId>
     </dependency>
+    -->
 
     <dependency>
       <groupId>org.nuxeo.common</groupId>
