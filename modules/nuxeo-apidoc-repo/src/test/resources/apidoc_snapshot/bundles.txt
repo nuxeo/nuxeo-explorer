@@ -49,7 +49,6 @@ NXBundle: org.nuxeo.ecm.webengine.jaxrs *** /grp:org.nuxeo.ecm.webengine/org.nux
 NXBundle: org.nuxeo.elasticsearch.core *** /grp:org.nuxeo.elasticsearch/org.nuxeo.elasticsearch.core
 NXBundle: org.nuxeo.osgi.app *** /grp:org.nuxeo.ecm.platform/org.nuxeo.osgi.app
 NXBundle: org.nuxeo.runtime *** /grp:org.nuxeo.runtime/org.nuxeo.runtime
-NXBundle: org.nuxeo.runtime.cluster *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.cluster
 NXBundle: org.nuxeo.runtime.datasource *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.datasource
 NXBundle: org.nuxeo.runtime.jtajca *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.jtajca
 NXBundle: org.nuxeo.runtime.kv *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.kv

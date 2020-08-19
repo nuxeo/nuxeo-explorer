@@ -59,13 +59,11 @@ NXOperation: op:Directory.CreateEntries *** /op:Directory.CreateEntries
 NXOperation: op:Directory.CreateVocabularyEntry *** /op:Directory.CreateVocabularyEntry
 NXOperation: op:Directory.DeleteEntries *** /op:Directory.DeleteEntries
 NXOperation: op:Directory.Entries *** /op:Directory.Entries
-NXOperation: op:Directory.LoadFromCSV *** /op:Directory.LoadFromCSV
 NXOperation: op:Directory.Projection *** /op:Directory.Projection
 NXOperation: op:Directory.ReadEntries *** /op:Directory.ReadEntries
 NXOperation: op:Directory.SuggestEntries *** /op:Directory.SuggestEntries
 NXOperation: op:Directory.UpdateEntries *** /op:Directory.UpdateEntries
 NXOperation: op:Document.AddACE *** /op:Document.AddACE
-NXOperation: op:Document.AddEntryToMultivaluedProperty *** /op:Document.AddEntryToMultivaluedProperty
 NXOperation: op:Document.AddFacet *** /op:Document.AddFacet
 NXOperation: op:Document.AddItemToListProperty *** /op:Document.AddItemToListProperty
 NXOperation: op:Document.AddPermission *** /op:Document.AddPermission
@@ -123,6 +121,7 @@ NXOperation: op:Document.UnblockPermissionInheritance *** /op:Document.UnblockPe
 NXOperation: op:Document.Unlock *** /op:Document.Unlock
 NXOperation: op:Document.Untrash *** /op:Document.Untrash
 NXOperation: op:Document.Update *** /op:Document.Update
+NXOperation: op:DocumentMultivaluedProperty.addItem *** /op:DocumentMultivaluedProperty.addItem
 NXOperation: op:Event.Fire *** /op:Event.Fire
 NXOperation: op:Favorite.Fetch *** /op:Favorite.Fetch
 NXOperation: op:Favorite.GetDocuments *** /op:Favorite.GetDocuments
@@ -133,8 +132,6 @@ NXOperation: op:FileManager.ImportWithProperties *** /op:FileManager.ImportWithP
 NXOperation: op:Group.CreateOrUpdate *** /op:Group.CreateOrUpdate
 NXOperation: op:JsonStack.ToggleDisplay *** /op:JsonStack.ToggleDisplay
 NXOperation: op:Log *** /op:Log
-NXOperation: op:Metrics.Start *** /op:Metrics.Start
-NXOperation: op:Metrics.Stop *** /op:Metrics.Stop
 NXOperation: op:Proxy.GetSourceDocument *** /op:Proxy.GetSourceDocument
 NXOperation: op:Render.Document *** /op:Render.Document
 NXOperation: op:Render.DocumentFeed *** /op:Render.DocumentFeed
