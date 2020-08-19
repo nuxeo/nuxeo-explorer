@@ -102,7 +102,7 @@ public class TestJson extends AbstractApidocTest {
         try (ByteArrayOutputStream sink = new ByteArrayOutputStream()) {
             snap.writeJson(sink, null, null);
             checkSnapshot(snap, persisted, false);
-            try (OutputStream file = Files.newOutputStream(Paths.get(FeaturesRunner.getBuildDirectory() + "/test.json"),
+            try (OutputStream file = Files.newOutputStream(Paths.get("target/test.json"),
                     StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
                 file.write(sink.toByteArray());
             }
