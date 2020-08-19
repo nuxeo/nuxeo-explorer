@@ -11,11 +11,11 @@
     <platform>server-@NUXEO_TARGET_VERSION@</platform>
   </platforms>
   <hotreload-support>false</hotreload-support>
-  <supported>true</supported>
+  <supported>false</supported>
   <require-terms-and-conditions-acceptance>true
   </require-terms-and-conditions-acceptance>
-  <production-state>production_ready</production-state>
-  <nuxeo-validation>nuxeo_certified</nuxeo-validation>
+  <production-state>testing</production-state>
+  <nuxeo-validation>inprocess</nuxeo-validation>
   <vendor>Nuxeo</vendor>
   <license>LGPL</license>
   <license-url>http://www.gnu.org/licenses/lgpl-2.1.html</license-url>
