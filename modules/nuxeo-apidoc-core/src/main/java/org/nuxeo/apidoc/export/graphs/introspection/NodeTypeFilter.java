@@ -19,6 +19,7 @@
 package org.nuxeo.apidoc.export.graphs.introspection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.nuxeo.apidoc.export.graphs.api.Node;
@@ -41,7 +42,7 @@ public class NodeTypeFilter implements NodeFilter {
     }
 
     public NodeTypeFilter(String... types) {
-        this(List.of(types));
+        this(Arrays.asList(types));
     }
 
     @Override

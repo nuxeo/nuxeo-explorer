@@ -358,8 +358,8 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
             List<String> reservedKeys) throws DocumentValidationException {
         DocumentModel snapDoc = session.getDocument(new IdRef(distribDocId));
         // update props
-        var repoSnap = (RepositoryDistributionSnapshot) snapDoc.getAdapter(DistributionSnapshot.class);
-        var finalProps = new HashMap<String, Serializable>();
+        RepositoryDistributionSnapshot repoSnap = (RepositoryDistributionSnapshot) snapDoc.getAdapter(DistributionSnapshot.class);
+        Map<String, Serializable> finalProps = new HashMap<String, Serializable>();
         if (properties != null) {
             finalProps.putAll(properties);
         }

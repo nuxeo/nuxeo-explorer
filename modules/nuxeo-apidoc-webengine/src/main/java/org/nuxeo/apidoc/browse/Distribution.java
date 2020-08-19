@@ -30,6 +30,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -153,7 +154,7 @@ public class Distribution extends ModuleRoot {
      *
      * @since 20.0.0
      */
-    protected static final List<String> SUB_DISTRIBUTION_PATH_RESERVED = List.of(VIEW_ADMIN, SAVE_ACTION,
+    protected static final List<String> SUB_DISTRIBUTION_PATH_RESERVED = Arrays.asList(VIEW_ADMIN, SAVE_ACTION,
             SAVE_EXTENDED_ACTION, DOWNLOAD_ACTION, UPDATE_ACTION, DO_UPDATE_ACTION, DELETE_ACTION, UPLOAD_ACTION,
             UPLOAD_TMP_ACTION, UPLOAD_TMP_VALID_ACTION, REINDEX_ACTION);
 
@@ -629,7 +630,7 @@ public class Distribution extends ModuleRoot {
         }
         // will trigger retrieval of distribution again
         return redirect(URIUtils.addParametersToURIQuery(String.format("%s/%s", getPath(), VIEW_ADMIN),
-                Map.of(ApiBrowserConstants.SUCCESS_FEEBACK_MESSAGE_VARIABLE, "Update Done.")));
+                Collections.singletonMap(ApiBrowserConstants.SUCCESS_FEEBACK_MESSAGE_VARIABLE, "Update Done.")));
     }
 
     /**
@@ -758,7 +759,7 @@ public class Distribution extends ModuleRoot {
 
         // will trigger retrieval of distributions again
         return redirect(URIUtils.addParametersToURIQuery(String.format("%s/%s", getPath(), VIEW_ADMIN),
-                Map.of(ApiBrowserConstants.SUCCESS_FEEBACK_MESSAGE_VARIABLE, "Deletion Done.")));
+                Collections.singletonMap(ApiBrowserConstants.SUCCESS_FEEBACK_MESSAGE_VARIABLE, "Deletion Done.")));
     }
 
     /**
@@ -772,10 +773,10 @@ public class Distribution extends ModuleRoot {
     @Path(LOGIN_ACTION)
     public Object handleLogin() throws URISyntaxException {
         Framework.getService(PluggableAuthenticationService.class).invalidateSession(request);
-        URI uri = new URI(URIUtils.addParametersToURIQuery(NXAuthConstants.LOGIN_PAGE, Map.of( //
-                NXAuthConstants.FORCE_ANONYMOUS_LOGIN, "true", //
-                NXAuthConstants.REQUESTED_URL, getPath() //
-        )));
+        Map<String, String> map = new HashMap<>();
+        map.put(NXAuthConstants.FORCE_ANONYMOUS_LOGIN, "true");
+        map.put(NXAuthConstants.REQUESTED_URL, getPath());
+        URI uri = new URI(URIUtils.addParametersToURIQuery(NXAuthConstants.LOGIN_PAGE, map));
         return Response.seeOther(uri).build();
     }
 

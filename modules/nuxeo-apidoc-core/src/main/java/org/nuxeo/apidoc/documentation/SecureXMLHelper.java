@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -53,12 +54,13 @@ public class SecureXMLHelper {
 
     protected static final String KEYWORDS_PROPERTY = "org.nuxeo.apidoc.secure.xml.keywords";
 
-    public static final List<String> DEFAULT_KEYWORDS = List.of("password", "Password", "secret", "apiKey", "TMPDIR",
-            "TMP", "TEMP", "TEMPDIR");
+    public static final List<String> DEFAULT_KEYWORDS = Arrays.asList("password", "Password", "secret", "apiKey",
+            "TMPDIR", "TMP", "TEMP", "TEMPDIR");
 
     protected static final String WHITELISTED_KEYWORDS_PROPERTY = "org.nuxeo.apidoc.secure.xml.keywords.whitelisted";
 
-    public static final List<String> DEFAULT_WHITELISTED_KEYWORDS = List.of("passwordField", "passwordHashAlgorithm");
+    public static final List<String> DEFAULT_WHITELISTED_KEYWORDS = Arrays.asList("passwordField",
+            "passwordHashAlgorithm");
 
     protected static final String SECRET_VALUE = "********";
 
@@ -103,7 +105,7 @@ public class SecureXMLHelper {
         return Framework.getService(ConfigurationService.class)
                         .getString(property)
                         .map(v -> v.split("\\s*,[,\\s]*"))
-                        .map(List::of)
+                        .map(Arrays::asList)
                         .orElse(defaultValue);
     }
 
@@ -197,7 +199,7 @@ public class SecureXMLHelper {
             writer.flush();
             writer.close();
 
-            return output.toString(StandardCharsets.UTF_8);
+            return output.toString(StandardCharsets.UTF_8.name());
         } catch (IOException e) {
             throw new XMLStreamException(e);
         }
@@ -239,7 +241,7 @@ public class SecureXMLHelper {
         String res = xml;
         for (String kw : keywords) {
             if (res.contains(kw)) {
-                for (String pattern : List.of(
+                for (String pattern : Arrays.asList(
                         // node startswith
                         String.format("(?<start><(?<key>\\w*%s)\\s*>)[^<]*(?<end></\\w*%s>)", kw, kw),
                         // node endswith

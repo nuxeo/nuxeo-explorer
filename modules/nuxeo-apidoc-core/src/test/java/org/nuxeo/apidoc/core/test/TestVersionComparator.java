@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,11 +55,11 @@ public class TestVersionComparator {
 
     @Test
     public void testList() {
-        List<String> versions = new ArrayList<>(List.of("11.3", "11.2-RC2", "11.2-RC10", "11.2-foo", "11.2-bar",
+        List<String> versions = new ArrayList<>(Arrays.asList("11.3", "11.2-RC2", "11.2-RC10", "11.2-foo", "11.2-bar",
                 "11.2-RC1", "11.10", "11.2.0", "11.2.10", "11.2.49", "11.2", "11.2.1", "11.2.3-SNAPSHOT", "11.2.53",
                 "11.2.3", "11.2.1-SNAPSHOT", "11.2.3-I20200929"));
         Collections.sort(versions, new VersionComparator());
-        assertEquals(List.of("11.2.0", "11.2.1-SNAPSHOT", "11.2.1", "11.2.3-I20200929", "11.2.3-SNAPSHOT", "11.2.3",
+        assertEquals(Arrays.asList("11.2.0", "11.2.1-SNAPSHOT", "11.2.1", "11.2.3-I20200929", "11.2.3-SNAPSHOT", "11.2.3",
                 "11.2.10", "11.2.49", "11.2.53", "11.2-RC1", "11.2-RC2", "11.2-RC10", "11.2-bar", "11.2-foo", "11.2",
                 "11.3", "11.10"), versions);
     }

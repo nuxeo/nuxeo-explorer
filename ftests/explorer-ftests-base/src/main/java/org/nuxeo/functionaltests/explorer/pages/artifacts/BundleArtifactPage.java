@@ -23,7 +23,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.Arrays;
 
 import org.nuxeo.functionaltests.Required;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
@@ -113,7 +113,7 @@ public class BundleArtifactPage extends ArtifactPage {
                         + "Exports");
         checkGroupId("org.nuxeo.ecm.platform");
         checkArtifactId("nuxeo-apidoc-webengine");
-        checkRequirements(List.of("org.nuxeo.ecm.webengine.core", "org.nuxeo.apidoc.core"));
+        checkRequirements(Arrays.asList("org.nuxeo.ecm.webengine.core", "org.nuxeo.apidoc.core"));
         checkResolutionOrder(false);
         checkPackages("platform-explorer");
     }

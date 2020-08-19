@@ -75,7 +75,7 @@ public class DOTGraphExporter extends AbstractGraphExporter {
             ComponentNameProvider<IdNode> vertexLabelProvider = idNode -> idNode.getNode().getLabel();
             ComponentNameProvider<Edge> edgeLabelProvider = Edge::getValue;
             ComponentAttributeProvider<IdNode> vertexAttributeProvider = idNode -> {
-                var map = new LinkedHashMap<String, String>();
+                Map<String, String> map = new LinkedHashMap<String, String>();
                 Node<?> node = idNode.getNode();
                 map.put("weight", String.valueOf(node.getWeight()));
                 map.put("type", String.valueOf(node.getType()));

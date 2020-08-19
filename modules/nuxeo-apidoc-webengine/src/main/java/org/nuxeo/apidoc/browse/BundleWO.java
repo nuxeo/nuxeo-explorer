@@ -66,7 +66,7 @@ public class BundleWO extends NuxeoArtifactWebObject {
     }
 
     protected Map<String, BundleInfo> getRequirementsInfo(DistributionSnapshot snapshot, List<String> requirements) {
-        var res = new LinkedHashMap<String, BundleInfo>();
+        Map<String, BundleInfo> res = new LinkedHashMap<>();
         requirements.forEach(req -> res.put(req, snapshot.getBundle(req)));
         return res;
     }

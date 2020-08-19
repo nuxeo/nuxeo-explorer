@@ -115,7 +115,7 @@ public class ApiBrowser extends DefaultObject {
         String viewId = "index";
         DistributionSnapshot snap = getDistribution();
         List<String> bundleIds = snap.getBundleIds();
-        var stats = new HashMap<String, Integer>();
+        Map<String, Integer> stats = new HashMap<String, Integer>();
         stats.put("bundles", bundleIds.size());
         stats.put("components", snap.getComponentIds().size());
         stats.put("services", snap.getServiceIds().size());
@@ -556,7 +556,7 @@ public class ApiBrowser extends DefaultObject {
             @QueryParam("checkAsPrefixes") Boolean checkAsPrefixes,
             @QueryParam("includeReferences") Boolean includeReferences, @QueryParam("pretty") Boolean pretty)
             throws IOException {
-        Map<String, String> props = Boolean.TRUE.equals(pretty) ? Map.of("pretty", "true") : null;
+        Map<String, String> props = Boolean.TRUE.equals(pretty) ? Collections.singletonMap("pretty", "true") : null;
         SnapshotFilter filter = getSnapshotFilter(bundles, nuxeoPackages, javaPackagePrefixes, checkAsPrefixes,
                 includeReferences);
         Exporter exporter = getSnapshotManager().getExporter(exporterName);
@@ -597,7 +597,7 @@ public class ApiBrowser extends DefaultObject {
     }
 
     protected List<String> getSnapshotFilterCriterion(List<String> queryParam) {
-        var res = new ArrayList<String>();
+        List<String> res = new ArrayList<String>();
         if (queryParam != null) {
             queryParam.stream().filter(StringUtils::isNotBlank).forEach(res::add);
         }

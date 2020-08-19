@@ -450,7 +450,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
             SnapshotFilter refFilter = null;
             if (filter != null && filter.getReferenceClass() != null) {
                 // resolve bundle selection to get reference filter
-                var selectedBundles = new ArrayList<NuxeoArtifact>();
+                List<NuxeoArtifact> selectedBundles = new ArrayList<NuxeoArtifact>();
                 getBundles().stream().filter(filter::accept).forEach(selectedBundles::add);
                 try {
                     Constructor<? extends SnapshotFilter> constructor = filter.getReferenceClass()
@@ -513,13 +513,13 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
      */
     public Map<String, Serializable> getUpdateProperties() {
         Map<String, Serializable> props = new HashMap<>();
-        List.of(TITLE_PROPERTY_PATH, PROP_NAME, PROP_VERSION, PROP_KEY).forEach(p -> props.put(p, safeGet(p)));
+        Arrays.asList(TITLE_PROPERTY_PATH, PROP_NAME, PROP_VERSION, PROP_KEY).forEach(p -> props.put(p, safeGet(p)));
         if (StringUtils.isBlank((String) props.get(TITLE_PROPERTY_PATH))
                 && StringUtils.isNotBlank((String) props.get(PROP_NAME))) {
             props.put(TITLE_PROPERTY_PATH, props.get(PROP_NAME));
         }
-        List.of(PROP_LATEST_LTS, PROP_LATEST_FT, PROP_HIDE)
-            .forEach(p -> props.put(p, String.valueOf(doc.getPropertyValue(p))));
+        Arrays.asList(PROP_LATEST_LTS, PROP_LATEST_FT, PROP_HIDE)
+              .forEach(p -> props.put(p, String.valueOf(doc.getPropertyValue(p))));
         Date releaseDate = getReleaseDate();
         props.put(PROP_RELEASED, releaseDate == null ? null : new SimpleDateFormat("yyyy-MM-dd").format(releaseDate));
         List<String> aliases = safeGet(PROP_ALIASES);
@@ -543,7 +543,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
                 props.put(TITLE_PROPERTY_PATH, props.get(PROP_NAME));
             }
             // checkboxes will fill the request (with value "on"), only when checked
-            List.of(PROP_LATEST_LTS, PROP_LATEST_FT, PROP_HIDE)
+            Arrays.asList(PROP_LATEST_LTS, PROP_LATEST_FT, PROP_HIDE)
                 .forEach(p -> props.put(p, Boolean.toString(formFields.containsKey(p))));
         }
         return props;
@@ -581,8 +581,8 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         Stream.of(TITLE_PROPERTY_PATH, PROP_NAME, PROP_VERSION, PROP_KEY, PROP_LATEST_LTS, PROP_LATEST_FT, PROP_HIDE)
               .filter(updateProperties::containsKey)
               .forEach(p -> doc.setPropertyValue(p, updateProperties.get(p)));
-        List.of(PROP_LATEST_LTS, PROP_LATEST_FT, PROP_HIDE)
-            .forEach(p -> doc.setPropertyValue(p, updateProperties.get(p)));
+        Arrays.asList(PROP_LATEST_LTS, PROP_LATEST_FT, PROP_HIDE)
+              .forEach(p -> doc.setPropertyValue(p, updateProperties.get(p)));
         if (updateProperties.containsKey(PROP_RELEASED)) {
             doc.setPropertyValue(DistributionSnapshot.PROP_RELEASED,
                     convertDate((String) updateProperties.get(PROP_RELEASED)));
@@ -600,7 +600,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     }
 
     protected void validateKeyOrAlias(String keyOrAlias, List<String> reservedKeys) throws DocumentValidationException {
-        var forbidden = new ArrayList<>(List.of(
+        List<String> forbidden = new ArrayList<>(Arrays.asList(
                 // reserved for live distrib
                 SnapshotManager.DISTRIBUTION_ALIAS_CURRENT, SnapshotManager.DISTRIBUTION_ALIAS_ADM,
                 // added automatically

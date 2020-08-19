@@ -25,8 +25,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -100,7 +100,7 @@ public class TestGraphExport extends AbstractApidocTest {
 
         Exporter exporter = snapshotManager.getExporter("jsonGraph");
         try (ByteArrayOutputStream sinkJson = new ByteArrayOutputStream()) {
-            exporter.export(sinkJson, snapshot, filter, Map.of("pretty", "true"));
+            exporter.export(sinkJson, snapshot, filter, Collections.singletonMap("pretty", "true"));
             checkJsonContentEquals("export/graphs/basic_graph.json", sinkJson.toString());
         }
 

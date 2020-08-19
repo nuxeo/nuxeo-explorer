@@ -68,7 +68,7 @@ public class ComponentWO extends NuxeoArtifactWebObject {
     }
 
     protected Map<String, ComponentInfo> getRequirementsInfo(DistributionSnapshot snapshot, List<String> requirements) {
-        var res = new LinkedHashMap<String, ComponentInfo>();
+        Map<String, ComponentInfo> res = new LinkedHashMap<>();
         requirements.forEach(req -> res.put(req, snapshot.getComponent(req)));
         return res;
     }

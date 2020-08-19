@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -120,7 +121,7 @@ public class TestJson extends AbstractApidocTest {
             public boolean accept(NuxeoArtifact artifact) {
                 if (artifact instanceof OperationInfo) {
                     OperationInfo op = (OperationInfo) artifact;
-                    return List.of("Actions.GET", "AttachFiles").contains(op.getName());
+                    return Arrays.asList("Actions.GET", "AttachFiles").contains(op.getName());
                 }
                 return super.accept(artifact);
             };
@@ -232,7 +233,7 @@ public class TestJson extends AbstractApidocTest {
         Blob parentReadme = bundle.getParentReadme();
         assertNotNull(parentReadme);
         checkContentEquals("apidoc_snapshot/apidoc_readme.txt", parentReadme.getString());
-        assertEquals(List.of(), bundle.getRequirements());
+        assertEquals(Arrays.asList(), bundle.getRequirements());
         assertEquals(Long.valueOf(66), bundle.getMinResolutionOrder());
         assertEquals(Long.valueOf(72), bundle.getMaxResolutionOrder());
         assertEquals(version, bundle.getVersion());
@@ -250,16 +251,16 @@ public class TestJson extends AbstractApidocTest {
         assertNotNull(group);
         assertEquals(BundleGroup.TYPE_NAME, group.getArtifactType());
         assertEquals(sVersion, group.getVersion());
-        assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"), group.getBundleIds());
+        assertEquals(Arrays.asList("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"), group.getBundleIds());
         assertEquals("grp:org.nuxeo.apidoc", group.getId());
         assertEquals("org.nuxeo.apidoc", group.getName());
         assertEquals("/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc", group.getHierarchyPath());
-        assertEquals(List.of("grp:org.nuxeo.ecm.platform"), group.getParentIds());
+        assertEquals(Arrays.asList("grp:org.nuxeo.ecm.platform"), group.getParentIds());
         List<Blob> readmes = group.getReadmes();
         assertNotNull(readmes);
         assertEquals(1, readmes.size());
         checkContentEquals("apidoc_snapshot/apidoc_readme.txt", readmes.get(0).getString());
-        assertEquals(List.of(), group.getSubGroups());
+        assertEquals(Arrays.asList(), group.getSubGroups());
         assertEquals(sVersion, group.getVersion());
         assertNotNull(group.getParentGroup());
         assertEquals("grp:org.nuxeo.ecm.platform", group.getParentGroup().getId());
@@ -273,13 +274,13 @@ public class TestJson extends AbstractApidocTest {
         assertEquals(sVersion, mvnGroup.getVersion());
         assertEquals("/grp:org.nuxeo.ecm.platform", mvnGroup.getHierarchyPath());
         if (partial) {
-            assertEquals(List.of(), mvnGroup.getBundleIds());
+            assertEquals(Arrays.asList(), mvnGroup.getBundleIds());
         } else {
             assertTrue(mvnGroup.getBundleIds().size() > 1);
             assertFalse(mvnGroup.getBundleIds().contains("org.nuxeo.apidoc.core"));
             assertFalse(mvnGroup.getBundleIds().contains("org.nuxeo.apidoc.repo"));
         }
-        assertEquals(List.of(), mvnGroup.getParentIds());
+        assertEquals(Arrays.asList(), mvnGroup.getParentIds());
         List<Blob> mvnReadmes = mvnGroup.getReadmes();
         assertNotNull(mvnReadmes);
         if (partial) {
@@ -289,7 +290,7 @@ public class TestJson extends AbstractApidocTest {
             checkContentEquals("apidoc_snapshot/apidoc_readme.txt", mvnReadmes.get(0).getString());
         }
         if (partial) {
-            assertEquals(List.of("grp:org.nuxeo.apidoc"),
+            assertEquals(Arrays.asList("grp:org.nuxeo.apidoc"),
                     mvnGroup.getSubGroups().stream().map(BundleGroup::getId).collect(Collectors.toList()));
         } else {
             List<String> sgids = mvnGroup.getSubGroups().stream().map(BundleGroup::getId).collect(Collectors.toList());
@@ -329,7 +330,7 @@ public class TestJson extends AbstractApidocTest {
         assertEquals(version, smcomp.getVersion());
         assertFalse(smcomp.isXmlPureComponent());
         checkContentEquals("apidoc_snapshot/processed-snapshot-service-framework.xml", smcomp.getXmlFileContent());
-        assertEquals(List.of(), smcomp.getRequirements());
+        assertEquals(Arrays.asList(), smcomp.getRequirements());
         assertEquals(Long.valueOf(69), smcomp.getResolutionOrder());
         assertNull(smcomp.getDeclaredStartOrder());
         assertEquals(Long.valueOf(135), smcomp.getStartOrder());
@@ -518,8 +519,8 @@ public class TestJson extends AbstractApidocTest {
         assertEquals("Actions.GET", op.getName());
         assertNotNull(op.getParams());
         assertEquals(2, op.getParams().size());
-        assertEquals(List.of("void", "blob", "document", "blob"), op.getSignature());
-        assertEquals(List.of(), op.getAliases());
+        assertEquals(Arrays.asList("void", "blob", "document", "blob"), op.getSignature());
+        assertEquals(Arrays.asList(), op.getAliases());
 
         // check packages (mocked in tests)
         List<PackageInfo> packages = snapshot.getPackages();
@@ -528,7 +529,7 @@ public class TestJson extends AbstractApidocTest {
         PackageInfo pkg = packages.get(0);
         assertNotNull(pkg);
         assertEquals(PackageInfo.TYPE_NAME, pkg.getArtifactType());
-        assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"), pkg.getBundles());
+        assertEquals(Arrays.asList("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"), pkg.getBundles());
         assertEquals("platform-explorer-mock-1.0.1", pkg.getId());
         assertEquals("platform-explorer-mock", pkg.getName());
         if (partial) {
@@ -538,9 +539,9 @@ public class TestJson extends AbstractApidocTest {
         }
         assertEquals("Platform Explorer Mock", pkg.getTitle());
         assertEquals(PackageType.ADDON.toString(), pkg.getPackageType());
-        assertEquals(List.of("platform-explorer-base"), pkg.getDependencies());
-        assertEquals(List.of(), pkg.getOptionalDependencies());
-        assertEquals(List.of(), pkg.getConflicts());
+        assertEquals(Arrays.asList("platform-explorer-base"), pkg.getDependencies());
+        assertEquals(Arrays.asList(), pkg.getOptionalDependencies());
+        assertEquals(Arrays.asList(), pkg.getConflicts());
 
         // check package retrieval through API
         PackageInfo pkg2 = snapshot.getPackage("platform-explorer-mock");

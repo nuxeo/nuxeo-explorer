@@ -30,10 +30,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -69,7 +69,8 @@ public class TestExportImport {
         Map<String, DistributionSnapshot> snapshots = snapshotManager.getPersistentSnapshots(session);
         assertNotNull(snapshots);
         assertEquals(1, snapshots.size());
-        checkSnapshot(snapshots.values().iterator().next(), "Nuxeo", "unknown", "Nuxeo-unknown", List.of(), false);
+        checkSnapshot(snapshots.values().iterator().next(), "Nuxeo", "unknown", "Nuxeo-unknown", Arrays.asList(),
+                false);
 
         tempExportFile = Framework.createTempFile("testExportImport", snapshot.getKey());
         try (OutputStream out = new FileOutputStream(tempExportFile)) {
@@ -87,11 +88,12 @@ public class TestExportImport {
     }
 
     protected Map<String, Serializable> getDistribProps() {
-        return Map.of( //
-                DistributionSnapshot.PROP_NAME, "server", //
-                DistributionSnapshot.PROP_VERSION, "42.66", //
-                DistributionSnapshot.PROP_KEY, "server-42.66", //
-                DistributionSnapshot.PROP_ALIASES, "latest\n11.x");
+        Map<String, Serializable> map = new HashMap<>();
+        map.put(DistributionSnapshot.PROP_NAME, "server");
+        map.put(DistributionSnapshot.PROP_VERSION, "42.66");
+        map.put(DistributionSnapshot.PROP_KEY, "server-42.66");
+        map.put(DistributionSnapshot.PROP_ALIASES, "latest\n11.x");
+        return map;
     }
 
     protected void checkSnapshot(DistributionSnapshot snapshot, String name, String version, String key,
@@ -109,10 +111,11 @@ public class TestExportImport {
         assertNotNull(snapshots);
         assertEquals(4, snapshots.size());
         assertTrue(snapshots.containsKey("Nuxeo-unknown"));
-        checkSnapshot(snapshots.get("Nuxeo-unknown"), "Nuxeo", "unknown", "Nuxeo-unknown", List.of(), false);
-        for (String distrib : Set.of("server-42.66", "11.x", "latest")) {
+        checkSnapshot(snapshots.get("Nuxeo-unknown"), "Nuxeo", "unknown", "Nuxeo-unknown", Arrays.asList(), false);
+        for (String distrib : Arrays.asList("server-42.66", "11.x", "latest")) {
             assertTrue(snapshots.containsKey(distrib));
-            checkSnapshot(snapshots.get(distrib), "server", "42.66", "server-42.66", List.of("latest", "11.x"), false);
+            checkSnapshot(snapshots.get(distrib), "server", "42.66", "server-42.66", Arrays.asList("latest", "11.x"),
+                    false);
         }
     }
 
@@ -128,14 +131,14 @@ public class TestExportImport {
         Map<String, DistributionSnapshot> snapshots = snapshotManager.getPersistentSnapshots(session);
         assertEquals(1, snapshots.size());
         assertTrue(snapshots.containsKey("Nuxeo-unknown"));
-        checkSnapshot(snapshots.get("Nuxeo-unknown"), "Nuxeo", "unknown", "Nuxeo-unknown", List.of(), true);
+        checkSnapshot(snapshots.get("Nuxeo-unknown"), "Nuxeo", "unknown", "Nuxeo-unknown", Arrays.asList(), true);
 
         // check validation on it, updating some properties
         Map<String, Serializable> updateProps = new HashMap<>(getDistribProps());
         updateProps.put(DistributionSnapshot.PROP_KEY, SnapshotManager.DISTRIBUTION_ALIAS_CURRENT);
         try {
             snapshotManager.validateImportedSnapshot(session, distribDocId, updateProps,
-                    List.of(SnapshotManager.DISTRIBUTION_ALIAS_CURRENT));
+                    Arrays.asList(SnapshotManager.DISTRIBUTION_ALIAS_CURRENT));
             fail("Should have raised a DocumentValidationException");
         } catch (IllegalArgumentException e) {
             assertEquals("Distribution key or alias is reserved: 'current'", e.getMessage());

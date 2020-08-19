@@ -20,6 +20,7 @@ package org.nuxeo.apidoc.core.test;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +66,7 @@ public class TestBundleGroupExtractor {
     }
 
     protected Map<String, BundleInfo> createMockBundles() {
-        var values = List.of(new MockBundle("org.nuxeo.common", "org.nuxeo.common", "nuxeo-common"),
+        List<MockBundle> values = Arrays.asList(new MockBundle("org.nuxeo.common", "org.nuxeo.common", "nuxeo-common"),
                 // connect
                 new MockBundle("org.nuxeo.connect.client", "org.nuxeo.connect", "nuxeo-connect-client"),
                 new MockBundle("org.nuxeo.connect.client.wrapper", "org.nuxeo.ecm.platform",
@@ -117,82 +118,84 @@ public class TestBundleGroupExtractor {
 
         assertEquals(5, roots.size());
         assertEquals(
-                List.of("grp:org.nuxeo.common", "grp:org.nuxeo.connect", "grp:org.nuxeo.ecm.core",
+                Arrays.asList("grp:org.nuxeo.common", "grp:org.nuxeo.connect", "grp:org.nuxeo.ecm.core",
                         "grp:org.nuxeo.ecm.platform", "grp:org.nuxeo.runtime"),
                 roots.stream().map(BundleGroup::getId).collect(Collectors.toList()));
         Iterator<BundleGroup> rootsIt = roots.iterator();
         BundleGroup common = rootsIt.next();
         assertEquals("grp:org.nuxeo.common", common.getId());
-        assertEquals(List.of(), common.getSubGroups());
-        assertEquals(List.of(), common.getParentIds());
+        assertEquals(Arrays.asList(), common.getSubGroups());
+        assertEquals(Arrays.asList(), common.getParentIds());
         BundleGroup connect = rootsIt.next();
         assertEquals("grp:org.nuxeo.connect", connect.getId());
-        assertEquals(List.of("grp:org.nuxeo.connect.client"),
+        assertEquals(Arrays.asList("grp:org.nuxeo.connect.client"),
                 connect.getSubGroups().stream().map(BundleGroup::getId).collect(Collectors.toList()));
-        assertEquals(List.of(), connect.getParentIds());
+        assertEquals(Arrays.asList(), connect.getParentIds());
         BundleGroup core = rootsIt.next();
         assertEquals("grp:org.nuxeo.ecm.core", core.getId());
-        assertEquals(List.of(), core.getSubGroups());
-        assertEquals(List.of(), core.getParentIds());
+        assertEquals(Arrays.asList(), core.getSubGroups());
+        assertEquals(Arrays.asList(), core.getParentIds());
         BundleGroup platform = rootsIt.next();
         assertEquals("grp:org.nuxeo.ecm.platform", platform.getId());
         assertEquals(
-                List.of("grp:org.nuxeo.apidoc", "grp:org.nuxeo.ecm.directory", "grp:org.nuxeo.ecm.platform.restapi",
-                        "grp:org.nuxeo.ecm.relations"),
+                Arrays.asList("grp:org.nuxeo.apidoc", "grp:org.nuxeo.ecm.directory",
+                        "grp:org.nuxeo.ecm.platform.restapi", "grp:org.nuxeo.ecm.relations"),
                 platform.getSubGroups().stream().map(BundleGroup::getId).collect(Collectors.toList()));
-        assertEquals(List.of(), platform.getParentIds());
+        assertEquals(Arrays.asList(), platform.getParentIds());
         BundleGroup runtime = rootsIt.next();
         assertEquals("grp:org.nuxeo.runtime", runtime.getId());
-        assertEquals(List.of(), runtime.getSubGroups());
-        assertEquals(List.of(), runtime.getParentIds());
+        assertEquals(Arrays.asList(), runtime.getSubGroups());
+        assertEquals(Arrays.asList(), runtime.getParentIds());
 
         Map<String, BundleGroup> groups = bge.getGroups();
         assertEquals(10, groups.size());
         assertEquals(
-                List.of("grp:org.nuxeo.ecm.core", "grp:org.nuxeo.common", "grp:org.nuxeo.apidoc",
+                Arrays.asList("grp:org.nuxeo.ecm.core", "grp:org.nuxeo.common", "grp:org.nuxeo.apidoc",
                         "grp:org.nuxeo.ecm.directory", "grp:org.nuxeo.ecm.platform.restapi",
                         "grp:org.nuxeo.ecm.relations", "grp:org.nuxeo.ecm.platform", "grp:org.nuxeo.runtime",
                         "grp:org.nuxeo.connect.client", "grp:org.nuxeo.connect"),
                 groups.values().stream().map(BundleGroup::getId).collect(Collectors.toList()));
-        assertEquals(List.of("org.nuxeo.common"), groups.get("grp:org.nuxeo.common").getBundleIds());
-        assertEquals(List.of("org.nuxeo.connect.update"), groups.get("grp:org.nuxeo.connect").getBundleIds());
-        assertEquals(List.of("org.nuxeo.connect.client", "org.nuxeo.connect.client.wrapper"),
+        assertEquals(Arrays.asList("org.nuxeo.common"), groups.get("grp:org.nuxeo.common").getBundleIds());
+        assertEquals(Arrays.asList("org.nuxeo.connect.update"), groups.get("grp:org.nuxeo.connect").getBundleIds());
+        assertEquals(Arrays.asList("org.nuxeo.connect.client", "org.nuxeo.connect.client.wrapper"),
                 groups.get("grp:org.nuxeo.connect.client").getBundleIds());
         assertEquals(
-                List.of("org.nuxeo.ecm.core", "org.nuxeo.ecm.core.api", "org.nuxeo.ecm.core.bulk",
+                Arrays.asList("org.nuxeo.ecm.core", "org.nuxeo.ecm.core.api", "org.nuxeo.ecm.core.bulk",
                         "org.nuxeo.ecm.core.io", "org.nuxeo.ecm.platform.el"),
                 groups.get("grp:org.nuxeo.ecm.core").getBundleIds());
-        assertEquals(List.of("org.nuxeo.ecm.permissions", "org.nuxeo.ecm.platform", "org.nuxeo.ecm.platform.api",
+        assertEquals(Arrays.asList("org.nuxeo.ecm.permissions", "org.nuxeo.ecm.platform", "org.nuxeo.ecm.platform.api",
                 "org.nuxeo.mail"), groups.get("grp:org.nuxeo.ecm.platform").getBundleIds());
         assertEquals(
-                List.of("org.nuxeo.connect.standalone", "org.nuxeo.launcher.commons", "org.nuxeo.osgi",
+                Arrays.asList("org.nuxeo.connect.standalone", "org.nuxeo.launcher.commons", "org.nuxeo.osgi",
                         "org.nuxeo.runtime", "org.nuxeo.runtime.cluster"),
                 groups.get("grp:org.nuxeo.runtime").getBundleIds());
         // directory
         assertEquals(
-                List.of("org.nuxeo.ecm.directory", "org.nuxeo.ecm.directory.api", "org.nuxeo.ecm.directory.sql",
+                Arrays.asList("org.nuxeo.ecm.directory", "org.nuxeo.ecm.directory.api", "org.nuxeo.ecm.directory.sql",
                         "org.nuxeo.ecm.directory.types.contrib"),
                 groups.get("grp:org.nuxeo.ecm.directory").getBundleIds());
-        assertEquals(List.of("grp:org.nuxeo.ecm.platform"), groups.get("grp:org.nuxeo.ecm.directory").getParentIds());
-        assertEquals(List.of(), groups.get("grp:org.nuxeo.ecm.directory").getSubGroups());
+        assertEquals(Arrays.asList("grp:org.nuxeo.ecm.platform"),
+                groups.get("grp:org.nuxeo.ecm.directory").getParentIds());
+        assertEquals(Arrays.asList(), groups.get("grp:org.nuxeo.ecm.directory").getSubGroups());
         // relations
         assertEquals(
-                List.of("org.nuxeo.ecm.relations", "org.nuxeo.ecm.relations.api",
+                Arrays.asList("org.nuxeo.ecm.relations", "org.nuxeo.ecm.relations.api",
                         "org.nuxeo.ecm.relations.core.listener", "org.nuxeo.ecm.relations.io"),
                 groups.get("grp:org.nuxeo.ecm.relations").getBundleIds());
-        assertEquals(List.of("grp:org.nuxeo.ecm.platform"), groups.get("grp:org.nuxeo.ecm.relations").getParentIds());
-        assertEquals(List.of(), groups.get("grp:org.nuxeo.ecm.relations").getSubGroups());
+        assertEquals(Arrays.asList("grp:org.nuxeo.ecm.platform"),
+                groups.get("grp:org.nuxeo.ecm.relations").getParentIds());
+        assertEquals(Arrays.asList(), groups.get("grp:org.nuxeo.ecm.relations").getSubGroups());
         // apidoc
-        assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo", "org.nuxeo.apidoc.webengine"),
+        assertEquals(Arrays.asList("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo", "org.nuxeo.apidoc.webengine"),
                 groups.get("grp:org.nuxeo.apidoc").getBundleIds());
-        assertEquals(List.of("grp:org.nuxeo.ecm.platform"), groups.get("grp:org.nuxeo.apidoc").getParentIds());
-        assertEquals(List.of(), groups.get("grp:org.nuxeo.apidoc").getSubGroups());
+        assertEquals(Arrays.asList("grp:org.nuxeo.ecm.platform"), groups.get("grp:org.nuxeo.apidoc").getParentIds());
+        assertEquals(Arrays.asList(), groups.get("grp:org.nuxeo.apidoc").getSubGroups());
         // restapi
-        assertEquals(List.of("org.nuxeo.ecm.platform.restapi.io", "org.nuxeo.ecm.platform.restapi.server"),
+        assertEquals(Arrays.asList("org.nuxeo.ecm.platform.restapi.io", "org.nuxeo.ecm.platform.restapi.server"),
                 groups.get("grp:org.nuxeo.ecm.platform.restapi").getBundleIds());
-        assertEquals(List.of("grp:org.nuxeo.ecm.platform"),
+        assertEquals(Arrays.asList("grp:org.nuxeo.ecm.platform"),
                 groups.get("grp:org.nuxeo.ecm.platform.restapi").getParentIds());
-        assertEquals(List.of(), groups.get("grp:org.nuxeo.ecm.platform.restapi").getSubGroups());
+        assertEquals(Arrays.asList(), groups.get("grp:org.nuxeo.ecm.platform.restapi").getSubGroups());
     }
 
 }

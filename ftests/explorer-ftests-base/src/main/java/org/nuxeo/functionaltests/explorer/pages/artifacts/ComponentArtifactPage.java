@@ -21,7 +21,7 @@ package org.nuxeo.functionaltests.explorer.pages.artifacts;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.util.List;
+import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
@@ -83,7 +83,7 @@ public class ComponentArtifactPage extends ArtifactPage {
         checkCommon("Component org.nuxeo.ecm.automation.server.marshallers",
                 "Component org.nuxeo.ecm.automation.server.marshallers", "In bundle org.nuxeo.ecm.automation.io",
                 "Requirements\n" + "Resolution Order\n" + "Contributions\n" + "XML Source");
-        checkRequirements(List.of("org.nuxeo.ecm.platform.contentview.json.marshallers"));
+        checkRequirements(Arrays.asList("org.nuxeo.ecm.platform.contentview.json.marshallers"));
         checkDocumentationText(null);
         checkImplementationText(null);
         checkJavadocLink(null);

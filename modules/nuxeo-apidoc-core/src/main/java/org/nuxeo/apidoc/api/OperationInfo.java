@@ -123,9 +123,12 @@ public interface OperationInfo extends NuxeoArtifact, Comparable<OperationInfo> 
         doc.label = oi.getLabel();
         doc.category = oi.getCategory();
         doc.description = oi.getDescription();
-        doc.params = oi.getParams().toArray(OperationDocumentation.Param[]::new);
-        doc.signature = oi.getSignature().toArray(String[]::new);
-        doc.aliases = oi.getAliases().toArray(String[]::new);
+        Param[] params = new Param[] {};
+        doc.params = oi.getParams().toArray(params);
+        String[] signature = new String[] {};
+        doc.signature = oi.getSignature().toArray(signature);
+        String[] aliases = new String[] {};
+        doc.aliases = oi.getAliases().toArray(aliases);
         doc.requires = oi.getRequires();
         doc.since = oi.getSince();
         // NB: widget definitions potentially missing (not persisted by explorer), same as url.

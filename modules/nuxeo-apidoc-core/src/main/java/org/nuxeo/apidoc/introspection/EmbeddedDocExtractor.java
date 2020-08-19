@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -58,7 +59,7 @@ public class EmbeddedDocExtractor {
      */
     protected static final String README = "ReadMe.md";
 
-    protected static List<Extension> MD_EXTENSIONS = List.of(TablesExtension.create());
+    protected static List<Extension> MD_EXTENSIONS = Arrays.asList(TablesExtension.create());
 
     protected static Parser MD_PARSER = Parser.builder().extensions(MD_EXTENSIONS).build();
 

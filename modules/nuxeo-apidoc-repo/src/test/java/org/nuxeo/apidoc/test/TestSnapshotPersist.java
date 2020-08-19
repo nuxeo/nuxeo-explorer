@@ -28,8 +28,9 @@ import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -101,18 +102,20 @@ public class TestSnapshotPersist extends AbstractApidocTest {
         RepositoryDistributionSnapshot rsnap = (RepositoryDistributionSnapshot) snapshot;
         try {
             rsnap.updateDocument(session,
-                    Map.of(DistributionSnapshot.PROP_KEY, SnapshotManager.DISTRIBUTION_ALIAS_CURRENT), null, null);
+                    Collections.singletonMap(DistributionSnapshot.PROP_KEY, SnapshotManager.DISTRIBUTION_ALIAS_CURRENT),
+                    null, null);
             fail("should have raised a DocumentValidationException");
         } catch (IllegalArgumentException e) {
             assertEquals("Distribution key or alias is reserved: 'current'", e.getMessage());
         }
         try {
-            rsnap.updateDocument(session, Map.of(DistributionSnapshot.PROP_ALIASES, "foo"), null, List.of("foo"));
+            rsnap.updateDocument(session, Collections.singletonMap(DistributionSnapshot.PROP_ALIASES, "foo"), null,
+                    Arrays.asList("foo"));
             fail("should have raised a DocumentValidationException");
         } catch (IllegalArgumentException e) {
             assertEquals("Distribution key or alias is reserved: 'foo'", e.getMessage());
         }
-        rsnap.updateDocument(session, Map.of(DistributionSnapshot.PROP_ALIASES, "foo"), null, null);
+        rsnap.updateDocument(session, Collections.singletonMap(DistributionSnapshot.PROP_ALIASES, "foo"), null, null);
         DistributionSnapshot updated = snapshotManager.getSnapshot("foo", session);
         assertNotNull(updated);
         checkDistributionSnapshot(updated, false, false);

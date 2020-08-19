@@ -24,6 +24,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -55,9 +56,9 @@ public class TestDistributionResolver {
             String version = id.replace(name + "-", "");
             when(snap.getVersion()).thenReturn(version);
             if (id.startsWith("server-11.1.1")) {
-                when(snap.getAliases()).thenReturn(List.of(SnapshotManager.DISTRIBUTION_ALIAS_CURRENT));
+                when(snap.getAliases()).thenReturn(Arrays.asList(SnapshotManager.DISTRIBUTION_ALIAS_CURRENT));
             } else {
-                when(snap.getAliases()).thenReturn(List.of());
+                when(snap.getAliases()).thenReturn(Arrays.asList());
             }
             fakeSnapshots.add(snap);
         }
