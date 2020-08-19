@@ -27,7 +27,6 @@ import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.PathRef;
-import org.nuxeo.ecm.platform.thumbnail.ThumbnailConstants;
 
 /**
  * @since 11.1
@@ -56,7 +55,7 @@ public class PackageInfoDocAdapter extends BaseNuxeoArtifactDocAdapter implement
         doc.setPropertyValue(PROP_OPTIONAL_DEPENDENCIES, (Serializable) pkg.getOptionalDependencies());
         doc.setPropertyValue(PROP_CONFLICTS, (Serializable) pkg.getConflicts());
 
-        doc.putContextData(ThumbnailConstants.DISABLE_THUMBNAIL_COMPUTATION, true);
+        fillContextData(doc);
         if (exist) {
             doc = session.saveDocument(doc);
         } else {

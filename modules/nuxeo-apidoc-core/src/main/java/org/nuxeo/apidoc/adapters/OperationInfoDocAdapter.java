@@ -35,7 +35,6 @@ import org.nuxeo.ecm.automation.OperationDocumentation.Param;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.PathRef;
-import org.nuxeo.ecm.platform.thumbnail.ThumbnailConstants;
 
 /**
  * Adapter from a Nuxeo document to the {@link OperationInfo} interface.
@@ -177,7 +176,7 @@ public class OperationInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
             params.add(map);
         }
         doc.setPropertyValue(PROP_PARAMS, (Serializable) params);
-        doc.putContextData(ThumbnailConstants.DISABLE_THUMBNAIL_COMPUTATION, true);
+        fillContextData(doc);
         if (exists) {
             doc = session.saveDocument(doc);
         } else {
