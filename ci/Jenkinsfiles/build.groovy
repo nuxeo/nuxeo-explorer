@@ -20,6 +20,10 @@ void setGitHubBuildStatus(String context, String message, String state) {
   ])
 }
 
+void getNuxeoImageVersion() {
+  return readMavenPom().getProperties().getProperty('nuxeo.image.version')
+}
+
 String getVersion(referenceBranch) {
   String version = readMavenPom().getVersion()
   return BRANCH_NAME == referenceBranch ? version : version + "-${BRANCH_NAME}"
@@ -74,6 +78,7 @@ pipeline {
     // NXP-29494: override templates to avoid activating s3 in PR preview
     NUXEO_TEMPLATE_OVERRIDE = "${BRANCH_NAME == REFERENCE_BRANCH ? '' : 'nuxeo.templates=default'}"
     NUXEO_DOCKER_REGISTRY = 'docker-private.packages.nuxeo.com'
+    NUXEO_IMAGE_VERSION = getNuxeoImageVersion()
     PREVIEW_NAMESPACE = "$APP_NAME-${BRANCH_NAME.toLowerCase()}"
     ORG = 'nuxeo'
   }
