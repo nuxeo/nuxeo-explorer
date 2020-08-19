@@ -34,7 +34,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
@@ -55,7 +54,6 @@ import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.search.ArtifactSearcher;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
-import org.nuxeo.apidoc.tree.TreeHelper;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.platform.htmlsanitizer.HtmlSanitizerService;
 import org.nuxeo.ecm.webengine.model.Resource;
@@ -89,20 +87,6 @@ public class ApiBrowser extends DefaultObject {
             embeddedMode = embed != null && embed;
         }
         getSnapshotManager().initWebContext(getContext().getRequest());
-    }
-
-    @GET
-    @Produces("text/plain")
-    @Path("tree")
-    public Object tree(@QueryParam("root") String source) {
-        return TreeHelper.updateTree(getContext(), source);
-    }
-
-    @GET
-    @Produces("text/html")
-    @Path("treeView")
-    public Object treeView() {
-        return getView("tree").arg(Distribution.DIST_ID, ctx.getProperty(Distribution.DIST_ID));
     }
 
     @GET
@@ -460,7 +444,6 @@ public class ApiBrowser extends DefaultObject {
         if (nxItem == null) {
             throw new WebResourceNotFoundException(bundleId);
         }
-        TreeHelper.updateTree(getContext(), nxItem.getHierarchyPath());
         return wo;
     }
 
@@ -471,7 +454,6 @@ public class ApiBrowser extends DefaultObject {
         if (nxItem == null) {
             throw new WebResourceNotFoundException(componentId);
         }
-        TreeHelper.updateTree(getContext(), nxItem.getHierarchyPath());
         return wo;
     }
 
@@ -487,7 +469,6 @@ public class ApiBrowser extends DefaultObject {
         if (nxItem == null) {
             throw new WebResourceNotFoundException(serviceId);
         }
-        TreeHelper.updateTree(getContext(), nxItem.getHierarchyPath());
         return wo;
     }
 
@@ -498,7 +479,6 @@ public class ApiBrowser extends DefaultObject {
         if (nxItem == null) {
             throw new WebResourceNotFoundException(epId);
         }
-        TreeHelper.updateTree(getContext(), nxItem.getHierarchyPath());
         return wo;
     }
 
@@ -509,7 +489,6 @@ public class ApiBrowser extends DefaultObject {
         if (nxItem == null) {
             throw new WebResourceNotFoundException(cId);
         }
-        TreeHelper.updateTree(getContext(), nxItem.getHierarchyPath());
         return wo;
     }
 
@@ -520,7 +499,6 @@ public class ApiBrowser extends DefaultObject {
         if (nxItem == null) {
             throw new WebResourceNotFoundException(gId);
         }
-        TreeHelper.updateTree(getContext(), nxItem.getHierarchyPath());
         return wo;
     }
 

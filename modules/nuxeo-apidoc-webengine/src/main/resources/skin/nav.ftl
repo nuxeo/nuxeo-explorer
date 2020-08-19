@@ -43,34 +43,6 @@
 </ul>
 </div>
 
-<div class="nav-box display-none">
-<h4> Browse by hierarchy </h4>
-</#if> <#-- if embedded -->
-
-<div id="treeControler"></div>
-
-<#macro tree id url="${Root.path}/${distId}/tree" root="/">
-  <script type="text/javascript">
-  var currentSelectedTreeId='${Context.request.getAttribute("tree-last-path")}';
-  var anonymousTree=false;
-  <#if Context.getPrincipal().isAnonymous()>
-   anonymousTree = true;
-  </#if>
-  $(document).ready(function(){
-    $("#${id}").treeview({
-      url: "${url}",
-      root: "${root}",
-      animated: "fast"
-    });
-
-  });
-  </script>
-  <ul id="${id}" class="filetree">
-  </ul>
-
-</#macro>
-
-<@tree id="myTree" root="/"/>
-</div>
+</#if>
 
 </#if>
