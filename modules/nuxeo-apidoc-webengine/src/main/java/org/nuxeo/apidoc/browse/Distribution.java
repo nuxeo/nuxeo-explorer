@@ -218,7 +218,7 @@ public class Distribution extends ModuleRoot {
     @GET
     @Produces("text/html")
     public Object doGet() {
-        return getView("index").arg("hideNav", Boolean.TRUE);
+        return getView("index");
     }
 
     @Path(SnapshotManager.DISTRIBUTION_ALIAS_LATEST)
@@ -465,8 +465,7 @@ public class Distribution extends ModuleRoot {
             @QueryParam(ApiBrowserConstants.ERROR_FEEBACK_MESSAGE_VARIABLE) String errorFeedbackMessage) {
         NuxeoPrincipal principal = getContext().getPrincipal();
         if (SecurityHelper.canManageDistributions(principal)) {
-            return getView("forms").arg("hideNav", Boolean.TRUE)
-                                   .arg(ApiBrowserConstants.SUCCESS_FEEBACK_MESSAGE_VARIABLE, successFeedbackMessage)
+            return getView("forms").arg(ApiBrowserConstants.SUCCESS_FEEBACK_MESSAGE_VARIABLE, successFeedbackMessage)
                                    .arg(ApiBrowserConstants.ERROR_FEEBACK_MESSAGE_VARIABLE, errorFeedbackMessage);
         }
         return show404();

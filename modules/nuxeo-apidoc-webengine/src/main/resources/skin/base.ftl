@@ -51,13 +51,11 @@
     </div>
     </@block>
 
-    <#if !hideNav>
-      <nav role="navigation">
+    <nav role="navigation">
       <@block name="left">
         <#include "nav.ftl">
       </@block>
-      </nav>
-    </#if>
+    </nav>
   </header>
 </#if>
 
