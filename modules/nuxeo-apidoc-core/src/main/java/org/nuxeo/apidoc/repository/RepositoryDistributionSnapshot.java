@@ -306,6 +306,9 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
                 QueryHelper.select(ServiceInfo.TYPE_NAME, getDoc(), ServiceInfo.PROP_CLASS_NAME, id),
                 ServiceInfo.PROP_OVERRIDEN, ServiceInfo.PROP_OVERRIDEN);
         DocumentModelList docs = getCoreSession().query(query);
+        if (docs.size() == 0) {
+            return null;
+        }
         if (docs.size() > 1) {
             throw new AssertionError("Multiple services found for " + id);
         }

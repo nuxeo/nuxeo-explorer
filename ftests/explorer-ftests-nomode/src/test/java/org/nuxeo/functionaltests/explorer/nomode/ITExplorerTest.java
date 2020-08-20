@@ -36,8 +36,8 @@ import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.OperationInfo;
+import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
-import org.nuxeo.apidoc.browse.ApiBrowserConstants;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.functionaltests.RestHelper;
 import org.nuxeo.functionaltests.explorer.pages.DistribAdminPage;
@@ -150,9 +150,12 @@ public class ITExplorerTest extends AbstractExplorerTest {
         openAndCheck(String.format("%s%s/", ExplorerHomePage.URL, "foo-10.10"), true);
     }
 
+    protected String getArtifactURL(String type, String id) {
+        return getArtifactURL(type, id, getDistribId(LIVE_NAME, liveVersion));
+    }
+
     protected void goToArtifact(String type, String id) {
-        open(String.format("%s%s/%s/%s", ExplorerHomePage.URL, getDistribId(LIVE_NAME, liveVersion),
-                ApiBrowserConstants.getArtifactView(type), id));
+        open(getArtifactURL(type, id));
     }
 
     @Test
@@ -346,6 +349,18 @@ public class ITExplorerTest extends AbstractExplorerTest {
         } finally {
             driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
         }
+    }
+
+    @Test
+    public void testInvalidArtifactPages() {
+        openAndCheck(getArtifactURL(BundleGroup.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(BundleInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(ComponentInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(ExtensionInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(ExtensionPointInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(ServiceInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(PackageInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(OperationInfo.TYPE_NAME, "foo"), true);
     }
 
 }

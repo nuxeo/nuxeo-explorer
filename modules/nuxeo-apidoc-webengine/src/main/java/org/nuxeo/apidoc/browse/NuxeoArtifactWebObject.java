@@ -29,6 +29,7 @@ import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.ecm.webengine.model.Template;
+import org.nuxeo.ecm.webengine.model.exceptions.WebResourceNotFoundException;
 import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
 import org.nuxeo.runtime.api.Framework;
 
@@ -90,6 +91,10 @@ public abstract class NuxeoArtifactWebObject extends DefaultObject {
     @Produces("text/html")
     public Object doViewDefault() {
         NuxeoArtifact nxItem = getNxArtifact();
+        if (nxItem == null) {
+            throw new WebResourceNotFoundException(String.format("No artifact found with id '%s' for resource %s",
+                    getNxArtifactId(), getClass().getName()));
+        }
         return getView("default").arg("nxItem", nxItem);
     }
 
