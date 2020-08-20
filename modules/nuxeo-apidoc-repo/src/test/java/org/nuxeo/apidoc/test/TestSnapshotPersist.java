@@ -19,8 +19,10 @@
  */
 package org.nuxeo.apidoc.test;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
@@ -48,6 +50,7 @@ import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.connect.update.PackageException;
+import org.nuxeo.ecm.automation.OperationDocumentation;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.validation.DocumentValidationException;
@@ -240,6 +243,23 @@ public class TestSnapshotPersist extends AbstractApidocTest {
             assertEquals("", s);
         } else {
             checkContentEquals("apidoc_snapshot/operations.txt", s);
+            // check the first operation documentation
+            OperationInfo oi = ops.get(0);
+            OperationDocumentation od = OperationInfo.getDocumentation(oi);
+            assertEquals("Actions.GET", od.getId());
+            assertEquals("List available actions", od.getLabel());
+            assertEquals("Services", od.getCategory());
+            assertEquals("Retrieve list of available actions for a given category. Action context is built based "
+                    + "on the Operation context (currentDocument will be fetched from Context if not provided "
+                    + "as input). If this operation is executed in a chain that initialized the Seam context, "
+                    + "it will be used for Action context", od.getDescription());
+            assertArrayEquals(new String[] { "void", "blob", "document", "blob" }, od.getSignature());
+            assertArrayEquals(new String[0], od.getAliases());
+            assertNull(od.getRequires());
+            assertEquals("", od.getSince());
+            assertEquals("Actions.GET", od.getUrl());
+            // not retrieved
+            assertNull(od.getOperations());
         }
     }
 
