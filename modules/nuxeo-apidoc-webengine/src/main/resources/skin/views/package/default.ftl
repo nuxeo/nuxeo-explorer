@@ -40,7 +40,11 @@
     <h2>Dependencies</h2>
     <ul id="dependencies">
       <#list nxItem.dependencies as dep>
-      <li><a class="packages" href="${Root.path}/${distId}/viewPackage/${dep}">${dep}</a></li>
+        <#if dependencies[dep]??>
+          <li><a class="packages" href="${Root.path}/${distId}/viewPackage/${dep}">${dep}</a></li>
+        <#else>
+          <li><span class="packages">${dep}</li>
+        </#if>
       </#list>
     <ul>
     </#if>
@@ -48,7 +52,11 @@
     <h2>Optional Dependencies</h2>
     <ul id="optionalDependencies">
       <#list nxItem.optionalDependencies as dep>
-      <li><a class="packages" href="${Root.path}/${distId}/viewPackage/${dep}">${dep}</a></li>
+        <#if optionalDependencies[dep]??>
+          <li><a class="packages" href="${Root.path}/${distId}/viewPackage/${dep}">${dep}</a></li>
+        <#else>
+          <li><span class="packages">${dep}</li>
+        </#if>
       </#list>
     <ul>
     </#if>
@@ -56,7 +64,11 @@
     <h2>Conflicts</h2>
     <ul id="conflicts">
       <#list nxItem.conflicts as dep>
-      <li><a class="packages" href="${Root.path}/${distId}/viewPackage/${dep}">${dep}</a></li>
+        <#if conflicts[dep]??>
+          <li><a class="packages" href="${Root.path}/${distId}/viewPackage/${dep}">${dep}</a></li>
+        <#else>
+          <li><span class="packages">${dep}</li>
+        </#if>
       </#list>
     <ul>
     </#if>

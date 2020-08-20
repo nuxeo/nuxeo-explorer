@@ -58,6 +58,12 @@ public class PackageWO extends NuxeoArtifactWebObject {
         return snapshot.getPackage(nxArtifactId);
     }
 
+    protected Map<String, PackageInfo> getDependenciesInfo(DistributionSnapshot snapshot, List<String> packages) {
+        var res = new LinkedHashMap<String, PackageInfo>();
+        packages.forEach(pkg -> res.put(pkg, snapshot.getPackage(pkg)));
+        return res;
+    }
+
     protected Map<String, BundleInfo> getBundleInfo(DistributionSnapshot snapshot, List<String> bundles) {
         var res = new LinkedHashMap<String, BundleInfo>();
         bundles.forEach(bid -> res.put(bid, snapshot.getBundle(bid)));
@@ -104,6 +110,9 @@ public class PackageWO extends NuxeoArtifactWebObject {
         t.arg("services", getServiceInfo(components));
         t.arg("extensionpoints", getExtensionPointInfo(components));
         t.arg("contributions", getContributionInfo(components));
+        t.arg("dependencies", getDependenciesInfo(snapshot, pkg.getDependencies()));
+        t.arg("optionalDependencies", getDependenciesInfo(snapshot, pkg.getOptionalDependencies()));
+        t.arg("conflicts", getDependenciesInfo(snapshot, pkg.getConflicts()));
 
         List<Exporter> exporters = getSnapshotManager().getExporters()
                                                        .stream()
