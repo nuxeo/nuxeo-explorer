@@ -15,6 +15,12 @@
       <param name="name" value="org.nuxeo.connect.server.reachable" />
       <param name="value" value="false" />
     </antcall>
+    <!-- disable thumbnail conversion in ftests -->
+    <copy todir="${nuxeo.home}/nxserver/config/">
+      <fileset dir="${out.dir}/../../contribs/">
+        <include name="*-config.xml" />
+      </fileset>
+    </copy>
   </target>
 
   <target name="prepare-packages" depends="_init">
