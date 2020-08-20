@@ -19,7 +19,9 @@
 package org.nuxeo.apidoc.browse;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -31,18 +33,28 @@ import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.ServiceInfo;
+import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
+import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
 @WebObject(type = "component")
 public class ComponentWO extends NuxeoArtifactWebObject {
+
+    @Produces("text/html")
+    @Override
+    public Object doViewDefault() {
+        Template t = (Template) super.doViewDefault();
+        t.arg("requirements", getRequirementsInfo(getSnapshot(), getTargetComponentInfo().getRequirements()));
+        return t;
+    }
 
     @GET
     @Produces("text/xml")
     @Path("override")
     public Object override(@QueryParam("contributionId") String contribId) {
         ComponentInfo component = getTargetComponentInfo();
-        ExtensionInfo contribution = getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession())
-                                                         .getContribution(contribId);
+        DistributionSnapshot snapshot = getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession());
+        ExtensionInfo contribution = snapshot.getContribution(contribId);
         return getView("override").arg("component", component).arg("contribution", contribution);
     }
 
@@ -53,6 +65,12 @@ public class ComponentWO extends NuxeoArtifactWebObject {
     @Override
     public NuxeoArtifact getNxArtifact() {
         return getTargetComponentInfo();
+    }
+
+    protected Map<String, ComponentInfo> getRequirementsInfo(DistributionSnapshot snapshot, List<String> requirements) {
+        var res = new LinkedHashMap<String, ComponentInfo>();
+        requirements.forEach(req -> res.put(req, snapshot.getComponent(req)));
+        return res;
     }
 
     public List<ServiceWO> getServices() {

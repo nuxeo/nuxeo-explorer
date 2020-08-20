@@ -21,7 +21,11 @@
     <h2>Requirements</h2>
     <ul class="nolist" id="requirements">
       <#list nxItem.requirements as req>
-      <li><a class="tag components" href="${Root.path}/${distId}/viewComponent/${req}">${req}</a></li>
+        <#if requirements[req]??>
+          <li><a class="tag components" href="${Root.path}/${distId}/viewComponent/${req}">${req}</a></li>
+        <#else>
+          <li><span class="components">${req}</li>
+        </#if>
       </#list>
     </ul>
   </#if>
