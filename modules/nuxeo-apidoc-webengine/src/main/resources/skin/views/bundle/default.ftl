@@ -43,7 +43,11 @@
     <h2>Requirements</h2>
     <ul class="nolist" id="requirements">
       <#list nxItem.requirements as req>
-      <li><a class="tag bundles" href="${Root.path}/${distId}/viewBundle/${req}">${req}</a></li>
+        <#if requirements[req]??>
+          <li><a class="tag bundles" href="${Root.path}/${distId}/viewBundle/${req}">${req}</a></li>
+        <#else>
+          <li><span class="bundles">${req}</li>
+        </#if>
       </#list>
     </ul>
   </#if>
