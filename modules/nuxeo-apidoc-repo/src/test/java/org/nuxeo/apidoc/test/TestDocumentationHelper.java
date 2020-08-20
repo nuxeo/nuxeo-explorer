@@ -36,6 +36,7 @@ public class TestDocumentationHelper {
 
     @Test
     public void test() throws Exception {
+        assertEquals("", DocumentationHelper.getHtml(""));
         assertEquals("<p>\nfoo\n</p>" //
                 + "<p>\nbar</p>", //
                 DocumentationHelper.getHtml("foo\n\nbar"));
@@ -53,5 +54,6 @@ public class TestDocumentationHelper {
         assertEquals("<p>\nfoo\n</p>" //
                 + "<p>\nbar</p>", //
                 DocumentationHelper.getHtml("foo\n@author you\nbar"));
+        assertEquals("<p>\nfoo</p>", DocumentationHelper.getHtml("foo"));
     }
 }

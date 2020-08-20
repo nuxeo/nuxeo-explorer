@@ -18,6 +18,7 @@
  */
 package org.nuxeo.apidoc.test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -33,11 +34,13 @@ import javax.inject.Inject;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
+import org.dom4j.DocumentException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
+import org.nuxeo.apidoc.documentation.ContributionItem;
 import org.nuxeo.apidoc.documentation.XMLContributionParser;
 import org.nuxeo.apidoc.listener.AttributesExtractorStater;
 import org.nuxeo.apidoc.worker.ExtractXmlAttributesWorker;
@@ -46,6 +49,7 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.event.EventServiceAdmin;
 import org.nuxeo.ecm.core.work.api.WorkManager;
+import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.TransactionalFeature;
@@ -57,6 +61,7 @@ import org.xml.sax.SAXException;
  */
 @RunWith(FeaturesRunner.class)
 @Features(RuntimeSnaphotFeature.class)
+@Deploy("org.nuxeo.ecm.platform.htmlsanitizer")
 public class TestExtractor {
 
     protected List<String> checks = Arrays.asList("usersocialworkspaces", "socialworkspaceactivitystream",
@@ -164,4 +169,44 @@ public class TestExtractor {
         assertNotNull(attributes);
         assertTrue(checks.stream().allMatch(attributes::contains));
     }
+
+    @Test
+    public void testExtractContributionItems() throws DocumentException {
+        List<ContributionItem> items = XMLContributionParser.extractContributionItems(
+                "<root><foo name=\"bar\"><documentation>info</documentation></foo></root>");
+        assertEquals("bar", items.get(0).getId());
+        assertEquals("foo bar", items.get(0).getLabel());
+        assertEquals("<p>\ninfo</p>", items.get(0).getDocumentation());
+        items = XMLContributionParser.extractContributionItems(
+                "<root><foo id=\"bar\"><description>info</description></foo></root>");
+        assertEquals("bar", items.get(0).getId());
+        assertEquals("foo bar", items.get(0).getLabel());
+        assertEquals("<p>\ninfo</p>", items.get(0).getDocumentation());
+        items = XMLContributionParser.extractContributionItems("<root><foo id=\"bar\"><description/></foo></root>");
+        assertEquals("bar", items.get(0).getId());
+        assertEquals("foo bar", items.get(0).getLabel());
+        assertEquals("", items.get(0).getDocumentation());
+    }
+
+    @Test
+    public void testExtractScriptingContributionItems() throws DocumentException {
+        String subxml = "<scriptedOperation id=\"javascript.testhotreload\">\n" //
+                + "    <inputType>void</inputType>\n" //
+                + "    <outputType>void</outputType>\n" //
+                + "    <category>javascript</category>\n" //
+                + "    <description/>\n" //
+                + "    <script><![CDATA[function run(input, params) {\n" //
+                + "  Console.log(\"Hell world\");\n" //
+                + "}]]></script>\n" //
+                + "  </scriptedOperation>";
+        String xml = String.format("<root>%s</root>", subxml);
+        List<ContributionItem> items = XMLContributionParser.extractContributionItems(xml);
+        assertEquals(1, items.size());
+        ContributionItem item = items.get(0);
+        assertEquals("javascript.testhotreload", item.getId());
+        assertEquals("scriptedOperation javascript.testhotreload", item.getLabel());
+        assertEquals("", item.getDocumentation());
+        assertEquals(subxml, item.getRawXml());
+    }
+
 }
