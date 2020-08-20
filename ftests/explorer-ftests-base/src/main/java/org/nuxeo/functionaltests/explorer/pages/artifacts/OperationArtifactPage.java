@@ -66,10 +66,9 @@ public class OperationArtifactPage extends ArtifactPage {
                 "In component org.nuxeo.ecm.core.automation.coreContrib",
                 "Description\n" + "Parameters\n" + "Signature\n" + "Implementation Information\n" + "JSON Definition");
         checkOperationDescriptionText("Adds the facet to the document.\n" //
-                + "WARNING: The save parameter is true by default, which means the document is saved in "
-                + "the database after adding the facet. It must be set to false when the operation is used "
-                + "in the context of an event that will fail if the document is saved (empty document created, "
-                + "about to create, before modification, ...).");
+                + "Save parameter automatically saves the document in the database. It has to be turned off "
+                + "when this operation is used in the context of the empty document created, about to create, "
+                + "before document modification, document modified events.");
         checkInfoText("Operation id Document.AddFacet\n" //
                 + "Aliases Document.AddFacet\n" //
                 + "Category Document\n" //
@@ -91,7 +90,7 @@ public class OperationArtifactPage extends ArtifactPage {
                 + "  \"label\" : \"Add Facet\",\n" //
                 + "  \"category\" : \"Document\",\n" //
                 + "  \"requires\" : null,\n" //
-                + "  \"description\" : \"Adds the facet to the document. <p>WARNING: The save parameter is true by default, which means the document is saved in the database after adding the facet. It must be set to false when the operation is used in the context of an event that will fail if the document is saved (empty document created, about to create, before modification, ...).</p>\",\n" //
+                + "  \"description\" : \"Adds the facet to the document. <p>Save parameter automatically saves the document in the database. It has to be turned off when this operation is used in the context of the empty document created, about to create, before document modification, document modified events.</p>\",\n" //
                 + "  \"url\" : \"Document.AddFacet\",\n" //
                 + "  \"signature\" : [ \"document\", \"document\", \"documents\", \"documents\" ],\n" //
                 + "  \"params\" : [ {\n" //
@@ -124,8 +123,7 @@ public class OperationArtifactPage extends ArtifactPage {
         checkImplementationText(
                 "Implementation Class Javadoc: org.nuxeo.ecm.automation.core.impl.OperationChainCompiler.CompiledChainImpl\n"//
                         + "Contributing Component org.nuxeo.ecm.core.automation.features.operations");
-        checkJavadocLink(
-                "/javadoc/org/nuxeo/ecm/automation/core/impl/OperationChainCompiler.CompiledChainImpl.html");
+        checkJavadocLink("/javadoc/org/nuxeo/ecm/automation/core/impl/OperationChainCompiler.CompiledChainImpl.html");
     }
 
     @Override

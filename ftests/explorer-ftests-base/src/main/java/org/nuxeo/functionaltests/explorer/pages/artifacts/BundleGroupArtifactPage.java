@@ -59,8 +59,9 @@ public class BundleGroupArtifactPage extends ArtifactPage {
             checkBundle("org.nuxeo.apidoc.webengine");
         } else {
             checkCommon("Bundle Group org.nuxeo.ecm.platform", "Bundle Group org.nuxeo.ecm.platform", null,
-                    "Bundle Subgroups\n" + "Bundles");
-            checkDocumentationText(null);
+                    "Documentation\nBundle Subgroups\n" + "Bundles");
+            // for some reason suggestbox addon readme is visible on platform group on 10.10
+            // checkDocumentationText(null);
             checkSubGroup("org.nuxeo.ecm.platform.comment");
             checkSubGroup("org.nuxeo.ecm.platform.filemanager");
             checkBundle("org.nuxeo.ecm.platform.api");

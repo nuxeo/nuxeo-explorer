@@ -236,8 +236,9 @@ public abstract class AbstractExplorerTest extends AbstractTest {
     protected void checkContributions(boolean partial, boolean includeReferences, boolean legacy) {
         ListingFragment listing = asPage(ListingFragment.class);
         if (!partial) {
-            listing.checkListing(-1, "cluster-config--configuration", "/viewContribution/cluster-config--configuration",
-                    "configuration - org.nuxeo.runtime.cluster.ClusterService");
+            listing.checkListing(-1, "default-repository-config--configuration",
+                    "/viewContribution/default-repository-config--configuration",
+                    "configuration - org.nuxeo.ecm.core.blob.BlobManager");
             listing = listing.filterOn("org.nuxeo.apidoc");
         }
         // one more contribution with thumbnail disablement in ftests
