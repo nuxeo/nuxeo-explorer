@@ -133,6 +133,11 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         return String.format("nuxeo-distribution-%s.zip", distribId);
     }
 
+    protected String getArtifactURL(String type, String id, String distribId) {
+        return String.format("%s%s/%s/%s", ExplorerHomePage.URL, distribId, ApiBrowserConstants.getArtifactView(type),
+                id);
+    }
+
     protected ExplorerHomePage goHome() {
         open(ExplorerHomePage.URL);
         return asPage(ExplorerHomePage.class);
