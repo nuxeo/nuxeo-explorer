@@ -140,7 +140,10 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                 "org.nuxeo.apidoc.test.automation--chains", "org.nuxeo.apidoc.test.automation--operation",
                 "org.nuxeo.apidoc.test.automation--operations", "org.nuxeo.apidoc.test.works--queues",
                 "org.nuxeo.apidoc.test.works--queues1"), snapshot.getContributionIds());
-        assertEquals(Arrays.asList("Document.Create", "Scripting.HelloWorld", "createDoc"),
+        // BuiltIn contributing component on 10.10...
+        // assertEquals(Arrays.asList("Document.Create", "Scripting.HelloWorld", "createDoc"),
+        // snapshot.getOperations().stream().map(OperationInfo::getName).collect(Collectors.toList()));
+        assertEquals(Arrays.asList("Document.Create"),
                 snapshot.getOperations().stream().map(OperationInfo::getName).collect(Collectors.toList()));
         assertEquals(Arrays.asList(MOCK_PACKAGE_ID),
                 snapshot.getPackages().stream().map(PackageInfo::getId).collect(Collectors.toList()));
