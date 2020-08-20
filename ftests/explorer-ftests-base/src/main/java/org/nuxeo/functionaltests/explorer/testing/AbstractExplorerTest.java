@@ -235,7 +235,8 @@ public abstract class AbstractExplorerTest extends AbstractTest {
                     "configuration - org.nuxeo.runtime.cluster.ClusterService");
             listing = listing.filterOn("org.nuxeo.apidoc");
         }
-        int nb = legacy ? 5 : 10;
+        // one more contribution with thumbnail disablement in ftests
+        int nb = legacy ? 5 : (partial ? 10 : 11);
         listing.checkListing(nb, "org.nuxeo.apidoc.adapterContrib--adapters",
                 "/viewContribution/org.nuxeo.apidoc.adapterContrib--adapters",
                 "adapters - org.nuxeo.ecm.core.api.DocumentAdapterService");
@@ -303,7 +304,9 @@ public abstract class AbstractExplorerTest extends AbstractTest {
                     "JAVA org.nuxeo.ecm.core.schema.TypeService");
             listing = listing.filterOn("org.nuxeo.apidoc");
         } else {
-            listing.checkListing(6, "apidoc.snapshot.SnapshotManagerComponent",
+            // one more component with thumbnail disablement in ftests
+            int nb = partial ? 6 : 7;
+            listing.checkListing(nb, "apidoc.snapshot.SnapshotManagerComponent",
                     "/viewComponent/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
                     "JAVA org.nuxeo.apidoc.snapshot.SnapshotManagerComponent");
         }

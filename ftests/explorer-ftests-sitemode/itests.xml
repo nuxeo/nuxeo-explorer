@@ -16,6 +16,12 @@
       <param name="name" value="org.nuxeo.apidoc.site.mode" />
       <param name="value" value="true" />
     </antcall>
+    <!-- disable thumbnail conversion in ftests -->
+    <copy todir="${nuxeo.home}/nxserver/config/">
+      <fileset dir="${out.dir}/../../contribs/">
+        <include name="*-config.xml" />
+      </fileset>
+    </copy>
   </target>
 
 </project>
