@@ -62,7 +62,7 @@ public class DocumentationHelper {
      * </ul>
      */
     public static String getHtml(String doc) {
-        if (doc == null) {
+        if (StringUtils.isBlank(doc)) {
             return "";
         }
         HtmlSanitizerService sanitizer = Framework.getService(HtmlSanitizerService.class);

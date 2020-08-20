@@ -101,12 +101,6 @@ public class XMLContributionParser {
     }
 
     protected static String getNodeAsString(Element node) {
-        String data = node.asXML();
-        data = data.substring(node.getName().length() + 2);
-        if (data.length() > node.getName().length()) {
-            data = data.substring(0, data.length() - node.getName().length() - 3);
-        }
-        data = data.trim();
-        return data;
+        return node.getTextTrim();
     }
 }
