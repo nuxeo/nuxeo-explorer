@@ -20,6 +20,7 @@ package org.nuxeo.apidoc.api;
 
 import java.util.List;
 
+import org.nuxeo.ecm.automation.OperationDocumentation;
 import org.nuxeo.ecm.automation.OperationDocumentation.Param;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -107,4 +108,25 @@ public interface OperationInfo extends NuxeoArtifact, Comparable<OperationInfo> 
     String getOperationClass();
 
     String getContributingComponent();
+
+    /**
+     * Reconstructs the operation documentation, for json export.
+     *
+     * @since 20.0.0
+     */
+    public static OperationDocumentation getDocumentation(OperationInfo oi) {
+        OperationDocumentation doc = new OperationDocumentation(oi.getName());
+        doc.label = oi.getLabel();
+        doc.category = oi.getCategory();
+        doc.description = oi.getDescription();
+        doc.params = oi.getParams().toArray(OperationDocumentation.Param[]::new);
+        doc.signature = oi.getSignature().toArray(String[]::new);
+        doc.aliases = oi.getAliases().toArray(String[]::new);
+        doc.requires = oi.getRequires();
+        doc.since = oi.getSince();
+        // NB: widget definitions potentially missing (not persisted by explorer), same as url.
+        // Operations wthin a chain are not persisted either, but are not serialized as json anyway, so not needed here.
+        return doc;
+    }
+
 }

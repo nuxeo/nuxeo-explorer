@@ -30,18 +30,14 @@ import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.documentation.JavaDocHelper;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
-import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationDocumentation;
 import org.nuxeo.ecm.automation.OperationDocumentation.Param;
-import org.nuxeo.ecm.automation.OperationException;
-import org.nuxeo.ecm.automation.OperationType;
-import org.nuxeo.ecm.automation.core.impl.ChainTypeImpl;
+import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.impl.OperationChainCompiler;
 import org.nuxeo.ecm.automation.jaxrs.io.JsonWriter;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
-import org.nuxeo.runtime.api.Framework;
 
 @WebObject(type = "operation")
 public class OperationWO extends NuxeoArtifactWebObject {
@@ -87,14 +83,15 @@ public class OperationWO extends NuxeoArtifactWebObject {
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();
         try {
-            OperationType opType = Framework.getService(AutomationService.class).getOperation(nxArtifactId);
-            OperationDocumentation opDoc = opType.getDocumentation();
+            OperationInfo opInfo = getTargetComponentInfo();
+            OperationDocumentation opDoc = OperationInfo.getDocumentation(opInfo);
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            JsonWriter.writeOperation(baos, opDoc, true);
-            t.arg("json", baos.toString());
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                JsonWriter.writeOperation(baos, opDoc, true);
+                t.arg("json", baos.toString());
+            }
 
-            if (opType instanceof ChainTypeImpl) {
+            if (Constants.CAT_CHAIN.equals(opInfo.getCategory())) {
                 // handle chains use case, where implementation type is an inner class
                 DistributionSnapshot dist = getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession());
                 JavaDocHelper helper = JavaDocHelper.getHelper(dist.getName(), dist.getVersion());
@@ -102,7 +99,7 @@ public class OperationWO extends NuxeoArtifactWebObject {
                 t.arg("implementationUrl", javadocUrl);
             }
 
-        } catch (OperationException | IOException e) {
+        } catch (IOException e) {
             throw new NuxeoException(e);
         }
         return t;
@@ -112,4 +109,5 @@ public class OperationWO extends NuxeoArtifactWebObject {
     public String getSearchCriterion() {
         return "'" + super.getSearchCriterion() + "' Operation";
     }
+
 }
