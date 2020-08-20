@@ -138,7 +138,7 @@
         </td>
         <td>
           <p>
-            <a class="button" href="${Root.path}/update/${distrib.key}" onclick="$.fn.clickButton(this)">
+            <a class="button" href="${Root.path}/updateDistrib/${distrib.key}" onclick="$.fn.clickButton(this)">
               Update
             </a>
           </p>

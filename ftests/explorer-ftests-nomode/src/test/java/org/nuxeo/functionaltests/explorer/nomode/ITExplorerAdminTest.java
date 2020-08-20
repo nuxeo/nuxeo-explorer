@@ -183,8 +183,8 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         checkDistrib(newDistribId, true, SAMPLE_BUNDLE_GROUP, true);
 
         // edit persisted distrib
-        open(DistribAdminPage.UPDATE_URL + newDistribId);
-        DistributionUpdatePage upage = asPage(DistributionUpdatePage.class);
+        open(DistribAdminPage.URL);
+        DistributionUpdatePage upage = asPage(DistribAdminPage.class).updateFirstPersistedDistrib();
         upage.check();
         upage.checkStringValue(newDistribName, upage.title);
         upage.checkStringValue(newDistribName, upage.name);
