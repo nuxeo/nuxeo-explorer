@@ -21,7 +21,9 @@ package org.nuxeo.apidoc.browse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Produces;
@@ -30,6 +32,7 @@ import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.export.api.Exporter;
+import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
@@ -54,7 +57,14 @@ public class BundleWO extends NuxeoArtifactWebObject {
                                                        .filter(e -> e.displayOn("bundle"))
                                                        .collect(Collectors.toList());
         t.arg("exporters", exporters);
+        t.arg("requirements", getRequirementsInfo(getSnapshot(), getTargetBundleInfo().getRequirements()));
         return t;
+    }
+
+    protected Map<String, BundleInfo> getRequirementsInfo(DistributionSnapshot snapshot, List<String> requirements) {
+        var res = new LinkedHashMap<String, BundleInfo>();
+        requirements.forEach(req -> res.put(req, snapshot.getBundle(req)));
+        return res;
     }
 
     protected class ComponentInfoSorter implements Comparator<ComponentInfo> {
