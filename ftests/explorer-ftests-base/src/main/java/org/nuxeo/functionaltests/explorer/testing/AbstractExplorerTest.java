@@ -239,10 +239,11 @@ public abstract class AbstractExplorerTest extends AbstractTest {
             listing.checkListing(-1, "default-repository-config--configuration",
                     "/viewContribution/default-repository-config--configuration",
                     "configuration - org.nuxeo.ecm.core.blob.BlobManager");
-            listing = listing.filterOn("org.nuxeo.apidoc");
+            listing = listing.filterOn("apidoc");
         }
-        // one more contribution with thumbnail disablement in ftests
-        int nb = legacy ? 5 : (partial ? 10 : 11);
+        // one more contribution with thumbnail disablement in ftests + org.nuxeo.connect.tools.report.apidoc--reports
+        // matching on runtime distribs search
+        int nb = legacy ? 5 : (partial ? 10 : 12);
         listing.checkListing(nb, "org.nuxeo.apidoc.adapterContrib--adapters",
                 "/viewContribution/org.nuxeo.apidoc.adapterContrib--adapters",
                 "adapters - org.nuxeo.ecm.core.api.DocumentAdapterService");
