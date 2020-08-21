@@ -11,7 +11,7 @@
   <@toc />
 
   <#if nxItem.description?has_content>
-    <h2>Description</h2>
+    <h2 class="toc">Description</h2>
     <div class="description">
       ${nxItem.description}
     </div>
@@ -28,7 +28,7 @@
   </table>
   </div>
 
-  <h2>Parameters</h2>
+  <h2 class="toc">Parameters</h2>
   <div class="parameters">
   <#if nxItem.params?size gt 0>
   <table class="topheaderTable">
@@ -54,7 +54,7 @@
   </#if>
   </div>
 
-  <h2>Signature</h2>
+  <h2 class="toc">Signature</h2>
   <div class="signature">
   <table class="listTable">
     <tr><th>Inputs</th><td> ${This.getInputsAsString(nxItem)} </td></tr>
@@ -62,7 +62,7 @@
   </table>
   </div>
 
-  <h2>Implementation Information</h2>
+  <h2 class="toc">Implementation Information</h2>
   <div class="implementation">
   <table class="listTable">
     <tr>
@@ -83,7 +83,7 @@
   </div>
 
 <#if json??>
-  <h2>JSON Definition</h2>
+  <h2 class="toc">JSON Definition</h2>
   <div class="json">
     <pre>${json?html}</pre>
   </div>

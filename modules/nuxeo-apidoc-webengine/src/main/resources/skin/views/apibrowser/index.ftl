@@ -8,7 +8,7 @@
 <div class="tabscontent">
   <@toc />
 
-  <h2>Browse</h2>
+  <h2 class="toc">Browse</h2>
   <ul>
     <li>
       <a class="bundles" href="${Root.path}/${distId}/listBundleGroups">Bundle Groups</a>
@@ -55,7 +55,7 @@
     </#list>
   </ul>
 
-  <h2>Exports</h2>
+  <h2 class="toc">Exports</h2>
   <ul class="exports">
     <li>
       <a href="${Root.path}/${distId}/json?pretty=true">Json Export</a>
