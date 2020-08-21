@@ -15,7 +15,7 @@
   <@toc />
 
   <#if nxItem.readmes?size gt 0>
-    <h2>Documentation</h2>
+    <h2 class="toc">Documentation</h2>
     <div class="documentation">
       <ul class="block-list">
         <#list nxItem.readmes as readme>
@@ -33,7 +33,7 @@
   </#if>
 
   <#if nxItem.subGroups?size gt 0>
-  <h2>Bundle Subgroups</h2>
+  <h2 class="toc">Bundle Subgroups</h2>
   <ul class="subbroups">
     <#list nxItem.subGroups as subGroup>
     <li>
@@ -44,7 +44,7 @@
   </#if>
 
   <#if nxItem.bundleIds?size gt 0>
-  <h2>Bundles</h2>
+  <h2 class="toc">Bundles</h2>
   <ul class="groupbundles">
     <#list nxItem.bundleIds as bundleId>
     <li>
