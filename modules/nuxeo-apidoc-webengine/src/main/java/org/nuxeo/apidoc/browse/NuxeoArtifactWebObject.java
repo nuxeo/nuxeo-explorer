@@ -18,6 +18,7 @@
  */
 package org.nuxeo.apidoc.browse;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -25,14 +26,23 @@ import java.net.URLEncoder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
+import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.platform.htmlsanitizer.HtmlSanitizerService;
 import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
 import org.nuxeo.runtime.api.Framework;
 
+import com.github.rjeschke.txtmark.Processor;
+
 public abstract class NuxeoArtifactWebObject extends DefaultObject {
+
+    private static final Logger log = LogManager.getLogger(NuxeoArtifactWebObject.class);
 
     protected String nxArtifactId;
 
@@ -96,4 +106,20 @@ public abstract class NuxeoArtifactWebObject extends DefaultObject {
     public String getSearchCriterion() {
         return String.format("'%s'", getNxArtifactId());
     }
+
+    protected String markdownToHTML(Blob readme) {
+        if (readme != null) {
+            try {
+                String content = readme.getString();
+                if (StringUtils.isNotBlank(content)) {
+                    return Framework.getService(HtmlSanitizerService.class)
+                                    .sanitizeString(Processor.process(content), null);
+                }
+            } catch (IOException e) {
+                log.error(e, e);
+            }
+        }
+        return null;
+    }
+
 }

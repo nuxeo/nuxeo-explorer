@@ -21,8 +21,11 @@ package org.nuxeo.apidoc.browse;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.Produces;
+
 import org.nuxeo.apidoc.api.BundleGroup;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
+import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
 @WebObject(type = "bundleGroup")
@@ -35,6 +38,15 @@ public class BundleGroupWO extends NuxeoArtifactWebObject {
     @Override
     public NuxeoArtifact getNxArtifact() {
         return getTargetBundleGroup();
+    }
+
+    @Produces("text/html")
+    @Override
+    public Object doViewDefault() {
+        Template t = (Template) super.doViewDefault();
+        t.arg("readmes",
+                getTargetBundleGroup().getReadmes().stream().map(this::markdownToHTML).collect(Collectors.toList()));
+        return t;
     }
 
     public List<BundleWO> getBundles() {

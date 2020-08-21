@@ -11,27 +11,27 @@
 <div class="tabscontent">
   <@toc />
 
-  <#if nxItem.readme?has_content || nxItem.parentReadme?has_content>
+  <#if readme?has_content || parentReadme?has_content>
     <h2 class="toc">Documentation</h2>
     <div class="documentation">
       <ul class="block-list">
-        <#if nxItem.readme?has_content>
+        <#if readme?has_content>
           <li>
             <div class="block-title">
               ${nxItem.readme.filename}
             </div>
             <div>
-              <pre>${nxItem.readme.getString()}</pre>
+              <pre>${readme}</pre>
             </div>
           </li>
         </#if>
-        <#if nxItem.parentReadme?has_content>
+        <#if parentReadme?has_content>
           <li>
             <div class="block-title">
               Parent Documentation: ${nxItem.parentReadme.filename}
             </div>
             <div>
-              <pre>${nxItem.parentReadme.getString()}</pre>
+              <pre>${parentReadme}</pre>
             </div>
           </li>
         </#if>

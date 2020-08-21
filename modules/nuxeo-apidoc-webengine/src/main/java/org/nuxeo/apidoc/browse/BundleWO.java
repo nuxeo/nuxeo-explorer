@@ -49,6 +49,9 @@ public class BundleWO extends NuxeoArtifactWebObject {
     @Override
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();
+        BundleInfo bundle = getTargetBundleInfo();
+        t.arg("readme", markdownToHTML(bundle.getReadme()));
+        t.arg("parentReadme", markdownToHTML(bundle.getParentReadme()));
         List<Exporter> exporters = getSnapshotManager().getExporters()
                                                        .stream()
                                                        .filter(e -> e.displayOn("bundle"))
