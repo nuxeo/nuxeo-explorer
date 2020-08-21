@@ -9,7 +9,7 @@
 
 <div class="tabscontent">
 
-  <h2>Implementation</h2>
+  <h2 class="toc">Implementation</h2>
   <div class="implementation">
     <@javadoc nxItem.id true />
   </div>

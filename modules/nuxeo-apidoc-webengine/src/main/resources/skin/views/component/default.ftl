@@ -11,14 +11,14 @@
   <@toc />
 
   <#if nxItem.documentationHtml?has_content>
-    <h2>Documentation</h2>
+    <h2 class="toc">Documentation</h2>
     <div class="documentation">
       ${nxItem.documentationHtml}
     </div>
   </#if>
 
   <#if nxItem.requirements?size gt 0>
-    <h2>Requirements</h2>
+    <h2 class="toc">Requirements</h2>
     <ul class="nolist" id="requirements">
       <#list nxItem.requirements as req>
       <li><a class="tag components" href="${Root.path}/${distId}/viewComponent/${req}">${req}</a></li>
@@ -26,7 +26,7 @@
     </ul>
   </#if>
 
-  <h2>Registration Order</h2>
+  <h2 class="toc">Registration Order</h2>
   <div id="registrationOrder">
     ${nxItem.registrationOrder}
   </div>
@@ -37,14 +37,14 @@
   </small>
 
   <#if !nxItem.xmlPureComponent>
-    <h2>Implementation</h2>
+    <h2 class="toc">Implementation</h2>
     <div class="implementation">
       <@javadoc nxItem.componentClass true />
     </div>
   </#if>
 
   <#if nxItem.serviceNames?size gt 0>
-  <h2>Services</h2>
+  <h2 class="toc">Services</h2>
   <ul class="nolist">
     <#list nxItem.serviceNames as service>
     <li><a class="tag services" href="${Root.path}/${distId}/viewService/${service}">${service}</a></li>
@@ -53,7 +53,7 @@
   </#if>
 
   <#if nxItem.extensionPoints?size gt 0>
-  <h2>Extension Points</h2>
+  <h2 class="toc">Extension Points</h2>
   <ul class="nolist">
     <#list nxItem.extensionPoints as ep>
     <li><a class="tag extensions" href="${Root.path}/${distId}/viewExtensionPoint/${ep.id}">${ep.name}</a></li>
@@ -62,7 +62,7 @@
   </#if>
 
   <#if nxItem.extensions?size gt 0>
-  <h2>Contributions</h2>
+  <h2 class="toc">Contributions</h2>
   <ul class="nolist">
     <#list nxItem.extensions as ex>
     <li><a class="tag contributions" href="${Root.path}/${distId}/viewContribution/${ex.id?url}">${ex.id}</a></li>
@@ -71,7 +71,7 @@
   </#if>
 
   <#if nxItem.xmlFileContent?has_content>
-    <h2>XML Source</h2>
+    <h2 class="toc">XML Source</h2>
     <div id="xmlSource">
       <pre><code>${nxItem.xmlFileContent?html}</code></pre>
     </div>

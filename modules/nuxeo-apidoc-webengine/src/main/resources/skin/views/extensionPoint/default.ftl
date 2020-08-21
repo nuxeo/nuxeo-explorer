@@ -12,13 +12,13 @@
   <@toc />
 
   <#if nxItem.documentationHtml?has_content>
-    <h2>Documentation</h2>
+    <h2 class="toc">Documentation</h2>
     <div class="documentation">
       ${nxItem.documentationHtml}
     </div>
   </#if>
 
-  <h2>Contribution Descriptors</h2>
+  <h2 class="toc">Contribution Descriptors</h2>
   <ul class="descriptors">
     <#list nxItem.descriptors as descriptor>
     <li><@javadoc descriptor true /></li>
@@ -26,7 +26,7 @@
   </ul>
 
   <#if nxItem.extensions?size gt 0>
-    <h2>Existing Contributions</h2>
+    <h2 class="toc">Existing Contributions</h2>
     <input type="search" id="searchField" placeholder="Text in contributions"/>
     <input type="button" value="search" onclick="searchContrib($('#searchField').val());"/>
     <span id="searchMatchResult"></span>
@@ -81,7 +81,7 @@
     </ul>
 
   <#else>
-    <h2>Contributions</h2>
+    <h2 class="toc">Contributions</h2>
     No known contributions.
   </#if>
 
