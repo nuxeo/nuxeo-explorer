@@ -360,10 +360,16 @@ public class Distribution extends ModuleRoot {
             RollbackException, HeuristicMixedException, HeuristicRollbackException {
         FormData formData = getContext().getForm();
 
-        String distribLabel = formData.getString("name");
         String bundleList = formData.getString("bundles");
         String javaPkgList = formData.getString("javaPackages");
         String nxPkgList = formData.getString("nxPackages");
+
+        if (StringUtils.isBlank(bundleList) && StringUtils.isBlank(javaPkgList) && StringUtils.isBlank(nxPkgList)) {
+            // no actual filtering
+            return performSave(null);
+        }
+
+        String distribLabel = formData.getString("name");
         boolean checkAsPrefixes = "on".equals(formData.getString("checkAsPrefixes"));
         boolean includeReferences = "on".equals(formData.getString("includeReferences"));
 
