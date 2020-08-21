@@ -41,7 +41,7 @@
     <ul id="dependencies">
       <#list nxItem.dependencies as dep>
         <#if dependencies[dep]??>
-          <li><a class="packages" href="${Root.path}/${distId}/viewPackage/${dep}">${dep}</a></li>
+          <li><a class="packages" href="${Root.path}/${distId}/viewPackage/${dependencies[dep].name}">${dep}</a></li>
         <#else>
           <li><span class="packages">${dep}</li>
         </#if>

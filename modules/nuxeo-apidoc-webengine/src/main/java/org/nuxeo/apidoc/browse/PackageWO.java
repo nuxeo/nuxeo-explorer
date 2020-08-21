@@ -58,9 +58,17 @@ public class PackageWO extends NuxeoArtifactWebObject {
         return snapshot.getPackage(nxArtifactId);
     }
 
+    protected String getPackageNameWithoutVersion(String dependency) {
+        int index = dependency.indexOf(":");
+        if (index > 0) {
+            return dependency.substring(0, index);
+        }
+        return dependency;
+    }
+
     protected Map<String, PackageInfo> getDependenciesInfo(DistributionSnapshot snapshot, List<String> packages) {
         var res = new LinkedHashMap<String, PackageInfo>();
-        packages.forEach(pkg -> res.put(pkg, snapshot.getPackage(pkg)));
+        packages.forEach(pkg -> res.put(pkg, snapshot.getPackage(getPackageNameWithoutVersion(pkg))));
         return res;
     }
 
