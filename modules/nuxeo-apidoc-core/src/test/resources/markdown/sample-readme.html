@@ -1,0 +1,42 @@
+<h2>About nuxeo-apidoc-core</h2>
+<p>This bundle provides an API to browse the Nuxeo distribution tree:</p>
+<pre><code>- BundleGroup (maven group or artificial grouping)
+  - Bundle
+    - Component
+      - Service
+      - Extension Points
+      - Contributions
+- Operations
+- Packages
+</code></pre>
+<p>This API has 2 implementations:</p>
+<ul><li>org.nuxeo.apidoc.introspection: Nuxeo Runtime in memory introspection</li><li>org.nuxeo.apidoc.adapters: DocumentModel adapters implementing the same API</li></ul>
+<p>The following documentation items are also extracted:</p>
+<ul><li>documentation that is built-in Nuxeo Runtime descriptors</li><li>readme files that may be embedded inside the jar</li></ul>
+<p>The service is made pluggable in two ways:</p>
+<ul><li>the plugins extension point allows to:
+<ul><li>add more introspection to the live runtime</li><li>persist this introspection</li><li>display this introspection in the webengine UI</li></ul>
+</li><li>the exports extension point allows to generate custom exports from a live distribution</li></ul>
+<h2>Bulk Command</h2>
+<p>The bulk command is the input of the framework.
+It is composed by the unique name of the action to execute, the NXQL query that materializes the document set, the user submitting the command, the repository and some optional parameters that could be needed by the action:</p>
+<pre><code class="language-java">BulkCommand command &#61; new BulkCommand.Builder(&#34;myAction&#34;, &#34;SELECT * from Document&#34;)
+                                        .repository(&#34;myRepository&#34;)
+                                        .user(&#34;myUser&#34;)
+                                        .param(&#34;param1&#34;, &#34;myParam1&#34;)
+                                        .param(&#34;param2&#34;, &#34;myParam2&#34;)
+                                        .build();
+String commandId &#61; Framework.getService(BulkService.class).submit(command);
+</code></pre>
+<h2>Execution flow</h2>
+<p><img src="bulk-overview.png" alt="baf" /></p>
+<h4>Kafka</h4>
+<p>Apache <a href="http://kafka.apache.org/">Kafka</a> is a distributed streaming platform. Kafka brings distributed support and fault tolerance.</p>
+<p>The implementation is straightforward:</p>
+<ul><li>A Log is a <a href="http://kafka.apache.org/intro#intro_topics">Topic</a>, a partition is a partition.</li><li>Appender uses the Kafka <a href="http://kafka.apache.org/documentation.html#producerapi">Producer API</a> and tailer the Kafka <a href="http://kafka.apache.org/documentation.html#consumerapi">Consumer API</a>.</li><li>Offsets are managed manually (auto commit is disable) and persisted in an internal Kafka topic.</li></ul>
+<p>You need to install and configure a Kafka cluster, the recommended version is 1.0.x. The Kafka broker needs to be tuned a bit:</p>
+<p>| Kafka broker options | default | recommended |  Description |
+| --- | ---: | ---: | --- |
+| <code>offsets.retention.minutes</code> | <code>1440</code> | <code>20160</code> |The default offset retention is only 1 day, without activity for this amount of time the current consumer offset position is lost and all messages will be reprocessed. To prevent this we recommend to use a value 2 times bigger as <code>log.retention.hours</code>, so by default 14 days or <code>20160</code>. See <a href="https://issues.apache.org/jira/browse/KAFKA-3806">KAFKA-3806</a> for more information. |
+| <code>log.retention.hours</code> | <code>168</code> | |The default log retention is 7 days. If you change this make sure you update <code>offset.retention.minutes</code>.|
+| <code>auto.create.topics.enable</code> |  <code>true</code> |  | Not needed, the topics are explicitly created. |</p>

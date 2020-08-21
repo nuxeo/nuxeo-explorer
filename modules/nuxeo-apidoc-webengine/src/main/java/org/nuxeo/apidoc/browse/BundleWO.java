@@ -32,6 +32,7 @@ import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.export.api.Exporter;
+import org.nuxeo.apidoc.introspection.EmbeddedDocExtractor;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
@@ -52,6 +53,9 @@ public class BundleWO extends NuxeoArtifactWebObject {
     @Override
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();
+        BundleInfo bundle = getTargetBundleInfo();
+        t.arg("readme", EmbeddedDocExtractor.getHtmlFromMarkdown(bundle.getReadme()));
+        t.arg("parentReadme",EmbeddedDocExtractor.getHtmlFromMarkdown(bundle.getParentReadme()));
         List<Exporter> exporters = getSnapshotManager().getExporters()
                                                        .stream()
                                                        .filter(e -> e.displayOn("bundle"))

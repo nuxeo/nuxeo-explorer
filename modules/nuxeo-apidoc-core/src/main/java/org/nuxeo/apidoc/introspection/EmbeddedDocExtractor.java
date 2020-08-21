@@ -29,11 +29,21 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.impl.blob.StringBlob;
+import org.nuxeo.ecm.platform.htmlsanitizer.HtmlSanitizerService;
+import org.nuxeo.runtime.api.Framework;
 
 public class EmbeddedDocExtractor {
+
+    private static final Logger log = LogManager.getLogger(EmbeddedDocExtractor.class);
 
     public static final String DOC_PREFIX = "doc/";
 
@@ -137,6 +147,31 @@ public class EmbeddedDocExtractor {
     protected static Blob getReadme(String name, InputStream is) throws IOException {
         String content = IOUtils.toString(is, StandardCharsets.UTF_8);
         return new StringBlob(content, "text/plain", StandardCharsets.UTF_8.name(), name);
+    }
+
+    /**
+     * Returns Markdown ReadMe content, converted to HTML.
+     *
+     * @since 20.0.0
+     */
+    public static String getHtmlFromMarkdown(Blob readme) {
+        if (readme != null) {
+            try {
+                return getHtmlFromMarkdown(readme.getString());
+            } catch (IOException e) {
+                log.error(e, e);
+            }
+        }
+        return null;
+    }
+
+    public static String getHtmlFromMarkdown(String md) {
+        if (StringUtils.isNotBlank(md)) {
+            Node document = Parser.builder().build().parse(md);
+            HtmlRenderer renderer = HtmlRenderer.builder().build();
+            return Framework.getService(HtmlSanitizerService.class).sanitizeString(renderer.render(document), null);
+        }
+        return null;
     }
 
 }

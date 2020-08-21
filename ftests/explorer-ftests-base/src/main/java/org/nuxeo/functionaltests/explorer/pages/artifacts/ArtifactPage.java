@@ -86,6 +86,20 @@ public abstract class ArtifactPage extends AbstractExplorerPage {
         checkTextIfExists(expected, description);
     }
 
+    /**
+     * @since 20.0.0
+     */
+    public void checkDocumentationHTML(String expected) {
+        try {
+            String expectedStripped = expected != null ? expected.trim() : null;
+            String html = documentation.getAttribute("innerHTML").trim();
+            assertEquals(expectedStripped, html);
+        } catch (NoSuchElementException e) {
+            assertNull(expected);
+        }
+
+    }
+
     public void checkDocumentationText(String expected) {
         checkTextIfExists(expected, documentation);
     }
