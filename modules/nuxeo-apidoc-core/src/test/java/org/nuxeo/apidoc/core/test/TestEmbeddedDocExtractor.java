@@ -20,12 +20,26 @@ package org.nuxeo.apidoc.core.test;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.nuxeo.apidoc.introspection.EmbeddedDocExtractor;
+import org.nuxeo.common.utils.FileUtils;
+import org.nuxeo.runtime.test.runner.Deploy;
+import org.nuxeo.runtime.test.runner.Features;
+import org.nuxeo.runtime.test.runner.FeaturesRunner;
+import org.nuxeo.runtime.test.runner.RuntimeFeature;
 
 /**
  * @since 11.1
  */
+@RunWith(FeaturesRunner.class)
+@Features(RuntimeFeature.class)
+@Deploy("org.nuxeo.ecm.platform.htmlsanitizer")
 public class TestEmbeddedDocExtractor {
 
     @Test
@@ -48,4 +62,20 @@ public class TestEmbeddedDocExtractor {
         assertEquals(0, EmbeddedDocExtractor.isReadme("doc-parent/Readme.txt"));
         assertEquals(0, EmbeddedDocExtractor.isReadme("doc-parent/Readme.html"));
     }
+
+    @Test
+    public void testMarkDownToHtml() throws IOException {
+        assertEquals(getReferenceContent("markdown/sample-readme.html"),
+                EmbeddedDocExtractor.getHtmlFromMarkdown(getReferenceContent("markdown/sample-readme.md")));
+    }
+
+    protected String getReferenceContent(String path) throws IOException {
+        URL fileUrl = Thread.currentThread().getContextClassLoader().getResource(path);
+        if (fileUrl == null) {
+            throw new IllegalStateException("File not found: " + path);
+        }
+        return org.apache.commons.io.FileUtils.readFileToString(new File(FileUtils.getFilePathFromUrl(fileUrl)),
+                StandardCharsets.UTF_8);
+    }
+
 }

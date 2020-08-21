@@ -101,4 +101,5 @@ public abstract class NuxeoArtifactWebObject extends DefaultObject {
     public String getSearchCriterion() {
         return String.format("'%s'", getNxArtifactId());
     }
+
 }

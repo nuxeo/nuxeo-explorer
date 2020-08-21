@@ -18,6 +18,7 @@
     <nuxeo.image.version>11.x</nuxeo.image.version>
     <dockerfile.maven.version>1.4.12</dockerfile.maven.version>
     <jgrapht.version>1.0.1</jgrapht.version>
+    <commonmark.version>0.15.2</commonmark.version>
   </properties>
 
   <modules>
@@ -34,6 +35,11 @@
         <groupId>org.jgrapht</groupId>
         <artifactId>jgrapht-ext</artifactId>
         <version>${jgrapht.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.atlassian.commonmark</groupId>
+        <artifactId>commonmark</artifactId>
+        <version>${commonmark.version}</version>
       </dependency>
       <!-- modules -->
       <dependency>

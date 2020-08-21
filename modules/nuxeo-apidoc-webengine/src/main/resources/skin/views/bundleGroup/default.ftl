@@ -24,7 +24,7 @@
               ${readme.filename}
             </div>
             <div>
-              <pre>${readme.getString()}</pre>
+              <pre>${readmes[readme?index]}</pre>
             </div>
           </li>
         </#list>
