@@ -46,7 +46,7 @@
           <li><span class="packages">${dep}</li>
         </#if>
       </#list>
-    <ul>
+    </ul>
     </#if>
     <#if nxItem.optionalDependencies?size gt 0>
     <h2>Optional Dependencies</h2>
@@ -58,7 +58,7 @@
           <li><span class="packages">${dep}</li>
         </#if>
       </#list>
-    <ul>
+    </ul>
     </#if>
     <#if nxItem.conflicts?size gt 0>
     <h2>Conflicts</h2>
@@ -70,7 +70,7 @@
           <li><span class="packages">${dep}</li>
         </#if>
       </#list>
-    <ul>
+    </ul>
     </#if>
   </div>
   </#if>
