@@ -251,6 +251,13 @@ pipeline {
           }
         }
       }
+      post {
+        always {
+          archiveArtifacts allowEmptyArchive: true, artifacts: '**/*.jar, packages/**/target/nuxeo-*-package-*.zip, **/target/**/*.log, **/target/*.png, **/target/*.html'
+          junit testResults: '**/target/failsafe-reports/*.xml, **/target/surefire-reports/*.xml', allowEmptyResults: true
+          findText regexp: ".*ERROR.*", fileSet: "ftests/**/log/server.log"
+        }
+      }
     }
 
     stage('Deploy Maven Artifacts') {
