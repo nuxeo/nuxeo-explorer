@@ -96,7 +96,7 @@ public class ITExplorerSimpleTest extends AbstractExplorerTest {
     @Test
     public void testServices() {
         open(LiveSimplePage.URL + ApiBrowserConstants.LIST_SERVICES);
-        checkServices(false, false);
+        checkServices(false, false, false);
     }
 
     @Test

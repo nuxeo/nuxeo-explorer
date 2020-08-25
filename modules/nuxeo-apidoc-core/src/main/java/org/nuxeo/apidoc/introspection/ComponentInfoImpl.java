@@ -59,8 +59,6 @@ public class ComponentInfoImpl extends BaseNuxeoArtifact implements ComponentInf
 
     protected final List<ExtensionPointInfo> extensionPoints = new ArrayList<>();
 
-    protected final List<String> serviceNames = new ArrayList<>();
-
     protected final List<ServiceInfo> services = new ArrayList<>();
 
     protected final List<ExtensionInfo> extensions = new ArrayList<>();
@@ -135,14 +133,8 @@ public class ComponentInfoImpl extends BaseNuxeoArtifact implements ComponentInf
     }
 
     public void addService(String serviceName, boolean overriden) {
-        serviceNames.add(serviceName);
         ServiceInfo si = new ServiceInfoImpl(serviceName, overriden, this);
         services.add(si);
-    }
-
-    @Override
-    public List<String> getServiceNames() {
-        return Collections.unmodifiableList(serviceNames);
     }
 
     @Override

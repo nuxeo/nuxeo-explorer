@@ -47,11 +47,11 @@
     </div>
   </#if>
 
-  <#if nxItem.serviceNames?size gt 0>
+  <#if nxItem.services?size gt 0>
   <h2>Services</h2>
   <ul class="nolist">
-    <#list nxItem.serviceNames as service>
-    <li><a class="tag services" href="${Root.path}/${distId}/viewService/${service}">${service}</a></li>
+    <#list nxItem.services as service>
+    <li><a class="tag services" href="${Root.path}/${distId}/viewService/${service.id}">${service.id}</a></li>
     </#list>
   </ul>
   </#if>

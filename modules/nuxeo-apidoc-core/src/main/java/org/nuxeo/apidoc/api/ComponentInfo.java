@@ -49,8 +49,6 @@ public interface ComponentInfo extends NuxeoArtifact {
 
     String PROP_IS_XML = "nxcomponent:isXML";
 
-    String PROP_SERVICES = "nxcomponent:services";
-
     @Override
     @JsonIgnore
     String getId();
@@ -69,9 +67,6 @@ public interface ComponentInfo extends NuxeoArtifact {
     String getDocumentation();
 
     String getDocumentationHtml();
-
-    @JsonIgnore
-    List<String> getServiceNames();
 
     @JsonManagedReference("service")
     List<ServiceInfo> getServices();

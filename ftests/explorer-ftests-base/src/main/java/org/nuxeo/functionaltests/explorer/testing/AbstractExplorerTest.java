@@ -197,7 +197,7 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_EXTENSIONPOINTS);
         checkExtensionPoints(partial, includeReferences, legacy);
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_SERVICES);
-        checkServices(partial, legacy);
+        checkServices(partial, includeReferences, legacy);
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_CONTRIBUTIONS);
         checkContributions(partial, includeReferences, legacy);
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_OPERATIONS);
@@ -253,7 +253,7 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         apage.checkReference(partial, includeReferences, legacy);
     }
 
-    protected void checkServices(boolean partial, boolean legacy) {
+    protected void checkServices(boolean partial, boolean includeReferences, boolean legacy) {
         ListingFragment listing = asPage(ListingFragment.class);
         if (!partial) {
             listing.checkListing(-1, "ActionManager", "/viewService/org.nuxeo.ecm.platform.actions.ejb.ActionManager",
@@ -262,8 +262,14 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         }
         // toggle sort to check the SnapshotManager service
         listing = listing.toggleSort();
-        listing.checkListing(2, "SnapshotManager", "/viewService/org.nuxeo.apidoc.snapshot.SnapshotManager",
-                "org.nuxeo.apidoc.snapshot.SnapshotManager");
+        if (includeReferences) {
+            listing.checkListing(11, "TypeProvider", "viewService/org.nuxeo.ecm.core.schema.TypeProvider",
+                    "org.nuxeo.ecm.core.schema.TypeProvider");
+            listing = listing.filterOn("org.nuxeo.apidoc");
+        } else {
+            listing.checkListing(2, "SnapshotManager", "/viewService/org.nuxeo.apidoc.snapshot.SnapshotManager",
+                    "org.nuxeo.apidoc.snapshot.SnapshotManager");
+        }
 
         listing.navigateToFirstItem();
         ServiceArtifactPage apage = asPage(ServiceArtifactPage.class);

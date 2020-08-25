@@ -72,7 +72,6 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
         doc.setPropertyValue(PROP_COMPONENT_CLASS, componentInfo.getComponentClass());
         doc.setPropertyValue(PROP_BUILT_IN_DOC, componentInfo.getDocumentation());
         doc.setPropertyValue(PROP_IS_XML, Boolean.valueOf(componentInfo.isXmlPureComponent()));
-        doc.setPropertyValue(PROP_SERVICES, (Serializable) componentInfo.getServiceNames());
         doc.setPropertyValue(PROP_REQUIREMENTS, (Serializable) componentInfo.getRequirements());
         doc.setPropertyValue(PROP_REGISTRATION_ORDER, componentInfo.getRegistrationOrder());
 
@@ -133,11 +132,6 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
     @Override
     public String getName() {
         return safeGet(PROP_COMPONENT_NAME);
-    }
-
-    @Override
-    public List<String> getServiceNames() {
-        return safeGet(PROP_SERVICES);
     }
 
     @Override

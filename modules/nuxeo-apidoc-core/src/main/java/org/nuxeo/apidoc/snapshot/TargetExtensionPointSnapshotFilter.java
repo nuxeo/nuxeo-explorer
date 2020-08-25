@@ -90,9 +90,9 @@ public class TargetExtensionPointSnapshotFilter implements SnapshotFilter {
             return targetExtensionPoints.contains(((ExtensionPointInfo) artifact).getId());
         }
         if (artifact instanceof ServiceInfo) {
-            return false;
+            return targetComponentNames.contains(((ServiceInfo) artifact).getComponentId());
         }
-        // skip services, contributions, operations, packages
+        // skip contributions, operations, packages
         return false;
     }
 

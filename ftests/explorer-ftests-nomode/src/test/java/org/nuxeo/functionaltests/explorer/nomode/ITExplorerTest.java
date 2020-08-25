@@ -190,7 +190,7 @@ public class ITExplorerTest extends AbstractExplorerTest {
     public void testServices() {
         ExplorerHomePage home = goHome();
         home.clickOn(home.firstServices);
-        checkServices(false, false);
+        checkServices(false, false, false);
     }
 
     @Test

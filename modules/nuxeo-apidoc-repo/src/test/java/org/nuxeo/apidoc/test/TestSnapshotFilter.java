@@ -105,8 +105,26 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                             "org.nuxeo.apidoc.test.automation", "org.nuxeo.apidoc.test.works"),
                     snapshot.getComponentIds());
         }
-        assertEquals(List.of("org.nuxeo.apidoc.search.ArtifactSearcher", "org.nuxeo.apidoc.snapshot.SnapshotManager"),
-                snapshot.getServiceIds());
+        if (isRef) {
+            assertEquals(List.of("org.nuxeo.apidoc.search.ArtifactSearcher",
+                    "org.nuxeo.apidoc.snapshot.SnapshotManager",
+                    "org.nuxeo.automation.scripting.api.AutomationScriptingService",
+                    "org.nuxeo.ecm.automation.AutomationAdmin", "org.nuxeo.ecm.automation.AutomationService",
+                    "org.nuxeo.ecm.automation.context.ContextService",
+                    "org.nuxeo.ecm.automation.core.events.EventHandlerRegistry",
+                    "org.nuxeo.ecm.automation.core.trace.TracerFactory",
+                    "org.nuxeo.ecm.core.api.adapter.DocumentAdapterService", "org.nuxeo.ecm.core.event.EventProducer",
+                    "org.nuxeo.ecm.core.event.EventService", "org.nuxeo.ecm.core.event.EventServiceAdmin",
+                    "org.nuxeo.ecm.core.lifecycle.LifeCycleService",
+                    "org.nuxeo.ecm.core.schema.PropertyCharacteristicHandler",
+                    "org.nuxeo.ecm.core.schema.SchemaManager", "org.nuxeo.ecm.core.schema.TypeProvider",
+                    "org.nuxeo.ecm.core.work.api.WorkManager",
+                    "org.nuxeo.runtime.services.config.ConfigurationService"), snapshot.getServiceIds());
+        } else {
+            assertEquals(
+                    List.of("org.nuxeo.apidoc.search.ArtifactSearcher", "org.nuxeo.apidoc.snapshot.SnapshotManager"),
+                    snapshot.getServiceIds());
+        }
         if (isRef) {
             assertEquals(List.of(
                     // inner extension points
