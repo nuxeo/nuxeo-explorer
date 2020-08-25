@@ -154,7 +154,7 @@ public class TestSnapshotPersist extends AbstractApidocTest {
         checkBundleGroups(snapshot, partial, ref);
         checkBundles(snapshot, partial, ref);
         checkComponents(snapshot, partial, ref);
-        checkServices(snapshot, partial);
+        checkServices(snapshot, partial, ref);
         checkExtensionPoints(snapshot, partial, ref);
         checkContributions(snapshot, partial);
         checkOperations(snapshot, partial);
@@ -231,10 +231,12 @@ public class TestSnapshotPersist extends AbstractApidocTest {
         }
     }
 
-    protected void checkServices(DistributionSnapshot snapshot, boolean partial) throws IOException {
+    protected void checkServices(DistributionSnapshot snapshot, boolean partial, boolean ref) throws IOException {
         List<String> sids = snapshot.getServiceIds();
         String s = sids.stream().map(snapshot::getService).map(this::represent).collect(Collectors.joining());
-        if (partial) {
+        if (ref) {
+            checkContentEquals("apidoc_snapshot/services_partial_ref.txt", s);
+        } else if (partial) {
             checkContentEquals("apidoc_snapshot/services_partial.txt", s);
         } else {
             checkContentEquals("apidoc_snapshot/services.txt", s);
