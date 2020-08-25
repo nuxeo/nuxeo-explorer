@@ -390,9 +390,17 @@ pipeline {
   post {
     success {
       script {
+        def message = "Release ${RELEASE_VERSION}"
         if (env.DRY_RUN != "true") {
-          currentBuild.description = "Release ${RELEASE_VERSION}"
+          currentBuild.description = "${message}"
+        } else {
+          currentBuild.description = "(Dry Run) ${message}"
         }
+      }
+    }
+    unsuccessful {
+      script {
+        currentBuild.description = "(Attempt) Release ${RELEASE_VERSION}"
       }
     }
   }
