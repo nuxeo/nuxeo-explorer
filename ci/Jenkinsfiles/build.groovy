@@ -67,8 +67,7 @@ pipeline {
   }
   environment {
     APP_NAME = 'nuxeo-explorer'
-    // waiting for https://github.com/jenkins-x/jx/issues/4076 to put it in Global EnvVars
-    CONNECT_PROD_UPLOAD = "https://connect.nuxeo.com/nuxeo/site/marketplace/upload?batch=true"
+    CONNECT_PROD_URL = "https://connect.nuxeo.com/nuxeo"
     MAVEN_OPTS = "$MAVEN_OPTS -Xms512m -Xmx3072m"
     MAVEN_ARGS = '-B -nsu'
     REFERENCE_BRANCH = 'master'
@@ -182,13 +181,13 @@ pipeline {
         container('maven') {
           echo """
           ----------------------------------------
-          Deploy Nuxeo packages
+          Upload Nuxeo Packages to ${CONNECT_PROD_URL}
           ----------------------------------------"""
           withCredentials([usernameColonPassword(credentialsId: 'connect-prod', variable: 'CONNECT_PASS')]) {
             sh """
               PACKAGES_TO_UPLOAD="packages/nuxeo-*-package/target/nuxeo-*-package*.zip"
               for file in \$PACKAGES_TO_UPLOAD ; do
-                curl -i -u "$CONNECT_PASS" -F package=@\$(ls \$file) "$CONNECT_PROD_UPLOAD" ;
+                curl --fail -i -u "$CONNECT_PASS" -F package=@\$(ls \$file) "$CONNECT_PROD_URL"/site/marketplace/upload?batch=true ;
               done
             """
           }
