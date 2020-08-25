@@ -81,6 +81,10 @@ pipeline {
     label 'jenkins-nuxeo-package-11'
   }
 
+  options {
+    skipStagesAfterUnstable()
+  }
+
   parameters {
     string(name: 'BRANCH_NAME', defaultValue: 'master', description: 'The branch to release')
     string(name: 'RELEASE_VERSION', defaultValue: '', description: 'Release Explorer version (optional)')
@@ -247,6 +251,17 @@ pipeline {
 
                 git push origin v${RELEASE_VERSION}
               """
+            }
+          }
+        }
+      }
+      post {
+        always {
+          archiveArtifacts allowEmptyArchive: true, artifacts: '**/*.jar, packages/**/target/nuxeo-*-package-*.zip, **/target/**/*.log, **/target/*.png, **/target/*.html'
+          junit testResults: allowEmptyResults: true, '**/target/failsafe-reports/*.xml, **/target/surefire-reports/*.xml'
+          script {
+            if (!params.SKIP_TESTS && !params.SKIP_FUNCTIONAL_TESTS) {
+              findText regexp: ".*ERROR.*", fileSet: "ftests/**/log/server.log", unstableIfFound: true
             }
           }
         }
