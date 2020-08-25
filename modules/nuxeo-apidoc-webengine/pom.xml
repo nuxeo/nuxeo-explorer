@@ -43,8 +43,8 @@
       <artifactId>javax.transaction-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>es.nitaur.markdown</groupId>
-      <artifactId>txtmark</artifactId>
+      <groupId>com.atlassian.commonmark</groupId>
+      <artifactId>commonmark</artifactId>
     </dependency>
 
     <dependency>

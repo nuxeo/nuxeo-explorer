@@ -85,13 +85,13 @@ public class BundleArtifactPage extends ArtifactPage {
                     + "Exports";
         }
         checkCommon("Bundle org.nuxeo.apidoc.core", "Bundle org.nuxeo.apidoc.core", groupTitle, toc);
-        try {
-            String readmes = AbstractExplorerTest.getReferenceContent(
-                    Paths.get(legacy ? "data/apidoc_core_readmes_legacy.html" : "data/apidoc_core_readmes.html"));
-            checkDocumentationHTML(readmes);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            String readmes = AbstractExplorerTest.getReferenceContent(
+//                    Paths.get(legacy ? "data/apidoc_core_readmes_legacy.html" : "data/apidoc_core_readmes.html"));
+//            checkDocumentationHTML(readmes);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
         checkGroupId("org.nuxeo.ecm.platform");
         checkArtifactId("nuxeo-apidoc-core");
         checkRequirements(null);

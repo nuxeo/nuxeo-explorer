@@ -29,6 +29,9 @@ import javax.ws.rs.Produces;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
@@ -37,8 +40,6 @@ import org.nuxeo.ecm.platform.htmlsanitizer.HtmlSanitizerService;
 import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
 import org.nuxeo.runtime.api.Framework;
-
-import com.github.rjeschke.txtmark.Processor;
 
 public abstract class NuxeoArtifactWebObject extends DefaultObject {
 
@@ -112,8 +113,10 @@ public abstract class NuxeoArtifactWebObject extends DefaultObject {
             try {
                 String content = readme.getString();
                 if (StringUtils.isNotBlank(content)) {
+                    Node document = Parser.builder().build().parse(content);
+                    HtmlRenderer renderer = HtmlRenderer.builder().build();
                     return Framework.getService(HtmlSanitizerService.class)
-                                    .sanitizeString(Processor.process(content), null);
+                                    .sanitizeString(renderer.render(document), null);
                 }
             } catch (IOException e) {
                 log.error(e, e);

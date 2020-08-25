@@ -17,7 +17,7 @@
     <nuxeo.target.version>11.*</nuxeo.target.version>
     <dockerfile.maven.version>1.4.12</dockerfile.maven.version>
     <jgrapht.version>1.0.1</jgrapht.version>
-    <txtmark.version>0.16</txtmark.version>
+    <commonmark.version>0.15.2</commonmark.version>
   </properties>
 
   <modules>
@@ -36,9 +36,9 @@
 	<version>${jgrapht.version}</version>
       </dependency>
       <dependency>
-        <groupId>es.nitaur.markdown</groupId>
-        <artifactId>txtmark</artifactId>
-        <version>${txtmark.version}</version>
+        <groupId>com.atlassian.commonmark</groupId>
+        <artifactId>commonmark</artifactId>
+        <version>${commonmark.version}</version>
       </dependency>
       <!-- modules -->
       <dependency>
