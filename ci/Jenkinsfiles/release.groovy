@@ -295,13 +295,13 @@ pipeline {
         container('maven') {
           echo """
           ----------------------------------------
-          Deploy Nuxeo packages
+          Upload Nuxeo Packages to ${CONNECT_PROD_URL}
           ----------------------------------------"""
           withCredentials([usernameColonPassword(credentialsId: 'connect-prod', variable: 'CONNECT_PASS')]) {
             sh """
               PACKAGES_TO_UPLOAD="packages/nuxeo-*-package/target/nuxeo-*-package*.zip"
               for file in \$PACKAGES_TO_UPLOAD ; do
-                curl -i -u "$CONNECT_PASS" -F package=@\$(ls \$file) "$CONNECT_PROD_UPLOAD" ;
+                curl --fail -i -u "$CONNECT_PASS" -F package=@\$(ls \$file) "$CONNECT_PROD_URL"/site/marketplace/upload?batch=true ;
               done
             """
           }
