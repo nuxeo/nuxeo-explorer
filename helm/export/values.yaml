@@ -1,0 +1,40 @@
+
+nuxeo:
+  fullnameOverride: export
+  nuxeo:
+    podAnnotations:
+      preview/scm.ref: ${SCM_REF}
+    podLabels:
+      branch: export
+      team: platform
+      resource: pod
+      usage: export
+    service:
+      annotations:
+        # clear expose annotations
+        fabric8.io/ingress.annotations: ""
+        fabric8.io/expose: ""
+      labels:
+        team: platform
+        resource: service
+        usage: export
+    image:
+      repository: ${DOCKER_REGISTRY}/nuxeo/nuxeo-explorer-export
+      tag: ${VERSION}
+      pullPolicy: Always
+      pullSecrets: kubernetes-docker-cfg
+    customEnvs:
+    - name: NUXEO_CLID
+      valueFrom:
+        secretKeyRef:
+          name: instance-clid
+          key: instance.clid
+    customParams: |-
+      ${NUXEO_TEMPLATE_OVERRIDE}
+    persistence:
+      enabled: false
+
+# needed for instance-clid replicator and local usage
+local:
+  instance_clid:
+

@@ -35,4 +35,3 @@ build:
 #  - image: nuxeo-explorer
 #    structureTests:
 #      - './docker/nuxeo-explorer-docker/test/*'
-
