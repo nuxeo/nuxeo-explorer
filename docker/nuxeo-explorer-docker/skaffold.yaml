@@ -9,7 +9,7 @@ kind: Config
 build:
   tagPolicy:
     envTemplate:
-      template: "{{.DOCKER_REGISTRY}}/nuxeo/nuxeo-explorer:{{.VERSION}}"
+      template: "{{.DOCKER_REGISTRY}}/nuxeo/{{.IMAGE_NAME}}:{{.VERSION}}"
   artifacts:
     - image: nuxeo-explorer
       context: docker/nuxeo-explorer-docker
@@ -35,4 +35,3 @@ build:
 #  - image: nuxeo-explorer
 #    structureTests:
 #      - './docker/nuxeo-explorer-docker/test/*'
-
