@@ -35,3 +35,5 @@ chromedriver.log
 # helm
 helm/preview/charts
 helm/preview/requirements.lock
+helm/export/charts
+helm/export/requirements.lock

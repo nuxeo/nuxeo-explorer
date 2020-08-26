@@ -79,7 +79,6 @@ nuxeo:
       persistence:
         enabled: ${PERSISTENCE}
 
-
 # needed for instance-clid replicator and local usage
 local:
   instance_clid:
