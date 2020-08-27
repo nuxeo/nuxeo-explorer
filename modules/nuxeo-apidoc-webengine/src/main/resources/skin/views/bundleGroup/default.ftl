@@ -19,12 +19,12 @@
     <div class="documentation">
       <ul class="block-list">
         <#list nxItem.readmes as readme>
-          <li>
-            <div class="block-title">
+          <li class="block-item">
+            <div class="block-title dark">
               ${readme.filename}
             </div>
-            <div>
-              <pre>${readmes[readme?index]}</pre>
+            <div class="block-content">
+              ${readmes[readme?index]}
             </div>
           </li>
         </#list>
