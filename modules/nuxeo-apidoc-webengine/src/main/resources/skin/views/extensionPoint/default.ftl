@@ -61,7 +61,7 @@
 
     <ul id="highlight-plugin" class="block-list">
       <#list nxItem.extensions as contrib>
-      <li id="${contrib.id}">
+      <li id="${contrib.id}" class="block-item">
         <div class="searchableText">
           <span style="display:none">${contrib.component.bundle.fileName} ${contrib.component.xmlFileName}</span>
           <pre><code>${contrib.xml?xml}</code></pre>

@@ -875,7 +875,7 @@ code, code span {
   padding: 0;
 }
 
-.block-list li {
+.block-list li.block-item {
   border: 1px solid #eee;
   border-radius: .3em;
   margin-bottom: 1em;
@@ -889,9 +889,19 @@ code, code span {
   border-top: 1px solid #eee;
 }
 
+.block-list li .dark {
+  background: none repeat scroll 0 0 #f6f9fb;
+}
+
 .block-list li .block-description {
   padding-left: 1em;
   display: block;
+}
+
+.block-list div.block-content {
+  margin: 0;
+  padding: .7em;
+  border: 1px solid #f6f9fb;
 }
 
 .block-list pre {

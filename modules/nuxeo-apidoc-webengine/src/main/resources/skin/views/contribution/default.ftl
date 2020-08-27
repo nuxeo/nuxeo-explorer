@@ -40,7 +40,7 @@
     <form method="POST" action="${Root.path}/${distId}/viewContribution/${nxItem.id}/override" target="_blank">
       <ul class="block-list">
       <#list nxItem.contributionItems as contributionItem>
-        <li>
+        <li class="block-item">
           <div>
             <pre><code>${contributionItem.xml}</code></pre>
           </div>
@@ -72,7 +72,7 @@
   <#else>
     <ul class="block-list">
     <#list nxItem.contributionItems as contributionItem>
-      <li>
+      <li class="block-item">
         <div>
           <pre><code>${contributionItem.xml}</code></pre>
         </div>

@@ -16,22 +16,22 @@
     <div class="documentation">
       <ul class="block-list">
         <#if readme?has_content>
-          <li>
-            <div class="block-title">
+          <li class="block-item">
+            <div class="block-title dark">
               ${nxItem.readme.filename}
             </div>
-            <div>
-              <pre>${readme}</pre>
+            <div class="block-content">
+              ${readme}
             </div>
           </li>
         </#if>
         <#if parentReadme?has_content>
-          <li>
-            <div class="block-title">
+          <li class="block-item">
+            <div class="block-title dark">
               Parent Documentation: ${nxItem.parentReadme.filename}
             </div>
-            <div>
-              <pre>${parentReadme}</pre>
+            <div class="block-content">
+              ${parentReadme}
             </div>
           </li>
         </#if>
