@@ -1,5 +1,9 @@
 ## About nuxeo-apidoc-core
 
+<script>
+  alert('XSS attempt');
+</script>
+
 This bundle provides an API to browse the Nuxeo distribution tree:
 
     - BundleGroup (maven group or artificial grouping)
