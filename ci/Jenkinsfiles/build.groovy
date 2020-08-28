@@ -58,7 +58,7 @@ void dockerPush(String image) {
 }
 
 void dockerDeploy(String imageName) {
-  String imageTag = "${ORG}/${imageName}:${VERSION}"
+  String imageTag = "nuxeo/${imageName}:${VERSION}"
   String internalImage = "${DOCKER_REGISTRY}/${imageTag}"
   String explorerImage = "${NUXEO_DOCKER_REGISTRY}/${imageTag}"
   echo "Push ${explorerImage}"
@@ -87,7 +87,6 @@ pipeline {
     )
   }
   environment {
-    APP_NAME = 'nuxeo-explorer'
     CONNECT_PROD_URL = "https://connect.nuxeo.com/nuxeo"
     MAVEN_OPTS = "$MAVEN_OPTS -Xms512m -Xmx3072m"
     MAVEN_ARGS = '-B -nsu'
@@ -98,8 +97,7 @@ pipeline {
     NUXEO_TEMPLATE_OVERRIDE = "${getPreviewTemplatesOverride(BRANCH_NAME == REFERENCE_BRANCH)}"
     NUXEO_DOCKER_REGISTRY = 'docker-private.packages.nuxeo.com'
     NUXEO_IMAGE_VERSION = getNuxeoImageVersion()
-    PREVIEW_NAMESPACE = "$APP_NAME-${BRANCH_NAME.toLowerCase()}"
-    ORG = 'nuxeo'
+    PREVIEW_NAMESPACE = "nuxeo-explorer-${BRANCH_NAME.toLowerCase()}"
   }
   stages {
     stage('Set Labels') {
@@ -247,8 +245,8 @@ pipeline {
               skaffold build -f ${moduleDir}/skaffold.yaml~gen
               # waiting skaffold + kaniko + container-stucture-tests issue
               #  see https://github.com/GoogleContainerTools/skaffold/issues/3907
-              docker pull ${DOCKER_REGISTRY}/${ORG}/nuxeo-explorer:${VERSION}
-              container-structure-test test --image ${DOCKER_REGISTRY}/${ORG}/nuxeo-explorer:${VERSION} --config ${moduleDir}/test/*
+              docker pull ${DOCKER_REGISTRY}/nuxeo/nuxeo-explorer:${VERSION}
+              container-structure-test test --image ${DOCKER_REGISTRY}/nuxeo/nuxeo-explorer:${VERSION} --config ${moduleDir}/test/*
             """
           }
         }
