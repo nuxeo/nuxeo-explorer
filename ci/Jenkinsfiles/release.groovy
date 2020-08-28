@@ -258,7 +258,7 @@ pipeline {
       post {
         always {
           archiveArtifacts allowEmptyArchive: true, artifacts: '**/*.jar, packages/**/target/nuxeo-*-package-*.zip, **/target/**/*.log, **/target/*.png, **/target/*.html'
-          junit testResults: allowEmptyResults: true, '**/target/failsafe-reports/*.xml, **/target/surefire-reports/*.xml'
+          junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml, **/target/surefire-reports/*.xml'
           script {
             if (!params.SKIP_TESTS && !params.SKIP_FUNCTIONAL_TESTS) {
               findText regexp: ".*ERROR.*", fileSet: "ftests/**/log/server.log", unstableIfFound: true
