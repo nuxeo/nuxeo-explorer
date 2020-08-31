@@ -120,11 +120,6 @@ pipeline {
     stage('Check Parameters') {
       steps {
         script {
-          if (!params.NUXEO_VERSION_IS_PROMOTED && !RELEASE_VERSION.contains('RC')) {
-            currentBuild.result = 'ABORTED';
-            currentBuild.description = "Can only release a RC against a non-promoted Nuxeo version"
-            error(currentBuild.description)
-          }
           echo """
           ----------------------------------------
           Branch name:                '${BRANCH_NAME}'
@@ -145,6 +140,13 @@ pipeline {
           Dry run:                    '${params.DRY_RUN}'
           ----------------------------------------
           """
+          if (!params.NUXEO_VERSION_IS_PROMOTED && !RELEASE_VERSION.contains('RC')) {
+            currentBuild.result = 'ABORTED';
+            def message = 'Can only release a RC against a non-promoted Nuxeo version'
+            currentBuild.description = "${message}"
+            echo "Aborting release with message: ${message}"
+            error(currentBuild.description)
+          }
         }
       }
     }
@@ -400,7 +402,9 @@ pipeline {
     }
     unsuccessful {
       script {
-        currentBuild.description = "(Attempt) Release ${RELEASE_VERSION}"
+        if (currentBuild.description.isEmpty()) {
+          currentBuild.description = "(Attempt) Release ${RELEASE_VERSION}"
+        }
       }
     }
   }
