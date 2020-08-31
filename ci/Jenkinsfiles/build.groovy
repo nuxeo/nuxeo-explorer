@@ -32,10 +32,6 @@ void setGitHubBuildStatus(String context, String message, String state) {
   ])
 }
 
-void getNuxeoImageVersion() {
-  return readMavenPom().getProperties().getProperty('nuxeo.image.version')
-}
-
 String getVersion(referenceBranch) {
   String version = readMavenPom().getVersion()
   return BRANCH_NAME == referenceBranch ? version : version + "-${BRANCH_NAME}"
@@ -96,7 +92,6 @@ pipeline {
     PERSISTENCE = "${BRANCH_NAME == REFERENCE_BRANCH}"
     NUXEO_TEMPLATE_OVERRIDE = "${getPreviewTemplatesOverride(BRANCH_NAME == REFERENCE_BRANCH)}"
     NUXEO_DOCKER_REGISTRY = 'docker-private.packages.nuxeo.com'
-    NUXEO_IMAGE_VERSION = getNuxeoImageVersion()
     PREVIEW_NAMESPACE = "nuxeo-explorer-${BRANCH_NAME.toLowerCase()}"
   }
   stages {
@@ -238,10 +233,14 @@ pipeline {
           Registry: ${DOCKER_REGISTRY}
           """
           script {
-            def moduleDir="docker/nuxeo-explorer-docker"
+            def moduleDir = 'docker/nuxeo-explorer-docker'
+            def nuxeoImageVersion = sh(returnStdout: true, script: 'mvn help:evaluate -Dexpression=nuxeo.platform.version | grep -v [INFO]').trim()
+            if (nuxeoImageVersion.isEmpty()) {
+                error("nuxeo image version is empty")
+            }
             // push images to the Jenkins X internal Docker registry
             sh """
-              envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen
+              NUXEO_IMAGE_VERSION=${nuxeoImageVersion} envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen
               skaffold build -f ${moduleDir}/skaffold.yaml~gen
               # waiting skaffold + kaniko + container-stucture-tests issue
               #  see https://github.com/GoogleContainerTools/skaffold/issues/3907

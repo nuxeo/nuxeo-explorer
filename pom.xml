@@ -15,7 +15,7 @@
 
   <properties>
     <nuxeo.target.version>11.*</nuxeo.target.version>
-    <nuxeo.image.version>11.x</nuxeo.image.version>
+    <nuxeo.image.version>${nuxeo.platform.version}</nuxeo.image.version>
     <dockerfile.maven.version>1.4.12</dockerfile.maven.version>
     <jgrapht.version>1.0.1</jgrapht.version>
     <commonmark.version>0.15.2</commonmark.version>
