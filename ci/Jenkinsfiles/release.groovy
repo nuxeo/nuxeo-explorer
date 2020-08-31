@@ -92,7 +92,6 @@ pipeline {
     string(name: 'NUXEO_VERSION', defaultValue: '', description: 'Version of the Nuxeo Server dependency (unchanged if unset)')
     booleanParam(name: 'NUXEO_VERSION_IS_PROMOTED', defaultValue: true, description: 'Uncheck if releasing a RC version, against a non-promoted Nuxeo build')
     string(name: 'NEXT_NUXEO_VERSION', defaultValue: '', description: 'Next Version of the Nuxeo Server dependency (unchanged if unset)')
-    string(name: 'NEXT_NUXEO_IMAGE_VERSION', defaultValue: '', description: 'Next Version of the Nuxeo Server Image dependency (unchanged if unset)')
     string(name: 'JIRA_ISSUE', defaultValue: '', description: 'Id of the Jira issue for this release')
     booleanParam(name: 'SKIP_TESTS', defaultValue: false, description: 'Skip all tests')
     booleanParam(name: 'SKIP_FUNCTIONAL_TESTS', defaultValue: false, description: 'Skip functional tests')
@@ -128,7 +127,6 @@ pipeline {
 
           Nuxeo version:              '${params.NUXEO_VERSION}'
           Next Nuxeo version:         '${params.NEXT_NUXEO_VERSION}'
-          Next Nuxeo image version:   '${params.NEXT_NUXEO_IMAGE_VERSION}'
 
           Jira issue:                 '${params.JIRA_ISSUE}'
 
@@ -189,8 +187,6 @@ pipeline {
                 # nuxeo version
                 # only replace the first <version> occurrence
                 perl -i -pe '!\$x && s|<version>.*?</version>|<version>${NUXEO_VERSION}</version>| && (\$x=1)' pom.xml
-
-                perl -i -pe 's|<nuxeo.image.version>.*?</nuxeo.image.version>|<nuxeo.image.version>${NUXEO_VERSION}</nuxeo.image.version>|' pom.xml
               """
             }
 
@@ -353,12 +349,6 @@ pipeline {
               sh """
                 # only replace the first <version> occurrence
                 perl -i -pe '!\$x && s|<version>.*?</version>|<version>${nextNuxeoVersion}</version>| && (\$x=1)' pom.xml
-              """
-            }
-            def nextNuxeoImageVersion = "${params.NEXT_NUXEO_IMAGE_VERSION}"
-            if (!nextNuxeoImageVersion.isEmpty()) {
-              sh """
-                perl -i -pe 's|<nuxeo.image.version>.*?</nuxeo.image.version>|<nuxeo.image.version>${nextNuxeoImageVersion}</nuxeo.image.version>|' pom.xml
               """
             }
 
