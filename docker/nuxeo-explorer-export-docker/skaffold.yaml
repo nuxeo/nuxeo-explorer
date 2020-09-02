@@ -28,8 +28,7 @@ build:
           CONNECT_EXPORT_CLID: "${CONNECT_EXPORT_CLID}"
           CONNECT_EXPORT_URL: "${CONNECT_EXPORT_URL}"
           EXPORT_PACKAGE_LIST: "${EXPORT_PACKAGE_LIST}"
-        cache:
-          repo: ${DOCKER_REGISTRY}/nuxeo/nuxeo-explorer-export/cache
+        # disable cache to retrieve packages again
   cluster:
     namespace: platform
     dockerConfig:
