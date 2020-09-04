@@ -42,9 +42,9 @@
             <input type="button" value="Save Partial Snapshot" id="savePartial"
               onclick="$('#extendedSave').css('display','block');$('#saveBtn').css('display','none')">
           </form>
-          <form method="GET" action="${Root.path}/json">
-            <input type="submit" value="Export as Json" />
-          </form>
+          <a class="button" href="${Root.path}/current/json" onclick="$.fn.clickButton(this)" target="_blank">
+            Export as json
+          </a>
         </div>
         <div style="display:none" id="stdSave">
           <form method="POST" action="${Root.path}/save">
@@ -153,6 +153,9 @@
           <p>
             <a class="button" href="${Root.path}/download/${distrib.key}" onclick="$.fn.clickButton(this)">
               Export as zip
+            </a>
+            <a class="button" href="${Root.path}/${distrib.key}/json" onclick="$.fn.clickButton(this)" target="_blank">
+              Export as json
             </a>
           </p>
           <p>
