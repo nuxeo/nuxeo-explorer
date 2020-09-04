@@ -86,7 +86,9 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     protected JavaDocHelper jdocHelper = null;
 
     public static RepositoryDistributionSnapshot create(DistributionSnapshot distrib, CoreSession session,
-            String containerPath, String label, Map<String, Serializable> properties) {
+            String containerPath, String label, Map<String, Serializable> properties, List<String> reservedKeys)
+            throws DocumentValidationException {
+
         DocumentModel doc = session.createDocumentModel(TYPE_NAME);
         String name = computeDocumentName(distrib.getKey());
         if (label != null) {
@@ -499,10 +501,11 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
      *
      * @since 20.0.0
      */
-    public Map<String, String> getUpdateProperties() {
-        Map<String, String> props = new HashMap<>();
+    public Map<String, Serializable> getUpdateProperties() {
+        Map<String, Serializable> props = new HashMap<>();
         List.of(TITLE_PROPERTY_PATH, PROP_NAME, PROP_VERSION, PROP_KEY).forEach(p -> props.put(p, safeGet(p)));
-        if (StringUtils.isBlank(props.get(TITLE_PROPERTY_PATH))) {
+        if (StringUtils.isBlank((String) props.get(TITLE_PROPERTY_PATH))
+                && StringUtils.isNotBlank((String) props.get(PROP_NAME))) {
             props.put(TITLE_PROPERTY_PATH, props.get(PROP_NAME));
         }
         List.of(PROP_LATEST_LTS, PROP_LATEST_FT, PROP_HIDE)
@@ -519,14 +522,15 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
      *
      * @since 20.0.0
      */
-    public Map<String, String> getUpdateProperties(Map<String, String[]> formFields) {
-        Map<String, String> props = new HashMap<>();
+    public static Map<String, Serializable> getUpdateProperties(Map<String, String[]> formFields) {
+        Map<String, Serializable> props = new HashMap<>();
         if (formFields != null) {
             Stream.of(TITLE_PROPERTY_PATH, PROP_NAME, PROP_VERSION, PROP_KEY, PROP_LATEST_LTS, PROP_LATEST_FT,
                     PROP_HIDE, PROP_RELEASED, PROP_ALIASES)
                   .filter(formFields::containsKey)
                   .forEach(p -> props.put(p, formFields.get(p)[0]));
-            if (StringUtils.isBlank(props.get(TITLE_PROPERTY_PATH))) {
+            if (StringUtils.isBlank((String) props.get(TITLE_PROPERTY_PATH))
+                    && StringUtils.isNotBlank((String) props.get(PROP_NAME))) {
                 props.put(TITLE_PROPERTY_PATH, props.get(PROP_NAME));
             }
             List.of(PROP_LATEST_LTS, PROP_LATEST_FT, PROP_HIDE)
@@ -540,7 +544,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
      *
      * @since 20.0.0
      */
-    public DocumentModel updateDocument(CoreSession session, Map<String, String> updateProperties, String comment,
+    public DocumentModel updateDocument(CoreSession session, Map<String, Serializable> updateProperties, String comment,
             List<String> reservedKeys) throws DocumentValidationException {
         final DocumentModel doc = getDoc();
         if (updateProperties == null) {
@@ -548,15 +552,16 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         }
         // validations
         if (Stream.of(TITLE_PROPERTY_PATH, PROP_NAME, PROP_VERSION, PROP_KEY)
-                  .anyMatch(p -> updateProperties.containsKey(p) && StringUtils.isBlank(updateProperties.get(p)))) {
+                  .anyMatch(p -> updateProperties.containsKey(p)
+                          && StringUtils.isBlank((String) updateProperties.get(p)))) {
             throw new DocumentValidationException("Please fill all required fields.");
         }
         if (updateProperties.containsKey(PROP_KEY)) {
-            validateKeyOrAlias(updateProperties.get(PROP_KEY), reservedKeys);
+            validateKeyOrAlias((String) updateProperties.get(PROP_KEY), reservedKeys);
         }
         List<String> aliases = null;
         if (updateProperties.containsKey(PROP_ALIASES)) {
-            aliases = Arrays.stream(updateProperties.get(PROP_ALIASES).split("\n"))
+            aliases = Arrays.stream(((String) updateProperties.get(PROP_ALIASES)).split("\n"))
                             .map(String::trim)
                             .filter(StringUtils::isNotBlank)
                             .collect(Collectors.toList());
@@ -569,7 +574,8 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         List.of(PROP_LATEST_LTS, PROP_LATEST_FT, PROP_HIDE)
             .forEach(p -> doc.setPropertyValue(p, updateProperties.get(p)));
         if (updateProperties.containsKey(PROP_RELEASED)) {
-            doc.setPropertyValue(DistributionSnapshot.PROP_RELEASED, convertDate(updateProperties.get(PROP_RELEASED)));
+            doc.setPropertyValue(DistributionSnapshot.PROP_RELEASED,
+                    convertDate((String) updateProperties.get(PROP_RELEASED)));
         }
         if (aliases != null) {
             doc.setPropertyValue(PROP_ALIASES, (Serializable) aliases);

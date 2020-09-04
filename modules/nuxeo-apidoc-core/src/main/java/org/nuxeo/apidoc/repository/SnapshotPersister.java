@@ -61,6 +61,7 @@ import org.nuxeo.ecm.core.api.security.ACL;
 import org.nuxeo.ecm.core.api.security.ACP;
 import org.nuxeo.ecm.core.api.security.SecurityConstants;
 import org.nuxeo.ecm.core.api.security.impl.ACLImpl;
+import org.nuxeo.ecm.core.api.validation.DocumentValidationException;
 
 public class SnapshotPersister {
 
@@ -76,9 +77,6 @@ public class SnapshotPersister {
 
     /** @since 11.1 */
     public static final String PACKAGE_ROOT_NAME = "Packages";
-
-    /** @since 20.0.0 */
-    public static final String ROOT_TYPE_NAME = "Workspace";
 
     public DocumentModel getSubRoot(CoreSession session, DocumentModel root, String name) {
         DocumentRef rootRef = new PathRef(root.getPathAsString() + name);
@@ -104,7 +102,7 @@ public class SnapshotPersister {
      * @since 20.0.0
      */
     public static DocumentModel createRoot(CoreSession session, String parentPath, String name, boolean setAcl) {
-        DocumentModel root = session.createDocumentModel(parentPath, name, ROOT_TYPE_NAME);
+        DocumentModel root = session.createDocumentModel(parentPath, name, DistributionSnapshot.CONTAINER_TYPE_NAME);
         root.setPropertyValue(NuxeoArtifact.TITLE_PROPERTY_PATH, name);
         root = session.createDocument(root);
 
@@ -123,10 +121,11 @@ public class SnapshotPersister {
     }
 
     public DistributionSnapshot persist(DistributionSnapshot snapshot, CoreSession session, String label,
-            SnapshotFilter filter, Map<String, Serializable> properties, List<Plugin<?>> plugins) {
+            SnapshotFilter filter, Map<String, Serializable> properties, List<String> reservedKeys,
+            List<Plugin<?>> plugins) throws DocumentValidationException {
 
         RepositoryDistributionSnapshot distribContainer = RepositoryDistributionSnapshot.create(snapshot, session,
-                getDistributionRoot(session).getPathAsString(), label, properties);
+                getDistributionRoot(session).getPathAsString(), label, properties, reservedKeys);
 
         distribContainer.cleanPreviousArtifacts();
 

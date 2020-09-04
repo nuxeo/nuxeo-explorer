@@ -62,8 +62,10 @@ import org.nuxeo.apidoc.security.SecurityHelper;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
+import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.PathRef;
+import org.nuxeo.ecm.core.api.validation.DocumentValidationException;
 import org.nuxeo.ecm.core.io.DocumentPipe;
 import org.nuxeo.ecm.core.io.DocumentReader;
 import org.nuxeo.ecm.core.io.DocumentWriter;
@@ -187,23 +189,17 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
 
     @Override
     public DistributionSnapshot persistRuntimeSnapshot(CoreSession session) {
-        return persistRuntimeSnapshot(session, null, null);
+        return persistRuntimeSnapshot(session, null, null, null, null);
     }
 
     @Override
     public DistributionSnapshot persistRuntimeSnapshot(CoreSession session, String name,
-            Map<String, Serializable> properties) {
-        return persistRuntimeSnapshot(session, name, properties, null);
-    }
-
-    @Override
-    public DistributionSnapshot persistRuntimeSnapshot(CoreSession session, String name,
-            Map<String, Serializable> properties, SnapshotFilter filter) {
+            Map<String, Serializable> properties, List<String> reservedKeys, SnapshotFilter filter) {
         if (!canSeeRuntimeSnapshot(session)) {
             throw new RuntimeServiceException("Live runtime cannot be snapshotted.");
         }
         DistributionSnapshot liveSnapshot = getRuntimeSnapshot();
-        return persister.persist(liveSnapshot, session, name, filter, properties, getPlugins());
+        return persister.persist(liveSnapshot, session, name, filter, properties, reservedKeys, getPlugins());
     }
 
     @Override
@@ -290,42 +286,10 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
     }
 
     @Override
-    public void importSnapshot(CoreSession session, InputStream is) throws IOException {
-        String importPath = persister.getDistributionRoot(session).getPathAsString();
-        DocumentReader reader = new NuxeoArchiveReader(is);
-        DocumentWriter writer = new DocumentModelWriter(session, importPath);
-        DocumentPipe pipe = new DocumentPipeImpl(10);
-        pipe.setReader(reader);
-        pipe.setWriter(writer);
-        pipe.run();
-        reader.close();
-        writer.close();
-    }
-
-    @Override
-    public void validateImportedSnapshot(CoreSession session, String name, String version, String pathSegment,
-            String title) {
-
-        DocumentModel container = persister.getDistributionRoot(session);
-        DocumentRef tmpRef = new PathRef(container.getPathAsString(), IMPORT_TMP);
-
-        DocumentModel tmp;
-        if (session.exists(tmpRef)) {
-            tmp = session.getChild(container.getRef(), IMPORT_TMP);
-            DocumentModel snapDoc = session.getChildren(tmp.getRef()).get(0);
-            snapDoc.setPropertyValue("nxdistribution:name", name);
-            snapDoc.setPropertyValue("nxdistribution:version", version);
-            snapDoc.setPropertyValue("nxdistribution:key", name + "-" + version);
-            snapDoc.setPropertyValue(NuxeoArtifact.TITLE_PROPERTY_PATH, title);
-            BaseNuxeoArtifactDocAdapter.fillContextData(snapDoc);
-            snapDoc = session.saveDocument(snapDoc);
-
-            DocumentModel targetContainer = session.getParentDocument(tmp.getRef());
-
-            session.move(snapDoc.getRef(), targetContainer.getRef(), pathSegment);
-            session.removeDocument(tmp.getRef());
-        }
-
+    public void importSnapshot(CoreSession session, InputStream is, Map<String, Serializable> properties,
+            List<String> reservedKeys) throws IOException, DocumentValidationException {
+        DocumentModel snapDoc = importTmpSnapshot(session, is);
+        validateImportedSnapshot(session, snapDoc.getId(), properties, reservedKeys);
     }
 
     @Override
@@ -333,17 +297,20 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
         DocumentModel container = persister.getDistributionRoot(session);
         DocumentRef tmpRef = new PathRef(container.getPathAsString(), IMPORT_TMP);
 
+        // create tmp dir for import
         DocumentModel tmp;
         if (session.exists(tmpRef)) {
             tmp = session.getChild(container.getRef(), IMPORT_TMP);
             session.removeChildren(tmp.getRef());
         } else {
-            tmp = session.createDocumentModel(container.getPathAsString(), IMPORT_TMP, "Workspace");
+            tmp = session.createDocumentModel(container.getPathAsString(), IMPORT_TMP,
+                    DistributionSnapshot.CONTAINER_TYPE_NAME);
             tmp.setPropertyValue(NuxeoArtifact.TITLE_PROPERTY_PATH, "tmpImport");
             tmp = session.createDocument(tmp);
             session.save();
         }
 
+        // run import
         DocumentReader reader = new NuxeoArchiveReader(is);
         DocumentWriter writer = new DocumentModelWriter(session, tmp.getPathAsString()) {
             @Override
@@ -358,7 +325,33 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
         reader.close();
         writer.close();
 
-        return session.getChildren(tmp.getRef()).get(0);
+        // make sure it's hidden until validation, and move it
+        DocumentModel snapDoc = session.getChildren(tmp.getRef()).get(0);
+        snapDoc.setPropertyValue(DistributionSnapshot.PROP_HIDE, true);
+        BaseNuxeoArtifactDocAdapter.fillContextData(snapDoc);
+        snapDoc = session.saveDocument(snapDoc);
+        snapDoc = session.move(snapDoc.getRef(), session.getParentDocumentRef(tmp.getRef()), null);
+
+        // cleanup tmp dir
+        session.removeDocument(tmp.getRef());
+        session.save();
+
+        return snapDoc;
+    }
+
+    @Override
+    public void validateImportedSnapshot(CoreSession session, String distribDocId, Map<String, Serializable> properties,
+            List<String> reservedKeys) throws DocumentValidationException {
+        DocumentModel snapDoc = session.getDocument(new IdRef(distribDocId));
+        // update props
+        var repoSnap = (RepositoryDistributionSnapshot) snapDoc.getAdapter(DistributionSnapshot.class);
+        var finalProps = new HashMap<String, Serializable>();
+        if (properties != null) {
+            finalProps.putAll(properties);
+        }
+        // unhide distrib
+        finalProps.put(DistributionSnapshot.PROP_HIDE, false);
+        repoSnap.updateDocument(session, finalProps, null, reservedKeys);
     }
 
     @Override

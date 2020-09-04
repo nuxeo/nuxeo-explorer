@@ -35,19 +35,19 @@ import org.openqa.selenium.support.FindBy;
 public class UploadConfirmFragment extends AbstractExplorerPage {
 
     @Required
-    @FindBy(xpath = "//input[@name='name']")
+    @FindBy(xpath = "//input[@name='nxdistribution:name']")
     public WebElement nameInput;
 
     @Required
-    @FindBy(xpath = "//input[@name='version']")
+    @FindBy(xpath = "//input[@name='nxdistribution:version']")
     public WebElement versionInput;
 
     @Required
-    @FindBy(xpath = "//input[@name='pathSegment']")
-    public WebElement pathSegmentInput;
+    @FindBy(xpath = "//input[@name='nxdistribution:key']")
+    public WebElement keyInput;
 
     @Required
-    @FindBy(xpath = "//input[@name='title']")
+    @FindBy(xpath = "//input[@name='dc:title']")
     public WebElement titleInput;
 
     @Required
@@ -67,9 +67,6 @@ public class UploadConfirmFragment extends AbstractExplorerPage {
         if (newName != null) {
             nameInput.clear();
             nameInput.sendKeys(newName);
-            // will have an impact on persisted path, to ease up cleanup
-            pathSegmentInput.clear();
-            pathSegmentInput.sendKeys(newName);
             // just for display in tests
             titleInput.clear();
             titleInput.sendKeys(newName);
@@ -78,6 +75,8 @@ public class UploadConfirmFragment extends AbstractExplorerPage {
             versionInput.clear();
             versionInput.sendKeys(newVersion);
         }
+        keyInput.clear();
+        keyInput.sendKeys(String.format("%s-%s", nameInput.getAttribute("value"), versionInput.getAttribute("value")));
         Locator.scrollAndForceClick(importButton);
         By headerLocator = By.xpath("//h1");
         Locator.waitUntilElementPresent(headerLocator);

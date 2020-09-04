@@ -422,7 +422,7 @@ public class Distribution extends ModuleRoot {
         String source = formData.getString("source");
         try {
             getSnapshotManager().persistRuntimeSnapshot(getContext().getCoreSession(), formData.getString("name"),
-                    readUploadFormData(formData), filter);
+                    readUploadFormData(formData), SUB_DISTRIBUTION_PATH_RESERVED, filter);
         } catch (NuxeoException e) {
             log.error("Error during storage", e);
             if (tx != null) {
@@ -488,22 +488,25 @@ public class Distribution extends ModuleRoot {
     @POST
     @Path(UPLOAD_ACTION)
     @Produces("text/html")
-    public Object uploadDistrib() throws IOException {
+    public Object uploadDistrib() {
         if (!canImportOrExportDistributions()) {
             return show404();
         }
         FormData formData = getContext().getForm();
         Blob blob = formData.getFirstBlob();
         String source = formData.getString("source");
+        Map<String, Serializable> updateProperties = RepositoryDistributionSnapshot.getUpdateProperties(
+                formData.getFormFields());
 
         try {
-            getSnapshotManager().importSnapshot(getContext().getCoreSession(), blob.getStream());
+            getSnapshotManager().importSnapshot(getContext().getCoreSession(), blob.getStream(), updateProperties,
+                    SUB_DISTRIBUTION_PATH_RESERVED);
         } catch (IOException | IllegalArgumentException | NuxeoException e) {
             log.error(e, e);
             return getView("importKO").arg("message", e.getMessage()).arg("source", source);
         }
 
-        return getView(getRedirectViewPostUpload(source));
+        return Response.status(200).type(MediaType.TEXT_PLAIN).entity("Upload done.").build();
     }
 
     @POST
@@ -545,15 +548,13 @@ public class Distribution extends ModuleRoot {
         }
 
         FormData formData = getContext().getForm();
-        String name = formData.getString("name");
-        String version = formData.getString("version");
-        String pathSegment = formData.getString("pathSegment");
-        String title = formData.getString("title");
-
+        String distribDocId = formData.getFormProperty("distribDocId");
+        Map<String, Serializable> updateProperties = RepositoryDistributionSnapshot.getUpdateProperties(
+                formData.getFormFields());
         Template view;
         try {
-            getSnapshotManager().validateImportedSnapshot(getContext().getCoreSession(), name, version, pathSegment,
-                    title);
+            getSnapshotManager().validateImportedSnapshot(getContext().getCoreSession(), distribDocId, updateProperties,
+                    SUB_DISTRIBUTION_PATH_RESERVED);
             view = getView("importDone");
         } catch (IllegalArgumentException | NuxeoException e) {
             view = getView("importKO").arg("message", e.getMessage());
@@ -575,7 +576,7 @@ public class Distribution extends ModuleRoot {
         return updateDistribForm(distribId, null, null);
     }
 
-    protected Object updateDistribForm(String distribId, Map<String, String> updateProperties,
+    protected Object updateDistribForm(String distribId, Map<String, Serializable> updateProperties,
             String errorFeedbackMessage) {
         if (!showManageDistributions()) {
             return show404();
@@ -612,7 +613,8 @@ public class Distribution extends ModuleRoot {
             return show404();
         }
         RepositoryDistributionSnapshot repoSnap = (RepositoryDistributionSnapshot) snap;
-        Map<String, String> updateProperties = repoSnap.getUpdateProperties(formData.getFormFields());
+        Map<String, Serializable> updateProperties = RepositoryDistributionSnapshot.getUpdateProperties(
+                formData.getFormFields());
         try {
             repoSnap.updateDocument(getContext().getCoreSession(), updateProperties, formData.getString("comment"),
                     SUB_DISTRIBUTION_PATH_RESERVED);
