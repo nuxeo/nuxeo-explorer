@@ -19,6 +19,9 @@
  */
 package org.nuxeo.apidoc.adapters;
 
+import static org.nuxeo.ecm.core.api.validation.DocumentValidationService.CTX_MAP_KEY;
+import static org.nuxeo.ecm.core.api.validation.DocumentValidationService.Forcing.TURN_OFF;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -169,7 +172,14 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
         return path;
     }
 
-    protected static void fillContextData(DocumentModel doc) {
+    /**
+     * Fills context data to avoid useless processings on snapshot documents create/update.
+     *
+     * @since 20.0.0
+     */
+    public static void fillContextData(DocumentModel doc) {
+        // disable validation
+        doc.putContextData(CTX_MAP_KEY, TURN_OFF);
         // NXP-28928: disable useless thumbnail computation for explorer documents: could be costly and is not needed in
         // this context
         doc.putContextData(ThumbnailConstants.DISABLE_THUMBNAIL_COMPUTATION, true);
