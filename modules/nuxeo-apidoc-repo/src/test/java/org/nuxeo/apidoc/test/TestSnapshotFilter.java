@@ -169,7 +169,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, false, null);
         filter.addBundle("org.nuxeo.apidoc");
 
-        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         assertNotNull(snapshot);
         // nothing selected: filter should hold exact bundle names
         assertEquals(0, snapshot.getBundleIds().size());
@@ -177,7 +177,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         filter = new PersistSnapshotFilter(filterName, false, null);
         filter.addBundle("org.nuxeo.apidoc.core");
         filter.addBundle("org.nuxeo.apidoc.repo");
-        snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
 
         checkApiDoc(filterName, snapshot, false);
     }
@@ -188,7 +188,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName);
         filter.addBundle("org.nuxeo.apidoc");
 
-        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         assertNotNull(snapshot);
 
         checkApiDoc(filterName, snapshot, false);
@@ -201,7 +201,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                 TargetExtensionPointSnapshotFilter.class);
         filter.addBundle("org.nuxeo.apidoc");
 
-        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         checkApiDoc(filterName, snapshot, true);
     }
 
@@ -211,7 +211,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, false, null);
         filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
 
-        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         checkApiDoc(filterName, snapshot, false);
     }
 
@@ -221,7 +221,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, true, null);
         filter.addNuxeoPackage("platform-");
 
-        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         checkApiDoc(filterName, snapshot, false);
     }
 
@@ -232,7 +232,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                 TargetExtensionPointSnapshotFilter.class);
         filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
 
-        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         checkApiDoc(filterName, snapshot, true);
     }
 
@@ -242,7 +242,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         filter.addPackagesPrefix("org.nuxeo.ecm.automation.core.operations.services.query");
         filter.addPackagesPrefix("org.nuxeo.ecm.automation.core.operations.services.workmanager");
 
-        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         assertNotNull(snapshot);
 
         assertEquals(List.of("apidoc-java"),

@@ -34,6 +34,7 @@ import org.nuxeo.apidoc.plugin.Plugin;
 import org.nuxeo.apidoc.security.SecurityHelper;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.validation.DocumentValidationException;
 import org.nuxeo.runtime.RuntimeServiceException;
 
 public interface SnapshotManager {
@@ -127,9 +128,37 @@ public interface SnapshotManager {
 
     List<String> getAvailableVersions(CoreSession session, NuxeoArtifact nxItem);
 
-    void exportSnapshot(CoreSession session, String key, OutputStream out) throws IOException;
+    /**
+     * Imports given snapshot as a nuxeo tree.
+     * <p>
+     * Corresponding distribution will be hidden until
+     * #{@link #validateImportedSnapshot(CoreSession, String, Map, List)} is called (or until distribution is unhidden).
+     */
+    DocumentModel importTmpSnapshot(CoreSession session, InputStream is)
+            throws IOException, DocumentValidationException;
 
-    void importSnapshot(CoreSession session, InputStream is) throws IOException;
+    /**
+     * Imports given snapshot as a nuxeo tree.
+     *
+     * @param properties contains additional updates to be performed on distribution root document.
+     * @param reservedKeys contains a list of reserved keywords for distribution names.
+     * @since 20.0.0
+     */
+    void importSnapshot(CoreSession session, InputStream is, Map<String, Serializable> properties,
+            List<String> reservedKeys) throws IOException, DocumentValidationException;
+
+    /**
+     * Validates the uploaded snapshot persistence with given properties.
+     * <p>
+     * Corresponding distribution should lready exist with given doc id. Distribution will be unhidden on validation.
+     *
+     * @param reservedKeys contains a list of reserved keywords for distribution names.
+     * @since 20.0.0
+     */
+    void validateImportedSnapshot(CoreSession session, String distribDocId, Map<String, Serializable> properties,
+            List<String> reservedKeys) throws DocumentValidationException;
+
+    void exportSnapshot(CoreSession session, String key, OutputStream out) throws IOException;
 
     /**
      * Persists the runtime snapshot.
@@ -140,25 +169,14 @@ public interface SnapshotManager {
     DistributionSnapshot persistRuntimeSnapshot(CoreSession session);
 
     /**
-     * Persists the runtime snapshot with given properties.
-     *
-     * @throws RuntimeServiceException if the runtime snapshot should not be accessed (see {@link #isSiteMode()} and
-     *             {@link SecurityHelper#canSnapshotLiveDistribution(org.nuxeo.ecm.core.api.NuxeoPrincipal)}
-     */
-    DistributionSnapshot persistRuntimeSnapshot(CoreSession session, String name, Map<String, Serializable> properties);
-
-    /**
      * Persists the runtime snapshot with given properties and filter.
      *
      * @throws RuntimeServiceException if the runtime snapshot should not be accessed (see {@link #isSiteMode()} and
      *             {@link SecurityHelper#canSnapshotLiveDistribution(org.nuxeo.ecm.core.api.NuxeoPrincipal)}
+     * @since 20.0.0
      */
     DistributionSnapshot persistRuntimeSnapshot(CoreSession session, String name, Map<String, Serializable> properties,
-            SnapshotFilter filter);
-
-    void validateImportedSnapshot(CoreSession session, String name, String version, String pathSegment, String title);
-
-    DocumentModel importTmpSnapshot(CoreSession session, InputStream is) throws IOException;
+            List<String> reservedKeys, SnapshotFilter filter) throws DocumentValidationException;
 
     /**
      * Returns all registered plugins.
