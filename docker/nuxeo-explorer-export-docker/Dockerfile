@@ -41,3 +41,6 @@ RUN NUXEO_CONF=$NUXEO_HOME/bin/nuxeo.conf $NUXEO_HOME/bin/nuxeoctl mp-list
 RUN chown -R 900:0 $NUXEO_HOME \
   && chmod -R g+rwX $NUXEO_HOME
 USER 900
+
+# override start command to disable strict mode
+CMD ["nuxeoctl", "console", "--lenient"]
