@@ -21,8 +21,6 @@ package org.nuxeo.apidoc.snapshot;
 
 import static java.util.Collections.reverseOrder;
 import static java.util.Comparator.comparing;
-import static org.nuxeo.ecm.core.api.validation.DocumentValidationService.CTX_MAP_KEY;
-import static org.nuxeo.ecm.core.api.validation.DocumentValidationService.Forcing.TURN_OFF;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.nuxeo.apidoc.adapters.BaseNuxeoArtifactDocAdapter;
 import org.nuxeo.apidoc.api.BundleGroup;
 import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
@@ -73,7 +72,6 @@ import org.nuxeo.ecm.core.io.impl.plugins.DocumentModelWriter;
 import org.nuxeo.ecm.core.io.impl.plugins.DocumentTreeReader;
 import org.nuxeo.ecm.core.io.impl.plugins.NuxeoArchiveReader;
 import org.nuxeo.ecm.core.io.impl.plugins.NuxeoArchiveWriter;
-import org.nuxeo.ecm.platform.thumbnail.ThumbnailConstants;
 import org.nuxeo.runtime.RuntimeMessage.Level;
 import org.nuxeo.runtime.RuntimeServiceException;
 import org.nuxeo.runtime.api.Framework;
@@ -319,7 +317,7 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
             snapDoc.setPropertyValue("nxdistribution:version", version);
             snapDoc.setPropertyValue("nxdistribution:key", name + "-" + version);
             snapDoc.setPropertyValue(NuxeoArtifact.TITLE_PROPERTY_PATH, title);
-            snapDoc.putContextData(ThumbnailConstants.DISABLE_THUMBNAIL_COMPUTATION, true);
+            BaseNuxeoArtifactDocAdapter.fillContextData(snapDoc);
             snapDoc = session.saveDocument(snapDoc);
 
             DocumentModel targetContainer = session.getParentDocument(tmp.getRef());
@@ -347,8 +345,12 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
         }
 
         DocumentReader reader = new NuxeoArchiveReader(is);
-        DocumentWriter writer = new SnapshotWriter(session, tmp.getPathAsString());
-
+        DocumentWriter writer = new DocumentModelWriter(session, tmp.getPathAsString()) {
+            @Override
+            protected void beforeCreateDocument(DocumentModel doc) {
+                BaseNuxeoArtifactDocAdapter.fillContextData(doc);
+            }
+        };
         DocumentPipe pipe = new DocumentPipeImpl(10);
         pipe.setReader(reader);
         pipe.setWriter(writer);
@@ -371,21 +373,6 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
             }
         } catch (RuntimeServiceException e) {
             log.warn("Illegal access to runtime snapshot", e);
-        }
-    }
-
-    /**
-     * Custom writer to disable Validation Service and thumbnail update.
-     */
-    protected static class SnapshotWriter extends DocumentModelWriter {
-        public SnapshotWriter(CoreSession session, String parentPath) {
-            super(session, parentPath);
-        }
-
-        @Override
-        protected void beforeCreateDocument(DocumentModel doc) {
-            doc.putContextData(CTX_MAP_KEY, TURN_OFF);
-            doc.putContextData(ThumbnailConstants.DISABLE_THUMBNAIL_COMPUTATION, true);
         }
     }
 
