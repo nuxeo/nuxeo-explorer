@@ -191,7 +191,7 @@ pipeline {
           ----------------------------------------
           Upload Nuxeo Packages to ${CONNECT_PROD_URL}
           ----------------------------------------"""
-          withCredentials([usernameColonPassword(credentialsId: 'connect-prod', variable: 'CONNECT_PASS')]) {
+          withCredentials([usernamePassword(credentialsId: 'connect-prod', variable: 'CONNECT_PASS')]) {
             sh """
               PACKAGES_TO_UPLOAD="packages/nuxeo-*-package/target/nuxeo-*-package*.zip"
               for file in \$PACKAGES_TO_UPLOAD ; do
