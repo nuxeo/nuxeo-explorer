@@ -52,6 +52,7 @@ nuxeo:
           key: instance.clid
     customParams: |-
       ${NUXEO_TEMPLATE_OVERRIDE}
+      ${NUXEO_EXPLORER_CUSTOM_PARAMS}
     persistence:
       enabled: ${PERSISTENCE}
   mongodb:
