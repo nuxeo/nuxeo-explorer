@@ -149,6 +149,9 @@
             <a class="button" href="${Root.path}/updateDistrib/${distrib.key}" onclick="$.fn.clickButton(this)">
               Update
             </a>
+            <a class="button" href="${Root.path}/delete/${distrib.key}" onclick="if (confirm('Please confirm deletion')) {$.fn.clickButton(this); return true; } else { return false; }">
+              Delete
+            </a>
           </p>
           <p>
             <a class="button" href="${Root.path}/download/${distrib.key}" onclick="$.fn.clickButton(this)">
@@ -156,11 +159,6 @@
             </a>
             <a class="button" href="${Root.path}/${distrib.key}/json" onclick="$.fn.clickButton(this)" target="_blank">
               Export as json
-            </a>
-          </p>
-          <p>
-            <a class="button" href="${Root.path}/delete/${distrib.key}" onclick="if (confirm('Please confirm deletion')) {$.fn.clickButton(this); return true; } else { return false; }">
-              Delete
             </a>
           </p>
         </td>
