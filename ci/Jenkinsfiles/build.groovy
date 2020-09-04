@@ -55,6 +55,15 @@ void dockerDeploy(String imageName) {
   dockerPush(explorerImage)
 }
 
+String getPreviewTemplatesOverride(isReferenceBranch) {
+  if (isReferenceBranch) {
+    // activate dedicated profiles on master preview
+    return 'default,mongodb,explorer-sitemode,explorer-virtualadmin'
+  }
+  // NXP-29494: override templates to avoid activating s3 in PR preview
+  return 'nuxeo.templates=default'
+}
+
 pipeline {
   agent {
     label 'jenkins-nuxeo-package-11'
@@ -74,8 +83,7 @@ pipeline {
     SCM_REF = "${getCommitSha1()}"
     VERSION = "${getVersion(REFERENCE_BRANCH)}"
     PERSISTENCE = "${BRANCH_NAME == REFERENCE_BRANCH}"
-    // NXP-29494: override templates to avoid activating s3 in PR preview
-    NUXEO_TEMPLATE_OVERRIDE = "${BRANCH_NAME == REFERENCE_BRANCH ? '' : 'nuxeo.templates=default'}"
+    NUXEO_TEMPLATE_OVERRIDE = "${getPreviewTemplatesOverride(BRANCH_NAME == REFERENCE_BRANCH)}"
     NUXEO_DOCKER_REGISTRY = 'docker-private.packages.nuxeo.com'
     NUXEO_IMAGE_VERSION = getNuxeoImageVersion()
     PREVIEW_NAMESPACE = "$APP_NAME-${BRANCH_NAME.toLowerCase()}"
@@ -288,13 +296,17 @@ pipeline {
             ----------------------------------------
             Deploy Preview environment
             ----------------------------------------"""
-            // first substitute docker image names and versions
-            sh """
-              mv values.yaml values.yaml.tosubst
-              envsubst < values.yaml.tosubst > values.yaml
-            """
-            // second create target namespace (if doesn't exist) and copy secrets to target namespace
             script {
+              boolean isReferenceBranch = BRANCH_NAME == REFERENCE_BRANCH
+              // first substitute docker image names and versions
+              withCredentials([usernameColonPassword(credentialsId: 'explorer-preview', varpasswordVariableiable: 'EXPLORER_PASSWORD')]) {
+                sh """
+                  mv values.yaml values.yaml.tosubst
+                  NUXEO_EXPLORER_CUSTOM_PARAMS=${isReferenceBranch ? 'org.nuxeo.apidoc.apidocAdmin.password=' +  EXPLORER_PASSWORD : ''} \
+                  envsubst < values.yaml.tosubst > values.yaml
+                """
+              }
+              // second create target namespace (if doesn't exist) and copy secrets to target namespace
               String currentNs = sh(returnStdout: true, script: 'jx -b ns | sed -r "s/^Using namespace \'([^\']+)\'.+\\$/\\1/"').trim()
               boolean nsExist = sh(returnStatus: true, script: "kubectl get namespace ${PREVIEW_NAMESPACE}") == 0
               // Only used with jx preview on pr branches
@@ -311,7 +323,6 @@ pipeline {
                   --namespace=${PREVIEW_NAMESPACE} \
                   --from-file=.dockerconfigjson=/tmp/config.json \
                   --type=kubernetes.io/dockerconfigjson --dry-run -o yaml | kubectl apply -f -"""
-              boolean isReferenceBranch = BRANCH_NAME == REFERENCE_BRANCH
               String previewCommand = isReferenceBranch ?
                 // To avoid jx gc cron job, reference branch previews are deployed by calling jx step helm install instead of jx preview
                 "jx step helm install --namespace ${PREVIEW_NAMESPACE} --name ${PREVIEW_NAMESPACE} --verbose ."
