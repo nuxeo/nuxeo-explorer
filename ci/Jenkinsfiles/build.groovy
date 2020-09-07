@@ -191,7 +191,7 @@ pipeline {
           ----------------------------------------
           Upload Nuxeo Packages to ${CONNECT_PROD_URL}
           ----------------------------------------"""
-          withCredentials([usernamePassword(credentialsId: 'connect-prod', variable: 'CONNECT_PASS')]) {
+          withCredentials([usernameColonPassword(credentialsId: 'connect-prod', variable: 'CONNECT_PASS')]) {
             sh """
               PACKAGES_TO_UPLOAD="packages/nuxeo-*-package/target/nuxeo-*-package*.zip"
               for file in \$PACKAGES_TO_UPLOAD ; do
@@ -299,7 +299,7 @@ pipeline {
             script {
               boolean isReferenceBranch = BRANCH_NAME == REFERENCE_BRANCH
               // first substitute docker image names and versions
-              withCredentials([usernameColonPassword(credentialsId: 'explorer-preview', passwordVariable: 'EXPLORER_PASSWORD')]) {
+              withCredentials([usernamePassword(credentialsId: 'explorer-preview', passwordVariable: 'EXPLORER_PASSWORD')]) {
                 sh """
                   mv values.yaml values.yaml.tosubst
                   NUXEO_EXPLORER_CUSTOM_PARAMS=${isReferenceBranch ? 'org.nuxeo.apidoc.apidocAdmin.password=' +  EXPLORER_PASSWORD : ''} \
