@@ -533,8 +533,6 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
                     && StringUtils.isNotBlank((String) props.get(PROP_NAME))) {
                 props.put(TITLE_PROPERTY_PATH, props.get(PROP_NAME));
             }
-            List.of(PROP_LATEST_LTS, PROP_LATEST_FT, PROP_HIDE)
-                .forEach(p -> props.put(p, Boolean.toString(formFields.containsKey(p))));
         }
         return props;
     }
