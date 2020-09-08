@@ -314,6 +314,15 @@ public class Distribution extends ModuleRoot {
         return getSnapshotManager().getRuntimeSnapshot();
     }
 
+    /**
+     * Returns true if given key is shared by several instances.
+     *
+     * @since 20.0.0
+     */
+    public boolean isKeyDuplicated(String key) {
+        return getSnapshotManager().getPersistentSnapshots(ctx.getCoreSession(), key, false).size() > 1;
+    }
+
     public List<DistributionSnapshot> listPersistedDistributions() {
         SnapshotManager sm = getSnapshotManager();
         return sm.listPersistentSnapshots(ctx.getCoreSession()).stream().sorted((o1, o2) -> {

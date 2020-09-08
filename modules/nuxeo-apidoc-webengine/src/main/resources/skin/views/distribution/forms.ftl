@@ -120,6 +120,11 @@
       <tr>
         <td>
           <a class="distrib button" href="${Root.path}/${distrib.key}/">${distrib.name}</a>
+          <#if Root.isKeyDuplicated(distrib.key)>
+            <div id="errorMessage" class="message error">
+              Duplicate key detected: '${distrib.key}'
+            </div>
+          </#if>
         </td>
         <td>
           <#if distrib.aliases?size gt 0>
