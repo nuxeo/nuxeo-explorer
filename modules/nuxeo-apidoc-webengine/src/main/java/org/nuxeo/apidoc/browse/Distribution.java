@@ -73,6 +73,7 @@ import org.nuxeo.common.utils.URIUtils;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.IterableQueryResult;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.NuxeoPrincipal;
@@ -569,25 +570,45 @@ public class Distribution extends ModuleRoot {
         return view;
     }
 
+    protected DistributionSnapshot getPersistedDistrib(String distribId, String distribDocId) {
+        if (StringUtils.isNotBlank(distribDocId)) {
+            DocumentModel doc = ctx.getCoreSession().getDocument(new IdRef(distribDocId));
+            if (doc == null) {
+                return null;
+            }
+            return doc.getAdapter(DistributionSnapshot.class);
+        }
+        List<DistributionSnapshot> snapshots = getSnapshotManager().getPersistentSnapshots(ctx.getCoreSession(),
+                distribId, false);
+        if (snapshots.size() == 1) {
+            return snapshots.get(0);
+        }
+        if (snapshots.size() > 1) {
+            log.warn(String.format("Multiple distributions with key '%s': cannot retrieve one for sure", distribId));
+        }
+        return null;
+    }
+
     /**
      * Displays the distribution edit form.
      *
      * @since 20.0.0
      */
     @GET
-    @Path(UPDATE_ACTION + "/{distributionId}")
+    @Path(UPDATE_ACTION + "/{distribId}")
     @Produces("text/html")
-    public Object updateDistribForm(@PathParam("distributionId") String distribId) {
-        return updateDistribForm(distribId, null, null);
+    public Object updateDistribForm(@PathParam("distribId") String distribId,
+            @QueryParam("distribDocId") String distribDocId) {
+        return updateDistribForm(distribId, distribDocId, null, null);
     }
 
-    protected Object updateDistribForm(String distribId, Map<String, Serializable> updateProperties,
-            String errorFeedbackMessage) {
+    protected Object updateDistribForm(String distribId, String distribDocId,
+            Map<String, Serializable> updateProperties, String errorFeedbackMessage) {
         if (!showManageDistributions()) {
             return show404();
         }
-        DistributionSnapshot snap = getSnapshotManager().getSnapshot(distribId, getContext().getCoreSession());
-        if (snap == null || snap.isLive() || !(snap instanceof RepositoryDistributionSnapshot)) {
+        DistributionSnapshot snap = getPersistedDistrib(distribId, distribDocId);
+        if (!(snap instanceof RepositoryDistributionSnapshot)) {
             return show404();
         }
         RepositoryDistributionSnapshot repoSnap = (RepositoryDistributionSnapshot) snap;
@@ -595,6 +616,7 @@ public class Distribution extends ModuleRoot {
             updateProperties = repoSnap.getUpdateProperties();
         }
         return getView("updateForm").arg("distribId", distribId)
+                                    .arg("distribDocId", repoSnap.getDoc().getId())
                                     .arg("properties", updateProperties)
                                     .arg(ApiBrowserConstants.ERROR_FEEBACK_MESSAGE_VARIABLE, errorFeedbackMessage);
     }
@@ -613,8 +635,9 @@ public class Distribution extends ModuleRoot {
         }
         FormData formData = getContext().getForm();
         String distribId = formData.getFormProperty("distribId");
-        DistributionSnapshot snap = getSnapshotManager().getSnapshot(distribId, getContext().getCoreSession());
-        if (snap == null || snap.isLive() || !(snap instanceof RepositoryDistributionSnapshot)) {
+        String distribDocId = formData.getFormProperty("distribDocId");
+        DistributionSnapshot snap = getPersistedDistrib(distribId, distribDocId);
+        if (!(snap instanceof RepositoryDistributionSnapshot)) {
             return show404();
         }
         RepositoryDistributionSnapshot repoSnap = (RepositoryDistributionSnapshot) snap;
@@ -624,7 +647,7 @@ public class Distribution extends ModuleRoot {
             repoSnap.updateDocument(getContext().getCoreSession(), updateProperties, formData.getString("comment"),
                     SUB_DISTRIBUTION_PATH_RESERVED);
         } catch (DocumentValidationException e) {
-            return updateDistribForm(distribId, updateProperties, e.getMessage());
+            return updateDistribForm(distribId, repoSnap.getDoc().getId(), updateProperties, e.getMessage());
         }
         // will trigger retrieval of distribution again
         return redirect(URIUtils.addParametersToURIQuery(String.format("%s/%s", getPath(), VIEW_ADMIN),
@@ -739,17 +762,20 @@ public class Distribution extends ModuleRoot {
      * @since 20.0.0
      */
     @GET
-    @Path(DELETE_ACTION + "/{distributionId}")
+    @Path(DELETE_ACTION + "/{distribId}")
     @Produces("text/html")
-    public Object deleteDistrib(@PathParam("distributionId") String distribId) throws IOException {
+    public Object deleteDistrib(@PathParam("distribId") String distribId,
+            @QueryParam("distribDocId") String distribDocId) throws IOException {
         if (!showManageDistributions()) {
             return show404();
         }
 
+        DistributionSnapshot snap = getPersistedDistrib(distribId, distribDocId);
+        if (!(snap instanceof RepositoryDistributionSnapshot)) {
+            return show404();
+        }
         CoreSession session = getContext().getCoreSession();
-        RepositoryDistributionSnapshot snapshot = (RepositoryDistributionSnapshot) getSnapshotManager().getSnapshot(
-                distribId, session);
-        session.removeDocument(snapshot.getDoc().getRef());
+        session.removeDocument(((RepositoryDistributionSnapshot) snap).getDoc().getRef());
         session.save();
 
         // will trigger retrieval of distributions again

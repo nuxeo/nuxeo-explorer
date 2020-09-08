@@ -121,7 +121,7 @@
         <td>
           <a class="distrib button" href="${Root.path}/${distrib.key}/">${distrib.name}</a>
           <#if Root.isKeyDuplicated(distrib.key)>
-            <div id="errorMessage" class="message error">
+            <div class="message error duplicateKey">
               Duplicate key detected: '${distrib.key}'
             </div>
           </#if>
@@ -151,10 +151,10 @@
         </td>
         <td>
           <p>
-            <a class="button" href="${Root.path}/updateDistrib/${distrib.key}" onclick="$.fn.clickButton(this)">
+            <a class="button" href="${Root.path}/updateDistrib/${distrib.key}?distribDocId=${distrib.doc.id}" onclick="$.fn.clickButton(this)">
               Update
             </a>
-            <a class="button" href="${Root.path}/delete/${distrib.key}" onclick="if (confirm('Please confirm deletion')) {$.fn.clickButton(this); return true; } else { return false; }">
+            <a class="button" href="${Root.path}/delete/${distrib.key}?distribDocId=${distrib.doc.id}" onclick="if (confirm('Please confirm deletion')) {$.fn.clickButton(this); return true; } else { return false; }">
               Delete
             </a>
           </p>
