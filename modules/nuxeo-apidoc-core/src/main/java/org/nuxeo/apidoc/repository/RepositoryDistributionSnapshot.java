@@ -61,7 +61,6 @@ import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.JsonMapper;
 import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
-import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
@@ -94,13 +93,6 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         if (label != null) {
             name = computeDocumentName(label);
         }
-        String targetPath = new Path(containerPath).append(name).toString();
-
-        boolean exist = false;
-        if (session.exists(new PathRef(targetPath))) {
-            exist = true;
-            doc = session.getDocument(new PathRef(targetPath));
-        }
 
         // Set first properties passed by parameter to not override default
         // behavior
@@ -122,14 +114,8 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         doc.setPropertyValue(PROP_LATEST_LTS, distrib.isLatestLTS());
         doc.setPropertyValue(PROP_VERSION, distrib.getVersion());
 
-        DocumentModel ret;
         fillContextData(doc);
-        if (exist) {
-            ret = session.saveDocument(doc);
-        } else {
-            ret = session.createDocument(doc);
-        }
-        return new RepositoryDistributionSnapshot(ret);
+        return new RepositoryDistributionSnapshot(session.createDocument(doc));
     }
 
     public static List<DistributionSnapshot> readPersistentSnapshots(CoreSession session) {

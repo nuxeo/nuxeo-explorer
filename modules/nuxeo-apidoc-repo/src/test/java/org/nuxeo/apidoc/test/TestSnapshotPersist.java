@@ -161,15 +161,12 @@ public class TestSnapshotPersist extends AbstractApidocTest {
         DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         assertEquals(key, snapshot.getKey());
         assertEquals(1, snapshotManager.getPersistentSnapshots(session, key, false).size());
-        String docId = ((RepositoryDistributionSnapshot) snapshot).getDoc().getId();
 
         // persist another time with same name
         snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         assertEquals("apidoc-unknown", snapshot.getKey());
-        // check distrib has not been duplicated
-        assertEquals(1, snapshotManager.getPersistentSnapshots(session, key, false).size());
-        // check doc id has not changed
-        assertEquals(docId, ((RepositoryDistributionSnapshot) snapshot).getDoc().getId());
+        // check distrib has been duplicated
+        assertEquals(2, snapshotManager.getPersistentSnapshots(session, key, false).size());
     }
 
     protected void checkDistributionSnapshot(DistributionSnapshot snapshot, boolean partial, boolean ref)
