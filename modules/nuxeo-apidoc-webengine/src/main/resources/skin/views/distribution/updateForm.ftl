@@ -72,7 +72,7 @@
       </tr>
       <tr>
         <td colspan="2">
-          <input type="hidden" name="docId" value="${distribDoc.id}" />
+          <input type="hidden" name="distribDocId" value="${distribDocId}" />
           <input type="hidden" name="distribId" value="${distribId}" />
           <input type="submit" class="button primary" value="Update" id="doUpdate" onclick="$.fn.clickButton(this)" />
           <a class="button" href="${Root.path}/_admin/">Cancel</a>

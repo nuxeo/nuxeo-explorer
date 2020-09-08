@@ -314,4 +314,31 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         openAndCheck(getArtifactURL(OperationInfo.TYPE_NAME, "foo"), true);
     }
 
+    @Test
+    public void testDuplicateDistributionKey() {
+        open(DistribAdminPage.URL);
+        String distribName = "testDupe";
+        String version = asPage(DistribAdminPage.class).saveCurrentLiveDistrib(distribName, true, false);
+        String distribId = getDistribId(distribName, version);
+        asPage(DistribAdminPage.class).check();
+        // save again
+        asPage(DistribAdminPage.class).saveCurrentLiveDistrib(distribName, true, false);
+        String message = String.format("Duplicate key detected: '%s'", distribId);
+        asPage(DistribAdminPage.class).checkDuplicateKeyErrorMessages(message, message);
+
+        // try to delete via api
+        openAndCheck(DistribAdminPage.DELETE_URL + distribId, true);
+        // try to update via api
+        openAndCheck(DistribAdminPage.UPDATE_URL + distribId, true);
+
+        // update via admin UI: the link hold the necessary unique doc identifier to perform the update
+        open(DistribAdminPage.URL);
+        DistributionUpdatePage upage = asPage(DistribAdminPage.class).updateFirstPersistedDistrib();
+        upage.updateString(upage.key, getDistribId("foo", version));
+        upage.submit();
+
+        // no errors anymore
+        asPage(DistribAdminPage.class).check();
+    }
+
 }
