@@ -157,4 +157,20 @@ public class TestExportImport {
         checkFinalSnapshots();
     }
 
+    @Test
+    public void testExportImportMultiple() throws IOException {
+        String key = "server-42.66";
+        assertTrue(snapshotManager.getPersistentSnapshots(session, key, false).isEmpty());
+        try (InputStream in = new FileInputStream(tempExportFile)) {
+            snapshotManager.importSnapshot(session, in, getDistribProps(), null);
+        }
+        assertEquals(1, snapshotManager.getPersistentSnapshots(session, key, false).size());
+        // duplicate same import
+        try (InputStream in = new FileInputStream(tempExportFile)) {
+            snapshotManager.importSnapshot(session, in, getDistribProps(), null);
+        }
+        // check there is one more
+        assertEquals(2, snapshotManager.getPersistentSnapshots(session, key, false).size());
+    }
+
 }

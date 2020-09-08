@@ -138,14 +138,14 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
             }
             return getRuntimeSnapshot();
         }
-        DistributionSnapshot snap = getPersistentSnapshots(session).get(key);
-        if (snap == null && canSeeRuntimeSnapshot(session)) {
+        List<DistributionSnapshot> snaps = getPersistentSnapshots(session, key, true);
+        if (snaps.isEmpty() && canSeeRuntimeSnapshot(session)) {
             DistributionSnapshot rtsnap = getRuntimeSnapshot();
             if (rtsnap.getKey().equals(key)) {
                 return rtsnap;
             }
         }
-        return snap;
+        return snaps.get(0);
     }
 
     @Override
@@ -166,6 +166,11 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
             }
         }
         return persistentSnapshots;
+    }
+
+    @Override
+    public List<DistributionSnapshot> getPersistentSnapshots(CoreSession session, String key, boolean includeAliases) {
+        return RepositoryDistributionSnapshot.readPersistentSnapshots(session, key, includeAliases);
     }
 
     protected boolean canSeeRuntimeSnapshot(CoreSession session) {

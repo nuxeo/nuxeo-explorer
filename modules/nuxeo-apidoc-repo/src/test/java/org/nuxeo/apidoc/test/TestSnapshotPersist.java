@@ -149,6 +149,29 @@ public class TestSnapshotPersist extends AbstractApidocTest {
         checkDistributionSnapshot(persisted, true, true);
     }
 
+    @Test
+    public void testPersistDupeKey() throws IOException {
+        PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc", true,
+                TargetExtensionPointSnapshotFilter.class);
+        filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
+        String key = "apidoc-unknown";
+
+        assertTrue(snapshotManager.getPersistentSnapshots(session, key, false).isEmpty());
+
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
+        assertEquals(key, snapshot.getKey());
+        assertEquals(1, snapshotManager.getPersistentSnapshots(session, key, false).size());
+        String docId = ((RepositoryDistributionSnapshot) snapshot).getDoc().getId();
+
+        // persist another time with same name
+        snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
+        assertEquals("apidoc-unknown", snapshot.getKey());
+        // check distrib has not been duplicated
+        assertEquals(1, snapshotManager.getPersistentSnapshots(session, key, false).size());
+        // check doc id has not changed
+        assertEquals(docId, ((RepositoryDistributionSnapshot) snapshot).getDoc().getId());
+    }
+
     protected void checkDistributionSnapshot(DistributionSnapshot snapshot, boolean partial, boolean ref)
             throws IOException {
         checkBundleGroups(snapshot, partial, ref);

@@ -142,6 +142,30 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
                    .collect(Collectors.toList());
     }
 
+    /**
+     * Returns a list of sorted distribution with given key, maybe including aliases.
+     *
+     * @since 20.0.0
+     */
+    public static List<DistributionSnapshot> readPersistentSnapshots(CoreSession session, String key,
+            boolean includeAliases) {
+        String query = String.format("SELECT * FROM %s where %s AND %s", TYPE_NAME, QueryHelper.NOT_DELETED,
+                QueryHelper.NOT_VERSION);
+        String escapedKey = NXQL.escapeString(key);
+        if (includeAliases) {
+            query += String.format(" AND (%s = %s OR %s = %s)", DistributionSnapshot.PROP_KEY, escapedKey,
+                    DistributionSnapshot.PROP_ALIASES, escapedKey);
+        } else {
+            query += String.format(" AND %s = %s", DistributionSnapshot.PROP_KEY, escapedKey);
+        }
+        query += " ORDER BY " + NXQL.ECM_UUID;
+        DocumentModelList docs = session.query(query);
+        return docs.stream()
+                   .map(doc -> doc.getAdapter(DistributionSnapshot.class))
+                   .filter(Objects::nonNull)
+                   .collect(Collectors.toList());
+    }
+
     public RepositoryDistributionSnapshot(DocumentModel doc) {
         super(doc);
     }
