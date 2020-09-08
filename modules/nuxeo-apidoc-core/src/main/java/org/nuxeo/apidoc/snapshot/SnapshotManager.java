@@ -117,6 +117,17 @@ public interface SnapshotManager {
     Map<String, DistributionSnapshot> getPersistentSnapshots(CoreSession session);
 
     /**
+     * Returns persistent distributions with given key, potentially including aliases.
+     * <p>
+     * Hidden distributions are included.
+     * <p>
+     * Trashed distributions are not included.
+     *
+     * @since 20.0.0
+     */
+    List<DistributionSnapshot> getPersistentSnapshots(CoreSession session, String key, boolean includeAliases);
+
+    /**
      * Returns available distributions, for user display.
      * <p>
      * Hidden distributions are not included.
@@ -132,7 +143,8 @@ public interface SnapshotManager {
      * Imports given snapshot as a nuxeo tree.
      * <p>
      * Corresponding distribution will be hidden until
-     * #{@link #validateImportedSnapshot(CoreSession, String, Map, List)} is called (or until distribution is unhidden).
+     * #{@link #validateImportedSnapshot(CoreSession, String, Map, List)} is called (or until distribution is
+     * unhidden).
      */
     DocumentModel importTmpSnapshot(CoreSession session, InputStream is)
             throws IOException, DocumentValidationException;

@@ -337,10 +337,6 @@ public class Distribution extends ModuleRoot {
         }).collect(Collectors.toList());
     }
 
-    public Map<String, DistributionSnapshot> getPersistedDistributions() {
-        return getSnapshotManager().getPersistentSnapshots(ctx.getCoreSession());
-    }
-
     public DistributionSnapshot getCurrentDistribution() {
         return (DistributionSnapshot) ctx.getProperty(DIST);
     }
