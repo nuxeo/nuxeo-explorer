@@ -20,7 +20,6 @@ package org.nuxeo.functionaltests.explorer.nomode;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nuxeo.apidoc.security.SecurityHelper;
 import org.nuxeo.functionaltests.RestHelper;
@@ -88,13 +87,6 @@ public class ITExplorerApidocManagerTest extends ITExplorerAdminTest {
         doLogout();
         doLogin();
         checkLivePartialDistribImport(distribName, distribId);
-    }
-
-    @Override
-    @Ignore("Overkill")
-    @Test
-    public void testLivePartialRefDistribExport() {
-        // NOOP
     }
 
     @Override
