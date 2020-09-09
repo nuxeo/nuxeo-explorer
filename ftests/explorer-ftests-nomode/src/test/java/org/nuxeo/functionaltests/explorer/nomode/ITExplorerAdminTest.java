@@ -18,6 +18,8 @@
  */
 package org.nuxeo.functionaltests.explorer.nomode;
 
+import static org.junit.Assume.assumeTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -186,6 +188,7 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
 
     @Test
     public void testLivePartialRefDistribExport() {
+        assumeTrue(isAdminTest());
         checkLivePartialDistribExport("my-partial-ref-server", true, true);
     }
 
@@ -316,6 +319,7 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
 
     @Test
     public void testDuplicateDistributionKey() {
+        assumeTrue(isAdminTest());
         open(DistribAdminPage.URL);
         String distribName = "testDupe";
         String version = asPage(DistribAdminPage.class).saveCurrentLiveDistrib(distribName, true, false);
