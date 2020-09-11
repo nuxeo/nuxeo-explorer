@@ -107,7 +107,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         }
         if (isRef) {
             assertEquals(List.of("org.nuxeo.apidoc.search.ArtifactSearcher",
-                    "org.nuxeo.apidoc.snapshot.SnapshotManager",
+                    "org.nuxeo.apidoc.snapshot.SnapshotListener", "org.nuxeo.apidoc.snapshot.SnapshotManager",
                     "org.nuxeo.automation.scripting.api.AutomationScriptingService",
                     "org.nuxeo.ecm.automation.AutomationAdmin", "org.nuxeo.ecm.automation.AutomationService",
                     "org.nuxeo.ecm.automation.context.ContextService",
@@ -121,8 +121,8 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                     "org.nuxeo.ecm.core.work.api.WorkManager",
                     "org.nuxeo.runtime.services.config.ConfigurationService"), snapshot.getServiceIds());
         } else {
-            assertEquals(
-                    List.of("org.nuxeo.apidoc.search.ArtifactSearcher", "org.nuxeo.apidoc.snapshot.SnapshotManager"),
+            assertEquals(List.of("org.nuxeo.apidoc.search.ArtifactSearcher",
+                    "org.nuxeo.apidoc.snapshot.SnapshotListener", "org.nuxeo.apidoc.snapshot.SnapshotManager"),
                     snapshot.getServiceIds());
         }
         if (isRef) {

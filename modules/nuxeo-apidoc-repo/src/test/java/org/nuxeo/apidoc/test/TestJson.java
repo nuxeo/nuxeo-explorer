@@ -338,7 +338,7 @@ public class TestJson extends AbstractApidocTest {
 
         // check services
         assertNotNull(smcomp.getServices());
-        assertEquals(2, smcomp.getServices().size());
+        assertEquals(3, smcomp.getServices().size());
         ServiceInfo service = smcomp.getServices().get(0);
         assertEquals(ServiceInfo.TYPE_NAME, service.getArtifactType());
         assertEquals("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent", service.getComponentId());
@@ -351,7 +351,9 @@ public class TestJson extends AbstractApidocTest {
         // check json back reference
         assertNotNull(service.getComponent());
         // check second service id
-        assertEquals("org.nuxeo.apidoc.search.ArtifactSearcher", smcomp.getServices().get(1).getId());
+        assertEquals("org.nuxeo.apidoc.snapshot.SnapshotListener", smcomp.getServices().get(1).getId());
+        // check third service id
+        assertEquals("org.nuxeo.apidoc.search.ArtifactSearcher", smcomp.getServices().get(2).getId());
 
         // check extension points
         assertNotNull(smcomp.getExtensionPoints());
