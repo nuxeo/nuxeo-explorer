@@ -19,5 +19,6 @@
   <xs:element name="targetComponentName" type="xs:string"/>
   <xs:element name="extensionPoint" type="xs:string"/>
   <xs:element name="documentation" type="nxcontribution:longString"/>
+  <xs:element name="registrationOrder" type="xs:integer" />
 
 </xs:schema>

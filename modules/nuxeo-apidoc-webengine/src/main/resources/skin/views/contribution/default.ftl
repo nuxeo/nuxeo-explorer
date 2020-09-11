@@ -35,6 +35,22 @@
     <a class="tag components">${epCompName}</a>
   </#if>
 
+  <#if nxItem.registrationOrder??>
+    <h2 class="toc">Registration Order</h2>
+    <div id="registrationOrder" class="registrationOrder">
+      ${nxItem.registrationOrder?string.computer}
+    </div>
+    <small id="registrationOrderHelp">
+      The registration order represents the order in which this contribution was registered on its target extention
+      point.
+      This will impact the override/merge behaviour when it is implemented on the target service, and is useful for
+      proper customization of existing contributions.
+      <br />
+      You can influence this order by adding "require" tags in the containing component declaration, to make sure
+      it is resolved after another component (see "Resolution Order" on components).
+    </small>
+  </#if>
+
   <h2 class="toc">Contributed Items</h2>
   <#if ep>
     <form method="POST" action="${Root.path}/${distId}/viewContribution/${nxItem.id}/override" target="_blank">

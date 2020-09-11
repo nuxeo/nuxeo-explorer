@@ -469,6 +469,7 @@ public class TestJson extends AbstractApidocTest {
                 ext.getHierarchyPath());
         assertEquals(new ComponentName("service:org.nuxeo.ecm.core.schema.TypeService"), ext.getTargetComponentName());
         assertEquals(version, ext.getVersion());
+        assertEquals(Long.valueOf(2), ext.getRegistrationOrder());
         // check json back reference
         assertNotNull(ext.getComponent());
 

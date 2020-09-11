@@ -70,6 +70,7 @@ public class ExtensionInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
         doc.setPropertyValue(PROP_DOC, xi.getDocumentation());
         doc.setPropertyValue(PROP_EXTENSION_POINT, xi.getExtensionPoint());
         doc.setPropertyValue(PROP_TARGET_COMPONENT_NAME, xi.getTargetComponentName().getName());
+        doc.setPropertyValue(PROP_TARGET_REGISTRATION_ORDER, xi.getRegistrationOrder());
 
         Blob xmlBlob = Blobs.createBlob(xi.getXml(), "text/xml", null, "contrib.xml"); // !!!!!
         doc.setPropertyValue(NuxeoArtifact.CONTENT_PROPERTY_PATH, (Serializable) xmlBlob);
@@ -161,6 +162,16 @@ public class ExtensionInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
             return parentComponent;
         }
         return null;
+    }
+
+    @Override
+    public Long getRegistrationOrder() {
+        return safeGet(PROP_TARGET_REGISTRATION_ORDER);
+    }
+
+    @Override
+    public void setRegistrationOrder(Long order) {
+        throw new UnsupportedOperationException();
     }
 
 }

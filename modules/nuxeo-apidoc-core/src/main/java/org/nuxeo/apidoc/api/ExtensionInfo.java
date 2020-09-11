@@ -22,6 +22,7 @@ package org.nuxeo.apidoc.api;
 import java.util.List;
 
 import org.nuxeo.apidoc.documentation.ContributionItem;
+import org.nuxeo.runtime.model.ComponentManager;
 import org.nuxeo.runtime.model.ComponentName;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -37,6 +38,8 @@ public interface ExtensionInfo extends NuxeoArtifact {
     String PROP_EXTENSION_POINT = "nxcontribution:extensionPoint";
 
     String PROP_TARGET_COMPONENT_NAME = "nxcontribution:targetComponentName";
+
+    String PROP_TARGET_REGISTRATION_ORDER = "nxcontribution:registrationOrder";
 
     /**
      * Returns a key combining the target component name and the extension point name.
@@ -55,6 +58,20 @@ public interface ExtensionInfo extends NuxeoArtifact {
 
     @JsonBackReference("extension")
     ComponentInfo getComponent();
+
+    /**
+     * Returns the registration order on target extension point, as indicated by {@link ComponentManager}.
+     *
+     * @since 20.0.0
+     */
+    Long getRegistrationOrder();
+
+    /**
+     * Sets the registration order on target extension point, as indicated by {@link ComponentManager}.
+     *
+     * @since 20.0.0
+     */
+    void setRegistrationOrder(Long order);
 
     /**
      * Returns the locally computed unique id for a contribution.

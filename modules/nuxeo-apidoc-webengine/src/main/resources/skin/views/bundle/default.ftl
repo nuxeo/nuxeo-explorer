@@ -58,22 +58,25 @@
       <div id="resolutionOrder" class="resolutionOrder">
         ${nxItem.minResolutionOrder?string.computer}
       </div>
-      <small id="resolutionOrderHelp">
-        The resolution order represents the order in which this bundle's component has been resolved by the Nuxeo Runtime framework.
-        <br />
-        You can influence this order by adding "require" tags in the component declaration, to make sure it is resolved after another component.
-      </small>
     <#else>
       <div id="resolutionOrder" class="resolutionOrder">
         [${nxItem.minResolutionOrder?string.computer}, ${nxItem.maxResolutionOrder?string.computer}]
       </div>
-      <small id="resolutionOrderHelp">
-        The resolution order represents the order in which components have been resolved by the Nuxeo Runtime framework.
-        This range represents the minimal and maximal orders for this bundle's components.
-        <br />
-        You can influence this order by adding "require" tags in the component declaration, to make sure it is resolved after another component.
-      </small>
     </#if>
+      <small id="resolutionOrderHelp">
+        <#if nxItem.minResolutionOrder = nxItem.maxResolutionOrder>
+          The resolution order represents the order in which this bundle's single component has been resolved by the
+          Nuxeo Runtime framework.
+        <#else>
+          The resolution order represents the order in which components have been resolved by the Nuxeo Runtime
+          framework.
+          This range represents the minimal and maximal orders for this bundle's components.
+        </#if>
+        <br />
+        You can influence this order by adding "require" tags in the component declaration, to make sure it is resolved
+        after another component. It will also impact the order in which contributions are registered on their target
+        extension point (see "Registration Order" on contributions).
+      </small>
   </#if>
 
   <h2 class="toc">Components</h2>

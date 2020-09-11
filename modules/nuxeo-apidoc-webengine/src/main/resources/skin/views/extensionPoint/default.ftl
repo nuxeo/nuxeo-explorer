@@ -27,38 +27,17 @@
 
   <#if nxItem.extensions?size gt 0>
     <h2 class="toc">Existing Contributions</h2>
-    <input type="search" id="searchField" placeholder="Text in contributions"/>
-    <input type="button" value="search" onclick="searchContrib($('#searchField').val());"/>
-    <span id="searchMatchResult"></span>
-    <script>
-    function searchContrib(text) {
-
-      $('#highlight-plugin').removeHighlight();
-      $('#highlight-plugin').find('li').show();
-      $('#searchMatchResult').html("");
-
-      if (text.trim().length==0) {
-        $('#searchMatchResult').html("empty search string!");
-        return;
-      }
-
-      var elems = $('div.searchableText:contains("' + text +'")');
-      if (elems.size()>0) {
-        $('div.searchableText').highlight(text);
-        $('#searchMatchResult').html(elems.size() + " matching contribution(s)");
-
-        $('#highlight-plugin').find('li').hide();
-        elems.each(function(i, elt) {
-          console.log(elt);
-          console.log($(elt).parent('li'));
-          $(elt).parent('li').show();
-        });
-      } else {
-        $('#searchMatchResult').html("no match found");
-      }
-    }
-    </script>
-
+    <small>
+      Contributions are presented in the same order as the registration order on this extension point.
+      This order is displayed before the contribution name, in brackets.
+    </small>
+    <p>
+      <form id="searchContributions">
+        <input type="search" id="searchField" placeholder="Text in contributions" autofocus />
+        <input type="submit" value="search" onclick="searchContrib($('#searchField').val()); return false;" />
+        <span id="searchMatchResult"></span>
+      </form>
+    </p>
     <ul id="highlight-plugin" class="block-list">
       <#list nxItem.extensions as contrib>
       <li id="${contrib.id}" class="block-item">
@@ -67,8 +46,9 @@
           <pre><code>${contrib.xml?xml}</code></pre>
         </div>
         <div class="block-title">
+          (<#if contrib.registrationOrder??>${contrib.registrationOrder?string.computer}<#else>?</#if>)
           <a class="components" href="${Root.path}/${distId}/viewComponent/${contrib.component.id}">
-            ${contrib.component.bundle.fileName} ${contrib.component.xmlFileName}
+            ${contrib.component.bundle.fileName}${contrib.component.xmlFileName}
           </a>
           &nbsp;
           <a class="override button" onclick="$.fn.clickButton(this)"
@@ -87,6 +67,37 @@
 
   <@tocTrigger />
 
+</@block>
+
+<@block name="footer_scripts">
+  <script>
+  function searchContrib(text) {
+
+    $('#highlight-plugin').removeHighlight();
+    $('#highlight-plugin').find('li').show();
+    $('#searchMatchResult').html("");
+
+    if (text.trim().length==0) {
+      $('#searchMatchResult').html("empty search string!");
+      return;
+    }
+
+    var elems = $('div.searchableText:contains("' + text +'")');
+    if (elems.size()>0) {
+      $('div.searchableText').highlight(text);
+      $('#searchMatchResult').html(elems.size() + " matching contribution(s)");
+
+      $('#highlight-plugin').find('li').hide();
+      elems.each(function(i, elt) {
+        console.log(elt);
+        console.log($(elt).parent('li'));
+        $(elt).parent('li').show();
+      });
+    } else {
+      $('#searchMatchResult').html("no match found");
+    }
+  }
+  </script>
 </@block>
 
 </@extends>

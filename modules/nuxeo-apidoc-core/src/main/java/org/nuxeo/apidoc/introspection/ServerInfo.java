@@ -513,6 +513,8 @@ public class ServerInfo {
                     xtinfo.setTargetComponentName(xt.getTargetComponent());
                     xtinfo.setDocumentation(xt.getDocumentation());
                     xtinfo.setXml(SecureXMLHelper.secure(xt.toXML()));
+                    // set additional order from snapshot listener
+                    xtinfo.setRegistrationOrder(snapshotListener.getExtensionRegistrationOrder(xtinfo.getId()));
 
                     contribRegistry.add(xtinfo);
 
