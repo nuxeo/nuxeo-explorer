@@ -24,7 +24,6 @@ import static org.junit.Assert.assertFalse;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.nuxeo.functionaltests.Required;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -42,9 +41,14 @@ public class ComponentArtifactPage extends ArtifactPage {
     @FindBy(xpath = "//div[@class='implementation']//a[@class='javadoc']")
     public WebElement javadocLink;
 
-    @Required
-    @FindBy(xpath = "//div[@id='resolutionOrder']")
+    @FindBy(css = ".resolutionOrder")
     public WebElement resolutionOrder;
+
+    @FindBy(css = ".startOrder")
+    public WebElement startOrder;
+
+    @FindBy(css = ".declaredStartOrder")
+    public WebElement declaredStartOrder;
 
     @FindBy(xpath = "//div[@id='xmlSource']")
     public WebElement xmlSource;
@@ -55,11 +59,10 @@ public class ComponentArtifactPage extends ArtifactPage {
 
     @Override
     public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
-        String toc = "Documentation\n" + "Resolution Order\n" + "Implementation\n" + "Services\n"
+        String toc = "Documentation\n" + "Resolution Order\n" + "Start Order\n" + "Implementation\n" + "Services\n"
                 + "Extension Points\n" + "Contributions\n" + "XML Source";
         if (legacy) {
-            toc = "Documentation\n" + "Resolution Order\n" + "Implementation\n" + "Services\n" + "Extension Points\n"
-                    + "XML Source";
+            toc = "Documentation\n" + "Implementation\n" + "Services\n" + "Extension Points\n" + "XML Source";
         }
         checkCommon("Component org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
                 "Component org.nuxeo.apidoc.snapshot.SnapshotManagerComponent", "In bundle org.nuxeo.apidoc.repo", toc);
@@ -70,6 +73,8 @@ public class ComponentArtifactPage extends ArtifactPage {
         checkImplementationText("Javadoc: org.nuxeo.apidoc.snapshot.SnapshotManagerComponent");
         checkJavadocLink("/javadoc/org/nuxeo/apidoc/snapshot/SnapshotManagerComponent.html");
         checkResolutionOrder(!legacy);
+        checkStartOrder(!legacy);
+        checkDeclaredStartOrder(null);
         checkXMLSource(true);
     }
 
@@ -83,6 +88,8 @@ public class ComponentArtifactPage extends ArtifactPage {
         checkImplementationText(null);
         checkJavadocLink(null);
         checkResolutionOrder(true);
+        checkStartOrder(false);
+        checkDeclaredStartOrder(null);
         checkXMLSource(true);
     }
 
@@ -101,7 +108,15 @@ public class ComponentArtifactPage extends ArtifactPage {
     }
 
     public void checkResolutionOrder(boolean set) {
-        assertEquals(!set, StringUtils.isBlank(resolutionOrder.getText()));
+        checkSetIfExists(set, resolutionOrder);
+    }
+
+    public void checkStartOrder(boolean set) {
+        checkSetIfExists(set, startOrder);
+    }
+
+    public void checkDeclaredStartOrder(Long value) {
+        checkTextIfExists(value != null ? value.toString() : null, declaredStartOrder);
     }
 
     /** @since 20.0.0 */

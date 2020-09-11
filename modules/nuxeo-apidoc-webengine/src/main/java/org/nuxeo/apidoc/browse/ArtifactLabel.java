@@ -32,6 +32,9 @@ public class ArtifactLabel implements Comparable<ArtifactLabel> {
     /** @since 11.1 */
     protected Long order;
 
+    /** @since 20.0.0 */
+    protected Long additionalOrder;
+
     public ArtifactLabel(String id, String label, String simpleId) {
         this.id = id;
         this.label = label;
@@ -60,6 +63,14 @@ public class ArtifactLabel implements Comparable<ArtifactLabel> {
 
     public void setOrder(Long order) {
         this.order = order;
+    }
+
+    public Long getAdditionalOrder() {
+        return additionalOrder;
+    }
+
+    public void setAdditionalOrder(Long additionalOrder) {
+        this.additionalOrder = additionalOrder;
     }
 
     @Override

@@ -30,15 +30,40 @@
     </ul>
   </#if>
 
-  <h2 class="toc">Resolution Order</h2>
-  <div id="resolutionOrder">
-    ${nxItem.resolutionOrder}
-  </div>
-  <small id="resolutionOrderHelp">
-    The resolution order represents the order in which this component has been resolved by the Nuxeo Runtime framework.
-    <br />
-    You can influence this order by adding "require" tags in your component declaration, to make sure it is resolved after another component.
-  </small>
+  <#if nxItem.resolutionOrder??>
+    <h2 class="toc">Resolution Order</h2>
+    <div id="resolutionOrder" class="resolutionOrder">
+      ${nxItem.resolutionOrder?string.computer}
+    </div>
+    <small id="resolutionOrderHelp">
+      The resolution order represents the order in which this component has been resolved by the Nuxeo Runtime
+      framework.
+      <br />
+      You can influence this order by adding "require" tags in your component declaration, to make sure it is resolved
+      after another component.
+    </small>
+  </#if>
+
+  <#if !nxItem.isXmlPureComponent() && nxItem.startOrder??>
+    <h2 class="toc">Start Order</h2>
+    <div id="startOrder">
+      <span class="startOrder">${nxItem.startOrder?string.computer}</span>
+      <#if nxItem.declaredStartOrder??>
+        (Declared Start Order: <span class="declaredStartOrder">${nxItem.declaredStartOrder?string.computer}</span>
+      </#if>
+    </div>
+    <small id="startOrderHelp">
+      The start order represents the order in which this component has been started by the Nuxeo Runtime framework.
+      <br />
+      This number is interesting to tweak if your Java component interacts with other components, and needs to be
+      started before or after another one.
+      <br />
+      It can be changed by implementing the method "Component#getApplicationStartedOrder()" on your Java component:
+      components are sorted according to this reference value, in increasing order.
+      <br />
+      The default value is 1000, and the repository initialization uses number 100. Negative values can also be used.
+    </small>
+  </#if>
 
   <#if !nxItem.xmlPureComponent>
     <h2 class="toc">Implementation</h2>

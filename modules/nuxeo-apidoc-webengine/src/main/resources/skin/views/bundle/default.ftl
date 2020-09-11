@@ -55,8 +55,8 @@
   <#if nxItem.minResolutionOrder??>
     <h2 class="toc">Resolution Order</h2>
     <#if nxItem.minResolutionOrder = nxItem.maxResolutionOrder>
-      <div id="resolutionOrder">
-        ${nxItem.minResolutionOrder}
+      <div id="resolutionOrder" class="resolutionOrder">
+        ${nxItem.minResolutionOrder?string.computer}
       </div>
       <small id="resolutionOrderHelp">
         The resolution order represents the order in which this bundle's component has been resolved by the Nuxeo Runtime framework.
@@ -64,8 +64,8 @@
         You can influence this order by adding "require" tags in the component declaration, to make sure it is resolved after another component.
       </small>
     <#else>
-      <div id="resolutionOrder">
-        [${nxItem.minResolutionOrder}, ${nxItem.maxResolutionOrder}]
+      <div id="resolutionOrder" class="resolutionOrder">
+        [${nxItem.minResolutionOrder?string.computer}, ${nxItem.maxResolutionOrder?string.computer}]
       </div>
       <small id="resolutionOrderHelp">
         The resolution order represents the order in which components have been resolved by the Nuxeo Runtime framework.

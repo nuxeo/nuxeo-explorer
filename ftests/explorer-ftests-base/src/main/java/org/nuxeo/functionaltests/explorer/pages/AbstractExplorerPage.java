@@ -19,6 +19,7 @@
 package org.nuxeo.functionaltests.explorer.pages;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
@@ -26,6 +27,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.functionaltests.AbstractTest;
 import org.nuxeo.functionaltests.Locator;
 import org.nuxeo.functionaltests.Required;
@@ -110,6 +112,14 @@ public abstract class AbstractExplorerPage extends AbstractPage {
             assertEquals(expected, element.getText());
         } catch (NoSuchElementException e) {
             assertNull(expected);
+        }
+    }
+
+    protected void checkSetIfExists(boolean set, WebElement element) {
+        try {
+            assertEquals(!set, StringUtils.isBlank(element.getText()));
+        } catch (NoSuchElementException e) {
+            assertFalse(set);
         }
     }
 

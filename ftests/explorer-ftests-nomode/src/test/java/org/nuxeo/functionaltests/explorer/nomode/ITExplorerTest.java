@@ -337,6 +337,8 @@ public class ITExplorerTest extends AbstractExplorerTest {
         apage.checkImplementationText(null);
         apage.checkJavadocLink(null);
         apage.checkResolutionOrder(true);
+        apage.checkStartOrder(false);
+        apage.checkDeclaredStartOrder(null);
         apage.checkXMLSource(false);
     }
 

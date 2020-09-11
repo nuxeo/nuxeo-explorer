@@ -19,19 +19,16 @@
 package org.nuxeo.functionaltests.explorer.pages.artifacts;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.functionaltests.Required;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
 import org.nuxeo.functionaltests.explorer.testing.AbstractExplorerTest;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -157,11 +154,7 @@ public class BundleArtifactPage extends ArtifactPage {
 
     /** @since 20.0.0 */
     public void checkResolutionOrder(boolean set) {
-        try {
-            assertEquals(!set, StringUtils.isBlank(resolutionOrder.getText()));
-        } catch (NoSuchElementException e) {
-            assertFalse(set);
-        }
+        checkSetIfExists(set, resolutionOrder);
     }
 
     public void checkPackages(String expected) {

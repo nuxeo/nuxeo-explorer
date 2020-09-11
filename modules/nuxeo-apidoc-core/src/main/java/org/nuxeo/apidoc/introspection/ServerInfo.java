@@ -61,6 +61,7 @@ import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.documentation.SecureXMLHelper;
+import org.nuxeo.apidoc.snapshot.SnapshotListener;
 import org.nuxeo.common.Environment;
 import org.nuxeo.common.utils.JarUtils;
 import org.nuxeo.common.utils.StringUtils;
@@ -441,6 +442,7 @@ public class ServerInfo {
         Map<String, ExtensionPointInfoImpl> xpRegistry = new HashMap<>();
         List<ExtensionInfoImpl> contribRegistry = new ArrayList<>();
 
+        SnapshotListener snapshotListener = Framework.getService(SnapshotListener.class);
         // This list is ordered by resolution order (including component requirements): we can deduce bundle range
         // ordering from it, depending on contained registrations. It does not account for unresolved registrations that
         // should be handled separately.
@@ -469,6 +471,9 @@ public class ServerInfo {
 
             ComponentInfoImpl component = new ComponentInfoImpl(binfo, cname.getName());
             component.setResolutionOrder(resolutionOrder++);
+            // set additional orders from snapshot listener
+            component.setDeclaredStartOrder(snapshotListener.getDeclaredStartOrder(cname.getName()));
+            component.setStartOrder(snapshotListener.getStartOrder(cname.getName()));
 
             if (ri.getExtensionPoints() != null) {
                 for (ExtensionPoint xp : ri.getExtensionPoints()) {
