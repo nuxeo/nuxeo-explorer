@@ -120,21 +120,10 @@ public abstract class AbstractGraphExporter extends AbstractExporter {
                     hit(nodeHits, compNode.getId());
                 }
 
-                var comps = new HashMap<String, Integer>();
                 for (ExtensionInfo contribution : component.getExtensions()) {
                     if (filter != null && !filter.accept(contribution)) {
                         continue;
                     }
-                    // handle multiple contributions to the same extension point
-                    String cid = contribution.getId();
-                    if (comps.containsKey(cid)) {
-                        Integer num = comps.get(cid);
-                        comps.put(cid, num + 1);
-                        cid += "-" + String.valueOf(num + 1);
-                    } else {
-                        comps.put(cid, Integer.valueOf(0));
-                    }
-
                     Node<?> contNode = createContributionNode(contribution, category);
                     graph.addNode(contNode);
                     // add link to corresponding component
