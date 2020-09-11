@@ -170,7 +170,11 @@ public class ApiBrowser extends DefaultObject {
                                                          .map(ArtifactLabel::createLabelFromComponent)
                                                          .sorted()
                                                          .collect(Collectors.toList());
-        javaLabels.stream().forEach(l -> l.setOrder(snapshot.getComponent(l.getId()).getResolutionOrder()));
+        javaLabels.stream().forEach(l -> {
+            ComponentInfo c = snapshot.getComponent(l.getId());
+            l.setOrder(c.getResolutionOrder());
+            l.setAdditionalOrder(c.getDeclaredStartOrder());
+        });
 
         List<String> xmlComponentIds = snapshot.getXmlComponentIds();
         List<ArtifactLabel> xmlLabels = xmlComponentIds.stream()

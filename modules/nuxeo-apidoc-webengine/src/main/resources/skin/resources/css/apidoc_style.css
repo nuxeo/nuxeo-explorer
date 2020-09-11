@@ -1291,3 +1291,9 @@ table.gsc-table-result td {
   border-radius: 35px;
   padding: 0.1em 0.4em;
 }
+
+.resolutionOrder,
+.startOrder,
+.declaredStartOrder {
+  font-weight: bold;
+}

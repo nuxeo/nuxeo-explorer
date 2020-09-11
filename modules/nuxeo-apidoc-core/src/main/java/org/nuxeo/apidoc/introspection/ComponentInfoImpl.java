@@ -69,6 +69,12 @@ public class ComponentInfoImpl extends BaseNuxeoArtifact implements ComponentInf
     /** @since 20.0.0 */
     protected Long resolutionOrder;
 
+    /** @since 20.0.0 */
+    protected Long startOrder;
+
+    /** @since 20.0.0 */
+    protected Long declaredStartOrder;
+
     protected URL xmlFileUrl;
 
     protected String xmlFileContent;
@@ -271,6 +277,26 @@ public class ComponentInfoImpl extends BaseNuxeoArtifact implements ComponentInf
             this.operations.clear();
             this.operations.addAll(operations);
         }
+    }
+
+    @Override
+    public Long getStartOrder() {
+        return startOrder;
+    }
+
+    @Override
+    public void setStartOrder(Long order) {
+        this.startOrder = order;
+    }
+
+    @Override
+    public Long getDeclaredStartOrder() {
+        return declaredStartOrder;
+    }
+
+    @Override
+    public void setDeclaredStartOrder(Long order) {
+        this.declaredStartOrder = order;
     }
 
 }

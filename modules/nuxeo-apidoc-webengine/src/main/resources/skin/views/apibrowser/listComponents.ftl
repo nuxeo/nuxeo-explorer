@@ -21,6 +21,9 @@
       <th>
         Resolution Order
       </th>
+      <th>
+        Declared Start Order
+      </th>
     </tr>
   </thead>
   <tbody>
@@ -35,7 +38,14 @@
           </div>
       </td>
       <td>
-        ${component.order}</span>
+        <#if component.order??>
+          ${component.order?string.computer}
+        </#if>
+      </td>
+      <td>
+        <#if component.additionalOrder??>
+          ${component.additionalOrder?string.computer}
+        </#if>
       </td>
     </tr>
     </#list>
@@ -51,8 +61,11 @@
         </div>
       </td>
       <td>
-        ${component.order}</span>
+        <#if component.order??>
+          ${component.order?string.computer}
+        </#if>
       </td>
+      <td></td>
     </tr>
     </#list>
   </tbody>

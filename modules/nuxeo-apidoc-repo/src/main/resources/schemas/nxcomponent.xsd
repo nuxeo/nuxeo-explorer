@@ -24,5 +24,7 @@
   <xs:element name="services" type="nxcomponent:stringList" />
   <xs:element name="requirements" type="nxcomponent:stringList" />
   <xs:element name="resolutionOrder" type="xs:integer" />
+  <xs:element name="startOrder" type="xs:integer" />
+  <xs:element name="declaredStartOrder" type="xs:integer" />
 
 </xs:schema>

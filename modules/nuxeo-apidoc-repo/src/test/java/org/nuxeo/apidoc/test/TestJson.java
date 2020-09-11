@@ -331,6 +331,8 @@ public class TestJson extends AbstractApidocTest {
         checkContentEquals("apidoc_snapshot/processed-snapshot-service-framework.xml", smcomp.getXmlFileContent());
         assertEquals(List.of(), smcomp.getRequirements());
         assertEquals(Long.valueOf(69), smcomp.getResolutionOrder());
+        assertNull(smcomp.getDeclaredStartOrder());
+        assertEquals(Long.valueOf(135), smcomp.getStartOrder());
 
         // check json back reference
         assertNotNull(smcomp.getBundle());
