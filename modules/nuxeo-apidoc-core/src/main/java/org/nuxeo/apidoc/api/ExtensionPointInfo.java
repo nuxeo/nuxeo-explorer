@@ -55,4 +55,13 @@ public interface ExtensionPointInfo extends NuxeoArtifact {
 
     String getLabel();
 
+    /**
+     * Returns the computed unique id for an extension point.
+     *
+     * @since 20.0.0
+     */
+    public static String computeId(String componentId, String point) {
+        return componentId + "--" + point;
+    }
+
 }
