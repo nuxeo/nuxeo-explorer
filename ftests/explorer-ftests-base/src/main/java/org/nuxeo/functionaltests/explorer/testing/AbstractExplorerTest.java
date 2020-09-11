@@ -263,11 +263,12 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         // toggle sort to check the SnapshotManager service
         listing = listing.toggleSort();
         if (includeReferences) {
-            listing.checkListing(11, "TypeProvider", "viewService/org.nuxeo.ecm.core.schema.TypeProvider",
+            listing.checkListing(12, "TypeProvider", "viewService/org.nuxeo.ecm.core.schema.TypeProvider",
                     "org.nuxeo.ecm.core.schema.TypeProvider");
             listing = listing.filterOn("org.nuxeo.apidoc");
         } else {
-            listing.checkListing(2, "SnapshotManager", "/viewService/org.nuxeo.apidoc.snapshot.SnapshotManager",
+            listing.checkListing(legacy ? 2 : 3, "SnapshotManager",
+                    "/viewService/org.nuxeo.apidoc.snapshot.SnapshotManager",
                     "org.nuxeo.apidoc.snapshot.SnapshotManager");
         }
 

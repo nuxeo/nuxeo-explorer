@@ -78,6 +78,7 @@ import org.nuxeo.runtime.RuntimeMessage.Level;
 import org.nuxeo.runtime.RuntimeServiceException;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.model.ComponentContext;
+import org.nuxeo.runtime.model.ComponentManager;
 import org.nuxeo.runtime.model.DefaultComponent;
 
 public class SnapshotManagerComponent extends DefaultComponent implements SnapshotManager {
@@ -111,9 +112,18 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
 
     protected final SnapshotPersister persister = new SnapshotPersister();
 
+    protected SnapshotListener componentListener;
+
     protected final Map<String, Plugin<?>> plugins = new LinkedHashMap<>();
 
     protected final Map<String, Exporter> exporters = new LinkedHashMap<>();
+
+    public SnapshotManagerComponent() {
+        componentListener = new SnapshotListener();
+        ComponentManager compManager = Framework.getRuntime().getComponentManager();
+        compManager.addComponentListener(componentListener);
+        compManager.addListener(componentListener);
+    }
 
     @Override
     public DistributionSnapshot getRuntimeSnapshot() {
@@ -425,6 +435,8 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
             return (T) this;
         } else if (adapter.isAssignableFrom(ArtifactSearcher.class)) {
             return (T) searcher;
+        } else if (adapter.isAssignableFrom(SnapshotListener.class)) {
+            return (T) componentListener;
         }
         return null;
     }
