@@ -23,7 +23,7 @@ package org.nuxeo.apidoc.introspection;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
+import org.nuxeo.apidoc.api.BaseNuxeoLiveArtifact;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
@@ -32,7 +32,7 @@ import org.nuxeo.apidoc.documentation.DocumentationHelper;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-public class ExtensionPointInfoImpl extends BaseNuxeoArtifact implements ExtensionPointInfo {
+public class ExtensionPointInfoImpl extends BaseNuxeoLiveArtifact implements ExtensionPointInfo {
 
     protected ComponentInfo component;
 

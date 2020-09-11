@@ -117,6 +117,8 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         doc.setPropertyValue(PROP_LATEST_FT, distrib.isLatestFT());
         doc.setPropertyValue(PROP_LATEST_LTS, distrib.isLatestLTS());
         doc.setPropertyValue(PROP_VERSION, version);
+        doc.setPropertyValue(PROP_ERRORS, (Serializable) distrib.getErrors());
+        doc.setPropertyValue(PROP_WARNINGS, (Serializable) distrib.getWarnings());
 
         fillContextData(doc);
         return new RepositoryDistributionSnapshot(session.createDocument(doc));

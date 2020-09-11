@@ -31,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -73,9 +74,12 @@ import org.nuxeo.connect.update.PackageException;
 import org.nuxeo.connect.update.PackageUpdateService;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.osgi.BundleImpl;
+import org.nuxeo.runtime.RuntimeMessage;
+import org.nuxeo.runtime.RuntimeMessage.Level;
 import org.nuxeo.runtime.RuntimeService;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.deployment.preprocessor.DeploymentPreprocessor;
+import org.nuxeo.runtime.model.ComponentManager;
 import org.nuxeo.runtime.model.ComponentName;
 import org.nuxeo.runtime.model.Extension;
 import org.nuxeo.runtime.model.ExtensionPoint;
@@ -153,6 +157,10 @@ public class ServerInfo {
     protected final Map<String, PackageInfoImpl> packages = new HashMap<>();
 
     protected final List<Class<?>> allSpi = new ArrayList<>();
+
+    protected final List<String> errors = new ArrayList<>();
+
+    protected final List<String> warnings = new ArrayList<>();
 
     public ServerInfo(String name, String version) {
         this.name = name;
@@ -255,6 +263,11 @@ public class ServerInfo {
         BundleInfoImpl binfo = new BundleInfoImpl(bundle.getSymbolicName());
         binfo.setFileName(runtime.getBundleFile(bundle).getName());
         binfo.setLocation(bundle.getLocation());
+        List<RuntimeMessage> messages = runtime.getMessageHandler()
+                                               .getRuntimeMessages(
+                                                       m -> m.getSourceId().equals(bundle.getSymbolicName()));
+        binfo.setErrors(getMessages(messages, Level.ERROR));
+        binfo.setWarnings(getMessages(messages, Level.WARNING));
 
         if (!(bundle instanceof BundleImpl)) {
             return binfo;
@@ -344,6 +357,7 @@ public class ServerInfo {
                                                .collect(Collectors.toList());
             binfo.setPackages(packages);
         }
+
         return binfo;
     }
 
@@ -418,8 +432,13 @@ public class ServerInfo {
     public static ServerInfo build(String name, String version) {
         RuntimeService runtime = Framework.getRuntime();
         ServerInfo server = new ServerInfo(name, version);
+
         BundleInfoImpl configVirtualBundle = new BundleInfoImpl(BundleInfo.RUNTIME_CONFIG_BUNDLE);
         server.addBundle(configVirtualBundle);
+
+        // push all runtime errors and warnings
+        server.setErrors(runtime.getMessageHandler().getMessages(Level.ERROR));
+        server.setWarnings(runtime.getMessageHandler().getMessages(Level.WARNING));
 
         // get package link with bundles
         Map<String, List<LocalPackage>> pkgByBundle = new HashMap<>();
@@ -441,94 +460,26 @@ public class ServerInfo {
         Map<String, ExtensionPointInfoImpl> xpRegistry = new HashMap<>();
         List<ExtensionInfoImpl> contribRegistry = new ArrayList<>();
 
+        ComponentManager componentManager = runtime.getComponentManager();
         SnapshotListener snapshotListener = Framework.getService(SnapshotListener.class);
         // This list is ordered by resolution order (including component requirements): we can deduce bundle range
         // ordering from it, depending on contained registrations. It does not account for unresolved registrations that
         // should be handled separately.
-        Collection<ComponentName> registrations = runtime.getComponentManager().getResolvedRegistrations();
-        long resolutionOrder = 0;
-        for (ComponentName cname : registrations) {
-            RegistrationInfo ri = runtime.getComponentManager().getRegistrationInfo(cname);
-            Bundle bundle = ri.getContext().getBundle();
-            BundleInfoImpl binfo = null;
-
-            if (bundle == null) {
-                binfo = configVirtualBundle;
-            } else {
-                String symName = bundle.getSymbolicName();
-                if (symName == null) {
-                    log.error("No symbolic name found for bundle " + cname);
-                    continue;
-                }
-                // avoids duplicating/overriding the bundles
-                if (server.bundles.containsKey(bundle.getSymbolicName())) {
-                    binfo = (BundleInfoImpl) server.bundles.get(bundle.getSymbolicName());
-                } else {
-                    binfo = computeBundleInfo(bundle, pkgByBundle);
-                }
-            }
-
-            ComponentInfoImpl component = new ComponentInfoImpl(binfo, cname.getName());
-            component.setResolutionOrder(resolutionOrder++);
-            // set additional orders from snapshot listener
-            component.setDeclaredStartOrder(snapshotListener.getDeclaredStartOrder(cname.getName()));
-            component.setStartOrder(snapshotListener.getStartOrder(cname.getName()));
-
-            if (ri.getExtensionPoints() != null) {
-                for (ExtensionPoint xp : ri.getExtensionPoints()) {
-                    ExtensionPointInfoImpl xpinfo = new ExtensionPointInfoImpl(component, xp.getName());
-                    Class<?>[] ctypes = xp.getContributions();
-                    String[] descriptors = new String[ctypes.length];
-
-                    for (int i = 0; i < ctypes.length; i++) {
-                        descriptors[i] = ctypes[i].getCanonicalName();
-                        List<Class<?>> spi = getSPI(ctypes[i]);
-                        xpinfo.addSpi(spi);
-                        server.allSpi.addAll(spi);
-                    }
-                    xpinfo.setDescriptors(descriptors);
-                    xpinfo.setDocumentation(xp.getDocumentation());
-                    xpRegistry.put(xpinfo.getId(), xpinfo);
-                    component.addExtensionPoint(xpinfo);
-                }
-            }
-
-            component.setXmlFileUrl(ri.getXmlFileUrl());
-
-            if (ri.getProvidedServiceNames() != null) {
-                for (String serviceName : ri.getProvidedServiceNames()) {
-                    component.addService(serviceName, isServiceOverriden(ri, serviceName));
-                }
-            }
-
-            if (ri.getExtensions() != null) {
-                Map<String, AtomicLong> comps = new HashMap<>();
-                for (Extension xt : ri.getExtensions()) {
-                    // handle multiple contributions to the same extension point
-                    String id = xt.getExtensionPoint();
-                    comps.computeIfAbsent(id, k -> new AtomicLong(-1)).incrementAndGet();
-                    ExtensionInfoImpl xtinfo = new ExtensionInfoImpl(component, xt.getExtensionPoint(),
-                            comps.get(id).get());
-                    xtinfo.setTargetComponentName(xt.getTargetComponent());
-                    xtinfo.setDocumentation(xt.getDocumentation());
-                    xtinfo.setXml(SecureXMLHelper.secure(xt.toXML()));
-                    // set additional order from snapshot listener
-                    xtinfo.setRegistrationOrder(snapshotListener.getExtensionRegistrationOrder(xtinfo.getId()));
-
-                    contribRegistry.add(xtinfo);
-
-                    component.addExtension(xtinfo);
-                }
-            }
-
-            component.setComponentClass(ri.getImplementation());
-            component.setDocumentation(ri.getDocumentation());
-
-            ri.getRequiredComponents().forEach(req -> component.addRequirement(req.getName()));
-
-            binfo.addComponent(component);
-            server.addBundle(binfo);
+        Collection<ComponentName> resolved = componentManager.getResolvedRegistrations();
+        Long resolutionOrder = 0L;
+        for (ComponentName r : resolved) {
+            RegistrationInfo ri = componentManager.getRegistrationInfo(r);
+            processComponent(ri, resolutionOrder, server, componentManager, snapshotListener, pkgByBundle, xpRegistry,
+                    contribRegistry, configVirtualBundle);
+            resolutionOrder++;
         }
+        // then re-process all components to include potentially non-resolved ones
+        componentManager.getRegistrations().forEach(ri -> {
+            if (!resolved.contains(ri.getName())) {
+                processComponent(ri, null, server, componentManager, snapshotListener, pkgByBundle, xpRegistry,
+                        contribRegistry, configVirtualBundle);
+            }
+        });
 
         // post process all bundles to:
         // - register bundles that contain no components
@@ -546,10 +497,12 @@ public class ServerInfo {
             List<ComponentInfo> components = bi.getComponents();
             components.stream()
                       .mapToLong(ComponentInfo::getResolutionOrder)
+                      .filter(Objects::nonNull)
                       .min()
                       .ifPresent(min -> bi.setMinResolutionOrder(min));
             components.stream()
                       .mapToLong(ComponentInfo::getResolutionOrder)
+                      .filter(Objects::nonNull)
                       .max()
                       .ifPresent(max -> bi.setMaxResolutionOrder(max));
             if (!bi.getPackages().isEmpty()) {
@@ -567,6 +520,100 @@ public class ServerInfo {
         }
 
         return server;
+    }
+
+    protected static void processComponent(RegistrationInfo ri, Long resolutionOrder, ServerInfo server,
+            ComponentManager componentManager, SnapshotListener snapshotListener,
+            Map<String, List<LocalPackage>> pkgByBundle, Map<String, ExtensionPointInfoImpl> xpRegistry,
+            List<ExtensionInfoImpl> contribRegistry, BundleInfoImpl configVirtualBundle) {
+        Bundle bundle = ri.getContext().getBundle();
+        ComponentName cname = ri.getName();
+        BundleInfoImpl binfo = null;
+
+        if (bundle == null) {
+            binfo = configVirtualBundle;
+        } else {
+            String symName = bundle.getSymbolicName();
+            if (symName == null) {
+                log.error("No symbolic name found for bundle " + cname);
+                return;
+            }
+            // avoids duplicating/overriding the bundles
+            if (server.bundles.containsKey(bundle.getSymbolicName())) {
+                binfo = (BundleInfoImpl) server.bundles.get(bundle.getSymbolicName());
+            } else {
+                binfo = computeBundleInfo(bundle, pkgByBundle);
+            }
+        }
+
+        ComponentInfoImpl component = new ComponentInfoImpl(binfo, cname.getName());
+        if (resolutionOrder != null) {
+            component.setResolutionOrder(resolutionOrder);
+        }
+        // set additional orders from snapshot listener
+        component.setDeclaredStartOrder(snapshotListener.getDeclaredStartOrder(cname.getName()));
+        component.setStartOrder(snapshotListener.getStartOrder(cname.getName()));
+        // set errors/warnings
+        List<RuntimeMessage> compMessages = Framework.getRuntime()
+                                                     .getMessageHandler()
+                                                     .getRuntimeMessages(m -> m.getSourceId().equals(cname.getName()));
+        binfo.setErrors(getMessages(compMessages, Level.ERROR));
+        binfo.setWarnings(getMessages(compMessages, Level.WARNING));
+
+        if (ri.getExtensionPoints() != null) {
+            for (ExtensionPoint xp : ri.getExtensionPoints()) {
+                ExtensionPointInfoImpl xpinfo = new ExtensionPointInfoImpl(component, xp.getName());
+                Class<?>[] ctypes = xp.getContributions();
+                String[] descriptors = new String[ctypes.length];
+
+                for (int i = 0; i < ctypes.length; i++) {
+                    descriptors[i] = ctypes[i].getCanonicalName();
+                    List<Class<?>> spi = getSPI(ctypes[i]);
+                    xpinfo.addSpi(spi);
+                    server.allSpi.addAll(spi);
+                }
+                xpinfo.setDescriptors(descriptors);
+                xpinfo.setDocumentation(xp.getDocumentation());
+                xpRegistry.put(xpinfo.getId(), xpinfo);
+                component.addExtensionPoint(xpinfo);
+            }
+        }
+
+        component.setXmlFileUrl(ri.getXmlFileUrl());
+
+        if (ri.getProvidedServiceNames() != null) {
+            for (String serviceName : ri.getProvidedServiceNames()) {
+                component.addService(serviceName, isServiceOverriden(ri, serviceName));
+            }
+        }
+
+        if (ri.getExtensions() != null) {
+            Map<String, AtomicLong> comps = new HashMap<>();
+            for (Extension xt : ri.getExtensions()) {
+                // handle multiple contributions to the same extension point
+                String id = xt.getExtensionPoint();
+                comps.computeIfAbsent(id, k -> new AtomicLong(-1)).incrementAndGet();
+                ExtensionInfoImpl xtinfo = new ExtensionInfoImpl(component, xt.getExtensionPoint(),
+                        comps.get(id).get());
+                xtinfo.setTargetComponentName(xt.getTargetComponent());
+                xtinfo.setDocumentation(xt.getDocumentation());
+                xtinfo.setXml(SecureXMLHelper.secure(xt.toXML()));
+                // set additional order from snapshot listener
+                xtinfo.setRegistrationOrder(snapshotListener.getExtensionRegistrationOrder(xtinfo.getId()));
+
+                contribRegistry.add(xtinfo);
+
+                component.addExtension(xtinfo);
+            }
+        }
+
+        component.setComponentClass(ri.getImplementation());
+        component.setDocumentation(ri.getDocumentation());
+
+        ri.getRequiredComponents().forEach(req -> component.addRequirement(req.getName()));
+
+        binfo.addComponent(component);
+        server.addBundle(binfo);
     }
 
     protected static boolean isServiceOverriden(RegistrationInfo ri, String serviceName) {
@@ -587,6 +634,47 @@ public class ServerInfo {
 
     public List<Class<?>> getAllSpi() {
         return allSpi;
+    }
+
+    protected static List<String> getMessages(List<RuntimeMessage> messages, Level level) {
+        return messages.stream()
+                       .filter(m -> level.equals(m.getLevel()))
+                       .map(RuntimeMessage::getMessage)
+                       .collect(Collectors.toList());
+    }
+
+    /**
+     * @since 22.0.0
+     */
+    public List<String> getErrors() {
+        return Collections.unmodifiableList(errors);
+    }
+
+    /**
+     * @since 22.0.0
+     */
+    public void setErrors(List<String> messages) {
+        errors.clear();
+        if (messages != null) {
+            errors.addAll(messages);
+        }
+    }
+
+    /**
+     * @since 22.0.0
+     */
+    public List<String> getWarnings() {
+        return Collections.unmodifiableList(warnings);
+    }
+
+    /**
+     * @since 22.0.0
+     */
+    public void setWarnings(List<String> messages) {
+        warnings.clear();
+        if (messages != null) {
+            warnings.addAll(messages);
+        }
     }
 
 }

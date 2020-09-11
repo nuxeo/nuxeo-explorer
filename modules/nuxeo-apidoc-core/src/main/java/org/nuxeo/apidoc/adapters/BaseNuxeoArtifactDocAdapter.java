@@ -222,4 +222,24 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
         return res.stream().map(e -> e.get(idProp)).map(String.class::cast).collect(Collectors.toList());
     }
 
+    @Override
+    public List<String> getErrors() {
+        return safeGet(PROP_ERRORS);
+    }
+
+    @Override
+    public void setErrors(List<String> errors) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<String> getWarnings() {
+        return safeGet(PROP_WARNINGS);
+    }
+
+    @Override
+    public void setWarnings(List<String> warnings) {
+        throw new UnsupportedOperationException();
+    }
+
 }

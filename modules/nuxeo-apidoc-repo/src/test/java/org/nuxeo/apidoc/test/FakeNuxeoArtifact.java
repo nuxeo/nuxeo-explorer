@@ -18,13 +18,14 @@
  */
 package org.nuxeo.apidoc.test;
 
+import org.nuxeo.apidoc.api.BaseNuxeoLiveArtifact;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class FakeNuxeoArtifact implements NuxeoArtifact {
+public class FakeNuxeoArtifact extends BaseNuxeoLiveArtifact implements NuxeoArtifact {
 
     public final String id;
 

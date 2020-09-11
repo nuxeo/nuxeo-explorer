@@ -11,6 +11,7 @@
       <schema name="dublincore" />
       <schema name="file" />
       <schema name="nxdistribution" />
+      <schema name="apidoccommon" />
 
       <facet name="Commentable" />
       <facet name="Versionable" />
@@ -32,6 +33,7 @@
       <schema name="file" />
       <schema name="files" />
       <schema name="nxbundlegroup" />
+      <schema name="apidoccommon" />
 
       <facet name="Commentable" />
       <facet name="Versionable" />
@@ -43,12 +45,12 @@
       <prefetch></prefetch>
     </doctype>
 
-
     <doctype name="NXBundle" extends="OrderedFolder">
       <schema name="common" />
       <schema name="dublincore" />
       <schema name="file" />
       <schema name="nxbundle" />
+      <schema name="apidoccommon" />
 
       <facet name="Commentable" />
       <facet name="Versionable" />
@@ -67,6 +69,7 @@
       <schema name="dublincore" />
       <schema name="file" />
       <schema name="nxcomponent" />
+      <schema name="apidoccommon" />
 
       <facet name="Commentable" />
       <facet name="Versionable" />
@@ -109,6 +112,7 @@
       <schema name="dublincore" />
       <schema name="file" />
       <schema name="nxservice" />
+      <schema name="apidoccommon" />
 
       <facet name="Commentable" />
       <facet name="Versionable" />
@@ -119,6 +123,7 @@
       <schema name="common" />
       <schema name="dublincore" />
       <schema name="file" />
+      <schema name="apidoccommon" />
 
       <schema name="nxoperation" />
       <facet name="Commentable" />
@@ -129,6 +134,7 @@
     <doctype name="NXPackage" extends="Document">
       <schema name="common" />
       <schema name="dublincore" />
+      <schema name="apidoccommon" />
 
       <schema name="nxpackage" />
       <facet name="Commentable" />

@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
+import org.nuxeo.apidoc.api.BaseNuxeoLiveArtifact;
 import org.nuxeo.apidoc.api.BundleGroup;
 import org.nuxeo.apidoc.api.BundleGroupExtractor;
 import org.nuxeo.apidoc.api.BundleGroupFlatTree;
@@ -74,7 +74,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSnapshot {
+public class RuntimeSnapshot extends BaseNuxeoLiveArtifact implements DistributionSnapshot {
 
     private static final Logger log = LogManager.getLogger(RuntimeSnapshot.class);
 

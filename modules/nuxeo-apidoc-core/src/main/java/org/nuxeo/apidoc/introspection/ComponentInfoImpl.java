@@ -36,7 +36,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
+import org.nuxeo.apidoc.api.BaseNuxeoLiveArtifact;
 import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
@@ -49,7 +49,7 @@ import org.nuxeo.common.utils.Path;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-public class ComponentInfoImpl extends BaseNuxeoArtifact implements ComponentInfo {
+public class ComponentInfoImpl extends BaseNuxeoLiveArtifact implements ComponentInfo {
 
     private static final Logger log = LogManager.getLogger(ComponentInfoImpl.class);
 

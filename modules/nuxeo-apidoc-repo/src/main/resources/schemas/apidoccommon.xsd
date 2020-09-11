@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  targetNamespace="http://nuxeo.org/schemas/nxbundle"
-  xmlns:nxbundle="http://nuxeo.org/schemas/nxbundle">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://nuxeo.org/schemas/nxapidoc"
+  xmlns:nxapidoc="http://nuxeo.org/schemas/nxapidoc">
 
   <xs:simpleType name="longString">
     <xs:restriction base="xs:string">
@@ -9,5 +8,15 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:element name="attributes" type="nxbundle:longString" />
+  <xs:element name="attributes" type="nxapidoc:longString" />
+
+  <xs:complexType name="stringList">
+    <xs:sequence>
+      <xs:element name="item" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="errors" type="nxapidoc:stringList" />
+  <xs:element name="warnings" type="nxapidoc:stringList" />
+
 </xs:schema>

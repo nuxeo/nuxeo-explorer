@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
+import org.nuxeo.apidoc.api.BaseNuxeoLiveArtifact;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.ecm.automation.OperationDocumentation;
@@ -36,7 +36,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * DTO for an {@link OperationInfo}, used for the runtime implementation.
  */
-public class OperationInfoImpl extends BaseNuxeoArtifact implements OperationInfo {
+public class OperationInfoImpl extends BaseNuxeoLiveArtifact implements OperationInfo {
 
     protected final String name;
 

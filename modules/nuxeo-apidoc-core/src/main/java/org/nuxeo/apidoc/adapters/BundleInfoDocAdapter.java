@@ -83,6 +83,8 @@ public class BundleInfoDocAdapter extends BaseNuxeoArtifactDocAdapter implements
         }
         doc.setPropertyValue(PROP_README, (Serializable) bundleInfo.getReadme());
         doc.setPropertyValue(PROP_PARENT_README, (Serializable) bundleInfo.getParentReadme());
+        doc.setPropertyValue(PROP_ERRORS, (Serializable) bundleInfo.getErrors());
+        doc.setPropertyValue(PROP_WARNINGS, (Serializable) bundleInfo.getWarnings());
 
         fillContextData(doc);
         if (exist) {

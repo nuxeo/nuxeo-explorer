@@ -25,14 +25,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
+import org.nuxeo.apidoc.api.BaseNuxeoLiveArtifact;
 import org.nuxeo.apidoc.api.BundleGroup;
 import org.nuxeo.apidoc.api.NuxeoArtifactComparator;
 import org.nuxeo.ecm.core.api.Blob;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-public class BundleGroupImpl extends BaseNuxeoArtifact implements BundleGroup {
+public class BundleGroupImpl extends BaseNuxeoLiveArtifact implements BundleGroup {
 
     protected final String key;
 

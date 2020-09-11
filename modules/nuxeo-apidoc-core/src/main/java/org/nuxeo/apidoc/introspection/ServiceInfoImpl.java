@@ -18,7 +18,7 @@
  */
 package org.nuxeo.apidoc.introspection;
 
-import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
+import org.nuxeo.apidoc.api.BaseNuxeoLiveArtifact;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.api.VirtualNodesConsts;
@@ -26,7 +26,7 @@ import org.nuxeo.apidoc.api.VirtualNodesConsts;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ServiceInfoImpl extends BaseNuxeoArtifact implements ServiceInfo {
+public class ServiceInfoImpl extends BaseNuxeoLiveArtifact implements ServiceInfo {
 
     @JsonProperty("id")
     protected final String serviceClassName;

@@ -19,6 +19,8 @@
  */
 package org.nuxeo.apidoc.api;
 
+import java.util.List;
+
 import org.nuxeo.apidoc.adapters.BundleGroupDocAdapter;
 import org.nuxeo.apidoc.adapters.BundleInfoDocAdapter;
 import org.nuxeo.apidoc.adapters.ComponentInfoDocAdapter;
@@ -38,6 +40,7 @@ import org.nuxeo.apidoc.introspection.ServiceInfoImpl;
 import org.nuxeo.ecm.platform.dublincore.constants.DublinCoreConstants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -62,15 +65,17 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public interface NuxeoArtifact {
 
-    /**
-     * @since 11.1
-     */
+    /** @since 11.1 */
     public static String TITLE_PROPERTY_PATH = DublinCoreConstants.DUBLINCORE_TITLE_PROPERTY;
 
-    /**
-     * @since 11.1
-     */
+    /** @since 11.1 */
     public static String CONTENT_PROPERTY_PATH = "file:content";
+
+    /** @since 22.0.0 */
+    public static String PROP_ERRORS = "apidoccommon:errors";
+
+    /** @since 22.0.0 */
+    public static String PROP_WARNINGS = "apidoccommon:warnings";
 
     String getId();
 
@@ -80,5 +85,45 @@ public interface NuxeoArtifact {
     String getArtifactType();
 
     String getHierarchyPath();
+
+    // errors management
+
+    /**
+     * Returns the errors on this artifact.
+     * <p>
+     * Should be consistent with {@link #getNumErrors()}
+     *
+     * @since 22.0.0
+     */
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
+    List<String> getErrors();
+
+    /**
+     * Sets errors on this artifact.
+     * <p>
+     * Should impact {@link #getNumErrors()}
+     *
+     * @since 22.0.0
+     */
+    void setErrors(List<String> errors);
+
+    /**
+     * Returns the warnings on this artifact.
+     * <p>
+     * Should be consistent with {@link #getNumWarnings()}
+     *
+     * @since 22.0.0
+     */
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
+    List<String> getWarnings();
+
+    /**
+     * Sets warnings on this artifact.
+     * <p>
+     * Should impact {@link #getNumWarnings()}
+     *
+     * @since 22.0.0
+     */
+    void setWarnings(List<String> warnings);
 
 }

@@ -171,6 +171,8 @@ public class TestSnapshotPersist extends AbstractApidocTest {
 
     protected void checkDistributionSnapshot(DistributionSnapshot snapshot, boolean partial, boolean ref)
             throws IOException {
+        assertTrue(snapshot.getErrors().isEmpty());
+        assertTrue(snapshot.getWarnings().isEmpty());
         checkBundleGroups(snapshot, partial, ref);
         checkBundles(snapshot, partial, ref);
         checkComponents(snapshot, partial, ref);

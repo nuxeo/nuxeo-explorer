@@ -24,7 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
+import org.nuxeo.apidoc.api.BaseNuxeoLiveArtifact;
 import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 
@@ -34,7 +34,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * @since 11.1
  */
-public class PackageInfoImpl extends BaseNuxeoArtifact implements PackageInfo {
+public class PackageInfoImpl extends BaseNuxeoLiveArtifact implements PackageInfo {
 
     protected final Map<String, BundleInfo> bundles = new LinkedHashMap<>();
 

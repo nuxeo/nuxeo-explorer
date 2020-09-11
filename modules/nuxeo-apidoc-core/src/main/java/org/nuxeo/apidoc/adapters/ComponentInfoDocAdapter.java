@@ -76,6 +76,8 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
         doc.setPropertyValue(PROP_RESOLUTION_ORDER, componentInfo.getResolutionOrder());
         doc.setPropertyValue(PROP_DECLARED_START_ORDER, componentInfo.getDeclaredStartOrder());
         doc.setPropertyValue(PROP_START_ORDER, componentInfo.getStartOrder());
+        doc.setPropertyValue(PROP_ERRORS, (Serializable) componentInfo.getErrors());
+        doc.setPropertyValue(PROP_WARNINGS, (Serializable) componentInfo.getWarnings());
 
         Blob xmlBlob = Blobs.createBlob(componentInfo.getXmlFileContent(), "text/xml", null,
                 componentInfo.getXmlFileName());
