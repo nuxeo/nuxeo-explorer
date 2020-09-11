@@ -331,12 +331,12 @@ public class ITExplorerTest extends AbstractExplorerTest {
         goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.runtime.started");
         ComponentArtifactPage apage = asPage(ComponentArtifactPage.class);
         apage.checkCommon("Component org.nuxeo.runtime.started", "Component org.nuxeo.runtime.started",
-                "In bundle org.nuxeo.runtime", "Registration Order");
+                "In bundle org.nuxeo.runtime", "Resolution Order");
         apage.checkRequirements(null);
         apage.checkDocumentationText(null);
         apage.checkImplementationText(null);
         apage.checkJavadocLink(null);
-        apage.checkRegistrationOrder(true);
+        apage.checkResolutionOrder(true);
         apage.checkXMLSource(false);
     }
 

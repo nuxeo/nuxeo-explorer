@@ -61,10 +61,10 @@ public class BundleInfoImpl extends BaseNuxeoArtifact implements BundleInfo {
     protected Blob parentReadme;
 
     /** @since 20.0.0 */
-    protected Long minRegistrationOrder;
+    protected Long minResolutionOrder;
 
     /** @since 20.0.0 */
-    protected Long maxRegistrationOrder;
+    protected Long maxResolutionOrder;
 
     /** @since 11.1 */
     protected final List<String> packages = new ArrayList<>();
@@ -222,23 +222,23 @@ public class BundleInfoImpl extends BaseNuxeoArtifact implements BundleInfo {
     }
 
     @Override
-    public Long getMinRegistrationOrder() {
-        return minRegistrationOrder;
+    public Long getMinResolutionOrder() {
+        return minResolutionOrder;
     }
 
     @Override
-    public void setMinRegistrationOrder(Long minRegistrationOrder) {
-        this.minRegistrationOrder = minRegistrationOrder;
+    public void setMinResolutionOrder(Long order) {
+        this.minResolutionOrder = order;
     }
 
     @Override
-    public Long getMaxRegistrationOrder() {
-        return maxRegistrationOrder;
+    public Long getMaxResolutionOrder() {
+        return maxResolutionOrder;
     }
 
     @Override
-    public void setMaxRegistrationOrder(Long maxRegistrationOrder) {
-        this.maxRegistrationOrder = maxRegistrationOrder;
+    public void setMaxResolutionOrder(Long order) {
+        this.maxResolutionOrder = order;
     }
 
 }

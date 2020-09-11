@@ -233,8 +233,8 @@ public class TestJson extends AbstractApidocTest {
         assertNotNull(parentReadme);
         checkContentEquals("apidoc_snapshot/apidoc_readme.txt", parentReadme.getString());
         assertEquals(List.of(), bundle.getRequirements());
-        assertEquals(Long.valueOf(5), bundle.getMinRegistrationOrder());
-        assertEquals(Long.valueOf(188), bundle.getMaxRegistrationOrder());
+        assertEquals(Long.valueOf(66), bundle.getMinResolutionOrder());
+        assertEquals(Long.valueOf(72), bundle.getMaxResolutionOrder());
         assertEquals(version, bundle.getVersion());
         // check readme on core bundle instead
         BundleInfo coreBundle = snapshot.getBundle("org.nuxeo.apidoc.core");
@@ -330,7 +330,7 @@ public class TestJson extends AbstractApidocTest {
         assertFalse(smcomp.isXmlPureComponent());
         checkContentEquals("apidoc_snapshot/processed-snapshot-service-framework.xml", smcomp.getXmlFileContent());
         assertEquals(List.of(), smcomp.getRequirements());
-        assertEquals(Long.valueOf(58), smcomp.getRegistrationOrder());
+        assertEquals(Long.valueOf(69), smcomp.getResolutionOrder());
 
         // check json back reference
         assertNotNull(smcomp.getBundle());

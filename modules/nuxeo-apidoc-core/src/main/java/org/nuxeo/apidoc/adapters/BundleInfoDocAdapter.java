@@ -55,8 +55,8 @@ public class BundleInfoDocAdapter extends BaseNuxeoArtifactDocAdapter implements
         doc.setPropertyValue(PROP_BUNDLE_ID, bundleInfo.getId());
         doc.setPropertyValue(PROP_JAR_NAME, bundleInfo.getFileName());
         doc.setPropertyValue(PROP_REQUIREMENTS, (Serializable) bundleInfo.getRequirements());
-        doc.setPropertyValue(PROP_MIN_REGISTRATION_ORDER, bundleInfo.getMinRegistrationOrder());
-        doc.setPropertyValue(PROP_MAX_REGISTRATION_ORDER, bundleInfo.getMaxRegistrationOrder());
+        doc.setPropertyValue(PROP_MIN_REGISTRATION_ORDER, bundleInfo.getMinResolutionOrder());
+        doc.setPropertyValue(PROP_MAX_REGISTRATION_ORDER, bundleInfo.getMaxResolutionOrder());
         doc.setPropertyValue(PROP_PACKAGES, (Serializable) bundleInfo.getPackages());
         String manifest = bundleInfo.getManifest();
         if (manifest != null) {
@@ -177,22 +177,22 @@ public class BundleInfoDocAdapter extends BaseNuxeoArtifactDocAdapter implements
     }
 
     @Override
-    public Long getMinRegistrationOrder() {
+    public Long getMinResolutionOrder() {
         return safeGet(PROP_MIN_REGISTRATION_ORDER);
     }
 
     @Override
-    public void setMinRegistrationOrder(Long order) {
+    public void setMinResolutionOrder(Long order) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Long getMaxRegistrationOrder() {
+    public Long getMaxResolutionOrder() {
         return safeGet(PROP_MAX_REGISTRATION_ORDER);
     }
 
     @Override
-    public void setMaxRegistrationOrder(Long order) {
+    public void setMaxResolutionOrder(Long order) {
         throw new UnsupportedOperationException();
     }
 
