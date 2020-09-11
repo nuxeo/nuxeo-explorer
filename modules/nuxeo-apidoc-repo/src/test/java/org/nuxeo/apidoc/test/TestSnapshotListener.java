@@ -83,6 +83,9 @@ public class TestSnapshotListener extends AbstractApidocTest {
         // self registration
         check(1, listener.getExtensionPointTotal(ExtensionPointInfo.computeId(SNAPSHOT_COMP, "exporters")));
         check(0, listener.getExtensionRegistrationOrder(ExtensionInfo.computeId(SNAPSHOT_COMP, "exporters")));
+        // pending registration (non-regression test for NXP-29641)
+        check(1, listener.getExtensionRegistrationOrder(
+                ExtensionInfo.computeId("org.nuxeo.apidoc.adapterContrib", "adapters")));
     }
 
 }

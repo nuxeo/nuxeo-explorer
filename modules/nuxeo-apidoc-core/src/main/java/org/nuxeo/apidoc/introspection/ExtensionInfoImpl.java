@@ -57,6 +57,9 @@ public class ExtensionInfoImpl extends BaseNuxeoArtifact implements ExtensionInf
 
     protected Object[] contribution;
 
+    /** @since 20.0.0 */
+    protected Long registrationOrder;
+
     public ExtensionInfoImpl(ComponentInfo component, String extensionPoint, long index) {
         this.id = ExtensionInfo.computeId(component.getName(), extensionPoint, index);
         this.component = component;
@@ -150,6 +153,16 @@ public class ExtensionInfoImpl extends BaseNuxeoArtifact implements ExtensionInf
     @Override
     public ComponentInfo getComponent() {
         return component;
+    }
+
+    @Override
+    public Long getRegistrationOrder() {
+        return registrationOrder;
+    }
+
+    @Override
+    public void setRegistrationOrder(Long order) {
+        this.registrationOrder = order;
     }
 
 }

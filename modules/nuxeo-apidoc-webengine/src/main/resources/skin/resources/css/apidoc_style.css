@@ -1292,6 +1292,7 @@ table.gsc-table-result td {
   padding: 0.1em 0.4em;
 }
 
+.registrationOrder,
 .resolutionOrder,
 .startOrder,
 .declaredStartOrder {

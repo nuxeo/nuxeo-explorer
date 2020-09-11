@@ -87,7 +87,6 @@ public class SnapshotListener implements ComponentListener, Listener {
             // should not happen for events below
             return;
         }
-
         String name = component.getName().getName();
         if (isEvent(event, COMPONENT_STARTED)) {
             starts.put(name, ++startCounter);
