@@ -114,7 +114,7 @@ public class ExtensionPointInfoImpl extends BaseNuxeoArtifact implements Extensi
 
     @Override
     public String getId() {
-        return getComponentId() + "--" + getName();
+        return ExtensionPointInfo.computeId(getComponentId(), getName());
     }
 
     @Override

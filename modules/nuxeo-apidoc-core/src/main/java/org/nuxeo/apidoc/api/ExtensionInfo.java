@@ -56,4 +56,29 @@ public interface ExtensionInfo extends NuxeoArtifact {
     @JsonBackReference("extension")
     ComponentInfo getComponent();
 
+    /**
+     * Returns the locally computed unique id for a contribution.
+     *
+     * @since 20.0.0
+     */
+    public static String computeId(String componentName, String extensionPoint) {
+        return computeId(componentName, extensionPoint, -1);
+    }
+
+    /**
+     * Returns the locally computed unique id for a contribution.
+     * <p>
+     * Index accounts for potential multiple contributions to the same extension point (or another component with that
+     * same extension point name...).
+     *
+     * @since 20.0.0
+     */
+    public static String computeId(String componentName, String extensionPoint, long index) {
+        String id = componentName + "--" + extensionPoint;
+        if (index > 0) {
+            id += index;
+        }
+        return id;
+    }
+
 }

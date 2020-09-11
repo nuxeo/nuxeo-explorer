@@ -29,6 +29,7 @@ import org.dom4j.DocumentException;
 import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
+import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.VirtualNodesConsts;
 import org.nuxeo.apidoc.documentation.ContributionItem;
 import org.nuxeo.apidoc.documentation.DocumentationHelper;
@@ -57,11 +58,7 @@ public class ExtensionInfoImpl extends BaseNuxeoArtifact implements ExtensionInf
     protected Object[] contribution;
 
     public ExtensionInfoImpl(ComponentInfo component, String extensionPoint, long index) {
-        String id = component.getId() + "--" + extensionPoint;
-        if (index > 0) {
-            id += index;
-        }
-        this.id = id;
+        this.id = ExtensionInfo.computeId(component.getName(), extensionPoint, index);
         this.component = component;
         this.extensionPoint = extensionPoint;
     }
@@ -74,7 +71,7 @@ public class ExtensionInfoImpl extends BaseNuxeoArtifact implements ExtensionInf
 
     @Override
     public String getExtensionPoint() {
-        return targetComponentName.getName() + "--" + extensionPoint;
+        return ExtensionPointInfo.computeId(targetComponentName.getName(), extensionPoint);
     }
 
     @JsonSetter("extensionPoint")
