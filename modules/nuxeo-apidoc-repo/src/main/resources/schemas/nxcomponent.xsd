@@ -23,6 +23,6 @@
   <!--  services unused as of 20.0.0, kept for import compatibility -->
   <xs:element name="services" type="nxcomponent:stringList" />
   <xs:element name="requirements" type="nxcomponent:stringList" />
-  <xs:element name="registrationOrder" type="xs:integer" />
+  <xs:element name="resolutionOrder" type="xs:integer" />
 
 </xs:schema>

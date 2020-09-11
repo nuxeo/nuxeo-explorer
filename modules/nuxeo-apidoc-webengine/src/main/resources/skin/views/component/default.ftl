@@ -30,14 +30,14 @@
     </ul>
   </#if>
 
-  <h2 class="toc">Registration Order</h2>
-  <div id="registrationOrder">
-    ${nxItem.registrationOrder}
+  <h2 class="toc">Resolution Order</h2>
+  <div id="resolutionOrder">
+    ${nxItem.resolutionOrder}
   </div>
-  <small id="registrationOrderHelp">
-    The registration order represents the order in which this component has been deployed by the Nuxeo Runtime framework.
+  <small id="resolutionOrderHelp">
+    The resolution order represents the order in which this component has been resolved by the Nuxeo Runtime framework.
     <br />
-    You can influence this order by adding "require" tags in your component declaration, to make sure it is deployed after another component.
+    You can influence this order by adding "require" tags in your component declaration, to make sure it is resolved after another component.
   </small>
 
   <#if !nxItem.xmlPureComponent>

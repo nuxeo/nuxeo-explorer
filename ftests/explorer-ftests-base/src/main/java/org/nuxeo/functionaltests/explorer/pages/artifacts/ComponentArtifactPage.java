@@ -43,8 +43,8 @@ public class ComponentArtifactPage extends ArtifactPage {
     public WebElement javadocLink;
 
     @Required
-    @FindBy(xpath = "//div[@id='registrationOrder']")
-    public WebElement registrationOrder;
+    @FindBy(xpath = "//div[@id='resolutionOrder']")
+    public WebElement resolutionOrder;
 
     @FindBy(xpath = "//div[@id='xmlSource']")
     public WebElement xmlSource;
@@ -55,10 +55,10 @@ public class ComponentArtifactPage extends ArtifactPage {
 
     @Override
     public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
-        String toc = "Documentation\n" + "Registration Order\n" + "Implementation\n" + "Services\n"
+        String toc = "Documentation\n" + "Resolution Order\n" + "Implementation\n" + "Services\n"
                 + "Extension Points\n" + "Contributions\n" + "XML Source";
         if (legacy) {
-            toc = "Documentation\n" + "Registration Order\n" + "Implementation\n" + "Services\n" + "Extension Points\n"
+            toc = "Documentation\n" + "Resolution Order\n" + "Implementation\n" + "Services\n" + "Extension Points\n"
                     + "XML Source";
         }
         checkCommon("Component org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
@@ -69,7 +69,7 @@ public class ComponentArtifactPage extends ArtifactPage {
                         + "It can also persist this introspection as Nuxeo documents, to handle import and export of external distributions.");
         checkImplementationText("Javadoc: org.nuxeo.apidoc.snapshot.SnapshotManagerComponent");
         checkJavadocLink("/javadoc/org/nuxeo/apidoc/snapshot/SnapshotManagerComponent.html");
-        checkRegistrationOrder(!legacy);
+        checkResolutionOrder(!legacy);
         checkXMLSource(true);
     }
 
@@ -77,12 +77,12 @@ public class ComponentArtifactPage extends ArtifactPage {
     public void checkAlternative() {
         checkCommon("Component org.nuxeo.ecm.automation.server.marshallers",
                 "Component org.nuxeo.ecm.automation.server.marshallers", "In bundle org.nuxeo.ecm.automation.io",
-                "Requirements\n" + "Registration Order\n" + "Contributions\n" + "XML Source");
+                "Requirements\n" + "Resolution Order\n" + "Contributions\n" + "XML Source");
         checkRequirements(List.of("org.nuxeo.ecm.platform.contentview.json.marshallers"));
         checkDocumentationText(null);
         checkImplementationText(null);
         checkJavadocLink(null);
-        checkRegistrationOrder(true);
+        checkResolutionOrder(true);
         checkXMLSource(true);
     }
 
@@ -100,8 +100,8 @@ public class ComponentArtifactPage extends ArtifactPage {
         checkLink(expected, javadocLink);
     }
 
-    public void checkRegistrationOrder(boolean set) {
-        assertEquals(!set, StringUtils.isBlank(registrationOrder.getText()));
+    public void checkResolutionOrder(boolean set) {
+        assertEquals(!set, StringUtils.isBlank(resolutionOrder.getText()));
     }
 
     /** @since 20.0.0 */

@@ -75,6 +75,7 @@ import org.nuxeo.osgi.BundleImpl;
 import org.nuxeo.runtime.RuntimeService;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.deployment.preprocessor.DeploymentPreprocessor;
+import org.nuxeo.runtime.model.ComponentName;
 import org.nuxeo.runtime.model.Extension;
 import org.nuxeo.runtime.model.ExtensionPoint;
 import org.nuxeo.runtime.model.RegistrationInfo;
@@ -440,12 +441,13 @@ public class ServerInfo {
         Map<String, ExtensionPointInfoImpl> xpRegistry = new HashMap<>();
         List<ExtensionInfoImpl> contribRegistry = new ArrayList<>();
 
-        Collection<RegistrationInfo> registrations = runtime.getComponentManager().getRegistrations();
-        // this list is actually ordered by deployment order (including component requirements) - we can deduce bundle
-        // range ordering from it depending on contained registrations
-        long registrationOrder = 0;
-        for (RegistrationInfo ri : registrations) {
-            String cname = ri.getName().getName();
+        // This list is ordered by resolution order (including component requirements): we can deduce bundle range
+        // ordering from it, depending on contained registrations. It does not account for unresolved registrations that
+        // should be handled separately.
+        Collection<ComponentName> registrations = runtime.getComponentManager().getResolvedRegistrations();
+        long resolutionOrder = 0;
+        for (ComponentName cname : registrations) {
+            RegistrationInfo ri = runtime.getComponentManager().getRegistrationInfo(cname);
             Bundle bundle = ri.getContext().getBundle();
             BundleInfoImpl binfo = null;
 
@@ -465,8 +467,8 @@ public class ServerInfo {
                 }
             }
 
-            ComponentInfoImpl component = new ComponentInfoImpl(binfo, cname);
-            component.setRegistrationOrder(registrationOrder++);
+            ComponentInfoImpl component = new ComponentInfoImpl(binfo, cname.getName());
+            component.setResolutionOrder(resolutionOrder++);
 
             if (ri.getExtensionPoints() != null) {
                 for (ExtensionPoint xp : ri.getExtensionPoints()) {
@@ -524,7 +526,7 @@ public class ServerInfo {
 
         // post process all bundles to:
         // - register bundles that contain no components
-        // - set the bundle min and max registration orders as held by the runtime context
+        // - set the bundle min and max resolution orders as held by the runtime context
         // - try to match the bundle to a package
         Bundle[] allbundles = runtime.getContext().getBundle().getBundleContext().getBundles();
         for (Bundle bundle : allbundles) {
@@ -537,13 +539,13 @@ public class ServerInfo {
             }
             List<ComponentInfo> components = bi.getComponents();
             components.stream()
-                      .mapToLong(ComponentInfo::getRegistrationOrder)
+                      .mapToLong(ComponentInfo::getResolutionOrder)
                       .min()
-                      .ifPresent(min -> bi.setMinRegistrationOrder(min));
+                      .ifPresent(min -> bi.setMinResolutionOrder(min));
             components.stream()
-                      .mapToLong(ComponentInfo::getRegistrationOrder)
+                      .mapToLong(ComponentInfo::getResolutionOrder)
                       .max()
-                      .ifPresent(max -> bi.setMaxRegistrationOrder(max));
+                      .ifPresent(max -> bi.setMaxResolutionOrder(max));
             if (!bi.getPackages().isEmpty()) {
                 bi.getPackages().forEach(pkgName -> server.packages.get(pkgName).addBundle(bi.getId()));
             }

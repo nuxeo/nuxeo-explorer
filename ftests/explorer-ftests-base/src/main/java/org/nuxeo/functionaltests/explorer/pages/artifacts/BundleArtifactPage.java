@@ -42,8 +42,8 @@ import org.openqa.selenium.support.FindBy;
 public class BundleArtifactPage extends ArtifactPage {
 
     /** @since 20.0.0 */
-    @FindBy(xpath = "//div[@id='registrationOrder']")
-    public WebElement registrationOrder;
+    @FindBy(xpath = "//div[@id='resolutionOrder']")
+    public WebElement resolutionOrder;
 
     @Required
     @FindBy(xpath = "//table[@class='listTable']")
@@ -95,7 +95,7 @@ public class BundleArtifactPage extends ArtifactPage {
         checkGroupId("org.nuxeo.ecm.platform");
         checkArtifactId("nuxeo-apidoc-core");
         checkRequirements(null);
-        checkRegistrationOrder(false);
+        checkResolutionOrder(false);
         checkPackages(legacy ? null : "platform-explorer");
 
         WebElement jsonExport = exports.findElement(By.linkText("Json Export"));
@@ -117,14 +117,14 @@ public class BundleArtifactPage extends ArtifactPage {
         checkGroupId("org.nuxeo.ecm.platform");
         checkArtifactId("nuxeo-apidoc-webengine");
         checkRequirements(List.of("org.nuxeo.ecm.webengine.core", "org.nuxeo.apidoc.core"));
-        checkRegistrationOrder(false);
+        checkResolutionOrder(false);
         checkPackages("platform-explorer");
     }
 
     public void checkAlternative2() {
         checkCommon("Bundle org.nuxeo.apidoc.repo", "Bundle org.nuxeo.apidoc.repo", "In bundle group org.nuxeo.apidoc",
                 "Documentation\n" //
-                        + "Registration Order\n" //
+                        + "Resolution Order\n" //
                         + "Components\n" //
                         + "Packages\n" //
                         + "Maven Artifact\n" //
@@ -133,7 +133,7 @@ public class BundleArtifactPage extends ArtifactPage {
         checkGroupId("org.nuxeo.ecm.platform");
         checkArtifactId("nuxeo-apidoc-repo");
         checkRequirements(null);
-        checkRegistrationOrder(true);
+        checkResolutionOrder(true);
         checkPackages("platform-explorer");
     }
 
@@ -156,9 +156,9 @@ public class BundleArtifactPage extends ArtifactPage {
     }
 
     /** @since 20.0.0 */
-    public void checkRegistrationOrder(boolean set) {
+    public void checkResolutionOrder(boolean set) {
         try {
-            assertEquals(!set, StringUtils.isBlank(registrationOrder.getText()));
+            assertEquals(!set, StringUtils.isBlank(resolutionOrder.getText()));
         } catch (NoSuchElementException e) {
             assertFalse(set);
         }

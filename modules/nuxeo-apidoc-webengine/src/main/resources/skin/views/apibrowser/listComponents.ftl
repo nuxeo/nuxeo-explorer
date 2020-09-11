@@ -19,7 +19,7 @@
         <@tableFilterArea "component"/>
       </th>
       <th>
-        Registration Order
+        Resolution Order
       </th>
     </tr>
   </thead>

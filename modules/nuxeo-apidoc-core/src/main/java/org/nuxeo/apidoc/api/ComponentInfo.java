@@ -44,8 +44,8 @@ public interface ComponentInfo extends NuxeoArtifact {
     /** @since 11.1 */
     String PROP_REQUIREMENTS = "nxcomponent:requirements";
 
-    /** @since 11.1 */
-    String PROP_REGISTRATION_ORDER = "nxcomponent:registrationOrder";
+    /** @since 20.0.0 */
+    String PROP_RESOLUTION_ORDER = "nxcomponent:resolutionOrder";
 
     String PROP_IS_XML = "nxcomponent:isXML";
 
@@ -90,18 +90,18 @@ public interface ComponentInfo extends NuxeoArtifact {
     List<String> getRequirements();
 
     /**
-     * Returns the registration order as indicated by {@link ComponentManager}.
+     * Returns the resolution order as indicated by {@link ComponentManager}.
      *
-     * @since 11.1
+     * @since 20.0.0
      */
-    Long getRegistrationOrder();
+    Long getResolutionOrder();
 
     /**
-     * Sets the registration order as indicated by {@link ComponentManager}.
+     * Sets the resolution order as indicated by {@link ComponentManager}.
      *
-     * @since 11.1
+     * @since 20.0.0
      */
-    void setRegistrationOrder(Long order);
+    void setResolutionOrder(Long order);
 
     /** @since 20.0.0 */
     @JsonIgnore
