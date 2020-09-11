@@ -22,10 +22,8 @@ package org.nuxeo.apidoc.repository;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -239,13 +237,9 @@ public class SnapshotPersister {
             }
         }
 
-        Map<String, AtomicInteger> comps = new HashMap<>();
         for (ExtensionInfo ei : ci.getExtensions()) {
             if (filter == null || filter.accept(ei)) {
-                // handle multiple contributions to the same extension point
-                String id = ei.getId();
-                int index = comps.computeIfAbsent(id, k -> new AtomicInteger(-1)).incrementAndGet();
-                ExtensionInfoDocAdapter.create(ei, index, session, componentDocPath);
+                ExtensionInfoDocAdapter.create(ei, 0, session, componentDocPath);
             }
         }
     }
