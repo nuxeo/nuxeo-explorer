@@ -110,6 +110,7 @@ NXComponent: org.nuxeo.ecm.core.trash.service.migrator *** /grp:org.nuxeo.ecm.co
 NXComponent: org.nuxeo.ecm.core.uidgen.UIDGeneratorService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.uidgen.UIDGeneratorService
 NXComponent: org.nuxeo.ecm.core.uidseq.keyvaluestore *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.uidseq.keyvaluestore
 NXComponent: org.nuxeo.ecm.core.versioning.VersioningDocumentAdapter *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.versioning.VersioningDocumentAdapter
+NXComponent: org.nuxeo.ecm.core.versioning.config *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.versioning.config
 NXComponent: org.nuxeo.ecm.core.versioning.default-policies *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.versioning.default-policies *** [org.nuxeo.ecm.platform.el.service]
 NXComponent: org.nuxeo.ecm.core.work.config *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.event/org.nuxeo.ecm.core.work.config
 NXComponent: org.nuxeo.ecm.core.work.service *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.event/org.nuxeo.ecm.core.work.service

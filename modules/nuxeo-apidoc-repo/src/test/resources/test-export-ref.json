@@ -727,7 +727,7 @@
           ],
           "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.schemaContrib",
           "name": "org.nuxeo.apidoc.schemaContrib",
-          "registrationOrder": 162,
+          "registrationOrder": 163,
           "requirements": [
             "org.nuxeo.ecm.core.CoreExtensions"
           ],
@@ -791,7 +791,7 @@
           ],
           "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.test.works",
           "name": "org.nuxeo.apidoc.test.works",
-          "registrationOrder": 187,
+          "registrationOrder": 188,
           "requirements": [],
           "services": [],
           "version": "mockTestVersion",
@@ -806,7 +806,7 @@
       "id": "org.nuxeo.apidoc.repo",
       "location": "mockTestLocation",
       "manifest": "mockTestManifest",
-      "maxRegistrationOrder": 187,
+      "maxRegistrationOrder": 188,
       "minRegistrationOrder": 5,
       "packages": [
         "platform-explorer-mock"
@@ -877,7 +877,7 @@
           "extensions": [],
           "hierarchyPath": "/grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.lifecycle.LifeCycleService",
           "name": "org.nuxeo.ecm.core.lifecycle.LifeCycleService",
-          "registrationOrder": 166,
+          "registrationOrder": 167,
           "requirements": [],
           "services": [
             {
@@ -901,7 +901,7 @@
       "id": "org.nuxeo.ecm.core",
       "location": "mockTestLocation",
       "manifest": "mockTestManifest",
-      "maxRegistrationOrder": 199,
+      "maxRegistrationOrder": 200,
       "minRegistrationOrder": 2,
       "packages": [],
       "requirements": [
@@ -965,7 +965,7 @@
           "extensions": [],
           "hierarchyPath": "/grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.api/org.nuxeo.ecm.core.api.DocumentAdapterService",
           "name": "org.nuxeo.ecm.core.api.DocumentAdapterService",
-          "registrationOrder": 163,
+          "registrationOrder": 164,
           "requirements": [],
           "services": [
             {
@@ -989,7 +989,7 @@
       "id": "org.nuxeo.ecm.core.api",
       "location": "mockTestLocation",
       "manifest": "mockTestManifest",
-      "maxRegistrationOrder": 188,
+      "maxRegistrationOrder": 189,
       "minRegistrationOrder": 0,
       "packages": [],
       "requirements": [],
@@ -1131,7 +1131,7 @@
       "id": "org.nuxeo.ecm.core.event",
       "location": "mockTestLocation",
       "manifest": "mockTestManifest",
-      "maxRegistrationOrder": 202,
+      "maxRegistrationOrder": 203,
       "minRegistrationOrder": 79,
       "packages": [],
       "requirements": [],
@@ -1251,7 +1251,7 @@
       "id": "org.nuxeo.ecm.core.schema",
       "location": "mockTestLocation",
       "manifest": "mockTestManifest",
-      "maxRegistrationOrder": 189,
+      "maxRegistrationOrder": 190,
       "minRegistrationOrder": 17,
       "packages": [],
       "requirements": [],
@@ -1311,7 +1311,7 @@
           "extensions": [],
           "hierarchyPath": "/grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.ConfigurationService",
           "name": "org.nuxeo.runtime.ConfigurationService",
-          "registrationOrder": 160,
+          "registrationOrder": 161,
           "requirements": [],
           "services": [
             {
