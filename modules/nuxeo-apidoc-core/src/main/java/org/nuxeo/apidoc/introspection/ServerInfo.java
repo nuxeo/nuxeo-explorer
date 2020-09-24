@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.PropertyResourceBundle;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
@@ -496,11 +496,11 @@ public class ServerInfo {
             }
 
             if (ri.getExtensions() != null) {
-                Map<String, AtomicInteger> comps = new HashMap<>();
+                Map<String, AtomicLong> comps = new HashMap<>();
                 for (Extension xt : ri.getExtensions()) {
                     // handle multiple contributions to the same extension point
                     String id = xt.getExtensionPoint();
-                    comps.computeIfAbsent(id, k -> new AtomicInteger(-1)).incrementAndGet();
+                    comps.computeIfAbsent(id, k -> new AtomicLong(-1)).incrementAndGet();
                     ExtensionInfoImpl xtinfo = new ExtensionInfoImpl(component, xt.getExtensionPoint(),
                             comps.get(id).get());
                     xtinfo.setTargetComponentName(xt.getTargetComponent());
