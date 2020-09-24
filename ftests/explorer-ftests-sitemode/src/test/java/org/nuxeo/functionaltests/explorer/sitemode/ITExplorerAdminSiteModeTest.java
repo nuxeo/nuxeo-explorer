@@ -145,7 +145,7 @@ public class ITExplorerAdminSiteModeTest extends AbstractExplorerSiteModeTest {
         asPage(DistribAdminPage.class).checkPersistedDistribNotPresent(distribId);
         // recreate it deleted sample, as expected by other tests
         doLogout();
-        ITExplorerApidocManagerSideModeTest.initPersistedDistrib();
+        ITExplorerApidocManagerSiteModeTest.initPersistedDistrib();
     }
 
 }
