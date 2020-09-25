@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -73,6 +74,12 @@ public interface SnapshotManager {
 
     public static String PROPERTY_SITE_MODE = "org.nuxeo.apidoc.site.mode";
 
+    static Comparator<DistributionSnapshotDesc> DISTRIBUTION_COMPARATOR = Comparator.comparing(
+            DistributionSnapshotDesc::getVersion, new VersionComparator())
+                                                                                    .reversed()
+                                                                                    .thenComparing(
+                                                                                            DistributionSnapshotDesc::getName);
+
     /**
      * Initializes the web context, as potentially needed by plugins.
      *
@@ -117,7 +124,7 @@ public interface SnapshotManager {
     Map<String, DistributionSnapshot> getPersistentSnapshots(CoreSession session);
 
     /**
-     * Returns persistent distributions with given key, potentially including aliases.
+     * Returns persistent distributions with given key, potentially including aliases, sorted.
      * <p>
      * Hidden distributions are included.
      * <p>
@@ -128,7 +135,7 @@ public interface SnapshotManager {
     List<DistributionSnapshot> getPersistentSnapshots(CoreSession session, String key, boolean includeAliases);
 
     /**
-     * Returns available distributions, for user display.
+     * Returns available distributions, for user display, sorted.
      * <p>
      * Hidden distributions are not included.
      * <p>

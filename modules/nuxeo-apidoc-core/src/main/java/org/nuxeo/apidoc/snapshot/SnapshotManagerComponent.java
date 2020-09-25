@@ -19,9 +19,6 @@
  */
 package org.nuxeo.apidoc.snapshot;
 
-import static java.util.Collections.reverseOrder;
-import static java.util.Comparator.comparing;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -161,8 +158,7 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
     @Override
     public List<DistributionSnapshot> listPersistentSnapshots(CoreSession session) {
         List<DistributionSnapshot> distribs = RepositoryDistributionSnapshot.readPersistentSnapshots(session);
-        Collections.sort(distribs,
-                reverseOrder(comparing(DistributionSnapshot::getVersion)).thenComparing(DistributionSnapshot::getName));
+        distribs.sort(DISTRIBUTION_COMPARATOR);
         return distribs;
     }
 
@@ -180,7 +176,10 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
 
     @Override
     public List<DistributionSnapshot> getPersistentSnapshots(CoreSession session, String key, boolean includeAliases) {
-        return RepositoryDistributionSnapshot.readPersistentSnapshots(session, key, includeAliases);
+        List<DistributionSnapshot> distribs = RepositoryDistributionSnapshot.readPersistentSnapshots(session, key,
+                includeAliases);
+        distribs.sort(DISTRIBUTION_COMPARATOR);
+        return distribs;
     }
 
     protected boolean canSeeRuntimeSnapshot(CoreSession session) {
@@ -196,6 +195,7 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
                                                                                 .stream()
                                                                                 .filter(snap -> !snap.isHidden())
                                                                                 .collect(Collectors.toList());
+        distribs.sort(DISTRIBUTION_COMPARATOR);
         if (canSeeRuntimeSnapshot(session)) {
             distribs.add(0, getRuntimeSnapshot());
         }

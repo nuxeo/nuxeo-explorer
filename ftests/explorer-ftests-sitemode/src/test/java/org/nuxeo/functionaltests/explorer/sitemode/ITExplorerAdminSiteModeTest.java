@@ -132,8 +132,10 @@ public class ITExplorerAdminSiteModeTest extends AbstractExplorerSiteModeTest {
             asPage(DistributionHomePage.class).checkHeader(newerDistribId);
         } finally {
             // avoid conflict with testSample
-            cleanupPersistedDistribution(newDistribName);
-            cleanupPersistedDistribution(newerDistribName);
+            cleanupPersistedDistributions();
+            // recreate the deleted sample, as expected by other tests
+            doLogout();
+            ITExplorerApidocManagerSiteModeTest.initPersistedDistrib();
         }
     }
 
