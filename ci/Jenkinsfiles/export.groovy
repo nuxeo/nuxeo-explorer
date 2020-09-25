@@ -82,6 +82,7 @@ pipeline {
     booleanParam(name: 'UPLOAD_EXPORT', defaultValue: true, description: 'Upload export to target Explorer site (snapshot will be archived anyway).')
     booleanParam(name: 'UPLOAD_TO_PROD', defaultValue: false, description: 'Upload export to production Explorer site (otherwise, preview will be used).')
     booleanParam(name: 'UPLOAD_AS_PROMOTED', defaultValue: false, description: 'Upload export as a promoted version (this will impact aliases used for uploaded snapshot).')
+    string(name: 'UPLOAD_ALIASES', defaultValue: '', description: 'Additional aliases to setup on the uploaded snapshot.\nSample: \'firstAlias\nsecondAlias\'.')
   }
 
   environment {
@@ -287,6 +288,9 @@ pipeline {
               if (!params.UPLOAD_AS_PROMOTED) {
                 def xVersion = sh(returnStdout: true, script: "perl -pe 's/\\b(\\d+)(?=\\D*\$)/x/e' <<< ${NUXEO_IMAGE_VERSION}").trim()
                 aliases = "next\n${xVersion}"
+              }
+              if (!params.UPLOAD_ALIASES.trim().isEmpty()) {
+                aliases += "\n${params.UPLOAD_ALIASES}"
               }
               sh """
                 ${curlCommand} -Fsnap=@\$(find "\$(pwd)"/helm/export/export.zip -type f) -F \$'nxdistribution:aliases=${aliases}' ${UPLOAD_URL}/site/distribution/uploadDistrib
