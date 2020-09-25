@@ -186,6 +186,7 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
                                                                                 .stream()
                                                                                 .filter(snap -> !snap.isHidden())
                                                                                 .collect(Collectors.toList());
+        Collections.reverse(distribs);
         if (canSeeRuntimeSnapshot(session)) {
             distribs.add(0, getRuntimeSnapshot());
         }
