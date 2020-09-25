@@ -96,11 +96,10 @@ public class ITExplorerAdminSiteModeTest extends AbstractExplorerSiteModeTest {
 
     @Test
     public void testSampleDistribImport() throws IOException {
-        String newDistribName = "apidoc-site-mode-newer";
-        String newerDistribName = newDistribName + "-updated";
         try {
             File file = createSampleZip(true);
             String newVersion = "2.0.0";
+            String newDistribName = "apidoc-site-mode-newer";
             open(DistribAdminPage.URL);
             asPage(DistribAdminPage.class).importPersistedDistrib(file, newDistribName, newVersion, null);
 
@@ -114,6 +113,7 @@ public class ITExplorerAdminSiteModeTest extends AbstractExplorerSiteModeTest {
             DistributionUpdatePage upage = asPage(DistributionUpdatePage.class);
             upage.check();
 
+            String newerDistribName = newDistribName + "-updated";
             String newerDistribId = getDistribId(newerDistribName, newVersion);
             upage.updateString(upage.name, newerDistribName);
             upage.updateString(upage.key, newerDistribId);
@@ -145,7 +145,7 @@ public class ITExplorerAdminSiteModeTest extends AbstractExplorerSiteModeTest {
         asPage(DistribAdminPage.class).deleteFirstPersistedDistrib();
         String distribId = getDistribId(DISTRIB_NAME, DISTRIB_VERSION);
         asPage(DistribAdminPage.class).checkPersistedDistribNotPresent(distribId);
-        // recreate it deleted sample, as expected by other tests
+        // recreate the deleted sample, as expected by other tests
         doLogout();
         ITExplorerApidocManagerSiteModeTest.initPersistedDistrib();
     }
