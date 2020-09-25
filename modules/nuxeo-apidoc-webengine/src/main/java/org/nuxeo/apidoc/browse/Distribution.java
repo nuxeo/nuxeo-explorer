@@ -34,8 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.naming.NamingException;
@@ -70,6 +68,7 @@ import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.apidoc.snapshot.SnapshotResolverHelper;
 import org.nuxeo.apidoc.snapshot.TargetExtensionPointSnapshotFilter;
+import org.nuxeo.apidoc.snapshot.VersionComparator;
 import org.nuxeo.apidoc.worker.ExtractXmlAttributesWorker;
 import org.nuxeo.common.Environment;
 import org.nuxeo.common.utils.URIUtils;
@@ -157,9 +156,6 @@ public class Distribution extends ModuleRoot {
     protected static final List<String> SUB_DISTRIBUTION_PATH_RESERVED = List.of(VIEW_ADMIN, SAVE_ACTION,
             SAVE_EXTENDED_ACTION, DOWNLOAD_ACTION, UPDATE_ACTION, DO_UPDATE_ACTION, DELETE_ACTION, UPLOAD_ACTION,
             UPLOAD_TMP_ACTION, UPLOAD_TMP_VALID_ACTION, REINDEX_ACTION);
-
-    protected static final Pattern VERSION_REGEX = Pattern.compile("^(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:-.*)?$",
-            Pattern.CASE_INSENSITIVE);
 
     /**
      * Customized error management.
@@ -270,7 +266,7 @@ public class Distribution extends ModuleRoot {
         // resolve version-like distribs based only on version names, taking only persistent distributions and not
         // including aliases
         List<DistributionSnapshot> snaps = getSnapshotManager().listPersistentSnapshots((ctx.getCoreSession()));
-        if (distributionId.matches(VERSION_REGEX.toString())) {
+        if (VersionComparator.isVersion(distributionId)) {
             String finalDistributionId = distributionId;
             Optional<DistributionSnapshot> resolved = snaps.stream()
                                                            .filter(s -> s.getVersion().equals(finalDistributionId))
@@ -326,26 +322,7 @@ public class Distribution extends ModuleRoot {
     }
 
     public List<DistributionSnapshot> listPersistedDistributions() {
-        SnapshotManager sm = getSnapshotManager();
-        return sm.listPersistentSnapshots(ctx.getCoreSession()).stream().sorted((o1, o2) -> {
-            Matcher m1 = VERSION_REGEX.matcher(o1.getVersion());
-            Matcher m2 = VERSION_REGEX.matcher(o2.getVersion());
-
-            if (m1.matches() && m2.matches()) {
-                for (int i = 0; i < 3; i++) {
-                    String s1 = m1.group(i + 1);
-                    int c1 = s1 != null ? Integer.parseInt(s1) : 0;
-                    String s2 = m2.group(i + 1);
-                    int c2 = s2 != null ? Integer.parseInt(s2) : 0;
-
-                    if (c1 != c2 || i == 2) {
-                        return Integer.compare(c2, c1);
-                    }
-                }
-            }
-            log.info(String.format("Comparing version using String between %s - %s", o1.getVersion(), o2.getVersion()));
-            return o2.getVersion().compareTo(o1.getVersion());
-        }).collect(Collectors.toList());
+        return getSnapshotManager().listPersistentSnapshots(ctx.getCoreSession());
     }
 
     public DistributionSnapshot getCurrentDistribution() {
