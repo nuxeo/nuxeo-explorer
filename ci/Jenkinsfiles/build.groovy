@@ -32,6 +32,10 @@ void setGitHubBuildStatus(String context, String message, String state) {
   ])
 }
 
+def isPullRequest() {
+  return BRANCH_NAME =~ /PR-.*/
+}
+
 String getVersion(referenceBranch) {
   String version = readMavenPom().getVersion()
   return BRANCH_NAME == referenceBranch ? version : version + "-${BRANCH_NAME}"
@@ -371,14 +375,33 @@ pipeline {
       }
     }
   }
+
   post {
     always {
       script {
-        if (BRANCH_NAME == REFERENCE_BRANCH) {
+        if (!isPullRequest()) {
           // update JIRA issue
           step([$class: 'JiraIssueUpdater', issueSelector: [$class: 'DefaultIssueSelector'], scm: scm])
         }
       }
     }
+    success {
+      script {
+        if (!isPullRequest()) {
+          def prevStatus = currentBuild.getPreviousBuild()?.getResult()
+          if (!hudson.model.Result.SUCCESS.toString().equals(prevStatus) && !hudson.model.Result.UNSTABLE.toString().equals(prevStatus)) {
+            slackSend(channel: "${SLACK_CHANNEL}", color: "good", message: "Successfully built <nuxeo-explorer ${BRANCH_NAME} #${BUILD_NUMBER}|${BUILD_URL}>")
+          }
+        }
+      }
+    }
+    failure { // use failure instead of "unsuccessful" because of frequent UNSTABLE status on ftests
+      script {
+        if (!isPullRequest()) {
+          slackSend(channel: "${SLACK_CHANNEL}", color: "danger", message: "Failed to build <nuxeo-explorer ${BRANCH_NAME} #${BUILD_NUMBER}|${BUILD_URL}>")
+        }
+      }
+    }
   }
+
 }

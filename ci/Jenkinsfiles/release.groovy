@@ -377,12 +377,14 @@ pipeline {
     }
 
   }
+
   post {
     success {
       script {
         def message = "Release ${RELEASE_VERSION}"
         if (env.DRY_RUN != "true") {
           currentBuild.description = "${message}"
+          slackSend(channel: "${SLACK_CHANNEL}", color: "good", message: "Successfully released nuxeo-explorer ${RELEASE_VERSION} (Nuxeo ${NUXEO_IMAGE_VERSION}) <#${BUILD_NUMBER}|${BUILD_URL}>")
         } else {
           currentBuild.description = "(Dry Run) ${message}"
         }
@@ -393,7 +395,11 @@ pipeline {
         if (currentBuild.description.isEmpty()) {
           currentBuild.description = "(Attempt) Release ${RELEASE_VERSION}"
         }
+        if (env.DRY_RUN != "true") {
+          slackSend(channel: "${SLACK_CHANNEL}", color: "danger", message: "Failed to release nuxeo-explorer ${RELEASE_VERSION} (Nuxeo ${NUXEO_IMAGE_VERSION}) <#${BUILD_NUMBER}|${BUILD_URL}>")
+        }
       }
     }
   }
+
 }
