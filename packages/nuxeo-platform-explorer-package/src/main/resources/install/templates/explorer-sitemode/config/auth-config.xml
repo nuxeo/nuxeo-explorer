@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.explorer.auth.sitemode.config">
+
+  <extension target="org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService"
+    point="startURL">
+    <startURLPattern>
+      <patterns>
+        <pattern>site/distribution</pattern>
+      </patterns>
+    </startURLPattern>
+  </extension>
+
+  <extension target="org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService"
+    point="loginScreen">
+    <loginScreenConfig>
+      <startupPages>
+        <startupPage id="explorer" priority="2000">
+          <path>site/distribution</path>
+        </startupPage>
+      </startupPages>
+    </loginScreenConfig>
+  </extension>
+
+</component>
