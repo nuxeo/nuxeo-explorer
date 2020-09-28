@@ -54,6 +54,10 @@ pipeline {
     text(name: 'ADDITIONAL_PACKAGE_LIST', defaultValue: '', description: 'The additional list of packages to install for snapshot.\nWill override the default job triggered job value if not empty.')
   }
 
+  environment {
+    SLACK_CHANNEL = 'explorer-notifs'
+  }
+
   stages {
 
     stage('Set Labels') {
@@ -145,6 +149,14 @@ pipeline {
       }
     }
 
+  }
+
+  post {
+    unsuccessful {
+      script {
+        slackSend(channel: "${SLACK_CHANNEL}", color: "danger", message: "Failed to trigger nuxeo-explorer reference export for Nuxeo ${params.PROMOTED_NUXEO_VERSION}: <#${BUILD_NUMBER}|${BUILD_URL}>")
+      }
+    }
   }
 
 }

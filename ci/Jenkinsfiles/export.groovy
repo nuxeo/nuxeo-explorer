@@ -109,6 +109,7 @@ pipeline {
     UPLOAD_CREDS_ID = "${params.UPLOAD_TO_PROD ? 'explorer-prod' : 'explorer-preview'}"
 
     CURL_OPTIONS = "--fail --location --connect-timeout 180 --max-time 300 --retry 2"
+    SLACK_CHANNEL = 'explorer-notifs'
   }
 
   stages {
@@ -302,4 +303,22 @@ pipeline {
       }
     }
   }
+
+  post {
+    success {
+      script {
+        if (env.UPLOAD_EXPORT == "true" && !hudson.model.Result.SUCCESS.toString().equals(currentBuild.getPreviousBuild()?.getResult())) {
+          slackSend(channel: "${SLACK_CHANNEL}", color: "good", message: "Successfully <uploaded|${BUILD_URL}> nuxeo-explorer reference export for ${NUXEO_IMAGE_VERSION} :robot_face:")
+        }
+      }
+    }
+    unsuccessful {
+      script {
+        if (env.UPLOAD_EXPORT == "true") {
+          slackSend(channel: "${SLACK_CHANNEL}", color: "good", message: "Failed to <upload|${BUILD_URL}> nuxeo-explorer reference export for ${NUXEO_IMAGE_VERSION}")
+        }
+      }
+    }
+  }
+
 }
