@@ -49,6 +49,7 @@ pipeline {
 
   environment {
     CURL_OPTIONS = "--fail --location --connect-timeout 180 --max-time 300 --retry 2"
+    SLACK_CHANNEL = 'explorer-notifs'
   }
 
   stages {
@@ -119,6 +120,14 @@ pipeline {
             }
           }
         }
+      }
+    }
+  }
+
+  post {
+    unsuccessful {
+      script {
+        slackSend(channel: "${SLACK_CHANNEL}", color: "danger", message: "Failed to cleanup old exports on ${params.TARGET_URL}: <#${BUILD_NUMBER}|${BUILD_URL}>")
       }
     }
   }

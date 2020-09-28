@@ -52,6 +52,10 @@ pipeline {
     text(name: 'DEFAULT_PACKAGE_LIST', defaultValue: '', description: 'The list of packages to install for snapshot.\nSample: \'nuxeo-csv nuxeo-quota-1.0.0\'.\nWill override the default job triggered job value if not empty.')
   }
 
+  environment {
+    SLACK_CHANNEL = 'explorer-notifs'
+  }
+
   stages {
 
     stage('Set Labels') {
@@ -125,6 +129,14 @@ pipeline {
       }
     }
 
+  }
+
+  post {
+    unsuccessful {
+      script {
+        slackSend(channel: "${SLACK_CHANNEL}", color: "danger", message: "Failed to trigger nuxeo-explorer reference export for Nuxeo ${params.NUXEO_VERSION}: <#${BUILD_NUMBER}|${BUILD_URL}>")
+      }
+    }
   }
 
 }
