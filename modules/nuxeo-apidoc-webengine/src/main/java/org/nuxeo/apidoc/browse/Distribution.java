@@ -26,6 +26,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -82,6 +84,8 @@ import org.nuxeo.ecm.core.query.QueryFilter;
 import org.nuxeo.ecm.core.query.sql.NXQL;
 import org.nuxeo.ecm.core.work.api.Work;
 import org.nuxeo.ecm.core.work.api.WorkManager;
+import org.nuxeo.ecm.platform.ui.web.auth.NXAuthConstants;
+import org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService;
 import org.nuxeo.ecm.platform.web.common.vh.VirtualHostHelper;
 import org.nuxeo.ecm.webengine.forms.FormData;
 import org.nuxeo.ecm.webengine.model.Resource;
@@ -140,6 +144,9 @@ public class Distribution extends ModuleRoot {
 
     /** @since 20.0.0 */
     public static final String REINDEX_ACTION = "_reindex";
+
+    /** @since 20.0.0 */
+    public static final String LOGIN_ACTION = "apidocLogin";
 
     /**
      * List of subviews, used for validation of distribution names and aliases.
@@ -781,6 +788,24 @@ public class Distribution extends ModuleRoot {
         // will trigger retrieval of distributions again
         return redirect(URIUtils.addParametersToURIQuery(String.format("%s/%s", getPath(), VIEW_ADMIN),
                 Map.of(ApiBrowserConstants.SUCCESS_FEEBACK_MESSAGE_VARIABLE, "Deletion Done.")));
+    }
+
+    /**
+     * Handles redirection to login page for anonymous user use case.
+     * <p>
+     * Invalidates current session, otherwise login prompt is not shown in some cases, see NXP-29634.
+     *
+     * @since 20.0.0
+     */
+    @GET
+    @Path(LOGIN_ACTION)
+    public Object handleLogin() throws URISyntaxException {
+        Framework.getService(PluggableAuthenticationService.class).invalidateSession(request);
+        URI uri = new URI(URIUtils.addParametersToURIQuery(NXAuthConstants.LOGIN_PAGE, Map.of( //
+                NXAuthConstants.FORCE_ANONYMOUS_LOGIN, "true", //
+                NXAuthConstants.REQUESTED_URL, getPath() //
+        )));
+        return Response.seeOther(uri).build();
     }
 
 }
