@@ -190,17 +190,7 @@ public class Distribution extends ModuleRoot {
     }
 
     protected Object show404() {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        pw.println("<html>");
-        pw.println("<head><title>404 - Resource Not Found</title></head>");
-        pw.println("<body>");
-        pw.println("<h1>404 Resource Not Found</h1>");
-        pw.println("<p>The resource you're trying to access couldn't be found.</p>");
-        pw.println("</body>");
-        pw.println("</html>");
-        pw.close();
-        return Response.status(404).type(MediaType.TEXT_HTML_TYPE).entity(sw.toString()).build();
+        return Response.status(404).type(MediaType.TEXT_HTML_TYPE).entity(Resource404.getPageContent()).build();
     }
 
     protected static SnapshotManager getSnapshotManager() {
