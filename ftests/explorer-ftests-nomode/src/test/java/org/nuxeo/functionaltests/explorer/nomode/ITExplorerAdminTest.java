@@ -248,11 +248,12 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         String newerDistribId = getDistribId(newerDistribName, newerVersion);
         String alias1 = "alias1";
         String alias2 = "alias2";
+        String alias3 = "10.2";
 
         upage.updateString(upage.name, newerDistribName);
         upage.updateString(upage.version, newerVersion);
         upage.updateString(upage.key, newerDistribId);
-        upage.updateString(upage.aliases, alias1 + "\n" + alias2);
+        upage.updateString(upage.aliases, String.format("%s\n%s\n%s", alias1, alias2, alias3));
         upage.submit();
 
         DistribAdminPage adminPage = asPage(DistribAdminPage.class);
@@ -266,6 +267,12 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         open(String.format("%s%s/", ExplorerHomePage.URL, alias1));
         asPage(DistributionHomePage.class).checkHeader(newerDistribId);
         open(String.format("%s%s/", ExplorerHomePage.URL, alias2));
+        asPage(DistributionHomePage.class).checkHeader(newerDistribId);
+        // non-regression test for NXP-29717
+        open(String.format("%s%s/", ExplorerHomePage.URL, alias3));
+        asPage(DistributionHomePage.class).checkHeader(newerDistribId);
+        // check redirection to "simple" version identifier
+        open(String.format("%s%s/", ExplorerHomePage.URL, newerVersion));
         asPage(DistributionHomePage.class).checkHeader(newerDistribId);
 
         // check hiding distrib

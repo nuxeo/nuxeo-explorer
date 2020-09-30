@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -266,15 +267,17 @@ public class Distribution extends ModuleRoot {
             return ctx.newObject(Resource404.TYPE);
         }
 
+        // resolve version-like distribs based only on version names, taking only persistent distributions and not
+        // including aliases
         List<DistributionSnapshot> snaps = getSnapshotManager().listPersistentSnapshots((ctx.getCoreSession()));
         if (distributionId.matches(VERSION_REGEX.toString())) {
             String finalDistributionId = distributionId;
-            return snaps.stream()
-                        .filter(s -> s.getVersion().equals(finalDistributionId))
-                        .findFirst()
-                        .map(distribution -> ctx.newObject(RedirectResource.TYPE, finalDistributionId,
-                                distribution.getKey()))
-                        .orElseGet(() -> ctx.newObject(Resource404.TYPE));
+            Optional<DistributionSnapshot> resolved = snaps.stream()
+                                                           .filter(s -> s.getVersion().equals(finalDistributionId))
+                                                           .findFirst();
+            if (resolved.isPresent()) {
+                return ctx.newObject(RedirectResource.TYPE, finalDistributionId, resolved.get().getKey());
+            }
         }
 
         boolean showRuntimeSnapshot = showRuntimeSnapshot();
