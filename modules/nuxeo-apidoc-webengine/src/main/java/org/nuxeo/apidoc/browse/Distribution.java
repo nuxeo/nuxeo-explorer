@@ -302,9 +302,10 @@ public class Distribution extends ModuleRoot {
         }
 
         ctx.setProperty(ApiBrowserConstants.EMBEDDED_MODE_MARKER, embeddedMode);
-        ctx.setProperty(DIST, getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession()));
+        DistributionSnapshot snapshot = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
+        ctx.setProperty(DIST, snapshot);
         ctx.setProperty(DIST_ID, distributionId);
-        return ctx.newObject(ApiBrowser.TYPE, distributionId, embeddedMode);
+        return ctx.newObject(ApiBrowser.TYPE, distributionId, embeddedMode, snapshot);
     }
 
     public List<DistributionSnapshotDesc> getAvailableDistributions() {
