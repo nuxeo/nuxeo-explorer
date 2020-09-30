@@ -98,6 +98,7 @@ public class ApiBrowser extends DefaultObject {
             embeddedMode = embed != null && embed;
         }
         distribution = args.length > 2 ? (DistributionSnapshot) args[2] : null;
+        // init potential resources depending on request
         getSnapshotManager().initWebContext(getContext().getRequest());
     }
 
@@ -530,10 +531,6 @@ public class ApiBrowser extends DefaultObject {
             @QueryParam("checkAsPrefixes") Boolean checkAsPrefixes,
             @QueryParam("includeReferences") Boolean includeReferences, @QueryParam("pretty") Boolean pretty)
             throws IOException {
-        SnapshotManager sm = getSnapshotManager();
-        // init potential resources depending on request
-        sm.initWebContext(getContext().getRequest());
-
         SnapshotFilter filter = getSnapshotFilter(bundles, nuxeoPackages, javaPackagePrefixes, checkAsPrefixes,
                 includeReferences);
         PrettyPrinter printer = Boolean.TRUE.equals(pretty) ? new JsonPrettyPrinter() : null;
@@ -559,14 +556,10 @@ public class ApiBrowser extends DefaultObject {
             @QueryParam("checkAsPrefixes") Boolean checkAsPrefixes,
             @QueryParam("includeReferences") Boolean includeReferences, @QueryParam("pretty") Boolean pretty)
             throws IOException {
-        SnapshotManager sm = getSnapshotManager();
-        // init potential resources depending on request
-        sm.initWebContext(getContext().getRequest());
-
         Map<String, String> props = Boolean.TRUE.equals(pretty) ? Map.of("pretty", "true") : null;
         SnapshotFilter filter = getSnapshotFilter(bundles, nuxeoPackages, javaPackagePrefixes, checkAsPrefixes,
                 includeReferences);
-        Exporter exporter = sm.getExporter(exporterName);
+        Exporter exporter = getSnapshotManager().getExporter(exporterName);
         if (exporter == null) {
             return Response.status(404).build();
         }
