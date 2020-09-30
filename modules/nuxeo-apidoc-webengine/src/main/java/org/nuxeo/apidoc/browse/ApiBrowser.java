@@ -80,6 +80,8 @@ public class ApiBrowser extends DefaultObject {
 
     protected boolean embeddedMode = false;
 
+    protected DistributionSnapshot distribution;
+
     protected SnapshotManager getSnapshotManager() {
         return Framework.getService(SnapshotManager.class);
     }
@@ -95,14 +97,22 @@ public class ApiBrowser extends DefaultObject {
             Boolean embed = (Boolean) args[1];
             embeddedMode = embed != null && embed;
         }
+        distribution = args.length > 2 ? (DistributionSnapshot) args[2] : null;
         getSnapshotManager().initWebContext(getContext().getRequest());
+    }
+
+    protected DistributionSnapshot getDistribution() {
+        if (distribution != null) {
+            return distribution;
+        }
+        return getSnapshotManager().getSnapshot(distributionId, getContext().getCoreSession());
     }
 
     @GET
     @Produces("text/html")
     public Object doGet() {
         String viewId = "index";
-        DistributionSnapshot snap = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
+        DistributionSnapshot snap = getDistribution();
         List<String> bundleIds = snap.getBundleIds();
         var stats = new HashMap<String, Integer>();
         stats.put("bundles", bundleIds.size());
@@ -149,8 +159,7 @@ public class ApiBrowser extends DefaultObject {
     @Produces("text/html")
     @Path(ApiBrowserConstants.LIST_BUNDLES)
     public Object getBundles() {
-        DistributionSnapshot snapshot = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
-        List<String> bundleIds = snapshot.getBundleIds();
+        List<String> bundleIds = getDistribution().getBundleIds();
         List<ArtifactLabel> bundles = new ArrayList<>();
         for (String bid : bundleIds) {
             bundles.add(new ArtifactLabel(bid, bid, null));
@@ -164,7 +173,7 @@ public class ApiBrowser extends DefaultObject {
     @Produces("text/html")
     @Path(ApiBrowserConstants.LIST_COMPONENTS)
     public Object getComponents() {
-        DistributionSnapshot snapshot = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
+        DistributionSnapshot snapshot = getDistribution();
         List<String> javaComponentIds = snapshot.getJavaComponentIds();
         List<ArtifactLabel> javaLabels = javaComponentIds.stream()
                                                          .map(ArtifactLabel::createLabelFromComponent)
@@ -212,7 +221,7 @@ public class ApiBrowser extends DefaultObject {
     @Produces("text/html")
     @Path(ApiBrowserConstants.LIST_CONTRIBUTIONS)
     public Object getContributions() {
-        DistributionSnapshot snapshot = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
+        DistributionSnapshot snapshot = getDistribution();
         return getView(ApiBrowserConstants.LIST_CONTRIBUTIONS).arg("contributions", snapshot.getContributions())
                                                               .arg("isLive", snapshot.isLive())
                                                               .arg(Distribution.DIST_ID,
@@ -223,8 +232,7 @@ public class ApiBrowser extends DefaultObject {
     @Produces("text/html")
     @Path(ApiBrowserConstants.LIST_EXTENSIONPOINTS)
     public Object getExtensionPoints() {
-        List<String> epIds = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession())
-                                                 .getExtensionPointIds();
+        List<String> epIds = getDistribution().getExtensionPointIds();
 
         List<ArtifactLabel> labels = epIds.stream()
                                           .map(ArtifactLabel::createLabelFromExtensionPoint)
@@ -433,7 +441,7 @@ public class ApiBrowser extends DefaultObject {
 
     @Path("viewArtifact/{id}")
     public Object viewArtifact(@PathParam("id") String id) {
-        DistributionSnapshot snap = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
+        DistributionSnapshot snap = getDistribution();
 
         BundleGroup bg = snap.getBundleGroup(id);
         if (bg != null) {
@@ -476,8 +484,7 @@ public class ApiBrowser extends DefaultObject {
     @Produces("text/html")
     @Path(ApiBrowserConstants.LIST_OPERATIONS)
     public Object listOperations() {
-        DistributionSnapshot snap = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
-        List<OperationInfo> operations = snap.getOperations();
+        List<OperationInfo> operations = getDistribution().getOperations();
         return getView(ApiBrowserConstants.LIST_OPERATIONS).arg("operations", operations)
                                                            .arg(Distribution.DIST_ID,
                                                                    ctx.getProperty(Distribution.DIST_ID))
@@ -493,8 +500,7 @@ public class ApiBrowser extends DefaultObject {
     @Produces("text/html")
     @Path(ApiBrowserConstants.LIST_PACKAGES)
     public Object listPackages() {
-        DistributionSnapshot snap = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
-        List<PackageInfo> packages = snap.getPackages();
+        List<PackageInfo> packages = getDistribution().getPackages();
         return getView(ApiBrowserConstants.LIST_PACKAGES).arg("packages", packages)
                                                          .arg(Distribution.DIST_ID,
                                                                  ctx.getProperty(Distribution.DIST_ID))
@@ -525,7 +531,6 @@ public class ApiBrowser extends DefaultObject {
             @QueryParam("includeReferences") Boolean includeReferences, @QueryParam("pretty") Boolean pretty)
             throws IOException {
         SnapshotManager sm = getSnapshotManager();
-        DistributionSnapshot snapshot = sm.getSnapshot(distributionId, ctx.getCoreSession());
         // init potential resources depending on request
         sm.initWebContext(getContext().getRequest());
 
@@ -534,7 +539,7 @@ public class ApiBrowser extends DefaultObject {
         PrettyPrinter printer = Boolean.TRUE.equals(pretty) ? new JsonPrettyPrinter() : null;
         File tmp = getExportTmpFile();
         try (OutputStream out = new FileOutputStream(tmp)) {
-            snapshot.writeJson(out, filter, printer);
+            getDistribution().writeJson(out, filter, printer);
         }
 
         ArchiveFile aFile = new ArchiveFile(tmp.getAbsolutePath());
@@ -555,7 +560,6 @@ public class ApiBrowser extends DefaultObject {
             @QueryParam("includeReferences") Boolean includeReferences, @QueryParam("pretty") Boolean pretty)
             throws IOException {
         SnapshotManager sm = getSnapshotManager();
-        DistributionSnapshot snapshot = sm.getSnapshot(distributionId, ctx.getCoreSession());
         // init potential resources depending on request
         sm.initWebContext(getContext().getRequest());
 
@@ -568,7 +572,7 @@ public class ApiBrowser extends DefaultObject {
         }
         File tmp = getExportTmpFile();
         try (OutputStream out = new FileOutputStream(tmp)) {
-            exporter.export(out, snapshot, filter, props);
+            exporter.export(out, getDistribution(), filter, props);
         }
 
         ArchiveFile aFile = new ArchiveFile(tmp.getAbsolutePath());
