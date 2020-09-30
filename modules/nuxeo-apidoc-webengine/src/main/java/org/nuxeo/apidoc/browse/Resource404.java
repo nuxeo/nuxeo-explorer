@@ -18,8 +18,13 @@
  */
 package org.nuxeo.apidoc.browse;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.nuxeo.ecm.webengine.model.WebObject;
 import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
@@ -37,7 +42,21 @@ public class Resource404 extends DefaultObject {
     @GET
     @Produces("text/html")
     public Object doGet() {
-        return getView("error_404");
+        return Response.status(404).type(MediaType.TEXT_HTML_TYPE).entity(Resource404.getPageContent()).build();
+    }
+
+    public static String getPageContent() {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        pw.println("<html>");
+        pw.println("<head><title>404 - Resource Not Found</title></head>");
+        pw.println("<body>");
+        pw.println("<h1>404 Resource Not Found</h1>");
+        pw.println("<p>The resource you're trying to access couldn't be found.</p>");
+        pw.println("</body>");
+        pw.println("</html>");
+        pw.close();
+        return sw.toString();
     }
 
 }
