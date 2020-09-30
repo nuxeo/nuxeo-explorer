@@ -25,7 +25,7 @@
     </#list>
   </ul>
 
-  <#if nxItem.extensions?size gt 0>
+  <#if extensions?size gt 0>
     <h2 class="toc">Existing Contributions</h2>
     <small>
       Contributions are presented in the same order as the registration order on this extension point.
@@ -39,7 +39,7 @@
       </form>
     </p>
     <ul id="highlight-plugin" class="block-list">
-      <#list nxItem.extensions as contrib>
+      <#list extensions as contrib>
       <li id="${contrib.id}" class="block-item">
         <div class="searchableText">
           <span style="display:none">${contrib.component.bundle.fileName} ${contrib.component.xmlFileName}</span>
@@ -47,7 +47,7 @@
         </div>
         <div class="block-title">
           (<#if contrib.registrationOrder??>${contrib.registrationOrder?string.computer}<#else>?</#if>)
-          <a class="components" href="${Root.path}/${distId}/viewComponent/${contrib.component.id}">
+          <a class="components" href="${Root.path}/${distId}/viewContribution/${contrib.id}">
             ${contrib.component.bundle.fileName}${contrib.component.xmlFileName}
           </a>
           &nbsp;

@@ -18,9 +18,17 @@
  */
 package org.nuxeo.apidoc.browse;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.ws.rs.Produces;
+
 import org.apache.commons.lang3.StringUtils;
+import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
+import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
 @WebObject(type = "extensionPoint")
@@ -34,6 +42,18 @@ public class ExtensionPointWO extends NuxeoArtifactWebObject {
     @Override
     public NuxeoArtifact getNxArtifact() {
         return getTargetExtensionPointInfo();
+    }
+
+    @Produces("text/html")
+    @Override
+    public Object doViewDefault() {
+        Template t = (Template) super.doViewDefault();
+        // order extensions by registration order for display
+        List<ExtensionInfo> extensions = new ArrayList<>(getTargetExtensionPointInfo().getExtensions());
+        extensions.sort(Comparator.comparing(ExtensionInfo::getRegistrationOrder,
+                Comparator.nullsFirst(Comparator.naturalOrder())));
+        t.arg("extensions", extensions);
+        return t;
     }
 
     @Override
