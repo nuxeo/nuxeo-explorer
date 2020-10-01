@@ -69,10 +69,6 @@ public class DistributionHomePage extends AbstractExplorerPage {
     public WebElement packages;
 
     @Required
-    @FindBy(xpath = "//div[@id='tocDiv']")
-    public WebElement toc;
-
-    @Required
     @FindBy(xpath = "//ul[@class='exports']")
     public WebElement exports;
 
@@ -84,9 +80,6 @@ public class DistributionHomePage extends AbstractExplorerPage {
     public void check() {
         checkTitle("Nuxeo Platform Explorer");
         checkHeader(null);
-        assertEquals("Browse\n" //
-                + "Exports", //
-                toc.getText());
         // check export links presence but do not click (too costly)
         exports.findElement(By.linkText("Json Export"));
         exports.findElement(By.linkText("Json Graph"));
