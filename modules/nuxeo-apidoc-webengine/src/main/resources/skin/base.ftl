@@ -37,7 +37,14 @@
     <@block name="header">
     <div class="top-banner">
       <a href="${Root.path}">
-        <img src="${skinPath}/images/nuxeo.png">
+        <span class="main-menu--logo svg">
+          <svg viewBox="0 0 128 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#fff" d="M0,0 18,0 24,6 24,24 18,24 18,6 6,6 6,24 0,24M26,0 32,0 32,18 44,18 44,0 50,0 50,24 32,24 26,18M78,0 102,0 102,6 84,6 84,9 102,9 102,15 84,15 84,18 102,18 102,24 78,24M104,0 122,0 128,6 128,24 110,24 104,18 104,0 110,6 110,18 122,18 122,6 110,6z" />
+            <path fill="#73d2cf" d="M52,0 57,0 76,19 76,24 71,24 52,5M52,24 52,19 71,0 76,0 76,5 57,24z" />
+          </svg>
+        </span>
+      </a>
+      <a href="${Root.path}">
         <span>Platform Explorer</span>
       </a>
       <#if Root.currentDistribution != null>
