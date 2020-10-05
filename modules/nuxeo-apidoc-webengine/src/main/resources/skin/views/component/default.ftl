@@ -49,7 +49,7 @@
     <div id="startOrder">
       <span class="startOrder">${nxItem.startOrder?string.computer}</span>
       <#if nxItem.declaredStartOrder??>
-        (Declared Start Order: <span class="declaredStartOrder">${nxItem.declaredStartOrder?string.computer}</span>
+        (Declared Start Order: <span class="declaredStartOrder">${nxItem.declaredStartOrder?string.computer}</span>)
       </#if>
     </div>
     <small id="startOrderHelp">
