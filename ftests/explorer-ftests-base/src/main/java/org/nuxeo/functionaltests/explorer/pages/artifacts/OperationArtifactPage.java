@@ -118,13 +118,11 @@ public class OperationArtifactPage extends ArtifactPage {
         checkCommon("Operation FileManager.ImportWithMetaData",
                 "Operation FileManager.ImportWithMetaData (FileManager.ImportWithMetaData)",
                 // Non-regression test for NXP-29025 as this previously stated "In component BuiltIn" for all chains
-                // "In component org.nuxeo.ecm.core.automation.features.operations"
-                // not backported to 10.10...
-                "In component BuiltIn",
+                "In component org.nuxeo.ecm.core.automation.features.operations",
                 "Parameters\n" + "Signature\n" + "Implementation Information\n" + "JSON Definition");
         checkImplementationText(
                 "Implementation Class Javadoc: org.nuxeo.ecm.automation.core.impl.OperationChainCompiler.CompiledChainImpl\n"//
-                        + "Contributing Component BuiltIn");
+                        + "Contributing Component org.nuxeo.ecm.core.automation.features.operations");
         checkJavadocLink("/javadoc/org/nuxeo/ecm/automation/core/impl/OperationChainCompiler.CompiledChainImpl.html");
     }
 
