@@ -72,7 +72,7 @@ public class SnapshotListener implements ComponentListener, Listener {
     protected final Map<String, Long> registrations = new HashMap<>();
 
     protected boolean isEvent(ComponentEvent event, int eventId) {
-        return ComponentEvent.getEventName(eventId).equals(event.getEventName());
+        return event.id == eventId;
     }
 
     @Override
