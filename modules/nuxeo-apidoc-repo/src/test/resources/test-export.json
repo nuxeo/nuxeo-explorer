@@ -171,6 +171,7 @@
               "extensionPoint": "org.nuxeo.ecm.core.schema.TypeService--schema",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.schemaContrib/Contributions/org.nuxeo.apidoc.schemaContrib--schema",
               "id": "org.nuxeo.apidoc.schemaContrib--schema",
+              "registrationOrder": 3,
               "targetComponentName": {
                 "rawName": "service:org.nuxeo.ecm.core.schema.TypeService",
                 "name": "org.nuxeo.ecm.core.schema.TypeService",
@@ -185,7 +186,7 @@
           "requirements": [
             "org.nuxeo.ecm.core.CoreExtensions"
           ],
-          "resolutionOrder": 64,
+          "resolutionOrder": 65,
           "services": [],
           "startOrder": 15,
           "version": "mockTestVersion",
@@ -270,6 +271,7 @@
               "extensionPoint": "org.nuxeo.ecm.core.schema.TypeService--doctype",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.doctypeContrib/Contributions/org.nuxeo.apidoc.doctypeContrib--doctype",
               "id": "org.nuxeo.apidoc.doctypeContrib--doctype",
+              "registrationOrder": 2,
               "targetComponentName": {
                 "rawName": "service:org.nuxeo.ecm.core.schema.TypeService",
                 "name": "org.nuxeo.ecm.core.schema.TypeService",
@@ -282,7 +284,7 @@
           "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.doctypeContrib",
           "name": "org.nuxeo.apidoc.doctypeContrib",
           "requirements": [],
-          "resolutionOrder": 65,
+          "resolutionOrder": 66,
           "services": [],
           "startOrder": 12,
           "version": "mockTestVersion",
@@ -310,6 +312,7 @@
               "extensionPoint": "org.nuxeo.ecm.core.lifecycle.LifeCycleService--types",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.lifecycle.contrib/Contributions/org.nuxeo.apidoc.lifecycle.contrib--types",
               "id": "org.nuxeo.apidoc.lifecycle.contrib--types",
+              "registrationOrder": 1,
               "targetComponentName": {
                 "rawName": "service:org.nuxeo.ecm.core.lifecycle.LifeCycleService",
                 "name": "org.nuxeo.ecm.core.lifecycle.LifeCycleService",
@@ -322,7 +325,7 @@
           "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.lifecycle.contrib",
           "name": "org.nuxeo.apidoc.lifecycle.contrib",
           "requirements": [],
-          "resolutionOrder": 66,
+          "resolutionOrder": 67,
           "services": [],
           "startOrder": 13,
           "version": "mockTestVersion",
@@ -413,7 +416,7 @@
               "extensionPoint": "org.nuxeo.runtime.ConfigurationService--configuration",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/Contributions/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration",
               "id": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration",
-              "registrationOrder": 0,
+              "registrationOrder": 9,
               "targetComponentName": {
                 "rawName": "service:org.nuxeo.runtime.ConfigurationService",
                 "name": "org.nuxeo.runtime.ConfigurationService",
@@ -438,7 +441,7 @@
               "extensionPoint": "org.nuxeo.runtime.ConfigurationService--configuration",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/Contributions/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
               "id": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
-              "registrationOrder": 1,
+              "registrationOrder": 10,
               "targetComponentName": {
                 "rawName": "service:org.nuxeo.runtime.ConfigurationService",
                 "name": "org.nuxeo.runtime.ConfigurationService",
@@ -470,7 +473,7 @@
               "extensionPoint": "org.nuxeo.runtime.ConfigurationService--configuration",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/Contributions/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
               "id": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
-              "registrationOrder": 2,
+              "registrationOrder": 11,
               "targetComponentName": {
                 "rawName": "service:org.nuxeo.runtime.ConfigurationService",
                 "name": "org.nuxeo.runtime.ConfigurationService",
@@ -502,7 +505,7 @@
               "extensionPoint": "org.nuxeo.runtime.ConfigurationService--configuration",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/Contributions/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3",
               "id": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3",
-              "registrationOrder": 3,
+              "registrationOrder": 12,
               "targetComponentName": {
                 "rawName": "service:org.nuxeo.runtime.ConfigurationService",
                 "name": "org.nuxeo.runtime.ConfigurationService",
@@ -515,7 +518,7 @@
           "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
           "name": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
           "requirements": [],
-          "resolutionOrder": 67,
+          "resolutionOrder": 68,
           "services": [
             {
               "@type": "NXService",
@@ -542,7 +545,7 @@
               "version": "mockTestVersion"
             }
           ],
-          "startOrder": 130,
+          "startOrder": 131,
           "version": "mockTestVersion",
           "xmlFileContent": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<component name=\"org.nuxeo.apidoc.snapshot.SnapshotManagerComponent\">\n  <documentation>\n    <p>\n      This component handles the introspection of the current live Runtime as a distribution.\n    </p>\n    <p>\n      It can also persist this introspection as Nuxeo documents, to handle import and export of external distributions.\n    </p>\n  </documentation>\n  <implementation class=\"org.nuxeo.apidoc.snapshot.SnapshotManagerComponent\"></implementation>\n\n  <service>\n    <provide interface=\"org.nuxeo.apidoc.snapshot.SnapshotManager\"></provide>\n    <provide interface=\"org.nuxeo.apidoc.snapshot.SnapshotListener\"></provide>\n    <provide interface=\"org.nuxeo.apidoc.search.ArtifactSearcher\"></provide>\n  </service>\n\n  <extension-point name=\"plugins\">\n    <documentation>\n      <p>\n        A plugin can introspect and persist information related to the current runtime environment.\n      </p>\n      <p>\n        Sample contribution:\n        <code>\n          <extension point=\"plugins\" target=\"org.nuxeo.apidoc.snapshot.SnapshotManagerComponent\">\n            <plugin id=\"seam\" class=\"org.nuxeo.apidoc.seam.plugin.SeamPlugin\" snapshotClass=\"org.nuxeo.apidoc.seam.introspection.SeamRuntimeSnapshot\">\n              <ui>\n                <label>Seam Components</label>\n                <viewType>seam</viewType>\n                <homeView>listSeamComponents</homeView>\n                <styleClass>seam</styleClass>\n              </ui>\n            </plugin>\n          </extension>\n        </code>\n      </p>\n      <p>\n        The class should implement the\n        <b>org.nuxeo.apidoc.plugin.Plugin</b>\n        interface.\n      </p>\n      <p>\n        UI elements are used for rendering on webengine pages. The view type should match a webengine resource type,\n        and\n        the module holding this resource should be contributed to the main webengine module as a fragment using:\n        <code>\n          Fragment-Host: org.nuxeo.apidoc.webengine\n        </code>\n      </p>\n    </documentation>\n    <object class=\"org.nuxeo.apidoc.plugin.PluginDescriptor\"></object>\n  </extension-point>\n\n  <extension-point name=\"exporters\">\n    <documentation>\n      Extension point for pluggable export generation.\n    </documentation>\n    <object class=\"org.nuxeo.apidoc.export.api.ExporterDescriptor\"></object>\n  </extension-point>\n\n  <extension point=\"exporters\" target=\"org.nuxeo.apidoc.snapshot.SnapshotManagerComponent\">\n    <exporter id=\"jsonGraph\" class=\"org.nuxeo.apidoc.export.graphs.plugins.JsonGraphExporter\">\n      <title>Json Graph</title>\n      <description>Json dependency graph</description>\n      <filename>graph.json</filename>\n      <mimetype>application/json</mimetype>\n      <display>\n        <on>home</on>\n        <on>bundle</on>\n        <on>package</on>\n      </display>\n    </exporter>\n    <exporter id=\"dotGraph\" class=\"org.nuxeo.apidoc.export.graphs.plugins.DOTGraphExporter\">\n      <title>DOT Graph</title>\n      <description>Dependency graph exported in DOT format</description>\n      <filename>graph.dot</filename>\n      <mimetype>application/octet-stream</mimetype>\n      <display>\n        <on>home</on>\n      </display>\n    </exporter>\n  </extension>\n\n  <extension point=\"configuration\" target=\"org.nuxeo.runtime.ConfigurationService\">\n    <documentation>\n      URL base for Javadoc Links.\n    </documentation>\n    <property name=\"org.nuxeo.apidoc.javadoc.url\">\n      https://community.nuxeo.com/api/\n    </property>\n  </extension>\n\n  <extension point=\"configuration\" target=\"org.nuxeo.runtime.ConfigurationService\">\n    <documentation>\n      URL base for Connect Links (for Marketplace Packages).\n    </documentation>\n    <property name=\"org.nuxeo.apidoc.connect.url\">\n      https://connect.nuxeo.com/nuxeo/site/\n    </property>\n  </extension>\n\n  <extension point=\"configuration\" target=\"org.nuxeo.runtime.ConfigurationService\">\n    <documentation>\n      Default groups for application managers and readers.\n    </documentation>\n    <property name=\"org.nuxeo.apidoc.apidocmanagers.group\">\n      ApidocManagers\n    </property>\n    <property name=\"org.nuxeo.apidoc.apidocreaders.group\">\n      Everyone\n    </property>\n  </extension>\n\n  <extension point=\"configuration\" target=\"org.nuxeo.runtime.ConfigurationService\">\n    <documentation>\n      Properties controlling sensitive configuration exposure, when extracted from runtime contributions by\n      explorer logics.\n\n      @since 20.0.0\n    </documentation>\n    <property name=\"org.nuxeo.apidoc.secure.xml.keywords\">\n      password, Password, secret, apiKey, TMPDIR, TMP, TEMP, TEMPDIR\n    </property>\n    <property name=\"org.nuxeo.apidoc.secure.xml.keywords.whitelisted\">\n      passwordField, passwordHashAlgorithm\n    </property>\n  </extension>\n\n</component>",
           "xmlFileName": "mockTestXmlFileName",
@@ -681,6 +684,7 @@
               "extensionPoint": "org.nuxeo.ecm.core.api.DocumentAdapterService--adapters",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.adapterContrib/Contributions/org.nuxeo.apidoc.adapterContrib--adapters",
               "id": "org.nuxeo.apidoc.adapterContrib--adapters",
+              "registrationOrder": 1,
               "targetComponentName": {
                 "rawName": "service:org.nuxeo.ecm.core.api.DocumentAdapterService",
                 "name": "org.nuxeo.ecm.core.api.DocumentAdapterService",
@@ -693,7 +697,7 @@
           "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.adapterContrib",
           "name": "org.nuxeo.apidoc.adapterContrib",
           "requirements": [],
-          "resolutionOrder": 68,
+          "resolutionOrder": 69,
           "services": [],
           "startOrder": 11,
           "version": "mockTestVersion",
@@ -736,7 +740,7 @@
               "extensionPoint": "org.nuxeo.ecm.core.event.EventServiceComponent--listener",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.listener.contrib/Contributions/org.nuxeo.apidoc.listener.contrib--listener",
               "id": "org.nuxeo.apidoc.listener.contrib--listener",
-              "registrationOrder": 0,
+              "registrationOrder": 8,
               "targetComponentName": {
                 "rawName": "service:org.nuxeo.ecm.core.event.EventServiceComponent",
                 "name": "org.nuxeo.ecm.core.event.EventServiceComponent",
@@ -749,7 +753,7 @@
           "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.listener.contrib",
           "name": "org.nuxeo.apidoc.listener.contrib",
           "requirements": [],
-          "resolutionOrder": 69,
+          "resolutionOrder": 70,
           "services": [],
           "startOrder": 14,
           "version": "mockTestVersion",
@@ -777,7 +781,7 @@
               "extensionPoint": "org.nuxeo.ecm.core.work.service--queues",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.test.works/Contributions/org.nuxeo.apidoc.test.works--queues",
               "id": "org.nuxeo.apidoc.test.works--queues",
-              "registrationOrder": 0,
+              "registrationOrder": 3,
               "targetComponentName": {
                 "rawName": "service:org.nuxeo.ecm.core.work.service",
                 "name": "org.nuxeo.ecm.core.work.service",
@@ -801,7 +805,7 @@
               "extensionPoint": "org.nuxeo.ecm.core.work.service--queues",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.test.works/Contributions/org.nuxeo.apidoc.test.works--queues1",
               "id": "org.nuxeo.apidoc.test.works--queues1",
-              "registrationOrder": 1,
+              "registrationOrder": 4,
               "targetComponentName": {
                 "rawName": "service:org.nuxeo.ecm.core.work.service",
                 "name": "org.nuxeo.ecm.core.work.service",
@@ -814,7 +818,7 @@
           "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.test.works",
           "name": "org.nuxeo.apidoc.test.works",
           "requirements": [],
-          "resolutionOrder": 70,
+          "resolutionOrder": 71,
           "services": [],
           "startOrder": 16,
           "version": "mockTestVersion",
@@ -829,8 +833,8 @@
       "id": "org.nuxeo.apidoc.repo",
       "location": "mockTestLocation",
       "manifest": "mockTestManifest",
-      "maxResolutionOrder": 70,
-      "minResolutionOrder": 64,
+      "maxResolutionOrder": 71,
+      "minResolutionOrder": 65,
       "packages": [
         "platform-explorer-mock"
       ],
@@ -894,7 +898,7 @@
       "@type": "NXOperation",
       "aliases": [],
       "category": "Chain",
-      "contributingComponent": "BuiltIn",
+      "contributingComponent": "org.nuxeo.ecm.core.automation.features.operations",
       "hierarchyPath": "/op:AttachFiles",
       "label": "AttachFiles",
       "name": "AttachFiles",

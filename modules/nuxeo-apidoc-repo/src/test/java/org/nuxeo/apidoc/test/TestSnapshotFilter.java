@@ -121,8 +121,9 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                     "org.nuxeo.ecm.core.work.api.WorkManager",
                     "org.nuxeo.runtime.services.config.ConfigurationService"), snapshot.getServiceIds());
         } else {
-            assertEquals(Arrays.asList("org.nuxeo.apidoc.search.ArtifactSearcher",
-                    "org.nuxeo.apidoc.snapshot.SnapshotListener", "org.nuxeo.apidoc.snapshot.SnapshotManager"),
+            assertEquals(
+                    Arrays.asList("org.nuxeo.apidoc.search.ArtifactSearcher",
+                            "org.nuxeo.apidoc.snapshot.SnapshotListener", "org.nuxeo.apidoc.snapshot.SnapshotManager"),
                     snapshot.getServiceIds());
         }
         if (isRef) {
@@ -158,10 +159,10 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                 "org.nuxeo.apidoc.test.automation--operations", "org.nuxeo.apidoc.test.works--queues",
                 "org.nuxeo.apidoc.test.works--queues1"), snapshot.getContributionIds());
         // BuiltIn contributing component on 10.10...
-        // assertEquals(Arrays.asList("Document.Create", "Scripting.HelloWorld", "createDoc"),
-        // snapshot.getOperations().stream().map(OperationInfo::getName).collect(Collectors.toList()));
-        assertEquals(Arrays.asList("Document.Create"),
+        assertEquals(Arrays.asList("Document.Create", "Scripting.HelloWorld", "createDoc"),
                 snapshot.getOperations().stream().map(OperationInfo::getName).collect(Collectors.toList()));
+        // assertEquals(Arrays.asList("Document.Create"),
+        // snapshot.getOperations().stream().map(OperationInfo::getName).collect(Collectors.toList()));
         assertEquals(Arrays.asList(MOCK_PACKAGE_ID),
                 snapshot.getPackages().stream().map(PackageInfo::getId).collect(Collectors.toList()));
     }
