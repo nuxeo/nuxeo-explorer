@@ -154,7 +154,7 @@ pipeline {
   post {
     unsuccessful {
       script {
-        slackSend(channel: "${SLACK_CHANNEL}", color: "danger", message: "Failed to trigger nuxeo-explorer reference export for Nuxeo ${params.PROMOTED_NUXEO_VERSION}: <#${BUILD_NUMBER}|${BUILD_URL}>")
+        slackSend(channel: "${SLACK_CHANNEL}", color: "danger", message: "Failed to trigger nuxeo-explorer reference export for Nuxeo ${params.PROMOTED_NUXEO_VERSION}: <${BUILD_URL}|#${BUILD_NUMBER}>")
       }
     }
   }
