@@ -93,11 +93,15 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         if (label != null) {
             name = computeDocumentName(label);
         }
+        String version = distrib.getVersion();
 
         // Set first properties passed by parameter to not override default
         // behavior
         if (properties != null) {
             properties.forEach(doc::setPropertyValue);
+            if (properties.containsKey(PROP_VERSION)) {
+                version = (String) properties.get(PROP_VERSION);
+            }
         }
 
         doc.setPathInfo(containerPath, name);
@@ -107,12 +111,12 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
             doc.setPropertyValue(PROP_NAME, distrib.getName());
         } else {
             doc.setPropertyValue(TITLE_PROPERTY_PATH, label);
-            doc.setPropertyValue(PROP_KEY, label + "-" + distrib.getVersion());
+            doc.setPropertyValue(PROP_KEY, label + "-" + version);
             doc.setPropertyValue(PROP_NAME, label);
         }
         doc.setPropertyValue(PROP_LATEST_FT, distrib.isLatestFT());
         doc.setPropertyValue(PROP_LATEST_LTS, distrib.isLatestLTS());
-        doc.setPropertyValue(PROP_VERSION, distrib.getVersion());
+        doc.setPropertyValue(PROP_VERSION, version);
 
         fillContextData(doc);
         return new RepositoryDistributionSnapshot(session.createDocument(doc));

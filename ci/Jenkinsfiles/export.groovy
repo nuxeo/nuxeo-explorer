@@ -241,7 +241,8 @@ pipeline {
                     --namespace=${PREVIEW_NAMESPACE}
 
                   ${curlCommand} ${explorerUrl} --output home.html
-                  ${curlCommand} -d 'name=${params.SNAPSHOT_NAME}' ${explorerUrl}/save
+                  ${curlCommand} -d 'name=${params.SNAPSHOT_NAME}' -d 'version=${NUXEO_IMAGE_VERSION}' ${explorerUrl}/save
+                  ${curlCommand} ${explorerUrl} --output home_after_save.html
                   ${curlCommand} ${explorerUrl}/download/${distribId} --output export.zip
                 """
                 if (params.PERFORM_JSON_EXPORT) {
@@ -265,7 +266,7 @@ pipeline {
       }
       post {
         always {
-          archiveArtifacts allowEmptyArchive: true, artifacts: '**/home.html, **/export.json, **/export.zip, **/requirements.lock, **/charts/*.tgz, **/target/**/*.yaml'
+          archiveArtifacts allowEmptyArchive: true, artifacts: '**/home*.html, **/export.json, **/export.zip, **/requirements.lock, **/charts/*.tgz, **/target/**/*.yaml'
         }
       }
     }
