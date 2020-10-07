@@ -127,7 +127,7 @@ pipeline {
   post {
     unsuccessful {
       script {
-        slackSend(channel: "${SLACK_CHANNEL}", color: "danger", message: "Failed to cleanup old exports on ${params.TARGET_URL}: <#${BUILD_NUMBER}|${BUILD_URL}>")
+        slackSend(channel: "${SLACK_CHANNEL}", color: "danger", message: "Failed to cleanup old exports on ${params.TARGET_URL}: <${BUILD_URL}|#${BUILD_NUMBER}>")
       }
     }
   }

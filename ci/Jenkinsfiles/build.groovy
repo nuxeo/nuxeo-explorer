@@ -391,7 +391,7 @@ pipeline {
         if (!isPullRequest()) {
           def prevStatus = currentBuild.getPreviousBuild()?.getResult()
           if (!hudson.model.Result.SUCCESS.toString().equals(prevStatus) && !hudson.model.Result.UNSTABLE.toString().equals(prevStatus)) {
-            slackSend(channel: "${SLACK_CHANNEL}", color: "good", message: "Successfully built <nuxeo-explorer ${BRANCH_NAME} #${BUILD_NUMBER}|${BUILD_URL}>")
+            slackSend(channel: "${SLACK_CHANNEL}", color: "good", message: "Successfully built <${BUILD_URL}|nuxeo-explorer ${BRANCH_NAME} #${BUILD_NUMBER}>")
           }
         }
       }
@@ -399,7 +399,7 @@ pipeline {
     failure { // use failure instead of "unsuccessful" because of frequent UNSTABLE status on ftests
       script {
         if (!isPullRequest()) {
-          slackSend(channel: "${SLACK_CHANNEL}", color: "danger", message: "Failed to build <nuxeo-explorer ${BRANCH_NAME} #${BUILD_NUMBER}|${BUILD_URL}>")
+          slackSend(channel: "${SLACK_CHANNEL}", color: "danger", message: "Failed to build <${BUILD_URL}|nuxeo-explorer ${BRANCH_NAME} #${BUILD_NUMBER}>")
         }
       }
     }
