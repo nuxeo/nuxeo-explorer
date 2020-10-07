@@ -315,7 +315,7 @@ pipeline {
     unsuccessful {
       script {
         if (env.UPLOAD_EXPORT == "true") {
-          slackSend(channel: "${SLACK_CHANNEL}", color: "good", message: "Failed to <upload|${BUILD_URL}> nuxeo-explorer reference export for ${NUXEO_IMAGE_VERSION}")
+          slackSend(channel: "${SLACK_CHANNEL}", color: "danger", message: "Failed to <upload|${BUILD_URL}> nuxeo-explorer reference export for ${NUXEO_IMAGE_VERSION}")
         }
       }
     }
