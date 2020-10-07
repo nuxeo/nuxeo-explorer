@@ -385,6 +385,11 @@ public class Distribution extends ModuleRoot {
         if (StringUtils.isNotBlank(released)) {
             properties.put(DistributionSnapshot.PROP_RELEASED, RepositoryDistributionSnapshot.convertDate(released));
         }
+        // Version
+        String version = formData.getString("version");
+        if (StringUtils.isNotBlank(released)) {
+            properties.put(DistributionSnapshot.PROP_VERSION, version);
+        }
 
         return properties;
     }
