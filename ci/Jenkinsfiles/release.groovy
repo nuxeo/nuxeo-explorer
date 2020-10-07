@@ -393,7 +393,7 @@ pipeline {
     }
     unsuccessful {
       script {
-        if (currentBuild.description.isEmpty()) {
+        if (currentBuild.description?.isEmpty()) {
           currentBuild.description = "(Attempt) Release ${RELEASE_VERSION}"
         }
         if (env.DRY_RUN != "true") {
