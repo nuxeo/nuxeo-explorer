@@ -152,6 +152,9 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
                 return rtsnap;
             }
         }
+        if (snaps.isEmpty()) {
+            return null;
+        }
         return snaps.get(0);
     }
 
