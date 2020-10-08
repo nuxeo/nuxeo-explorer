@@ -237,7 +237,7 @@ pipeline {
                 String curlCommand = "curl --user Administrator:Administrator ${CURL_OPTIONS}"
                 sh """
                   kubectl rollout status deployment export \
-                    --timeout=3m \
+                    --timeout=15m \
                     --namespace=${PREVIEW_NAMESPACE}
 
                   ${curlCommand} ${explorerUrl} --output home.html
