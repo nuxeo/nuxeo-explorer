@@ -4,12 +4,12 @@
   <parent>
     <groupId>org.nuxeo</groupId>
     <artifactId>nuxeo-parent</artifactId>
-    <version>11.3-SNAPSHOT</version>
+    <version>11.3</version>
   </parent>
 
   <groupId>org.nuxeo.ecm.platform</groupId>
   <artifactId>nuxeo-explorer-parent</artifactId>
-  <version>20.0.0-SNAPSHOT</version>
+  <version>20.0.0</version>
   <name>Nuxeo Explorer Parent</name>
   <packaging>pom</packaging>
 
