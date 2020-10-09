@@ -62,7 +62,6 @@
                 <td><span name="version">${rtSnap.version}</span></td>
               </tr>
             </table>
-            <i>Existing snapshot with the same name and version will be updated.</i><br/>
             <input type="hidden" name="source" value="admin">
             <input type="submit" value="Save" id="doSave" class="button primary" onclick="$.fn.clickButton(this)" />
             <input type="button" value="Cancel" id="save"
