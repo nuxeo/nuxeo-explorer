@@ -43,7 +43,7 @@ pipeline {
   triggers {
     upstream(
       threshold: hudson.model.Result.SUCCESS,
-      upstreamProjects: "/nuxeo/release-nuxeo",
+      upstreamProjects: "/nuxeo/release-nuxeo-jsf-ui",
     )
   }
 
@@ -94,7 +94,7 @@ pipeline {
           def hasUpstream = false
           def wasTriggered = false;
           for (RunWrapper b: currentBuild.upstreamBuilds) {
-            if (b.projectName != 'test-trigger' && b.fullProjectName != 'nuxeo/release-nuxeo') {
+            if (b.projectName != 'test-trigger' && b.fullProjectName != 'nuxeo/release-nuxeo' && b.fullProjectName != 'nuxeo/release-nuxeo-jsf-ui') {
               continue
             }
             hasUpstream = true
@@ -107,11 +107,6 @@ pipeline {
               def originalVersion = matcher[0][2]
               echo "Parsed original version: ${originalVersion}"
               jobParams.add(string(name: 'UPLOAD_ALIASES', value: originalVersion))
-
-              if (params.ADDITIONAL_PACKAGE_LIST.trim().isEmpty()) {
-                // empty default additional packages list, as these are probably not released yet
-                jobParams.add(text(name: 'ADDITIONAL_PACKAGE_LIST', value: ''))
-              }
 
               echo "Triggering job with parameters: ${jobParams} for ${b.absoluteUrl}"
               build job: 'export-platform-explorer-reference', parameters: jobParams, wait: false
