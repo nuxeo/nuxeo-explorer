@@ -82,8 +82,7 @@ pipeline {
           def jobParams = [
             booleanParam(name: 'UPLOAD_AS_PROMOTED', value: true),
             booleanParam(name: 'DOWNLOAD_PACKAGES_FROM_PROD', value: true),
-            // upload to preview waiting for prod update to a more recent explorer version
-            booleanParam(name: 'UPLOAD_TO_PROD', value: false)
+            booleanParam(name: 'UPLOAD_TO_PROD', value: true)
           ]
           if (!params.DEFAULT_PACKAGE_LIST.trim().isEmpty()) {
             jobParams.add(text(name: 'DEFAULT_PACKAGE_LIST', value: params.DEFAULT_PACKAGE_LIST))
