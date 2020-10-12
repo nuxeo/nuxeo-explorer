@@ -53,13 +53,12 @@ public class ComponentWO extends NuxeoArtifactWebObject {
     @Path("override")
     public Object override(@QueryParam("contributionId") String contribId) {
         ComponentInfo component = getTargetComponentInfo();
-        DistributionSnapshot snapshot = getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession());
-        ExtensionInfo contribution = snapshot.getContribution(contribId);
+        ExtensionInfo contribution = getSnapshot().getContribution(contribId);
         return getView("override").arg("component", component).arg("contribution", contribution);
     }
 
     protected ComponentInfo getTargetComponentInfo() {
-        return getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession()).getComponent(nxArtifactId);
+        return getSnapshot().getComponent(nxArtifactId);
     }
 
     @Override

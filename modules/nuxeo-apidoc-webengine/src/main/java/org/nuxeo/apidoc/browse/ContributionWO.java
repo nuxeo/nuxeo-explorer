@@ -40,8 +40,7 @@ import org.nuxeo.ecm.webengine.model.WebObject;
 public class ContributionWO extends NuxeoArtifactWebObject {
 
     protected ExtensionInfo getTargetExtensionInfo() {
-        return getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession())
-                                   .getContribution(nxArtifactId);
+        return getSnapshot().getContribution(nxArtifactId);
     }
 
     @Override
