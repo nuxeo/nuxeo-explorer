@@ -43,7 +43,7 @@ import org.nuxeo.ecm.webengine.model.WebObject;
 public class OperationWO extends NuxeoArtifactWebObject {
 
     protected OperationInfo getTargetComponentInfo() {
-        return getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession()).getOperation(nxArtifactId);
+        return getSnapshot().getOperation(nxArtifactId);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class OperationWO extends NuxeoArtifactWebObject {
 
             if (Constants.CAT_CHAIN.equals(opInfo.getCategory())) {
                 // handle chains use case, where implementation type is an inner class
-                DistributionSnapshot dist = getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession());
+                DistributionSnapshot dist = getSnapshot();
                 JavaDocHelper helper = JavaDocHelper.getHelper(dist.getName(), dist.getVersion());
                 String javadocUrl = helper.getUrl(OperationChainCompiler.class.getCanonicalName(), "CompiledChainImpl");
                 t.arg("implementationUrl", javadocUrl);

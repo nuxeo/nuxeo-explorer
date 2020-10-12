@@ -33,7 +33,7 @@ import org.nuxeo.ecm.webengine.model.WebObject;
 public class BundleGroupWO extends NuxeoArtifactWebObject {
 
     protected BundleGroup getTargetBundleGroup() {
-        return getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession()).getBundleGroup(nxArtifactId);
+        return getSnapshot().getBundleGroup(nxArtifactId);
     }
 
     @Override

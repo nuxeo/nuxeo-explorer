@@ -26,7 +26,7 @@ import org.nuxeo.ecm.webengine.model.WebObject;
 public class ServiceWO extends NuxeoArtifactWebObject {
 
     protected ServiceInfo getServiceInfo() {
-        return getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession()).getService(nxArtifactId);
+        return getSnapshot().getService(nxArtifactId);
     }
 
     @Override

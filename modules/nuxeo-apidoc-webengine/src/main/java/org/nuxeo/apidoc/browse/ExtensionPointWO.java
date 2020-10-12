@@ -35,8 +35,7 @@ import org.nuxeo.ecm.webengine.model.WebObject;
 public class ExtensionPointWO extends NuxeoArtifactWebObject {
 
     protected ExtensionPointInfo getTargetExtensionPointInfo() {
-        return getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession())
-                                   .getExtensionPoint(nxArtifactId);
+        return getSnapshot().getExtensionPoint(nxArtifactId);
     }
 
     @Override
