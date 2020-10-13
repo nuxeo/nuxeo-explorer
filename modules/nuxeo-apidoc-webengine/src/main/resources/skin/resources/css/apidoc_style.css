@@ -488,8 +488,9 @@ header {
 .top-banner img {
   border-radius: 0;
   display: inline-block;
-  vertical-align: baseline;
   margin: 0 .6rem -0.2em 0;
+  vertical-align: baseline;
+  width: 5rem;
 }
 
 .top-banner span, .top-banner a {
@@ -500,23 +501,22 @@ header {
 @media (min-width: 48em) {
   .top-banner {
     padding: 0 .3rem 0 1rem;
- ; }
-  .top-banner img {
-    width: 5rem;
- ; }
+  }
 }
 
 @media (min-width: 64em) {
   .top-banner {
     padding: 0 1rem 0 2rem;
- ; }
+  }
+
   .top-banner img {
     width: 6.5rem;
- ; }
+  }
 }
 
 .login {
-  float: right; }
+  float: right;
+}
 
 /* Main Navigation */
 nav ul,
