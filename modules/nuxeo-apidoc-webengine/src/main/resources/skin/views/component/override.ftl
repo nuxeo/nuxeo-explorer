@@ -10,6 +10,14 @@ ${component.documentation}
 </#if>
 <#if contribution??>
   ${contribution.xml}
+<#else>
+  <#list component.extensions as contribution>
+  <extension target="${contribution.targetComponentName}" point="${contribution.extensionPoint}">
+    <#list contribution.contributionItems as contributionItem>
+    ${contributionItem.rawXml}
+    </#list>
+  </extension>
+  </#list>
 </#if>
 
 </component>

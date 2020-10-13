@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="org.nuxeo.apidoc.snapshot.SnapshotManagerComponent.override">
+
+  <require>org.nuxeo.apidoc.snapshot.SnapshotManagerComponent</require>
+
+  <documentation>
+<p>
+      This component handles the introspection of the current live Runtime as a distribution.
+    </p>
+<p>
+      It can also persist this introspection as Nuxeo documents, to handle import and export of external distributions.
+    </p>
+
+  </documentation>
+  <extension target="service:org.nuxeo.apidoc.snapshot.SnapshotManagerComponent" point="org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters">
+    <exporter class="org.nuxeo.apidoc.export.graphs.plugins.JsonGraphExporter" id="jsonGraph">
+      <title>Json Graph</title>
+      <description>Json dependency graph</description>
+      <filename>graph.json</filename>
+      <mimetype>application/json</mimetype>
+      <display>
+        <on>home</on>
+        <on>bundle</on>
+        <on>package</on>
+      </display>
+    </exporter>
+    <exporter class="org.nuxeo.apidoc.export.graphs.plugins.DOTGraphExporter" id="dotGraph">
+      <title>DOT Graph</title>
+      <description>Dependency graph exported in DOT format</description>
+      <filename>graph.dot</filename>
+      <mimetype>application/octet-stream</mimetype>
+      <display>
+        <on>home</on>
+      </display>
+    </exporter>
+  </extension>
+  <extension target="service:org.nuxeo.runtime.ConfigurationService" point="org.nuxeo.runtime.ConfigurationService--configuration">
+    <property name="org.nuxeo.apidoc.javadoc.url">
+      https://community.nuxeo.com/api/
+    </property>
+  </extension>
+  <extension target="service:org.nuxeo.runtime.ConfigurationService" point="org.nuxeo.runtime.ConfigurationService--configuration">
+    <property name="org.nuxeo.apidoc.connect.url">
+      https://connect.nuxeo.com/nuxeo/site/
+    </property>
+  </extension>
+  <extension target="service:org.nuxeo.runtime.ConfigurationService" point="org.nuxeo.runtime.ConfigurationService--configuration">
+    <property name="org.nuxeo.apidoc.apidocmanagers.group">
+      ApidocManagers
+    </property>
+    <property name="org.nuxeo.apidoc.apidocreaders.group">
+      Everyone
+    </property>
+  </extension>
+  <extension target="service:org.nuxeo.runtime.ConfigurationService" point="org.nuxeo.runtime.ConfigurationService--configuration">
+    <property name="org.nuxeo.apidoc.secure.xml.keywords">
+      password, Password, secret, apiKey, TMPDIR, TMP, TEMP, TEMPDIR
+    </property>
+    <property name="org.nuxeo.apidoc.secure.xml.keywords.whitelisted">
+      passwordField, passwordHashAlgorithm
+    </property>
+  </extension>
+
+</component>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="org.nuxeo.apidoc.snapshot.SnapshotManagerComponent.override">
+
+  <require>org.nuxeo.apidoc.snapshot.SnapshotManagerComponent</require>
+
+  <documentation>
+<p>
+      This component handles the introspection of the current live Runtime as a distribution.
+    </p>
+<p>
+      It can also persist this introspection as Nuxeo documents, to handle import and export of external distributions.
+    </p>
+
+  </documentation>
+  <extension point="exporters" target="org.nuxeo.apidoc.snapshot.SnapshotManagerComponent">
+    <exporter class="org.nuxeo.apidoc.export.graphs.plugins.JsonGraphExporter" id="jsonGraph">
+      <title>Json Graph</title>
+      <description>Json dependency graph</description>
+      <filename>graph.json</filename>
+      <mimetype>application/json</mimetype>
+      <display>
+        <on>home</on>
+        <on>bundle</on>
+        <on>package</on>
+      </display>
+    </exporter>
+    <exporter class="org.nuxeo.apidoc.export.graphs.plugins.DOTGraphExporter" id="dotGraph">
+      <title>DOT Graph</title>
+      <description>Dependency graph exported in DOT format</description>
+      <filename>graph.dot</filename>
+      <mimetype>application/octet-stream</mimetype>
+      <display>
+        <on>home</on>
+      </display>
+    </exporter>
+  </extension>
+
+</component>
