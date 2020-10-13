@@ -650,7 +650,7 @@ article {
   bottom: 0;
   width: 5px;
   background: #afdcf8;
-  left: 20%;
+  left: 16vw;
   margin-left: -10px;
 }
 
@@ -660,7 +660,7 @@ article {
 
 .timeline .time {
   display: block;
-  width: 25%;
+  width: calc(16vw + 50px);
   padding-right: 90px;
   position: absolute;
   text-align: right;
@@ -687,7 +687,7 @@ article {
   background: #fff;
   border-radius: 50%;
   box-shadow: 0 0 0 5px #afdcf8;
-  left: 21%;
+  left: calc(16vw + 10px);
   top: 8%;
   margin: 0 0 0 -25px;
 }
