@@ -20,6 +20,7 @@ package org.nuxeo.functionaltests.explorer.nomode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -38,6 +39,7 @@ import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
+import org.nuxeo.apidoc.browse.ApiBrowserConstants;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.functionaltests.RestHelper;
 import org.nuxeo.functionaltests.explorer.pages.DistribAdminPage;
@@ -229,6 +231,34 @@ public class ITExplorerTest extends AbstractExplorerTest {
         goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.ecm.automation.server.marshallers");
         ComponentArtifactPage apage = asPage(ComponentArtifactPage.class);
         apage.checkAlternative();
+    }
+
+    protected void checkOverridePage(String url, String referenceFilePath) {
+        driver.get(NUXEO_URL + url);
+        try {
+            assertEquals(AbstractExplorerTest.getReferenceContent(Paths.get(referenceFilePath)),
+                    driver.getPageSource());
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+        // perform home navigation after, to avoid LogTestWatchMan failing on taking a screenshot of this XML page...
+        driver.get(NUXEO_URL);
+    }
+
+    /**
+     * Non-regression test for NXP-29755
+     *
+     * @since 20.1.0
+     */
+    @Test
+    public void testComponentsOverride() {
+        String distribId = getDistribId(LIVE_NAME, liveVersion);
+        String componentId = "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent";
+        String url = String.format("%s%s/%s/%s/override", ExplorerHomePage.URL, distribId,
+                ApiBrowserConstants.VIEW_COMPONENT, componentId);
+        String filterUrl = String.format("%s?contributionId=%s--%s", url, componentId, "exporters");
+        checkOverridePage(url, "data/override_component_reference.xml");
+        checkOverridePage(filterUrl, "data/override_contribution_reference.xml");
     }
 
     @Test

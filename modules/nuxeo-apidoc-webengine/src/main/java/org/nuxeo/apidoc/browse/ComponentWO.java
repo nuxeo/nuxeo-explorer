@@ -28,6 +28,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
@@ -53,7 +54,11 @@ public class ComponentWO extends NuxeoArtifactWebObject {
     @Path("override")
     public Object override(@QueryParam("contributionId") String contribId) {
         ComponentInfo component = getTargetComponentInfo();
-        ExtensionInfo contribution = getSnapshot().getContribution(contribId);
+        DistributionSnapshot snapshot = getSnapshot();
+        ExtensionInfo contribution = null;
+        if (StringUtils.isNotBlank(contribId)) {
+            contribution = snapshot.getContribution(contribId);
+        }
         return getView("override").arg("component", component).arg("contribution", contribution);
     }
 
