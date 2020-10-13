@@ -20,7 +20,6 @@ package org.nuxeo.functionaltests.explorer.nomode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -239,7 +238,7 @@ public class ITExplorerTest extends AbstractExplorerTest {
             assertEquals(AbstractExplorerTest.getReferenceContent(Paths.get(referenceFilePath)),
                     driver.getPageSource());
         } catch (IOException e) {
-            fail(e.getMessage());
+            throw new AssertionError(e);
         }
         // perform home navigation after, to avoid LogTestWatchMan failing on taking a screenshot of this XML page...
         driver.get(NUXEO_URL);
