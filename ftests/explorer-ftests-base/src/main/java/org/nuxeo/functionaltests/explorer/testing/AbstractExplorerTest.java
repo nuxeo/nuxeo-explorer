@@ -438,7 +438,11 @@ public abstract class AbstractExplorerTest extends AbstractTest {
      * @since 20.0.0
      */
     public static InputStream getReferenceStream(Path path) throws IOException {
-        return Thread.currentThread().getContextClassLoader().getResourceAsStream(path.toString());
+        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path.toString());
+        if (stream == null) {
+            throw new IOException("Reference file not found at " + path);
+        }
+        return stream;
     }
 
 }
