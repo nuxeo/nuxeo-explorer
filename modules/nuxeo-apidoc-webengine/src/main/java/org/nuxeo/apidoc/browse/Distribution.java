@@ -75,6 +75,7 @@ import org.nuxeo.common.utils.URIUtils;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentNotFoundException;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.IterableQueryResult;
 import org.nuxeo.ecm.core.api.NuxeoException;
@@ -555,11 +556,11 @@ public class Distribution extends ModuleRoot {
 
     protected DistributionSnapshot getPersistedDistrib(String distribId, String distribDocId) {
         if (StringUtils.isNotBlank(distribDocId)) {
-            DocumentModel doc = ctx.getCoreSession().getDocument(new IdRef(distribDocId));
-            if (doc == null) {
+            try {
+                return ctx.getCoreSession().getDocument(new IdRef(distribDocId)).getAdapter(DistributionSnapshot.class);
+            } catch (DocumentNotFoundException e) {
                 return null;
             }
-            return doc.getAdapter(DistributionSnapshot.class);
         }
         List<DistributionSnapshot> snapshots = getSnapshotManager().getPersistentSnapshots(ctx.getCoreSession(),
                 distribId, false);
