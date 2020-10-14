@@ -336,31 +336,40 @@ pipeline {
               } else {
                 sh "kubectl create namespace ${PREVIEW_NAMESPACE}"
               }
-              sh "kubectl --namespace platform get secret kubernetes-docker-cfg -ojsonpath='{.data.\\.dockerconfigjson}' | base64 --decode > /tmp/config.json"
-              sh """kubectl create secret generic kubernetes-docker-cfg \
-                  --namespace=${PREVIEW_NAMESPACE} \
-                  --from-file=.dockerconfigjson=/tmp/config.json \
-                  --type=kubernetes.io/dockerconfigjson --dry-run -o yaml | kubectl apply -f -"""
-              String previewCommand = isReferenceBranch ?
-                // To avoid jx gc cron job, reference branch previews are deployed by calling jx step helm install instead of jx preview
-                "jx step helm install --namespace ${PREVIEW_NAMESPACE} --name ${PREVIEW_NAMESPACE} --verbose ."
-                // When deploying a pr preview, we use jx preview which gc the merged pull requests
-                : "jx preview --namespace ${PREVIEW_NAMESPACE} --verbose --source-url=https://github.com/nuxeo/nuxeo-explorer --preview-health-timeout 15m ${noCommentOpt}"
+              try {
+                sh "kubectl --namespace platform get secret kubernetes-docker-cfg -ojsonpath='{.data.\\.dockerconfigjson}' | base64 --decode > /tmp/config.json"
+                sh """kubectl create secret generic kubernetes-docker-cfg \
+                    --namespace=${PREVIEW_NAMESPACE} \
+                    --from-file=.dockerconfigjson=/tmp/config.json \
+                    --type=kubernetes.io/dockerconfigjson --dry-run -o yaml | kubectl apply -f -"""
+                String previewCommand = isReferenceBranch ?
+                  // To avoid jx gc cron job, reference branch previews are deployed by calling jx step helm install instead of jx preview
+                  "jx step helm install --namespace ${PREVIEW_NAMESPACE} --name ${PREVIEW_NAMESPACE} --verbose ."
+                  // When deploying a pr preview, we use jx preview which gc the merged pull requests
+                  : "jx preview --namespace ${PREVIEW_NAMESPACE} --verbose --source-url=https://github.com/nuxeo/nuxeo-explorer --preview-health-timeout 15m ${noCommentOpt}"
 
-              // third build and deploy the chart
-              // waiting for https://github.com/jenkins-x/jx/issues/5797 to be fixed in order to remove --source-url
-              sh """
-                jx step helm build --verbose
-                mkdir target && helm template . --output-dir target
-                ${previewCommand}
-              """
-              if (isReferenceBranch) {
-                // When not using jx preview, we need to expose the nuxeo url by hand
-                url = sh(returnStdout: true, script: "kubectl get svc --namespace ${PREVIEW_NAMESPACE} preview -o go-template='{{index .metadata.annotations \"fabric8.io/exposeUrl\"}}'")
-                echo """
-                  ----------------------------------------
-                  Preview available at: ${url}
-                  ----------------------------------------"""
+                // third build and deploy the chart
+                // waiting for https://github.com/jenkins-x/jx/issues/5797 to be fixed in order to remove --source-url
+                sh """
+                  jx step helm build --verbose
+                  mkdir target && helm template . --output-dir target
+                  ${previewCommand}
+                """
+                if (isReferenceBranch) {
+                  // When not using jx preview, we need to expose the nuxeo url by hand
+                  url = sh(returnStdout: true, script: "kubectl get svc --namespace ${PREVIEW_NAMESPACE} preview -o go-template='{{index .metadata.annotations \"fabric8.io/exposeUrl\"}}'")
+                  echo """
+                    ----------------------------------------
+                    Preview available at: ${url}
+                    ----------------------------------------"""
+                }
+              } catch (err) {
+                echo "Error while deploying preview environment: ${err}"
+                if (!nsExist) {
+                  echo "Deleting namespace ${PREVIEW_NAMESPACE}"
+                  sh "kubectl delete namespace ${PREVIEW_NAMESPACE}"
+                }
+                throw err
               }
             }
           }
