@@ -97,6 +97,9 @@ pipeline {
     NUXEO_TEMPLATE_OVERRIDE = "${getPreviewTemplatesOverride(BRANCH_NAME == REFERENCE_BRANCH)}"
     NUXEO_DOCKER_REGISTRY = 'docker-private.packages.nuxeo.com'
     PREVIEW_NAMESPACE = "nuxeo-explorer-${BRANCH_NAME.toLowerCase()}"
+    // APP_NAME and ORG needed for PR preview
+    APP_NAME = 'nuxeo-explorer'
+    ORG = 'nuxeo'
     SLACK_CHANNEL = 'explorer-notifs'
   }
   stages {
