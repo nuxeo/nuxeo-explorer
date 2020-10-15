@@ -22,7 +22,6 @@
   <script src="${skinPath}/script/html-xml.js"></script>
   <script src="${skinPath}/script/manifest.js"></script>
   <script src="${skinPath}/script/jquery.magnific.min.js"></script>
-  <script src="${skinPath}/script/quickEditor.js"></script>
   <script src="${skinPath}/script/jquery.highlight-3.js"></script>
   <script src="${skinPath}/script/jquery.toc.js"></script>
   <script src="${skinPath}/script/jquery.utils.js"></script>
