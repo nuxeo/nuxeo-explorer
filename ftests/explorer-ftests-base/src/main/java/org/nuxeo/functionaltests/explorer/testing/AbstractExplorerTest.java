@@ -188,6 +188,20 @@ public abstract class AbstractExplorerTest extends AbstractTest {
 
     protected void checkDistrib(String distribId, boolean partial, String partialVirtualGroup,
             boolean includeReferences, boolean legacy) {
+        open(ExplorerHomePage.URL + distribId);
+        DistributionHomePage dhome = asPage(DistributionHomePage.class);
+        dhome.check();
+        if (partial) {
+            if (legacy) {
+                dhome.checkNumbers(1, 3, 6, 2, 1, 5, 0, 0);
+            } else {
+                if (includeReferences) {
+                    dhome.checkNumbers(2, 8, 11, 12, 8, 10, 0, 1);
+                } else {
+                    dhome.checkNumbers(1, 3, 6, 3, 2, 10, 0, 1);
+                }
+            }
+        }
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_BUNDLEGROUPS);
         checkBundleGroups(partial, partialVirtualGroup, includeReferences, legacy);
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_BUNDLES);

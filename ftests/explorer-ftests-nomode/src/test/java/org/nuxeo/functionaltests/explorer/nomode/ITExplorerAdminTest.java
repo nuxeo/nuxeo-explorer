@@ -147,6 +147,7 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
     public void testLiveDistribExportAndImport() {
         String distribName = "my-server";
         String distribId = checkLiveDistribExport(distribName, true);
+        checkHomeFirstPersistedDistrib();
         checkLiveDistribImport(distribId);
     }
 
