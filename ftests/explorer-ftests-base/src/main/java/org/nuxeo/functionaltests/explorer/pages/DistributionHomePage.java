@@ -95,4 +95,26 @@ public class DistributionHomePage extends AbstractExplorerPage {
         }
     }
 
+    protected int getChipNumber(WebElement elt) {
+        return Integer.valueOf(elt.findElement(By.xpath("following-sibling::*")).getText());
+    }
+
+    /** @since 20.1.0 */
+    public void checkNumber(int nb, WebElement elt) {
+        assertEquals(nb, getChipNumber(elt));
+    }
+
+    /** @since 20.1.0 */
+    public void checkNumbers(int nbBundleGroups, int nbBundles, int nbComponents, int nbServices, int nbExtensionPoints,
+            int nbContributions, int nbOperations, int nbPackages) {
+        checkNumber(nbBundleGroups, bundleGroups);
+        checkNumber(nbBundles, bundles);
+        checkNumber(nbComponents, components);
+        checkNumber(nbServices, services);
+        checkNumber(nbExtensionPoints, extensionPoints);
+        checkNumber(nbContributions, contributions);
+        checkNumber(nbOperations, operations);
+        checkNumber(nbPackages, packages);
+    }
+
 }

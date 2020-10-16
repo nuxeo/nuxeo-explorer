@@ -120,7 +120,7 @@ public class ApiBrowser extends DefaultObject {
         stats.put("components", snap.getComponentIds().size());
         stats.put("services", snap.getServiceIds().size());
         stats.put("xps", snap.getExtensionPointIds().size());
-        stats.put("contribs", snap.getComponentIds().size());
+        stats.put("contribs", snap.getContributionIds().size());
         stats.put("operations", snap.getOperations().size());
         stats.put("packages", snap.getPackages().size());
         if (embeddedMode) {
