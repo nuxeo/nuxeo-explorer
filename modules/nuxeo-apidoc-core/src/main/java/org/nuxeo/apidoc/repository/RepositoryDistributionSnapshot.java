@@ -125,7 +125,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     public static List<DistributionSnapshot> readPersistentSnapshots(CoreSession session) {
         String query = String.format("SELECT * FROM %s where %s AND %s", TYPE_NAME, QueryHelper.NOT_DELETED,
                 QueryHelper.NOT_VERSION);
-        DocumentModelList docs = session.query(query);
+        DocumentModelList docs = query(session, query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(DistributionSnapshot.class))
                    .filter(Objects::nonNull)
@@ -149,7 +149,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
             query += String.format(" AND %s = %s", DistributionSnapshot.PROP_KEY, escapedKey);
         }
         query += " ORDER BY " + NXQL.ECM_UUID;
-        DocumentModelList docs = session.query(query);
+        DocumentModelList docs = query(session, query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(DistributionSnapshot.class))
                    .filter(Objects::nonNull)
@@ -162,13 +162,13 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
 
     protected <T> List<T> getChildren(Class<T> adapter, String docType) {
         String query = QueryHelper.select(docType, doc, NXQL.ECM_POS);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream().map(doc -> doc.getAdapter(adapter)).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     protected <T> T getChild(Class<T> adapter, String docType, String idField, String id) {
         String query = QueryHelper.select(docType, doc, idField, id);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         if (docs.isEmpty()) {
             log.debug(String.format("Unable to find %s with id '%s'", docType, id));
             return null;
@@ -210,7 +210,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     @Override
     public List<BundleGroup> getBundleGroups() {
         String query = QueryHelper.select(BundleGroup.TYPE_NAME, doc, NXQL.ECM_PARENTID, getBundleContainer().getId());
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(BundleGroup.class))
                    .filter(Objects::nonNull)
@@ -321,7 +321,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         String query = String.format("%s AND (%s = 0 OR %s is NULL)",
                 QueryHelper.select(ServiceInfo.TYPE_NAME, getDoc(), ServiceInfo.PROP_CLASS_NAME, id),
                 ServiceInfo.PROP_OVERRIDEN, ServiceInfo.PROP_OVERRIDEN);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         if (docs.size() == 0) {
             return null;
         }
@@ -374,14 +374,14 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         String query = String.format("%s OR %s = %s",
                 QueryHelper.select(OperationInfo.TYPE_NAME, getDoc(), OperationInfo.PROP_NAME, id),
                 OperationInfo.PROP_ALIASES, NXQL.escapeString(id));
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.isEmpty() ? null : docs.get(0).getAdapter(OperationInfo.class);
     }
 
     @Override
     public List<OperationInfo> getOperations() {
         String query = QueryHelper.select(OperationInfo.TYPE_NAME, getDoc(), NXQL.ECM_POS);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(OperationInfo.class))
                    .filter(Objects::nonNull)
@@ -391,14 +391,14 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     @Override
     public PackageInfo getPackage(String name) {
         String query = QueryHelper.select(PackageInfo.TYPE_NAME, getDoc(), PackageInfo.PROP_PACKAGE_NAME, name);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.isEmpty() ? null : docs.get(0).getAdapter(PackageInfo.class);
     }
 
     @Override
     public List<PackageInfo> getPackages() {
         String query = QueryHelper.select(PackageInfo.TYPE_NAME, getDoc(), PackageInfo.PROP_PACKAGE_ID);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(PackageInfo.class))
                    .filter(Objects::nonNull)
@@ -415,7 +415,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     @Override
     public void cleanPreviousArtifacts() {
         String query = QueryHelper.select("Document", getDoc());
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         getCoreSession().removeDocuments(docs.stream().map(doc -> doc.getRef()).toArray(size -> new DocumentRef[size]));
     }
 

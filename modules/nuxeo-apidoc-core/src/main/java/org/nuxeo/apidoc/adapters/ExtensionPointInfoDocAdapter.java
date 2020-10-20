@@ -114,7 +114,7 @@ public class ExtensionPointInfoDocAdapter extends BaseNuxeoArtifactDocAdapter im
         }
         String query = QueryHelper.select(ExtensionInfo.TYPE_NAME, dist, ExtensionInfo.PROP_EXTENSION_POINT, getId(),
                 NXQL.ECM_POS);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(ExtensionInfo.class))
                    .filter(Objects::nonNull)

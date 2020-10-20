@@ -114,7 +114,7 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
     @Override
     public List<ExtensionPointInfo> getExtensionPoints() {
         String query = QueryHelper.select(ExtensionPointInfo.TYPE_NAME, doc, NXQL.ECM_POS);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(ExtensionPointInfo.class))
                    .filter(Objects::nonNull)
@@ -124,7 +124,7 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
     @Override
     public List<ExtensionInfo> getExtensions() {
         String query = QueryHelper.select(ExtensionInfo.TYPE_NAME, doc, NXQL.ECM_POS);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(ExtensionInfo.class))
                    .filter(Objects::nonNull)
@@ -184,7 +184,7 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
     @Override
     public List<ServiceInfo> getServices() {
         String query = QueryHelper.select(ServiceInfo.TYPE_NAME, doc, NXQL.ECM_POS);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(ServiceInfo.class))
                    .filter(Objects::nonNull)
@@ -230,7 +230,7 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
     public List<OperationInfo> getOperations() {
         String query = QueryHelper.select(OperationInfo.TYPE_NAME, doc, OperationInfo.PROP_CONTRIBUTING_COMPONENT,
                 getName());
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream().map(doc -> doc.getAdapter(OperationInfo.class)).collect(Collectors.toList());
     }
 
