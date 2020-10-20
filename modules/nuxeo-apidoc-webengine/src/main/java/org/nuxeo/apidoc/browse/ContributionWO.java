@@ -30,22 +30,24 @@ import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
-import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.ecm.webengine.forms.FormData;
 import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
 @WebObject(type = "contribution")
-public class ContributionWO extends NuxeoArtifactWebObject {
+public class ContributionWO extends NuxeoArtifactWebObject<ExtensionInfo> {
 
     protected ExtensionInfo getTargetExtensionInfo() {
         return getSnapshot().getContribution(nxArtifactId);
     }
 
     @Override
-    public NuxeoArtifact getNxArtifact() {
-        return getTargetExtensionInfo();
+    public ExtensionInfo getNxArtifact() {
+        if (nxArtifact == null) {
+            nxArtifact = getTargetExtensionInfo();
+        }
+        return nxArtifact;
     }
 
     protected ExtensionPointInfo getTargetExtensionPoint(DistributionSnapshot snapshot, ExtensionInfo contrib) {
@@ -56,7 +58,7 @@ public class ContributionWO extends NuxeoArtifactWebObject {
     @Override
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();
-        ExtensionInfo ei = getTargetExtensionInfo();
+        ExtensionInfo ei = getNxArtifact();
         ExtensionPointInfo ep = getTargetExtensionPoint(getSnapshot(), ei);
         ComponentInfo epcomp = ep != null ? ep.getComponent() : null;
         t.arg("ep", ep);
@@ -75,7 +77,7 @@ public class ContributionWO extends NuxeoArtifactWebObject {
     @Produces("text/xml")
     @Path("override")
     public Object generateOverride() {
-        ExtensionInfo ei = getTargetExtensionInfo();
+        ExtensionInfo ei = getNxArtifact();
         ExtensionPointInfo ep = getTargetExtensionPoint(getSnapshot(), ei);
 
         FormData formData = ctx.getForm();

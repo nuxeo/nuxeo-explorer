@@ -31,7 +31,6 @@ import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
-import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.export.api.Exporter;
@@ -45,13 +44,16 @@ import org.nuxeo.ecm.webengine.model.WebObject;
  * @since 11.1
  */
 @WebObject(type = PackageWO.TYPE)
-public class PackageWO extends NuxeoArtifactWebObject {
+public class PackageWO extends NuxeoArtifactWebObject<PackageInfo> {
 
     public static final String TYPE = "package";
 
     @Override
-    public NuxeoArtifact getNxArtifact() {
-        return getTargetPackageInfo(getSnapshot());
+    public PackageInfo getNxArtifact() {
+        if (nxArtifact == null) {
+            nxArtifact = getTargetPackageInfo(getSnapshot());
+        }
+        return nxArtifact;
     }
 
     protected PackageInfo getTargetPackageInfo(DistributionSnapshot snapshot) {
@@ -107,7 +109,7 @@ public class PackageWO extends NuxeoArtifactWebObject {
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();
         DistributionSnapshot snapshot = getSnapshot();
-        PackageInfo pkg = getTargetPackageInfo(snapshot);
+        PackageInfo pkg = getNxArtifact();
         String marketplaceURL = PackageInfo.getMarketplaceURL(pkg, true);
         t.arg("marketplaceURL", marketplaceURL);
         Map<String, BundleInfo> binfo = getBundleInfo(snapshot, pkg.getBundles());

@@ -33,13 +33,16 @@ import org.nuxeo.ecm.webengine.model.exceptions.WebResourceNotFoundException;
 import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
 import org.nuxeo.runtime.api.Framework;
 
-public abstract class NuxeoArtifactWebObject extends DefaultObject {
+public abstract class NuxeoArtifactWebObject<T extends NuxeoArtifact> extends DefaultObject {
 
     protected String nxArtifactId;
+
+    protected T nxArtifact;
 
     @Override
     protected void initialize(Object... args) {
         nxArtifactId = (String) args[0];
+        nxArtifact = null;
     }
 
     protected String getNxArtifactId() {
@@ -59,7 +62,7 @@ public abstract class NuxeoArtifactWebObject extends DefaultObject {
         return super.getView(viewId).arg(Distribution.DIST_ID, getDistributionId()).arg("onArtifact", true);
     }
 
-    public abstract NuxeoArtifact getNxArtifact();
+    public abstract T getNxArtifact();
 
     protected String getDistributionId() {
         return (String) ctx.getProperty(Distribution.DIST_ID);

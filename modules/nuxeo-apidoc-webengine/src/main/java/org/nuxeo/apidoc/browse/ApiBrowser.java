@@ -369,75 +369,57 @@ public class ApiBrowser extends DefaultObject {
         return ctx.newObject(pluginId, distributionId, embeddedMode);
     }
 
-    @Path(ApiBrowserConstants.VIEW_BUNDLE + "/{bundleId}")
-    public Resource viewBundle(@PathParam("bundleId") String bundleId) {
-        NuxeoArtifactWebObject wo = (NuxeoArtifactWebObject) ctx.newObject("bundle", bundleId);
-        NuxeoArtifact nxItem = wo.getNxArtifact();
+    protected Resource getNxResource(String type, String id) {
+        Resource wo = ctx.newObject(type, id);
+        NuxeoArtifact nxItem = null;
+        if (wo instanceof NuxeoArtifactWebObject<?>) {
+            nxItem = ((NuxeoArtifactWebObject<?>) wo).getNxArtifact();
+        }
         if (nxItem == null) {
-            throw new WebResourceNotFoundException(bundleId);
+            throw new WebResourceNotFoundException(id);
         }
         return wo;
+    }
+
+    @Path(ApiBrowserConstants.VIEW_BUNDLE + "/{bundleId}")
+    public Resource viewBundle(@PathParam("bundleId") String bundleId) {
+        return getNxResource("bundle", bundleId);
     }
 
     @Path(ApiBrowserConstants.VIEW_COMPONENT + "/{componentId}")
     public Resource viewComponent(@PathParam("componentId") String componentId) {
-        NuxeoArtifactWebObject wo = (NuxeoArtifactWebObject) ctx.newObject("component", componentId);
-        NuxeoArtifact nxItem = wo.getNxArtifact();
-        if (nxItem == null) {
-            throw new WebResourceNotFoundException(componentId);
-        }
-        return wo;
+        return getNxResource("component", componentId);
     }
 
     @Path(ApiBrowserConstants.VIEW_OPERATION + "/{opId}")
     public Resource viewOperation(@PathParam("opId") String opId) {
-        return ctx.newObject("operation", opId);
+        return getNxResource("operation", opId);
     }
 
     @Path(ApiBrowserConstants.VIEW_SERVICE + "/{serviceId}")
     public Resource viewService(@PathParam("serviceId") String serviceId) {
-        NuxeoArtifactWebObject wo = (NuxeoArtifactWebObject) ctx.newObject("service", serviceId);
-        NuxeoArtifact nxItem = wo.getNxArtifact();
-        if (nxItem == null) {
-            throw new WebResourceNotFoundException(serviceId);
-        }
-        return wo;
+        return getNxResource("service", serviceId);
     }
 
     @Path(ApiBrowserConstants.VIEW_EXTENSIONPOINT + "/{epId}")
     public Resource viewExtensionPoint(@PathParam("epId") String epId) {
-        NuxeoArtifactWebObject wo = (NuxeoArtifactWebObject) ctx.newObject("extensionPoint", epId);
-        NuxeoArtifact nxItem = wo.getNxArtifact();
-        if (nxItem == null) {
-            throw new WebResourceNotFoundException(epId);
-        }
-        return wo;
+        return getNxResource("extensionPoint", epId);
     }
 
     @Path(ApiBrowserConstants.VIEW_CONTRIBUTION + "/{cId}")
     public Resource viewContribution(@PathParam("cId") String cId) {
-        NuxeoArtifactWebObject wo = (NuxeoArtifactWebObject) ctx.newObject("contribution", cId);
-        NuxeoArtifact nxItem = wo.getNxArtifact();
-        if (nxItem == null) {
-            throw new WebResourceNotFoundException(cId);
-        }
-        return wo;
+        return getNxResource("contribution", cId);
     }
 
     @Path(ApiBrowserConstants.VIEW_BUNDLEGROUP + "/{gId}")
     public Resource viewBundleGroup(@PathParam("gId") String gId) {
-        NuxeoArtifactWebObject wo = (NuxeoArtifactWebObject) ctx.newObject("bundleGroup", gId);
-        NuxeoArtifact nxItem = wo.getNxArtifact();
-        if (nxItem == null) {
-            throw new WebResourceNotFoundException(gId);
-        }
-        return wo;
+        return getNxResource("bundleGroup", gId);
     }
 
     /** @since 11.1 */
     @Path(ApiBrowserConstants.VIEW_PACKAGE + "/{pkgId}")
     public Resource viewPackage(@PathParam("pkgId") String pkgId) {
-        return ctx.newObject(PackageWO.TYPE, pkgId);
+        return getNxResource(PackageWO.TYPE, pkgId);
     }
 
     @Path("viewArtifact/{id}")

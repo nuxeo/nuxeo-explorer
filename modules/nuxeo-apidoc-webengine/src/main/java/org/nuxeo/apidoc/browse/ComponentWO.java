@@ -32,20 +32,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
-import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
 @WebObject(type = "component")
-public class ComponentWO extends NuxeoArtifactWebObject {
+public class ComponentWO extends NuxeoArtifactWebObject<ComponentInfo> {
 
     @Produces("text/html")
     @Override
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();
-        t.arg("requirements", getRequirementsInfo(getSnapshot(), getTargetComponentInfo().getRequirements()));
+        t.arg("requirements", getRequirementsInfo(getSnapshot(), getNxArtifact().getRequirements()));
         return t;
     }
 
@@ -53,7 +52,7 @@ public class ComponentWO extends NuxeoArtifactWebObject {
     @Produces("text/xml")
     @Path("override")
     public Object override(@QueryParam("contributionId") String contribId) {
-        ComponentInfo component = getTargetComponentInfo();
+        ComponentInfo component = getNxArtifact();
         DistributionSnapshot snapshot = getSnapshot();
         ExtensionInfo contribution = null;
         if (StringUtils.isNotBlank(contribId)) {
@@ -67,8 +66,11 @@ public class ComponentWO extends NuxeoArtifactWebObject {
     }
 
     @Override
-    public NuxeoArtifact getNxArtifact() {
-        return getTargetComponentInfo();
+    public ComponentInfo getNxArtifact() {
+        if (nxArtifact == null) {
+            nxArtifact = getTargetComponentInfo();
+        }
+        return nxArtifact;
     }
 
     protected Map<String, ComponentInfo> getRequirementsInfo(DistributionSnapshot snapshot, List<String> requirements) {
@@ -79,7 +81,7 @@ public class ComponentWO extends NuxeoArtifactWebObject {
 
     public List<ServiceWO> getServices() {
         List<ServiceWO> result = new ArrayList<>();
-        ComponentInfo ci = getTargetComponentInfo();
+        ComponentInfo ci = getNxArtifact();
         for (ServiceInfo si : ci.getServices()) {
             result.add((ServiceWO) ctx.newObject("service", si.getId()));
         }
@@ -88,7 +90,7 @@ public class ComponentWO extends NuxeoArtifactWebObject {
 
     public List<ExtensionPointWO> getExtensionPoints() {
         List<ExtensionPointWO> result = new ArrayList<>();
-        ComponentInfo ci = getTargetComponentInfo();
+        ComponentInfo ci = getNxArtifact();
         for (ExtensionPointInfo ei : ci.getExtensionPoints()) {
             result.add((ExtensionPointWO) ctx.newObject("extensionPoint", ei.getId()));
         }
@@ -97,7 +99,7 @@ public class ComponentWO extends NuxeoArtifactWebObject {
 
     public List<ContributionWO> getContributions() {
         List<ContributionWO> result = new ArrayList<>();
-        ComponentInfo ci = getTargetComponentInfo();
+        ComponentInfo ci = getNxArtifact();
         for (ExtensionInfo ei : ci.getExtensions()) {
             result.add((ContributionWO) ctx.newObject("contribution", ei.getId()));
         }

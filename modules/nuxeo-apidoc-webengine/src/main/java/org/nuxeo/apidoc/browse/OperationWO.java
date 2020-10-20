@@ -26,7 +26,6 @@ import java.util.List;
 
 import javax.ws.rs.Produces;
 
-import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.documentation.JavaDocHelper;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
@@ -40,15 +39,18 @@ import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
 @WebObject(type = "operation")
-public class OperationWO extends NuxeoArtifactWebObject {
+public class OperationWO extends NuxeoArtifactWebObject<OperationInfo> {
 
     protected OperationInfo getTargetComponentInfo() {
         return getSnapshot().getOperation(nxArtifactId);
     }
 
     @Override
-    public NuxeoArtifact getNxArtifact() {
-        return getTargetComponentInfo();
+    public OperationInfo getNxArtifact() {
+        if (nxArtifact == null) {
+            nxArtifact = getTargetComponentInfo();
+        }
+        return nxArtifact;
     }
 
     protected String getSignatureInfo(OperationInfo op, boolean isInput) {
@@ -83,7 +85,7 @@ public class OperationWO extends NuxeoArtifactWebObject {
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();
         try {
-            OperationInfo opInfo = getTargetComponentInfo();
+            OperationInfo opInfo = getNxArtifact();
             OperationDocumentation opDoc = OperationInfo.getDocumentation(opInfo);
 
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {

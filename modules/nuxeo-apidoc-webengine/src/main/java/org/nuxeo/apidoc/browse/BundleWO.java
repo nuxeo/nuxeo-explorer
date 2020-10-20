@@ -30,7 +30,6 @@ import javax.ws.rs.Produces;
 
 import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
-import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.export.api.Exporter;
 import org.nuxeo.apidoc.introspection.EmbeddedDocExtractor;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
@@ -38,30 +37,33 @@ import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
 @WebObject(type = "bundle")
-public class BundleWO extends NuxeoArtifactWebObject {
+public class BundleWO extends NuxeoArtifactWebObject<BundleInfo> {
 
     protected BundleInfo getTargetBundleInfo() {
         return getSnapshot().getBundle(nxArtifactId);
     }
 
     @Override
-    public NuxeoArtifact getNxArtifact() {
-        return getTargetBundleInfo();
+    public BundleInfo getNxArtifact() {
+        if (nxArtifact == null) {
+            nxArtifact = getTargetBundleInfo();
+        }
+        return nxArtifact;
     }
 
     @Produces("text/html")
     @Override
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();
-        BundleInfo bundle = getTargetBundleInfo();
+        BundleInfo bundle = getNxArtifact();
         t.arg("readme", EmbeddedDocExtractor.getHtmlFromMarkdown(bundle.getReadme()));
-        t.arg("parentReadme",EmbeddedDocExtractor.getHtmlFromMarkdown(bundle.getParentReadme()));
+        t.arg("parentReadme", EmbeddedDocExtractor.getHtmlFromMarkdown(bundle.getParentReadme()));
         List<Exporter> exporters = getSnapshotManager().getExporters()
                                                        .stream()
                                                        .filter(e -> e.displayOn("bundle"))
                                                        .collect(Collectors.toList());
         t.arg("exporters", exporters);
-        t.arg("requirements", getRequirementsInfo(getSnapshot(), getTargetBundleInfo().getRequirements()));
+        t.arg("requirements", getRequirementsInfo(getSnapshot(), getNxArtifact().getRequirements()));
         return t;
     }
 
@@ -88,7 +90,7 @@ public class BundleWO extends NuxeoArtifactWebObject {
 
     public List<ComponentWO> getComponents() {
         List<ComponentWO> result = new ArrayList<>();
-        BundleInfo bundle = getTargetBundleInfo();
+        BundleInfo bundle = getNxArtifact();
 
         List<ComponentInfo> cis = new ArrayList<>(bundle.getComponents());
         Collections.sort(cis, new ComponentInfoSorter());
