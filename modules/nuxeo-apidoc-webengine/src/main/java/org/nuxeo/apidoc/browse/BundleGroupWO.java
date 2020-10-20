@@ -24,21 +24,23 @@ import java.util.stream.Collectors;
 import javax.ws.rs.Produces;
 
 import org.nuxeo.apidoc.api.BundleGroup;
-import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.introspection.EmbeddedDocExtractor;
 import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
 @WebObject(type = "bundleGroup")
-public class BundleGroupWO extends NuxeoArtifactWebObject {
+public class BundleGroupWO extends NuxeoArtifactWebObject<BundleGroup> {
 
     protected BundleGroup getTargetBundleGroup() {
         return getSnapshot().getBundleGroup(nxArtifactId);
     }
 
     @Override
-    public NuxeoArtifact getNxArtifact() {
-        return getTargetBundleGroup();
+    public BundleGroup getNxArtifact() {
+        if (nxArtifact == null) {
+            nxArtifact = getTargetBundleGroup();
+        }
+        return nxArtifact;
     }
 
     @Produces("text/html")
@@ -46,25 +48,25 @@ public class BundleGroupWO extends NuxeoArtifactWebObject {
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();
         t.arg("readmes",
-                getTargetBundleGroup().getReadmes()
-                                      .stream()
-                                      .map(EmbeddedDocExtractor::getHtmlFromMarkdown)
-                                      .collect(Collectors.toList()));
+                getNxArtifact().getReadmes()
+                               .stream()
+                               .map(EmbeddedDocExtractor::getHtmlFromMarkdown)
+                               .collect(Collectors.toList()));
         return t;
     }
 
     public List<BundleWO> getBundles() {
-        return getTargetBundleGroup().getBundleIds()
-                                     .stream()
-                                     .map(bid -> (BundleWO) ctx.newObject("bundle", bid))
-                                     .collect(Collectors.toList());
+        return getNxArtifact().getBundleIds()
+                              .stream()
+                              .map(bid -> (BundleWO) ctx.newObject("bundle", bid))
+                              .collect(Collectors.toList());
     }
 
     public List<BundleGroupWO> getSubGroups() {
-        return getTargetBundleGroup().getSubGroups()
-                                     .stream()
-                                     .map(bg -> (BundleGroupWO) ctx.newObject("bundleGroup", bg.getId()))
-                                     .collect(Collectors.toList());
+        return getNxArtifact().getSubGroups()
+                              .stream()
+                              .map(bg -> (BundleGroupWO) ctx.newObject("bundleGroup", bg.getId()))
+                              .collect(Collectors.toList());
     }
 
 }

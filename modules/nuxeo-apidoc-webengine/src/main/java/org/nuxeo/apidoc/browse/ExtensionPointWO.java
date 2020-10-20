@@ -27,20 +27,22 @@ import javax.ws.rs.Produces;
 import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
-import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
 @WebObject(type = "extensionPoint")
-public class ExtensionPointWO extends NuxeoArtifactWebObject {
+public class ExtensionPointWO extends NuxeoArtifactWebObject<ExtensionPointInfo> {
 
     protected ExtensionPointInfo getTargetExtensionPointInfo() {
         return getSnapshot().getExtensionPoint(nxArtifactId);
     }
 
     @Override
-    public NuxeoArtifact getNxArtifact() {
-        return getTargetExtensionPointInfo();
+    public ExtensionPointInfo getNxArtifact() {
+        if (nxArtifact == null) {
+            nxArtifact = getTargetExtensionPointInfo();
+        }
+        return nxArtifact;
     }
 
     @Produces("text/html")
@@ -48,7 +50,7 @@ public class ExtensionPointWO extends NuxeoArtifactWebObject {
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();
         // order extensions by registration order for display
-        List<ExtensionInfo> extensions = new ArrayList<>(getTargetExtensionPointInfo().getExtensions());
+        List<ExtensionInfo> extensions = new ArrayList<>(getNxArtifact().getExtensions());
         extensions.sort(Comparator.comparing(ExtensionInfo::getRegistrationOrder,
                 Comparator.nullsFirst(Comparator.naturalOrder())));
         t.arg("extensions", extensions);

@@ -18,20 +18,22 @@
  */
 package org.nuxeo.apidoc.browse;
 
-import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
 @WebObject(type = "service")
-public class ServiceWO extends NuxeoArtifactWebObject {
+public class ServiceWO extends NuxeoArtifactWebObject<ServiceInfo> {
 
     protected ServiceInfo getServiceInfo() {
         return getSnapshot().getService(nxArtifactId);
     }
 
     @Override
-    public NuxeoArtifact getNxArtifact() {
-        return getServiceInfo();
+    public ServiceInfo getNxArtifact() {
+        if (nxArtifact == null) {
+            nxArtifact = getServiceInfo();
+        }
+        return nxArtifact;
     }
 
 }
