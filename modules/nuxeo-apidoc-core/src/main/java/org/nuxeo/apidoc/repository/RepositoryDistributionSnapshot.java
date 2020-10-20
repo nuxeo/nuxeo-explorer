@@ -160,8 +160,8 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         super(doc);
     }
 
-    protected <T> List<T> getChildren(Class<T> adapter, String docType) {
-        String query = QueryHelper.select(docType, doc, NXQL.ECM_POS);
+    protected <T> List<T> getChildren(Class<T> adapter, String docType, String sort) {
+        String query = QueryHelper.select(docType, doc, sort);
         DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream().map(doc -> doc.getAdapter(adapter)).filter(Objects::nonNull).collect(Collectors.toList());
     }
@@ -220,15 +220,13 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
 
     @Override
     public List<BundleInfo> getBundles() {
-        return getChildren(BundleInfo.class, BundleInfo.TYPE_NAME);
+        return getChildren(BundleInfo.class, BundleInfo.TYPE_NAME, NXQL.ECM_POS);
     }
 
     @Override
     public List<String> getBundleIds() {
-        return getChildren(BundleInfo.class, BundleInfo.TYPE_NAME).stream()
-                                                                  .map(NuxeoArtifact::getId)
-                                                                  .sorted()
-                                                                  .collect(Collectors.toList());
+        return getChildren(BundleInfo.class, BundleInfo.TYPE_NAME,
+                BundleInfo.PROP_BUNDLE_ID).stream().map(NuxeoArtifact::getId).collect(Collectors.toList());
     }
 
     @Override
@@ -238,10 +236,8 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
 
     @Override
     public List<String> getComponentIds() {
-        return getChildren(ComponentInfo.class, ComponentInfo.TYPE_NAME).stream()
-                                                                        .map(NuxeoArtifact::getId)
-                                                                        .sorted()
-                                                                        .collect(Collectors.toList());
+        return getChildren(ComponentInfo.class, ComponentInfo.TYPE_NAME,
+                ComponentInfo.PROP_COMPONENT_ID).stream().map(NuxeoArtifact::getId).collect(Collectors.toList());
     }
 
     @Override
@@ -251,15 +247,13 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
 
     @Override
     public List<String> getContributionIds() {
-        return getChildren(ExtensionInfo.class, ExtensionInfo.TYPE_NAME).stream()
-                                                                        .map(NuxeoArtifact::getId)
-                                                                        .sorted()
-                                                                        .collect(Collectors.toList());
+        return getChildren(ExtensionInfo.class, ExtensionInfo.TYPE_NAME,
+                ExtensionInfo.PROP_CONTRIB_ID).stream().map(NuxeoArtifact::getId).collect(Collectors.toList());
     }
 
     @Override
     public List<ExtensionInfo> getContributions() {
-        return getChildren(ExtensionInfo.class, ExtensionInfo.TYPE_NAME);
+        return getChildren(ExtensionInfo.class, ExtensionInfo.TYPE_NAME, NXQL.ECM_POS);
     }
 
     @Override
@@ -269,25 +263,20 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
 
     @Override
     public List<String> getExtensionPointIds() {
-        return getChildren(ExtensionPointInfo.class, ExtensionPointInfo.TYPE_NAME).stream()
-                                                                                  .map(NuxeoArtifact::getId)
-                                                                                  .sorted()
-                                                                                  .collect(Collectors.toList());
+        return getChildren(ExtensionPointInfo.class, ExtensionPointInfo.TYPE_NAME,
+                ExtensionPointInfo.PROP_EP_ID).stream().map(NuxeoArtifact::getId).collect(Collectors.toList());
     }
 
     public List<String> getBundleGroupIds() {
-        return getChildren(BundleGroup.class, BundleGroup.TYPE_NAME).stream()
-                                                                    .map(NuxeoArtifact::getId)
-                                                                    .sorted()
-                                                                    .collect(Collectors.toList());
+        return getChildren(BundleGroup.class, BundleGroup.TYPE_NAME, BundleGroup.PROP_KEY).stream()
+                                                                                          .map(NuxeoArtifact::getId)
+                                                                                          .collect(Collectors.toList());
     }
 
     @Override
     public List<String> getServiceIds() {
-        return getChildren(ServiceInfo.class, ServiceInfo.TYPE_NAME).stream()
-                                                                    .map(NuxeoArtifact::getId)
-                                                                    .sorted()
-                                                                    .collect(Collectors.toList());
+        return getChildren(ServiceInfo.class, ServiceInfo.TYPE_NAME,
+                ServiceInfo.PROP_CLASS_NAME).stream().map(NuxeoArtifact::getId).collect(Collectors.toList());
     }
 
     @Override
@@ -331,22 +320,25 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         return docs.get(0).getAdapter(ServiceInfo.class);
     }
 
+    protected List<String> getComponentIds(boolean isXML) {
+        String query = String.format("%s AND %s = %s ORDER BY %s", QueryHelper.select(ComponentInfo.TYPE_NAME, doc),
+                ComponentInfo.PROP_IS_XML, isXML ? 1 : 0, ComponentInfo.PROP_COMPONENT_NAME);
+        DocumentModelList docs = query(getCoreSession(), query);
+        return docs.stream()
+                   .map(doc -> doc.getAdapter(ComponentInfo.class))
+                   .filter(Objects::nonNull)
+                   .map(NuxeoArtifact::getId)
+                   .collect(Collectors.toList());
+    }
+
     @Override
     public List<String> getJavaComponentIds() {
-        return getChildren(ComponentInfo.class, ComponentInfo.TYPE_NAME).stream()
-                                                                        .filter(ci -> !ci.isXmlPureComponent())
-                                                                        .map(NuxeoArtifact::getId)
-                                                                        .sorted()
-                                                                        .collect(Collectors.toList());
+        return getComponentIds(false);
     }
 
     @Override
     public List<String> getXmlComponentIds() {
-        return getChildren(ComponentInfo.class, ComponentInfo.TYPE_NAME).stream()
-                                                                        .filter(ComponentInfo::isXmlPureComponent)
-                                                                        .map(NuxeoArtifact::getId)
-                                                                        .sorted()
-                                                                        .collect(Collectors.toList());
+        return getComponentIds(true);
     }
 
     @Override
