@@ -1,0 +1,94 @@
+NXComponent: DublinCoreStorageService *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.dublincore/DublinCoreStorageService
+NXComponent: org.nuxeo.apidoc.snapshot.SnapshotManagerComponent *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent
+NXComponent: org.nuxeo.automation.scripting.internals.AutomationScriptingComponent *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.scripting/org.nuxeo.automation.scripting.internals.AutomationScriptingComponent *** [org.nuxeo.ecm.core.operation.OperationServiceComponent]
+NXComponent: org.nuxeo.core.LocalConfigurationService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.api/org.nuxeo.core.LocalConfigurationService
+NXComponent: org.nuxeo.directory.mongodb.MongoDBDirectoryFactory *** /grp:org.nuxeo.ecm.platform/org.nuxeo.directory.mongodb/org.nuxeo.directory.mongodb.MongoDBDirectoryFactory *** [org.nuxeo.runtime.mongodb.MongoDBComponent, org.nuxeo.ecm.directory.DirectoryServiceImpl, org.nuxeo.ecm.directory.sql.SQLDirectoryFactory]
+NXComponent: org.nuxeo.ecm.automation.io.services.IOComponent *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.io/org.nuxeo.ecm.automation.io.services.IOComponent *** [org.nuxeo.ecm.webengine.core.service.json]
+NXComponent: org.nuxeo.ecm.automation.server.AutomationServer *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.server/org.nuxeo.ecm.automation.server.AutomationServer *** [org.nuxeo.ecm.automation.io.services.IOComponent]
+NXComponent: org.nuxeo.ecm.automation.server.BatchManager *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.server/org.nuxeo.ecm.automation.server.BatchManager
+NXComponent: org.nuxeo.ecm.core.CoreService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.CoreService
+NXComponent: org.nuxeo.ecm.core.api.CoreSessionServiceImpl *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.api.CoreSessionServiceImpl
+NXComponent: org.nuxeo.ecm.core.api.DocumentAdapterService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.api/org.nuxeo.ecm.core.api.DocumentAdapterService
+NXComponent: org.nuxeo.ecm.core.api.DocumentValidationService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.api/org.nuxeo.ecm.core.api.DocumentValidationService
+NXComponent: org.nuxeo.ecm.core.api.blobholder.BlobHolderAdapterComponent *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.api/org.nuxeo.ecm.core.api.blobholder.BlobHolderAdapterComponent
+NXComponent: org.nuxeo.ecm.core.api.pathsegment.PathSegmentService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.api/org.nuxeo.ecm.core.api.pathsegment.PathSegmentService
+NXComponent: org.nuxeo.ecm.core.api.propertiesmapping.PropertiesMappingComponent *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.api/org.nuxeo.ecm.core.api.propertiesmapping.PropertiesMappingComponent
+NXComponent: org.nuxeo.ecm.core.api.repository.RepositoryManager *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.api/org.nuxeo.ecm.core.api.repository.RepositoryManager
+NXComponent: org.nuxeo.ecm.core.api.thumbnail.ThumbnailService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.api/org.nuxeo.ecm.core.api.thumbnail.ThumbnailService
+NXComponent: org.nuxeo.ecm.core.api.versioning.VersioningService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.api.versioning.VersioningService
+NXComponent: org.nuxeo.ecm.core.blob.BlobManager *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.api/org.nuxeo.ecm.core.blob.BlobManager
+NXComponent: org.nuxeo.ecm.core.blob.DocumentBlobManager *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.blob.DocumentBlobManager
+NXComponent: org.nuxeo.ecm.core.bulk *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.bulk/org.nuxeo.ecm.core.bulk
+NXComponent: org.nuxeo.ecm.core.cache.CacheService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.cache/org.nuxeo.ecm.core.cache.CacheService
+NXComponent: org.nuxeo.ecm.core.convert.service.ConversionServiceImpl *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.convert/org.nuxeo.ecm.core.convert/org.nuxeo.ecm.core.convert.service.ConversionServiceImpl
+NXComponent: org.nuxeo.ecm.core.event.EventServiceComponent *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.event/org.nuxeo.ecm.core.event.EventServiceComponent
+NXComponent: org.nuxeo.ecm.core.filter.CharacterFilteringService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.filter.CharacterFilteringService
+NXComponent: org.nuxeo.ecm.core.io.DocumentXMLExporter *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.io/org.nuxeo.ecm.core.io.DocumentXMLExporter
+NXComponent: org.nuxeo.ecm.core.io.MarshallerRegistry *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.io/org.nuxeo.ecm.core.io.MarshallerRegistry
+NXComponent: org.nuxeo.ecm.core.io.download.DownloadService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.io/org.nuxeo.ecm.core.io.download.DownloadService *** [org.nuxeo.ecm.core.transientstore.TransientStorageComponent]
+NXComponent: org.nuxeo.ecm.core.lifecycle.LifeCycleService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.lifecycle.LifeCycleService
+NXComponent: org.nuxeo.ecm.core.management.CoreManagementComponent *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.management.CoreManagementComponent *** [org.nuxeo.ecm.core.repository.RepositoryService]
+NXComponent: org.nuxeo.ecm.core.managemment.standby *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.managemment.standby *** [org.nuxeo.runtime.management.ResourcePublisher, org.nuxeo.runtime.metrics.MetricsService, org.nuxeo.runtime.EventService]
+NXComponent: org.nuxeo.ecm.core.operation.OperationServiceComponent *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.core/org.nuxeo.ecm.core.operation.OperationServiceComponent *** [org.nuxeo.runtime.management.ServerLocator]
+NXComponent: org.nuxeo.ecm.core.repository.RepositoryService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.sql/org.nuxeo.ecm.core.repository.RepositoryService *** [org.nuxeo.ecm.core.storage.sql.RepositoryService]
+NXComponent: org.nuxeo.ecm.core.repository.RepositoryServiceComponent *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.repository.RepositoryServiceComponent *** [org.nuxeo.runtime.cluster.ClusterService, org.nuxeo.ecm.core.api.repository.RepositoryManager]
+NXComponent: org.nuxeo.ecm.core.scheduler.SchedulerService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.event/org.nuxeo.ecm.core.scheduler.SchedulerService *** [org.nuxeo.runtime.cluster.ClusterService]
+NXComponent: org.nuxeo.ecm.core.schema.ObjectResolverService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.schema/org.nuxeo.ecm.core.schema.ObjectResolverService
+NXComponent: org.nuxeo.ecm.core.schema.TypeService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.schema/org.nuxeo.ecm.core.schema.TypeService *** [org.nuxeo.ecm.core.schema.ObjectResolverService]
+NXComponent: org.nuxeo.ecm.core.scroll.service *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.bulk/org.nuxeo.ecm.core.scroll.service
+NXComponent: org.nuxeo.ecm.core.security.SecurityService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.security.SecurityService
+NXComponent: org.nuxeo.ecm.core.storage.dbs.DBSRepositoryService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.dbs/org.nuxeo.ecm.core.storage.dbs.DBSRepositoryService *** [org.nuxeo.ecm.core.repository.RepositoryServiceComponent]
+NXComponent: org.nuxeo.ecm.core.storage.lock.LockManagerService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.lock.LockManagerService
+NXComponent: org.nuxeo.ecm.core.storage.mem.MemRepositoryService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.mem/org.nuxeo.ecm.core.storage.mem.MemRepositoryService *** [org.nuxeo.ecm.core.storage.dbs.DBSRepositoryService]
+NXComponent: org.nuxeo.ecm.core.storage.mongodb.MongoDBRepositoryService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.mongodb/org.nuxeo.ecm.core.storage.mongodb.MongoDBRepositoryService *** [org.nuxeo.ecm.core.storage.dbs.DBSRepositoryService]
+NXComponent: org.nuxeo.ecm.core.storage.sql.RepositoryService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.sql/org.nuxeo.ecm.core.storage.sql.RepositoryService *** [org.nuxeo.ecm.core.storage.lock.LockManagerService, org.nuxeo.ecm.core.repository.RepositoryServiceComponent, org.nuxeo.ecm.core.api.repository.RepositoryManager]
+NXComponent: org.nuxeo.ecm.core.storage.sql.jdbc.QueryMakerService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.sql/org.nuxeo.ecm.core.storage.sql.jdbc.QueryMakerService
+NXComponent: org.nuxeo.ecm.core.transientstore.TransientStorageComponent *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.cache/org.nuxeo.ecm.core.transientstore.TransientStorageComponent
+NXComponent: org.nuxeo.ecm.core.trash.TrashService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.trash.TrashService
+NXComponent: org.nuxeo.ecm.core.uidgen.UIDGeneratorService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.uidgen.UIDGeneratorService
+NXComponent: org.nuxeo.ecm.core.work.service *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.event/org.nuxeo.ecm.core.work.service
+NXComponent: org.nuxeo.ecm.directory.DirectoryServiceImpl *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.directory/org.nuxeo.ecm.directory/org.nuxeo.ecm.directory.DirectoryServiceImpl *** [org.nuxeo.runtime.cluster.ClusterService, org.nuxeo.ecm.core.cache.CacheService]
+NXComponent: org.nuxeo.ecm.directory.GenericDirectory *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.directory/org.nuxeo.ecm.directory/org.nuxeo.ecm.directory.GenericDirectory *** [org.nuxeo.ecm.directory.DirectoryServiceImpl]
+NXComponent: org.nuxeo.ecm.directory.core.CoreDirectoryFactory *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.directory/org.nuxeo.ecm.directory/org.nuxeo.ecm.directory.core.CoreDirectoryFactory *** [org.nuxeo.ecm.directory.DirectoryServiceImpl]
+NXComponent: org.nuxeo.ecm.directory.sql.SQLDirectoryFactory *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.directory/org.nuxeo.ecm.directory.sql/org.nuxeo.ecm.directory.sql.SQLDirectoryFactory *** [org.nuxeo.ecm.directory.DirectoryServiceImpl]
+NXComponent: org.nuxeo.ecm.platform.actions.ActionService *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.actions/org.nuxeo.ecm.platform.actions.ActionService
+NXComponent: org.nuxeo.ecm.platform.commandline.executor.service.CommandLineExecutorComponent *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.commandline.executor/org.nuxeo.ecm.platform.commandline.executor.service.CommandLineExecutorComponent
+NXComponent: org.nuxeo.ecm.platform.computedgroups.ComputedGroupsServiceImpl *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.platform.usermanager/org.nuxeo.ecm.platform.usermanager/org.nuxeo.ecm.platform.computedgroups.ComputedGroupsServiceImpl
+NXComponent: org.nuxeo.ecm.platform.content.template.service.ContentTemplateService *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.content.template/org.nuxeo.ecm.platform.content.template.service.ContentTemplateService
+NXComponent: org.nuxeo.ecm.platform.el.service *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.platform.el/org.nuxeo.ecm.platform.el.service
+NXComponent: org.nuxeo.ecm.platform.mimetype.service.MimetypeRegistryService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.mimetype/org.nuxeo.ecm.platform.mimetype.service.MimetypeRegistryService
+NXComponent: org.nuxeo.ecm.platform.query.api.PageProviderService *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.query.api/org.nuxeo.ecm.platform.query.api.PageProviderService
+NXComponent: org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.web.common/org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService
+NXComponent: org.nuxeo.ecm.platform.usermanager.UserService *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.platform.usermanager/org.nuxeo.ecm.platform.usermanager/org.nuxeo.ecm.platform.usermanager.UserService
+NXComponent: org.nuxeo.ecm.platform.web.common.exceptionhandling.service.ExceptionHandlingService *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.web.common/org.nuxeo.ecm.platform.web.common.exceptionhandling.service.ExceptionHandlingService
+NXComponent: org.nuxeo.ecm.platform.web.common.locale *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.web.common/org.nuxeo.ecm.platform.web.common.locale
+NXComponent: org.nuxeo.ecm.platform.web.common.requestcontroller.service.RequestControllerService *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.web.common/org.nuxeo.ecm.platform.web.common.requestcontroller.service.RequestControllerService
+NXComponent: org.nuxeo.ecm.webengine.WebEngineComponent *** /grp:org.nuxeo.ecm.webengine/org.nuxeo.ecm.webengine.core/org.nuxeo.ecm.webengine.WebEngineComponent *** [org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService]
+NXComponent: org.nuxeo.ecm.webengine.core.service.json *** /grp:org.nuxeo.ecm.webengine/org.nuxeo.ecm.webengine.core/org.nuxeo.ecm.webengine.core.service.json
+NXComponent: org.nuxeo.ecm.webengine.jaxrs.servlet.config.ServletRegistryComponent *** /grp:org.nuxeo.ecm.webengine/org.nuxeo.ecm.webengine.jaxrs/org.nuxeo.ecm.webengine.jaxrs.servlet.config.ServletRegistryComponent
+NXComponent: org.nuxeo.elasticsearch.ElasticSearchComponent *** /grp:org.nuxeo.elasticsearch/org.nuxeo.elasticsearch.core/org.nuxeo.elasticsearch.ElasticSearchComponent *** [org.nuxeo.ecm.core.repository.RepositoryServiceComponent]
+NXComponent: org.nuxeo.runtime.ConfigurationService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.ConfigurationService
+NXComponent: org.nuxeo.runtime.EventService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.EventService
+NXComponent: org.nuxeo.runtime.LoginAsComponent *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.LoginAsComponent
+NXComponent: org.nuxeo.runtime.LoginComponent *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.LoginComponent
+NXComponent: org.nuxeo.runtime.RuntimeComponent *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.RuntimeComponent
+NXComponent: org.nuxeo.runtime.avro *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.stream/org.nuxeo.runtime.avro
+NXComponent: org.nuxeo.runtime.cluster.ClusterService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.cluster/org.nuxeo.runtime.cluster.ClusterService *** [org.nuxeo.runtime.kv.KeyValueService]
+NXComponent: org.nuxeo.runtime.codec.service *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.stream/org.nuxeo.runtime.codec.service
+NXComponent: org.nuxeo.runtime.datasource *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.datasource/org.nuxeo.runtime.datasource *** [org.nuxeo.runtime.jtajca.JtaActivator]
+NXComponent: org.nuxeo.runtime.jtajca.JtaActivator *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.jtajca/org.nuxeo.runtime.jtajca.JtaActivator
+NXComponent: org.nuxeo.runtime.kv.KeyValueService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.kv/org.nuxeo.runtime.kv.KeyValueService
+NXComponent: org.nuxeo.runtime.management.ResourcePublisher *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.management/org.nuxeo.runtime.management.ResourcePublisher *** [org.nuxeo.runtime.management.ServerLocator]
+NXComponent: org.nuxeo.runtime.management.ServerLocator *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.management/org.nuxeo.runtime.management.ServerLocator
+NXComponent: org.nuxeo.runtime.management.counters *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.management/org.nuxeo.runtime.management.counters
+NXComponent: org.nuxeo.runtime.management.metrics *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.management/org.nuxeo.runtime.management.metrics *** [org.nuxeo.runtime.management.ServerLocator, org.nuxeo.runtime.management.ResourcePublisher]
+NXComponent: org.nuxeo.runtime.metrics.MetricsService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.metrics/org.nuxeo.runtime.metrics.MetricsService
+NXComponent: org.nuxeo.runtime.migration.MigrationService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.migration/org.nuxeo.runtime.migration.MigrationService *** [org.nuxeo.runtime.kv.KeyValueService]
+NXComponent: org.nuxeo.runtime.model.persistence *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.model.persistence
+NXComponent: org.nuxeo.runtime.mongodb.MongoDBComponent *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.mongodb/org.nuxeo.runtime.mongodb.MongoDBComponent
+NXComponent: org.nuxeo.runtime.pubsub.PubSubService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.pubsub/org.nuxeo.runtime.pubsub.PubSubService
+NXComponent: org.nuxeo.runtime.reload *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.reload/org.nuxeo.runtime.reload
+NXComponent: org.nuxeo.runtime.services.resource.ResourceService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.services.resource.ResourceService
+NXComponent: org.nuxeo.runtime.stream.kafka.service *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.stream/org.nuxeo.runtime.stream.kafka.service
+NXComponent: org.nuxeo.runtime.stream.service *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.stream/org.nuxeo.runtime.stream.service
+NXComponent: org.nuxeo.runtime.trackers.files *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.trackers.files *** [org.nuxeo.runtime.EventService]

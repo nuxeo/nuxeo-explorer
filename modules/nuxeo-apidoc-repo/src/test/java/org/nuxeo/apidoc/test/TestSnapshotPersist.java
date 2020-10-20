@@ -173,7 +173,9 @@ public class TestSnapshotPersist extends AbstractApidocTest {
             throws IOException {
         checkBundleGroups(snapshot, partial, ref);
         checkBundles(snapshot, partial, ref);
-        checkComponents(snapshot, partial, ref);
+        checkComponents(snapshot, partial, ref, null);
+        checkComponents(snapshot, partial, ref, "xml");
+        checkComponents(snapshot, partial, ref, "java");
         checkServices(snapshot, partial, ref);
         checkExtensionPoints(snapshot, partial, ref);
         checkContributions(snapshot, partial);
@@ -239,16 +241,28 @@ public class TestSnapshotPersist extends AbstractApidocTest {
         }
     }
 
-    protected void checkComponents(DistributionSnapshot snapshot, boolean partial, boolean ref) throws IOException {
-        List<String> cids = snapshot.getComponentIds();
-        String s = cids.stream().map(snapshot::getComponent).map(this::represent).collect(Collectors.joining());
-        if (ref) {
-            checkContentEquals("apidoc_snapshot/components_partial_ref.txt", s);
-        } else if (partial) {
-            checkContentEquals("apidoc_snapshot/components_partial.txt", s);
+    protected void checkComponents(DistributionSnapshot snapshot, boolean partial, boolean ref, String filterOn)
+            throws IOException {
+        List<String> cids;
+        if ("xml".equals(filterOn)) {
+            cids = snapshot.getXmlComponentIds();
+        } else if ("java".equals(filterOn)) {
+            cids = snapshot.getJavaComponentIds();
         } else {
-            checkContentEquals("apidoc_snapshot/components.txt", s);
+            cids = snapshot.getComponentIds();
         }
+        String s = cids.stream().map(snapshot::getComponent).map(this::represent).collect(Collectors.joining());
+        String filepattern = "apidoc_snapshot/components%s.txt";
+        String filesuffix;
+        if (ref) {
+            filesuffix = "%s_partial_ref";
+        } else if (partial) {
+            filesuffix = "%s_partial";
+        } else {
+            filesuffix = "%s";
+        }
+        checkContentEquals(
+                String.format(filepattern, String.format(filesuffix, filterOn == null ? "" : "_" + filterOn)), s);
     }
 
     protected void checkServices(DistributionSnapshot snapshot, boolean partial, boolean ref) throws IOException {

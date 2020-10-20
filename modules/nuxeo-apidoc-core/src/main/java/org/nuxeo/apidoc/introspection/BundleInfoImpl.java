@@ -125,9 +125,7 @@ public class BundleInfoImpl extends BaseNuxeoArtifact implements BundleInfo {
 
     @Override
     public List<String> getPackages() {
-        return packages.stream()
-                       .sorted()
-                       .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+        return packages.stream().sorted().collect(Collectors.toUnmodifiableList());
     }
 
     public void setPackages(List<String> packages) {
