@@ -7,7 +7,7 @@
              from `org.nuxeo.apidoc.browse.ApiBrowser#filterExtensionPoints`
   -->
   </#if>
-  <form id="fulltext" method="POST" action="${Root.path}/${distId}/${action}">
+  <form id="fulltext" method="GET" action="${Root.path}/${distId}/${action}">
     <input name="fulltext" id="fulltext-box" type="search" class="searchFilter"
     placeholder="Find in ${name}"<#if searchFilter??> value="${searchFilter}"</#if> autofocus />
     <input id="filter-submit-button" type="submit" value="Search"/>
