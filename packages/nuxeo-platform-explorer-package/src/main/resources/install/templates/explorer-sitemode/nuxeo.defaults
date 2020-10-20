@@ -1,3 +1,4 @@
 default.target=.
 org.nuxeo.apidoc.site.mode=true
+org.nuxeo.apidoc.use.elasticsearch=true
 org.nuxeo.apidoc.activatefilter=true

@@ -51,8 +51,6 @@ import org.nuxeo.runtime.api.Framework;
 
 public class ArtifactSearcherImpl implements ArtifactSearcher {
 
-    protected static final int MAX_RESULTS = 1000;
-
     protected NuxeoArtifact mapDoc2Artifact(DocumentModel doc) {
         NuxeoArtifact artifact = null;
 
