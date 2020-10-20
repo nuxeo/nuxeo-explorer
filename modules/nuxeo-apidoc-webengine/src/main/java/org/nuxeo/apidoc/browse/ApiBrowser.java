@@ -30,9 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -245,109 +243,10 @@ public class ApiBrowser extends DefaultObject {
                                                                         ctx.getProperty(Distribution.DIST_ID));
     }
 
-    /**
-     * XXX Not used?
-     */
-    @POST
-    @Produces("text/html")
-    @Path("filterComponents")
-    public Object filterComponents(@FormParam("fulltext") String fulltext) {
-        if (StringUtils.isBlank(fulltext)) {
-            return getComponents();
-        }
-        List<NuxeoArtifact> artifacts = getSearcher().filterArtifact(getContext().getCoreSession(), distributionId,
-                ComponentInfo.TYPE_NAME, fulltext);
-
-        List<ArtifactLabel> xmlLabels = new ArrayList<>();
-        List<ArtifactLabel> javaLabels = new ArrayList<>();
-
-        for (NuxeoArtifact item : artifacts) {
-            ComponentInfo ci = (ComponentInfo) item;
-            if (ci.isXmlPureComponent()) {
-                xmlLabels.add(ArtifactLabel.createLabelFromComponent(ci.getId()));
-            } else {
-                javaLabels.add(ArtifactLabel.createLabelFromComponent(ci.getId()));
-            }
-        }
-        return getView(ApiBrowserConstants.LIST_COMPONENTS).arg("javaComponents", javaLabels)
-                                                           .arg("xmlComponents", xmlLabels)
-                                                           .arg(Distribution.DIST_ID,
-                                                                   ctx.getProperty(Distribution.DIST_ID))
-                                                           .arg("searchFilter", sanitize(fulltext));
-    }
-
-    /**
-     * XXX Not used?
-     */
-    @POST
-    @Produces("text/html")
-    @Path("filterBundles")
-    public Object filterBundles(@FormParam("fulltext") String fulltext) {
-        if (StringUtils.isBlank(fulltext)) {
-            return getBundles();
-        }
-        List<NuxeoArtifact> artifacts = getSearcher().filterArtifact(getContext().getCoreSession(), distributionId,
-                BundleInfo.TYPE_NAME, fulltext);
-        List<String> bundleIds = new ArrayList<>();
-        for (NuxeoArtifact item : artifacts) {
-            bundleIds.add(item.getId());
-        }
-        return getView(ApiBrowserConstants.LIST_BUNDLES).arg("bundleIds", bundleIds)
-                                                        .arg(Distribution.DIST_ID,
-                                                                ctx.getProperty(Distribution.DIST_ID))
-                                                        .arg("searchFilter", sanitize(fulltext));
-    }
-
-    /**
-     * XXX Not used?
-     */
-    @POST
-    @Produces("text/html")
-    @Path("filterServices")
-    public Object filterServices(@FormParam("fulltext") String fulltext) {
-        if (StringUtils.isBlank(fulltext)) {
-            return getServices();
-        }
-        List<NuxeoArtifact> artifacts = getSearcher().filterArtifact(getContext().getCoreSession(), distributionId,
-                ServiceInfo.TYPE_NAME, fulltext);
-        List<String> serviceIds = new ArrayList<>();
-        for (NuxeoArtifact item : artifacts) {
-            serviceIds.add(item.getId());
-        }
-        List<ArtifactLabel> serviceLabels = new ArrayList<>();
-
-        for (String id : serviceIds) {
-            serviceLabels.add(ArtifactLabel.createLabelFromService(id));
-        }
-        return getView(ApiBrowserConstants.LIST_SERVICES).arg("services", serviceLabels)
-                                                         .arg(Distribution.DIST_ID,
-                                                                 ctx.getProperty(Distribution.DIST_ID))
-                                                         .arg("searchFilter", sanitize(fulltext));
-    }
-
-    @POST
-    @Produces("text/html")
-    @Path("filterExtensionPoints")
-    public Object filterExtensionPoints(@FormParam("fulltext") String fulltext) {
-        if (StringUtils.isBlank(fulltext)) {
-            return getExtensionPoints();
-        }
-        List<NuxeoArtifact> artifacts = getSearcher().filterArtifact(getContext().getCoreSession(), distributionId,
-                ExtensionPointInfo.TYPE_NAME, fulltext);
-        List<String> eps = artifacts.stream().map(NuxeoArtifact::getId).collect(Collectors.toList());
-        List<ArtifactLabel> labels = eps.stream()
-                                        .map(ArtifactLabel::createLabelFromExtensionPoint)
-                                        .collect(Collectors.toList());
-        return getView(ApiBrowserConstants.LIST_EXTENSIONPOINTS).arg("eps", labels)
-                                                                .arg(Distribution.DIST_ID,
-                                                                        ctx.getProperty(Distribution.DIST_ID))
-                                                                .arg("searchFilter", sanitize(fulltext));
-    }
-
-    @POST
+    @GET
     @Produces("text/html")
     @Path("filterContributions")
-    public Object filterContributions(@FormParam("fulltext") String fulltext) {
+    public Object filterContributions(@QueryParam("fulltext") String fulltext) {
         if (StringUtils.isBlank(fulltext)) {
             return getContributions();
         }
