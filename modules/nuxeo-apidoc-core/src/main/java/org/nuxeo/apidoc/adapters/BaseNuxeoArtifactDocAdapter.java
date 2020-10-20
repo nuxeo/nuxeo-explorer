@@ -33,7 +33,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
+import org.nuxeo.apidoc.search.ArtifactSearcher;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
+import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.common.utils.IdUtils;
 import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.core.api.Blob;
@@ -44,6 +46,9 @@ import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.PropertyException;
 import org.nuxeo.ecm.platform.picture.listener.PictureViewsGenerationListener;
 import org.nuxeo.ecm.platform.thumbnail.ThumbnailConstants;
+import org.nuxeo.elasticsearch.api.ElasticSearchService;
+import org.nuxeo.elasticsearch.query.NxQueryBuilder;
+import org.nuxeo.runtime.api.Framework;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -190,7 +195,12 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
     }
 
     protected static DocumentModelList query(CoreSession session, String query) {
-        return session.query(query);
+        if (Framework.isBooleanPropertyTrue(SnapshotManager.PROPERTY_USE_ES)) {
+            ElasticSearchService ess = Framework.getService(ElasticSearchService.class);
+            return ess.query(new NxQueryBuilder(session).nxql(query).limit(ArtifactSearcher.MAX_RESULTS));
+        } else {
+            return session.query(query);
+        }
     }
 
 }

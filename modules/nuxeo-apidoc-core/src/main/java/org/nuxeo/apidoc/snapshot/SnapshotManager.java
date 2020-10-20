@@ -74,6 +74,8 @@ public interface SnapshotManager {
 
     public static String PROPERTY_SITE_MODE = "org.nuxeo.apidoc.site.mode";
 
+    public static String PROPERTY_USE_ES = "org.nuxeo.apidoc.use.elasticsearch";
+
     static Comparator<DistributionSnapshotDesc> DISTRIBUTION_COMPARATOR = Comparator.comparing(
             DistributionSnapshotDesc::getVersion, new VersionComparator())
                                                                                     .reversed()
