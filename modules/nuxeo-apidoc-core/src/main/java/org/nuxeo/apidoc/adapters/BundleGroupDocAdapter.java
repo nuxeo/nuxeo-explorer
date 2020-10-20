@@ -103,7 +103,7 @@ public class BundleGroupDocAdapter extends BaseNuxeoArtifactDocAdapter implement
     @Override
     public List<BundleGroup> getSubGroups() {
         String query = QueryHelper.select(TYPE_NAME, doc, NXQL.ECM_POS);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(BundleGroup.class))
                    .filter(Objects::nonNull)

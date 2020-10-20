@@ -39,6 +39,7 @@ import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.PropertyException;
 import org.nuxeo.ecm.platform.picture.listener.PictureViewsGenerationListener;
@@ -186,6 +187,10 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
         // NXP-29435: disable picture view computation even if explorer documents should not actually go through it,
         // hoping it speeds things in some edge cases (see server logs attached to NXP-29433)
         doc.putContextData(PictureViewsGenerationListener.DISABLE_PICTURE_VIEWS_GENERATION_LISTENER, true);
+    }
+
+    protected static DocumentModelList query(CoreSession session, String query) {
+        return session.query(query);
     }
 
 }
