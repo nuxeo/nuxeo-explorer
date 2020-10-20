@@ -34,6 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -207,8 +208,7 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
     public List<BundleGroup> getBundleGroups() {
         return parentBundleGroups.stream()
                                  .sorted(new NuxeoArtifactComparator())
-                                 .collect(Collectors.collectingAndThen(Collectors.toList(),
-                                         Collections::unmodifiableList));
+                                 .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
@@ -338,19 +338,15 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
 
     @Override
     public List<String> getJavaComponentIds() {
-        return javaComponentsIds;
+        return javaComponentsIds.stream().sorted().collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public List<String> getXmlComponentIds() {
-        List<String> result = new ArrayList<>();
-
-        for (String cId : getComponentIds()) {
-            if (!javaComponentsIds.contains(cId)) {
-                result.add(cId);
-            }
-        }
-        return result;
+        return getComponentIds().stream()
+                                .filter(Predicate.not(javaComponentsIds::contains))
+                                .sorted()
+                                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
@@ -439,7 +435,7 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
     @Override
     public List<OperationInfo> getOperations() {
         initOperations();
-        return operations;
+        return Collections.unmodifiableList(operations);
     }
 
     @Override
