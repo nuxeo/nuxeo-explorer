@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -86,13 +85,14 @@ public class BundleGroupDocAdapter extends BaseNuxeoArtifactDocAdapter implement
 
     @Override
     public List<String> getBundleIds() {
-        List<DocumentModel> children = getCoreSession().getChildren(doc.getRef());
-        return children.stream()
-                       .map(doc -> doc.getAdapter(BundleInfo.class))
-                       .filter(Objects::nonNull)
-                       .map(BundleInfo::getId)
-                       .filter(Predicate.not(Predicate.isEqual(getId())))
-                       .collect(Collectors.toList());
+        String query = String.format("SELECT * FROM %s WHERE %s = %s AND %s ORDER BY %s", BundleInfo.TYPE_NAME,
+                NXQL.ECM_PARENTID, NXQL.escapeString(doc.getId()), QueryHelper.NOT_DELETED, BundleInfo.PROP_BUNDLE_ID);
+        DocumentModelList docs = query(getCoreSession(), query);
+        return docs.stream()
+                   .map(doc -> doc.getAdapter(BundleInfo.class))
+                   .filter(Objects::nonNull)
+                   .map(NuxeoArtifact::getId)
+                   .collect(Collectors.toList());
     }
 
     @Override

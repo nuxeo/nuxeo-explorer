@@ -81,13 +81,7 @@ public class ExtensionPointInfoDocAdapter extends BaseNuxeoArtifactDocAdapter im
 
     @Override
     public ComponentInfo getComponent() {
-        // find root doc for distribution
-        DocumentModel distDoc = doc;
-        while (!DistributionSnapshot.TYPE_NAME.equals(distDoc.getType())) {
-            distDoc = getCoreSession().getParentDocument(distDoc.getRef());
-        }
-        DistributionSnapshot dist = distDoc.getAdapter(DistributionSnapshot.class);
-        return dist.getComponent(getComponentId());
+        return getParentNuxeoArtifact(ComponentInfo.class);
     }
 
     @Override
