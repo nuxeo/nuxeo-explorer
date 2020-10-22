@@ -123,8 +123,6 @@ public class ApiBrowser extends DefaultObject {
         stats.put("packages", snap.getPackages().size());
         if (embeddedMode) {
             viewId = "indexSimple";
-            stats.put("jComponents", snap.getJavaComponentIds().size());
-            stats.put("xComponents", snap.getXmlComponentIds().size());
         } else {
             stats.put("bundlegroups", snap.getBundleGroups().size());
         }
@@ -173,24 +171,19 @@ public class ApiBrowser extends DefaultObject {
     @Path(ApiBrowserConstants.LIST_COMPONENTS)
     public Object getComponents() {
         DistributionSnapshot snapshot = getDistribution();
-        List<String> javaComponentIds = snapshot.getJavaComponentIds();
-        List<ArtifactLabel> javaLabels = javaComponentIds.stream()
-                                                         .map(ArtifactLabel::createLabelFromComponent)
-                                                         .sorted()
-                                                         .collect(Collectors.toList());
-        javaLabels.stream().forEach(l -> {
-            ComponentInfo c = snapshot.getComponent(l.getId());
+        List<ComponentInfo> comps = snapshot.getComponents();
+        var javaLabels = new ArrayList<ArtifactLabel>();
+        var xmlLabels = new ArrayList<ArtifactLabel>();
+        comps.forEach(c -> {
+            ArtifactLabel l = ArtifactLabel.createLabelFromComponent(c.getId());
             l.setOrder(c.getResolutionOrder());
             l.setAdditionalOrder(c.getDeclaredStartOrder());
+            if (c.isXmlPureComponent()) {
+                xmlLabels.add(l);
+            } else {
+                javaLabels.add(l);
+            }
         });
-
-        List<String> xmlComponentIds = snapshot.getXmlComponentIds();
-        List<ArtifactLabel> xmlLabels = xmlComponentIds.stream()
-                                                       .map(ArtifactLabel::createLabelFromComponent)
-                                                       .sorted()
-                                                       .collect(Collectors.toList());
-        xmlLabels.stream().forEach(l -> l.setOrder(snapshot.getComponent(l.getId()).getResolutionOrder()));
-
         return getView(ApiBrowserConstants.LIST_COMPONENTS).arg("javaComponents", javaLabels)
                                                            .arg("xmlComponents", xmlLabels)
                                                            .arg(Distribution.DIST_ID,

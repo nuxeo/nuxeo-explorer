@@ -23,12 +23,8 @@
         <td>${stats.bundles}</td>
       </tr>
       <tr>
-        <td>Number of <a href="${Root.path}/${distId}/listComponents">Java Components</a></td>
-        <td>${stats.jComponents}</td>
-      </tr>
-      <tr>
-        <td>Number of <a href="${Root.path}/${distId}/listComponents">XML Components</a></td>
-        <td>${stats.xComponents}</td>
+        <td>Number of <a href="${Root.path}/${distId}/listComponents">Components</a></td>
+        <td>${stats.components}</td>
       </tr>
       <tr>
         <td>Number of <a href="${Root.path}/${distId}/listServices">Services</a></td>

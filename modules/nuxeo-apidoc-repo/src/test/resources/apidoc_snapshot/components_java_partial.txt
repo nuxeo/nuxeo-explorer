@@ -1,1 +1,0 @@
-NXComponent: org.nuxeo.apidoc.snapshot.SnapshotManagerComponent *** /apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent

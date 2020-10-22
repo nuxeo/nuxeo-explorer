@@ -34,7 +34,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -90,8 +89,6 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
     protected final String version;
 
     protected final Map<String, BundleInfo> bundles = new LinkedHashMap<>();
-
-    protected final List<String> javaComponentsIds = new ArrayList<>();
 
     protected final Map<String, String> components2Bundles = new HashMap<>();
 
@@ -168,9 +165,6 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
             bundles.put(bInfo.getId(), bInfo);
             for (ComponentInfo cInfo : bInfo.getComponents()) {
                 components2Bundles.put(cInfo.getId(), bInfo.getId());
-                if (!cInfo.isXmlPureComponent()) {
-                    javaComponentsIds.add(cInfo.getId());
-                }
 
                 for (ServiceInfo sInfo : cInfo.getServices()) {
                     if (sInfo.isOverriden()) {
@@ -247,6 +241,15 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
         componentsIds.addAll(components2Bundles.keySet());
         Collections.sort(componentsIds);
         return componentsIds;
+    }
+
+    @Override
+    public List<ComponentInfo> getComponents() {
+        return bundles.values()
+                      .stream()
+                      .flatMap(b -> b.getComponents().stream())
+                      .sorted(new NuxeoArtifactComparator())
+                      .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
@@ -334,19 +337,6 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
             }
         }
         return null;
-    }
-
-    @Override
-    public List<String> getJavaComponentIds() {
-        return javaComponentsIds.stream().sorted().collect(Collectors.toUnmodifiableList());
-    }
-
-    @Override
-    public List<String> getXmlComponentIds() {
-        return getComponentIds().stream()
-                                .filter(Predicate.not(javaComponentsIds::contains))
-                                .sorted()
-                                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
