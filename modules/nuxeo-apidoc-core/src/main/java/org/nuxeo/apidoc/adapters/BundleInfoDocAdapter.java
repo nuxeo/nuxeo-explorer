@@ -28,12 +28,15 @@ import org.nuxeo.apidoc.api.BundleGroup;
 import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
+import org.nuxeo.apidoc.api.QueryHelper;
 import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.Blobs;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.PathRef;
+import org.nuxeo.ecm.core.query.sql.NXQL;
 
 public class BundleInfoDocAdapter extends BaseNuxeoArtifactDocAdapter implements BundleInfo {
 
@@ -93,11 +96,12 @@ public class BundleInfoDocAdapter extends BaseNuxeoArtifactDocAdapter implements
 
     @Override
     public List<ComponentInfo> getComponents() {
-        List<DocumentModel> children = getCoreSession().getChildren(doc.getRef());
-        return children.stream()
-                       .map(doc -> doc.getAdapter(ComponentInfo.class))
-                       .filter(Objects::nonNull)
-                       .collect(Collectors.toList());
+        String query = QueryHelper.select(ComponentInfo.TYPE_NAME, doc, NXQL.ECM_POS);
+        DocumentModelList docs = query(getCoreSession(), query);
+        return docs.stream()
+                   .map(doc -> doc.getAdapter(ComponentInfo.class))
+                   .filter(Objects::nonNull)
+                   .collect(Collectors.toList());
     }
 
     @Override
