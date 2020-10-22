@@ -26,6 +26,7 @@ import org.nuxeo.runtime.model.ComponentManager;
 import org.nuxeo.runtime.model.ComponentName;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public interface ExtensionInfo extends NuxeoArtifact {
 
@@ -54,6 +55,7 @@ public interface ExtensionInfo extends NuxeoArtifact {
 
     String getXml();
 
+    @JsonIgnore
     List<ContributionItem> getContributionItems();
 
     @JsonBackReference("extension")

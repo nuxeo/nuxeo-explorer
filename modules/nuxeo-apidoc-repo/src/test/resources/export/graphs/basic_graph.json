@@ -416,78 +416,6 @@
       },
       "object": {
         "@type": "NXContribution",
-        "contributionItems": [
-          {
-            "documentation": "",
-            "id": "nxbundle",
-            "label": "schema nxbundle",
-            "rawXml": "<schema name=\"nxbundle\" prefix=\"nxbundle\" src=\"schemas/nxbundle.xsd\"/>",
-            "xml": "&lt;schema name=&quot;nxbundle&quot; prefix=&quot;nxbundle&quot; src=&quot;schemas/nxbundle.xsd&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "nxbundlegroup",
-            "label": "schema nxbundlegroup",
-            "rawXml": "<schema name=\"nxbundlegroup\" prefix=\"nxbundlegroup\" src=\"schemas/nxbundlegroup.xsd\"/>",
-            "xml": "&lt;schema name=&quot;nxbundlegroup&quot; prefix=&quot;nxbundlegroup&quot; src=&quot;schemas/nxbundlegroup.xsd&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "nxcomponent",
-            "label": "schema nxcomponent",
-            "rawXml": "<schema name=\"nxcomponent\" prefix=\"nxcomponent\" src=\"schemas/nxcomponent.xsd\"/>",
-            "xml": "&lt;schema name=&quot;nxcomponent&quot; prefix=&quot;nxcomponent&quot; src=&quot;schemas/nxcomponent.xsd&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "nxcontribution",
-            "label": "schema nxcontribution",
-            "rawXml": "<schema name=\"nxcontribution\" prefix=\"nxcontribution\" src=\"schemas/nxcontribution.xsd\"/>",
-            "xml": "&lt;schema name=&quot;nxcontribution&quot; prefix=&quot;nxcontribution&quot; src=&quot;schemas/nxcontribution.xsd&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "nxdistribution",
-            "label": "schema nxdistribution",
-            "rawXml": "<schema name=\"nxdistribution\" prefix=\"nxdistribution\" src=\"schemas/nxdistribution.xsd\"/>",
-            "xml": "&lt;schema name=&quot;nxdistribution&quot; prefix=&quot;nxdistribution&quot; src=&quot;schemas/nxdistribution.xsd&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "nxextensionpoint",
-            "label": "schema nxextensionpoint",
-            "rawXml": "<schema name=\"nxextensionpoint\" prefix=\"nxextensionpoint\" src=\"schemas/nxextensionpoint.xsd\"/>",
-            "xml": "&lt;schema name=&quot;nxextensionpoint&quot; prefix=&quot;nxextensionpoint&quot; src=&quot;schemas/nxextensionpoint.xsd&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "nxservice",
-            "label": "schema nxservice",
-            "rawXml": "<schema name=\"nxservice\" prefix=\"nxservice\" src=\"schemas/nxservice.xsd\"/>",
-            "xml": "&lt;schema name=&quot;nxservice&quot; prefix=&quot;nxservice&quot; src=&quot;schemas/nxservice.xsd&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "nxoperation",
-            "label": "schema nxoperation",
-            "rawXml": "<schema name=\"nxoperation\" prefix=\"nxop\" src=\"schemas/nxoperation.xsd\"/>",
-            "xml": "&lt;schema name=&quot;nxoperation&quot; prefix=&quot;nxop&quot; src=&quot;schemas/nxoperation.xsd&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "nxpackage",
-            "label": "schema nxpackage",
-            "rawXml": "<schema name=\"nxpackage\" prefix=\"nxpackage\" src=\"schemas/nxpackage.xsd\"/>",
-            "xml": "&lt;schema name=&quot;nxpackage&quot; prefix=&quot;nxpackage&quot; src=&quot;schemas/nxpackage.xsd&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "apidoccommon",
-            "label": "schema apidoccommon",
-            "rawXml": "<schema name=\"apidoccommon\" prefix=\"adc\" src=\"schemas/apidoccommon.xsd\"/>",
-            "xml": "&lt;schema name=&quot;apidoccommon&quot; prefix=&quot;adc&quot; src=&quot;schemas/apidoccommon.xsd&quot;/&gt;"
-          }
-        ],
         "documentation": null,
         "documentationHtml": "",
         "extensionPoint": "org.nuxeo.ecm.core.schema.TypeService--schema",
@@ -538,71 +466,6 @@
       },
       "object": {
         "@type": "NXContribution",
-        "contributionItems": [
-          {
-            "documentation": "",
-            "id": "NXDistribution",
-            "label": "doctype NXDistribution",
-            "rawXml": "<doctype extends=\"Folder\" name=\"NXDistribution\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n      <schema name=\"file\"/>\n      <schema name=\"nxdistribution\"/>\n\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n      <facet name=\"Folderish\"/>\n\n      <subtypes>\n        <type>NXBundleGroup</type>\n        <type>NXBundle</type>\n        <type>NXOperation</type>\n        <type>NXPackage</type>\n        <type>Workspace</type>\n      </subtypes>\n    </doctype>",
-            "xml": "&lt;doctype extends=&quot;Folder&quot; name=&quot;NXDistribution&quot;&gt;\n      &lt;schema name=&quot;common&quot;/&gt;\n      &lt;schema name=&quot;dublincore&quot;/&gt;\n      &lt;schema name=&quot;file&quot;/&gt;\n      &lt;schema name=&quot;nxdistribution&quot;/&gt;\n\n      &lt;facet name=&quot;Commentable&quot;/&gt;\n      &lt;facet name=&quot;Versionable&quot;/&gt;\n      &lt;facet name=&quot;Folderish&quot;/&gt;\n\n      &lt;subtypes&gt;\n        &lt;type&gt;NXBundleGroup&lt;/type&gt;\n        &lt;type&gt;NXBundle&lt;/type&gt;\n        &lt;type&gt;NXOperation&lt;/type&gt;\n        &lt;type&gt;NXPackage&lt;/type&gt;\n        &lt;type&gt;Workspace&lt;/type&gt;\n      &lt;/subtypes&gt;\n    &lt;/doctype&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "NXBundleGroup",
-            "label": "doctype NXBundleGroup",
-            "rawXml": "<doctype extends=\"OrderedFolder\" name=\"NXBundleGroup\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n      <schema name=\"file\"/>\n      <schema name=\"files\"/>\n      <schema name=\"nxbundlegroup\"/>\n\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n      <facet name=\"Folderish\"/>\n\n      <subtypes>\n        <type>NXBundleGroup</type>\n      </subtypes>\n    </doctype>",
-            "xml": "&lt;doctype extends=&quot;OrderedFolder&quot; name=&quot;NXBundleGroup&quot;&gt;\n      &lt;schema name=&quot;common&quot;/&gt;\n      &lt;schema name=&quot;dublincore&quot;/&gt;\n      &lt;schema name=&quot;file&quot;/&gt;\n      &lt;schema name=&quot;files&quot;/&gt;\n      &lt;schema name=&quot;nxbundlegroup&quot;/&gt;\n\n      &lt;facet name=&quot;Commentable&quot;/&gt;\n      &lt;facet name=&quot;Versionable&quot;/&gt;\n      &lt;facet name=&quot;Folderish&quot;/&gt;\n\n      &lt;subtypes&gt;\n        &lt;type&gt;NXBundleGroup&lt;/type&gt;\n      &lt;/subtypes&gt;\n    &lt;/doctype&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "NXBundle",
-            "label": "doctype NXBundle",
-            "rawXml": "<doctype extends=\"OrderedFolder\" name=\"NXBundle\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n      <schema name=\"file\"/>\n      <schema name=\"nxbundle\"/>\n\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n      <facet name=\"Folderish\"/>\n      <subtypes>\n        <type>NXComponent</type>\n        <type>NXService</type>\n        <type>NXExtensionPoint</type>\n        <type>NXContribution</type>\n      </subtypes>\n    </doctype>",
-            "xml": "&lt;doctype extends=&quot;OrderedFolder&quot; name=&quot;NXBundle&quot;&gt;\n      &lt;schema name=&quot;common&quot;/&gt;\n      &lt;schema name=&quot;dublincore&quot;/&gt;\n      &lt;schema name=&quot;file&quot;/&gt;\n      &lt;schema name=&quot;nxbundle&quot;/&gt;\n\n      &lt;facet name=&quot;Commentable&quot;/&gt;\n      &lt;facet name=&quot;Versionable&quot;/&gt;\n      &lt;facet name=&quot;Folderish&quot;/&gt;\n      &lt;subtypes&gt;\n        &lt;type&gt;NXComponent&lt;/type&gt;\n        &lt;type&gt;NXService&lt;/type&gt;\n        &lt;type&gt;NXExtensionPoint&lt;/type&gt;\n        &lt;type&gt;NXContribution&lt;/type&gt;\n      &lt;/subtypes&gt;\n    &lt;/doctype&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "NXComponent",
-            "label": "doctype NXComponent",
-            "rawXml": "<doctype extends=\"OrderedFolder\" name=\"NXComponent\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n      <schema name=\"file\"/>\n      <schema name=\"nxcomponent\"/>\n\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n      <facet name=\"Folderish\"/>\n      <subtypes>\n        <type>NXService</type>\n        <type>NXExtensionPoint</type>\n        <type>NXContribution</type>\n      </subtypes>\n    </doctype>",
-            "xml": "&lt;doctype extends=&quot;OrderedFolder&quot; name=&quot;NXComponent&quot;&gt;\n      &lt;schema name=&quot;common&quot;/&gt;\n      &lt;schema name=&quot;dublincore&quot;/&gt;\n      &lt;schema name=&quot;file&quot;/&gt;\n      &lt;schema name=&quot;nxcomponent&quot;/&gt;\n\n      &lt;facet name=&quot;Commentable&quot;/&gt;\n      &lt;facet name=&quot;Versionable&quot;/&gt;\n      &lt;facet name=&quot;Folderish&quot;/&gt;\n      &lt;subtypes&gt;\n        &lt;type&gt;NXService&lt;/type&gt;\n        &lt;type&gt;NXExtensionPoint&lt;/type&gt;\n        &lt;type&gt;NXContribution&lt;/type&gt;\n      &lt;/subtypes&gt;\n    &lt;/doctype&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "NXExtensionPoint",
-            "label": "doctype NXExtensionPoint",
-            "rawXml": "<doctype extends=\"OrderedFolder\" name=\"NXExtensionPoint\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n      <schema name=\"file\"/>\n      <schema name=\"nxextensionpoint\"/>\n      <schema name=\"apidoccommon\"/>\n\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n      <facet name=\"Folderish\"/>\n    </doctype>",
-            "xml": "&lt;doctype extends=&quot;OrderedFolder&quot; name=&quot;NXExtensionPoint&quot;&gt;\n      &lt;schema name=&quot;common&quot;/&gt;\n      &lt;schema name=&quot;dublincore&quot;/&gt;\n      &lt;schema name=&quot;file&quot;/&gt;\n      &lt;schema name=&quot;nxextensionpoint&quot;/&gt;\n      &lt;schema name=&quot;apidoccommon&quot;/&gt;\n\n      &lt;facet name=&quot;Commentable&quot;/&gt;\n      &lt;facet name=&quot;Versionable&quot;/&gt;\n      &lt;facet name=&quot;Folderish&quot;/&gt;\n    &lt;/doctype&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "NXContribution",
-            "label": "doctype NXContribution",
-            "rawXml": "<doctype extends=\"Document\" name=\"NXContribution\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n      <schema name=\"file\"/>\n      <schema name=\"nxcontribution\"/>\n      <schema name=\"apidoccommon\"/>\n\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n    </doctype>",
-            "xml": "&lt;doctype extends=&quot;Document&quot; name=&quot;NXContribution&quot;&gt;\n      &lt;schema name=&quot;common&quot;/&gt;\n      &lt;schema name=&quot;dublincore&quot;/&gt;\n      &lt;schema name=&quot;file&quot;/&gt;\n      &lt;schema name=&quot;nxcontribution&quot;/&gt;\n      &lt;schema name=&quot;apidoccommon&quot;/&gt;\n\n      &lt;facet name=&quot;Commentable&quot;/&gt;\n      &lt;facet name=&quot;Versionable&quot;/&gt;\n    &lt;/doctype&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "NXService",
-            "label": "doctype NXService",
-            "rawXml": "<doctype extends=\"Document\" name=\"NXService\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n      <schema name=\"file\"/>\n      <schema name=\"nxservice\"/>\n\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n    </doctype>",
-            "xml": "&lt;doctype extends=&quot;Document&quot; name=&quot;NXService&quot;&gt;\n      &lt;schema name=&quot;common&quot;/&gt;\n      &lt;schema name=&quot;dublincore&quot;/&gt;\n      &lt;schema name=&quot;file&quot;/&gt;\n      &lt;schema name=&quot;nxservice&quot;/&gt;\n\n      &lt;facet name=&quot;Commentable&quot;/&gt;\n      &lt;facet name=&quot;Versionable&quot;/&gt;\n    &lt;/doctype&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "NXOperation",
-            "label": "doctype NXOperation",
-            "rawXml": "<doctype extends=\"Document\" name=\"NXOperation\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n      <schema name=\"file\"/>\n\n      <schema name=\"nxoperation\"/>\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n    </doctype>",
-            "xml": "&lt;doctype extends=&quot;Document&quot; name=&quot;NXOperation&quot;&gt;\n      &lt;schema name=&quot;common&quot;/&gt;\n      &lt;schema name=&quot;dublincore&quot;/&gt;\n      &lt;schema name=&quot;file&quot;/&gt;\n\n      &lt;schema name=&quot;nxoperation&quot;/&gt;\n      &lt;facet name=&quot;Commentable&quot;/&gt;\n      &lt;facet name=&quot;Versionable&quot;/&gt;\n    &lt;/doctype&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "NXPackage",
-            "label": "doctype NXPackage",
-            "rawXml": "<doctype extends=\"Document\" name=\"NXPackage\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n\n      <schema name=\"nxpackage\"/>\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n    </doctype>",
-            "xml": "&lt;doctype extends=&quot;Document&quot; name=&quot;NXPackage&quot;&gt;\n      &lt;schema name=&quot;common&quot;/&gt;\n      &lt;schema name=&quot;dublincore&quot;/&gt;\n\n      &lt;schema name=&quot;nxpackage&quot;/&gt;\n      &lt;facet name=&quot;Commentable&quot;/&gt;\n      &lt;facet name=&quot;Versionable&quot;/&gt;\n    &lt;/doctype&gt;"
-          }
-        ],
         "documentation": "\n      These contributions provide document types that handle persistence of introspected distributions.\n    \n",
         "documentationHtml": "<p/>\nThese contributions provide document types that handle persistence of introspected distributions.\n<p/>",
         "extensionPoint": "org.nuxeo.ecm.core.schema.TypeService--doctype",
@@ -653,15 +516,6 @@
       },
       "object": {
         "@type": "NXContribution",
-        "contributionItems": [
-          {
-            "documentation": "",
-            "id": null,
-            "label": "types",
-            "rawXml": "<types>\n      <type name=\"NXDistribution\">default</type>\n      <type name=\"NXBundleGroup\">default</type>\n      <type name=\"NXBundle\">default</type>\n      <type name=\"NXComponent\">default</type>\n      <type name=\"NXService\">default</type>\n      <type name=\"NXExtensionPoint\">default</type>\n      <type name=\"NXContribution\">default</type>\n      <type name=\"NXOperation\">default</type>\n    </types>",
-            "xml": "&lt;types&gt;\n      &lt;type name=&quot;NXDistribution&quot;&gt;default&lt;/type&gt;\n      &lt;type name=&quot;NXBundleGroup&quot;&gt;default&lt;/type&gt;\n      &lt;type name=&quot;NXBundle&quot;&gt;default&lt;/type&gt;\n      &lt;type name=&quot;NXComponent&quot;&gt;default&lt;/type&gt;\n      &lt;type name=&quot;NXService&quot;&gt;default&lt;/type&gt;\n      &lt;type name=&quot;NXExtensionPoint&quot;&gt;default&lt;/type&gt;\n      &lt;type name=&quot;NXContribution&quot;&gt;default&lt;/type&gt;\n      &lt;type name=&quot;NXOperation&quot;&gt;default&lt;/type&gt;\n    &lt;/types&gt;"
-          }
-        ],
         "documentation": null,
         "documentationHtml": "",
         "extensionPoint": "org.nuxeo.ecm.core.lifecycle.LifeCycleService--types",
@@ -809,22 +663,6 @@
       },
       "object": {
         "@type": "NXContribution",
-        "contributionItems": [
-          {
-            "documentation": "<p/>\nJson dependency graph",
-            "id": "jsonGraph",
-            "label": "exporter jsonGraph",
-            "rawXml": "<exporter class=\"org.nuxeo.apidoc.export.graphs.plugins.JsonGraphExporter\" id=\"jsonGraph\">\n      <title>Json Graph</title>\n      <description>Json dependency graph</description>\n      <filename>graph.json</filename>\n      <mimetype>application/json</mimetype>\n      <display>\n        <on>home</on>\n        <on>bundle</on>\n        <on>package</on>\n      </display>\n    </exporter>",
-            "xml": "&lt;exporter class=&quot;org.nuxeo.apidoc.export.graphs.plugins.JsonGraphExporter&quot; id=&quot;jsonGraph&quot;&gt;\n      &lt;title&gt;Json Graph&lt;/title&gt;\n      &lt;description&gt;Json dependency graph&lt;/description&gt;\n      &lt;filename&gt;graph.json&lt;/filename&gt;\n      &lt;mimetype&gt;application/json&lt;/mimetype&gt;\n      &lt;display&gt;\n        &lt;on&gt;home&lt;/on&gt;\n        &lt;on&gt;bundle&lt;/on&gt;\n        &lt;on&gt;package&lt;/on&gt;\n      &lt;/display&gt;\n    &lt;/exporter&gt;"
-          },
-          {
-            "documentation": "<p/>\nDependency graph exported in DOT format",
-            "id": "dotGraph",
-            "label": "exporter dotGraph",
-            "rawXml": "<exporter class=\"org.nuxeo.apidoc.export.graphs.plugins.DOTGraphExporter\" id=\"dotGraph\">\n      <title>DOT Graph</title>\n      <description>Dependency graph exported in DOT format</description>\n      <filename>graph.dot</filename>\n      <mimetype>application/octet-stream</mimetype>\n      <display>\n        <on>home</on>\n      </display>\n    </exporter>",
-            "xml": "&lt;exporter class=&quot;org.nuxeo.apidoc.export.graphs.plugins.DOTGraphExporter&quot; id=&quot;dotGraph&quot;&gt;\n      &lt;title&gt;DOT Graph&lt;/title&gt;\n      &lt;description&gt;Dependency graph exported in DOT format&lt;/description&gt;\n      &lt;filename&gt;graph.dot&lt;/filename&gt;\n      &lt;mimetype&gt;application/octet-stream&lt;/mimetype&gt;\n      &lt;display&gt;\n        &lt;on&gt;home&lt;/on&gt;\n      &lt;/display&gt;\n    &lt;/exporter&gt;"
-          }
-        ],
         "documentation": null,
         "documentationHtml": "",
         "extensionPoint": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
@@ -850,15 +688,6 @@
       },
       "object": {
         "@type": "NXContribution",
-        "contributionItems": [
-          {
-            "documentation": "",
-            "id": "org.nuxeo.apidoc.javadoc.url",
-            "label": "property org.nuxeo.apidoc.javadoc.url",
-            "rawXml": "<property name=\"org.nuxeo.apidoc.javadoc.url\">\n      https://community.nuxeo.com/api/\n    </property>",
-            "xml": "&lt;property name=&quot;org.nuxeo.apidoc.javadoc.url&quot;&gt;\n      https://community.nuxeo.com/api/\n    &lt;/property&gt;"
-          }
-        ],
         "documentation": "\n      URL base for Javadoc Links.\n    \n",
         "documentationHtml": "<p/>\nURL base for Javadoc Links.\n<p/>",
         "extensionPoint": "org.nuxeo.runtime.ConfigurationService--configuration",
@@ -884,15 +713,6 @@
       },
       "object": {
         "@type": "NXContribution",
-        "contributionItems": [
-          {
-            "documentation": "",
-            "id": "org.nuxeo.apidoc.connect.url",
-            "label": "property org.nuxeo.apidoc.connect.url",
-            "rawXml": "<property name=\"org.nuxeo.apidoc.connect.url\">\n      https://connect.nuxeo.com/nuxeo/site/\n    </property>",
-            "xml": "&lt;property name=&quot;org.nuxeo.apidoc.connect.url&quot;&gt;\n      https://connect.nuxeo.com/nuxeo/site/\n    &lt;/property&gt;"
-          }
-        ],
         "documentation": "\n      URL base for Connect Links (for Marketplace Packages).\n    \n",
         "documentationHtml": "<p/>\nURL base for Connect Links (for Marketplace Packages).\n<p/>",
         "extensionPoint": "org.nuxeo.runtime.ConfigurationService--configuration",
@@ -918,22 +738,6 @@
       },
       "object": {
         "@type": "NXContribution",
-        "contributionItems": [
-          {
-            "documentation": "",
-            "id": "org.nuxeo.apidoc.apidocmanagers.group",
-            "label": "property org.nuxeo.apidoc.apidocmanagers.group",
-            "rawXml": "<property name=\"org.nuxeo.apidoc.apidocmanagers.group\">\n      ApidocManagers\n    </property>",
-            "xml": "&lt;property name=&quot;org.nuxeo.apidoc.apidocmanagers.group&quot;&gt;\n      ApidocManagers\n    &lt;/property&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "org.nuxeo.apidoc.apidocreaders.group",
-            "label": "property org.nuxeo.apidoc.apidocreaders.group",
-            "rawXml": "<property name=\"org.nuxeo.apidoc.apidocreaders.group\">\n      Everyone\n    </property>",
-            "xml": "&lt;property name=&quot;org.nuxeo.apidoc.apidocreaders.group&quot;&gt;\n      Everyone\n    &lt;/property&gt;"
-          }
-        ],
         "documentation": "\n      Default groups for application managers and readers.\n    \n",
         "documentationHtml": "<p/>\nDefault groups for application managers and readers.\n<p/>",
         "extensionPoint": "org.nuxeo.runtime.ConfigurationService--configuration",
@@ -959,22 +763,6 @@
       },
       "object": {
         "@type": "NXContribution",
-        "contributionItems": [
-          {
-            "documentation": "",
-            "id": "org.nuxeo.apidoc.secure.xml.keywords",
-            "label": "property org.nuxeo.apidoc.secure.xml.keywords",
-            "rawXml": "<property name=\"org.nuxeo.apidoc.secure.xml.keywords\">\n      password, Password, secret, apiKey, TMPDIR, TMP, TEMP, TEMPDIR\n    </property>",
-            "xml": "&lt;property name=&quot;org.nuxeo.apidoc.secure.xml.keywords&quot;&gt;\n      password, Password, secret, apiKey, TMPDIR, TMP, TEMP, TEMPDIR\n    &lt;/property&gt;"
-          },
-          {
-            "documentation": "",
-            "id": "org.nuxeo.apidoc.secure.xml.keywords.whitelisted",
-            "label": "property org.nuxeo.apidoc.secure.xml.keywords.whitelisted",
-            "rawXml": "<property name=\"org.nuxeo.apidoc.secure.xml.keywords.whitelisted\">\n      passwordField, passwordHashAlgorithm\n    </property>",
-            "xml": "&lt;property name=&quot;org.nuxeo.apidoc.secure.xml.keywords.whitelisted&quot;&gt;\n      passwordField, passwordHashAlgorithm\n    &lt;/property&gt;"
-          }
-        ],
         "documentation": "\n      Properties controlling sensitive configuration exposure, when extracted from runtime contributions by\n      explorer logics.\n\n      @since 20.0.0\n    \n",
         "documentationHtml": "<p/>\nProperties controlling sensitive configuration exposure, when extracted from runtime contributions by\nexplorer logics.\n<p/>\n@since 20.0.0\n<p/>",
         "extensionPoint": "org.nuxeo.runtime.ConfigurationService--configuration",
@@ -1025,127 +813,6 @@
       },
       "object": {
         "@type": "NXContribution",
-        "contributionItems": [
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.api.BundleGroup\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXBundleGroup\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.api.BundleGroup&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXBundleGroup&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.api.BundleInfo\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXBundle\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.api.BundleInfo&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXBundle&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.api.ComponentInfo\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXComponent\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.api.ComponentInfo&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXComponent&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.api.ExtensionPointInfo\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXExtensionPoint\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.api.ExtensionPointInfo&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXExtensionPoint&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.api.ExtensionInfo\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXContribution\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.api.ExtensionInfo&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXContribution&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.api.ServiceInfo\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXService\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.api.ServiceInfo&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXService&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.snapshot.DistributionSnapshot\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXDistribution\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.snapshot.DistributionSnapshot&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXDistribution&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.api.OperationInfo\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXOperation\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.api.OperationInfo&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXOperation&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.api.PackageInfo\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXPackage\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.api.PackageInfo&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXPackage&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.api.NuxeoArtifact\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXBundleGroup\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.api.NuxeoArtifact&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXBundleGroup&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.api.NuxeoArtifact\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXBundle\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.api.NuxeoArtifact&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXBundle&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.api.NuxeoArtifact\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXComponent\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.api.NuxeoArtifact&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXComponent&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.api.NuxeoArtifact\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXExtensionPoint\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.api.NuxeoArtifact&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXExtensionPoint&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.api.NuxeoArtifact\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXContribution\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.api.NuxeoArtifact&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXContribution&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.api.NuxeoArtifact\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXService\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.api.NuxeoArtifact&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXService&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.api.NuxeoArtifact\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXOperation\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.api.NuxeoArtifact&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXOperation&quot;/&gt;"
-          },
-          {
-            "documentation": "",
-            "id": null,
-            "label": "adapter",
-            "rawXml": "<adapter class=\"org.nuxeo.apidoc.api.NuxeoArtifact\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXPackage\"/>",
-            "xml": "&lt;adapter class=&quot;org.nuxeo.apidoc.api.NuxeoArtifact&quot; factory=&quot;org.nuxeo.apidoc.adapters.AdapterFactory&quot; type=&quot;NXPackage&quot;/&gt;"
-          }
-        ],
         "documentation": "\n      These contributions provide a mapping between live introspections and persisted representations of a\n      distribution.\n    \n",
         "documentationHtml": "<p/>\nThese contributions provide a mapping between live introspections and persisted representations of a\ndistribution.\n<p/>",
         "extensionPoint": "org.nuxeo.ecm.core.api.DocumentAdapterService--adapters",
@@ -1196,29 +863,6 @@
       },
       "object": {
         "@type": "NXContribution",
-        "contributionItems": [
-          {
-            "documentation": "<p/>\nUpdates latest distribution flag.",
-            "id": "latestDistributionsListener",
-            "label": "listener latestDistributionsListener",
-            "rawXml": "<listener async=\"false\" class=\"org.nuxeo.apidoc.listener.LatestDistributionsListener\" name=\"latestDistributionsListener\" postCommit=\"false\">\n      <documentation>\n        Updates latest distribution flag.\n      </documentation>\n      <event>aboutToCreate</event>\n      <event>beforeDocumentModification</event>\n    </listener>",
-            "xml": "&lt;listener async=&quot;false&quot; class=&quot;org.nuxeo.apidoc.listener.LatestDistributionsListener&quot; name=&quot;latestDistributionsListener&quot; postCommit=&quot;false&quot;&gt;\n      &lt;documentation&gt;\n        Updates latest distribution flag.\n      &lt;/documentation&gt;\n      &lt;event&gt;aboutToCreate&lt;/event&gt;\n      &lt;event&gt;beforeDocumentModification&lt;/event&gt;\n    &lt;/listener&gt;"
-          },
-          {
-            "documentation": "<p/>\nListener in charge of triggering AttributesExtractorScheduler.",
-            "id": "AttributesExtractorStater",
-            "label": "listener AttributesExtractorStater",
-            "rawXml": "<listener async=\"false\" class=\"org.nuxeo.apidoc.listener.AttributesExtractorStater\" name=\"AttributesExtractorStater\" postCommit=\"false\">\n      <documentation>\n        Listener in charge of triggering AttributesExtractorScheduler.\n      </documentation>\n      <event>aboutToCreate</event>\n      <event>beforeDocumentModification</event>\n    </listener>",
-            "xml": "&lt;listener async=&quot;false&quot; class=&quot;org.nuxeo.apidoc.listener.AttributesExtractorStater&quot; name=&quot;AttributesExtractorStater&quot; postCommit=&quot;false&quot;&gt;\n      &lt;documentation&gt;\n        Listener in charge of triggering AttributesExtractorScheduler.\n      &lt;/documentation&gt;\n      &lt;event&gt;aboutToCreate&lt;/event&gt;\n      &lt;event&gt;beforeDocumentModification&lt;/event&gt;\n    &lt;/listener&gt;"
-          },
-          {
-            "documentation": "<p/>\nSchedules a work for XML attributes extraction.",
-            "id": "AttributesExtractorScheduler",
-            "label": "listener AttributesExtractorScheduler",
-            "rawXml": "<listener async=\"false\" class=\"org.nuxeo.apidoc.listener.AttributesExtractorScheduler\" name=\"AttributesExtractorScheduler\" postCommit=\"false\" priority=\"20\">\n      <description>\n        Schedules a work for XML attributes extraction.\n      </description>\n      <event>documentCreated</event>\n      <event>documentModified</event>\n    </listener>",
-            "xml": "&lt;listener async=&quot;false&quot; class=&quot;org.nuxeo.apidoc.listener.AttributesExtractorScheduler&quot; name=&quot;AttributesExtractorScheduler&quot; postCommit=&quot;false&quot; priority=&quot;20&quot;&gt;\n      &lt;description&gt;\n        Schedules a work for XML attributes extraction.\n      &lt;/description&gt;\n      &lt;event&gt;documentCreated&lt;/event&gt;\n      &lt;event&gt;documentModified&lt;/event&gt;\n    &lt;/listener&gt;"
-          }
-        ],
         "documentation": "\n      These contributions are used for latest distribution flag update and XML attributes extractions in\n      extension points.\n    \n",
         "documentationHtml": "<p/>\nThese contributions are used for latest distribution flag update and XML attributes extractions in\nextension points.\n<p/>",
         "extensionPoint": "org.nuxeo.ecm.core.event.EventServiceComponent--listener",
@@ -1269,15 +913,6 @@
       },
       "object": {
         "@type": "NXContribution",
-        "contributionItems": [
-          {
-            "documentation": "",
-            "id": "apidoc-xml-extractor",
-            "label": "queue apidoc-xml-extractor",
-            "rawXml": "<queue id=\"apidoc-xml-extractor\">\n      <maxThreads>1</maxThreads>\n      <category>apidoc-xml-extractor</category>\n    </queue>",
-            "xml": "&lt;queue id=&quot;apidoc-xml-extractor&quot;&gt;\n      &lt;maxThreads&gt;1&lt;/maxThreads&gt;\n      &lt;category&gt;apidoc-xml-extractor&lt;/category&gt;\n    &lt;/queue&gt;"
-          }
-        ],
         "documentation": null,
         "documentationHtml": "",
         "extensionPoint": "org.nuxeo.ecm.core.work.service--queues",
@@ -1303,15 +938,6 @@
       },
       "object": {
         "@type": "NXContribution",
-        "contributionItems": [
-          {
-            "documentation": "",
-            "id": "apidoc-xml-extractor-2",
-            "label": "queue apidoc-xml-extractor-2",
-            "rawXml": "<queue id=\"apidoc-xml-extractor-2\">\n      <maxThreads>1</maxThreads>\n      <category>apidoc-xml-extractor-2</category>\n    </queue>",
-            "xml": "&lt;queue id=&quot;apidoc-xml-extractor-2&quot;&gt;\n      &lt;maxThreads&gt;1&lt;/maxThreads&gt;\n      &lt;category&gt;apidoc-xml-extractor-2&lt;/category&gt;\n    &lt;/queue&gt;"
-          }
-        ],
         "documentation": null,
         "documentationHtml": "",
         "extensionPoint": "org.nuxeo.ecm.core.work.service--queues",
