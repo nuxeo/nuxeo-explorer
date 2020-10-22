@@ -241,6 +241,11 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     }
 
     @Override
+    public List<ComponentInfo> getComponents() {
+        return getChildren(ComponentInfo.class, ComponentInfo.TYPE_NAME, ComponentInfo.PROP_COMPONENT_ID);
+    }
+
+    @Override
     public ExtensionInfo getContribution(String id) {
         return getChild(ExtensionInfo.class, ExtensionInfo.TYPE_NAME, ExtensionInfo.PROP_CONTRIB_ID, id);
     }
@@ -329,16 +334,6 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
                    .filter(Objects::nonNull)
                    .map(NuxeoArtifact::getId)
                    .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<String> getJavaComponentIds() {
-        return getComponentIds(false);
-    }
-
-    @Override
-    public List<String> getXmlComponentIds() {
-        return getComponentIds(true);
     }
 
     @Override

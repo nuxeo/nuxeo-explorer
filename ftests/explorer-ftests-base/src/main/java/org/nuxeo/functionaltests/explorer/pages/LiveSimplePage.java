@@ -56,8 +56,7 @@ public class LiveSimplePage extends AbstractExplorerPage {
         String statsContent = stats.getText();
         assertNotNull(statsContent);
         assertTrue(statsContent.contains("Number of Bundles"));
-        assertTrue(statsContent.contains("Number of Java Components"));
-        assertTrue(statsContent.contains("Number of XML Components"));
+        assertTrue(statsContent.contains("Number of Components"));
         assertTrue(statsContent.contains("Number of Services"));
         assertTrue(statsContent.contains("Number of Services"));
         assertTrue(statsContent.contains("Number of Extension Points"));
