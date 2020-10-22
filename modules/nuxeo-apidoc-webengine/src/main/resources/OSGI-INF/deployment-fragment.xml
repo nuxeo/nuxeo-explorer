@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <fragment version="1">
 
-  <extension target="web#AUTH-FILTER">
+  <extension target="web#FILTER">
     <filter>
       <display-name>APIDoc Cache and Auth</display-name>
       <filter-name>APIDOCCache</filter-name>
@@ -11,8 +11,7 @@
     </filter>
 
     <filter-mapping>
-      <filter-name>APIDOCCache
-      </filter-name>
+      <filter-name>APIDOCCache</filter-name>
       <url-pattern>/*</url-pattern>
       <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
@@ -28,8 +27,7 @@
     </filter>
 
     <filter-mapping>
-      <filter-name>APIDOCRedirect
-      </filter-name>
+      <filter-name>APIDOCRedirect</filter-name>
       <url-pattern>/*</url-pattern>
       <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
