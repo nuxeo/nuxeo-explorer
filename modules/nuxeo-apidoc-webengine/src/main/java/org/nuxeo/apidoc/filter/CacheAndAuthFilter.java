@@ -83,9 +83,9 @@ public class CacheAndAuthFilter extends BaseApiDocFilter {
 
     public static void addCacheHeader(HttpServletResponse httpResponse, boolean isPrivate, String cacheTime) {
         if (isPrivate) {
-            httpResponse.addHeader("Cache-Control", "private, max-age=" + cacheTime);
+            httpResponse.setHeader("Cache-Control", "private, max-age=" + cacheTime);
         } else {
-            httpResponse.addHeader("Cache-Control", "public, max-age=" + cacheTime);
+            httpResponse.setHeader("Cache-Control", "public, max-age=" + cacheTime);
         }
 
         // Generating expires using current date and adding cache time.
