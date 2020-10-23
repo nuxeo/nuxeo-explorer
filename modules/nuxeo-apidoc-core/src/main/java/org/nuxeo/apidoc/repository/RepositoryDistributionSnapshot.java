@@ -225,8 +225,8 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
 
     @Override
     public List<String> getBundleIds() {
-        return getChildren(BundleInfo.class, BundleInfo.TYPE_NAME,
-                BundleInfo.PROP_BUNDLE_ID).stream().map(NuxeoArtifact::getId).collect(Collectors.toList());
+        return queryAndFetchIds(getCoreSession(), BundleInfo.PROP_BUNDLE_ID, BundleInfo.TYPE_NAME, doc,
+                BundleInfo.PROP_BUNDLE_ID);
     }
 
     @Override
@@ -236,8 +236,8 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
 
     @Override
     public List<String> getComponentIds() {
-        return getChildren(ComponentInfo.class, ComponentInfo.TYPE_NAME,
-                ComponentInfo.PROP_COMPONENT_ID).stream().map(NuxeoArtifact::getId).collect(Collectors.toList());
+        return queryAndFetchIds(getCoreSession(), ComponentInfo.PROP_COMPONENT_ID, ComponentInfo.TYPE_NAME, doc,
+                ComponentInfo.PROP_COMPONENT_ID);
     }
 
     @Override
@@ -252,8 +252,8 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
 
     @Override
     public List<String> getContributionIds() {
-        return getChildren(ExtensionInfo.class, ExtensionInfo.TYPE_NAME,
-                ExtensionInfo.PROP_CONTRIB_ID).stream().map(NuxeoArtifact::getId).collect(Collectors.toList());
+        return queryAndFetchIds(getCoreSession(), ExtensionInfo.PROP_CONTRIB_ID, ExtensionInfo.TYPE_NAME, doc,
+                ExtensionInfo.PROP_CONTRIB_ID);
     }
 
     @Override
@@ -268,20 +268,19 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
 
     @Override
     public List<String> getExtensionPointIds() {
-        return getChildren(ExtensionPointInfo.class, ExtensionPointInfo.TYPE_NAME,
-                ExtensionPointInfo.PROP_EP_ID).stream().map(NuxeoArtifact::getId).collect(Collectors.toList());
+        return queryAndFetchIds(getCoreSession(), ExtensionPointInfo.PROP_EP_ID, ExtensionPointInfo.TYPE_NAME, doc,
+                ExtensionPointInfo.PROP_EP_ID);
     }
 
     public List<String> getBundleGroupIds() {
-        return getChildren(BundleGroup.class, BundleGroup.TYPE_NAME, BundleGroup.PROP_KEY).stream()
-                                                                                          .map(NuxeoArtifact::getId)
-                                                                                          .collect(Collectors.toList());
+        return queryAndFetchIds(getCoreSession(), BundleGroup.PROP_KEY, BundleGroup.TYPE_NAME, doc,
+                BundleGroup.PROP_KEY);
     }
 
     @Override
     public List<String> getServiceIds() {
-        return getChildren(ServiceInfo.class, ServiceInfo.TYPE_NAME,
-                ServiceInfo.PROP_CLASS_NAME).stream().map(NuxeoArtifact::getId).collect(Collectors.toList());
+        return queryAndFetchIds(getCoreSession(), ServiceInfo.PROP_CLASS_NAME, ServiceInfo.TYPE_NAME, doc,
+                ServiceInfo.PROP_CLASS_NAME);
     }
 
     @Override

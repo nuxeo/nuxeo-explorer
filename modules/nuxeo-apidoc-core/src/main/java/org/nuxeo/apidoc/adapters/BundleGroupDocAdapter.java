@@ -34,12 +34,14 @@ import org.nuxeo.apidoc.api.BundleGroup;
 import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.QueryHelper;
+import org.nuxeo.apidoc.search.ArtifactSearcher;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.PartialList;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.query.sql.NXQL;
 
@@ -85,14 +87,13 @@ public class BundleGroupDocAdapter extends BaseNuxeoArtifactDocAdapter implement
 
     @Override
     public List<String> getBundleIds() {
-        String query = String.format("SELECT * FROM %s WHERE %s = %s AND %s ORDER BY %s", BundleInfo.TYPE_NAME,
-                NXQL.ECM_PARENTID, NXQL.escapeString(doc.getId()), QueryHelper.NOT_DELETED, BundleInfo.PROP_BUNDLE_ID);
-        DocumentModelList docs = query(getCoreSession(), query);
-        return docs.stream()
-                   .map(doc -> doc.getAdapter(BundleInfo.class))
-                   .filter(Objects::nonNull)
-                   .map(NuxeoArtifact::getId)
-                   .collect(Collectors.toList());
+        String bidProp = BundleInfo.PROP_BUNDLE_ID;
+        String query = String.format("SELECT %s FROM %s WHERE %s = %s AND %s ORDER BY %s", bidProp,
+                BundleInfo.TYPE_NAME, NXQL.ECM_PARENTID, NXQL.escapeString(doc.getId()), QueryHelper.NOT_DELETED,
+                bidProp);
+        PartialList<Map<String, Serializable>> res = getCoreSession().queryProjection(query,
+                ArtifactSearcher.MAX_RESULTS, 0);
+        return res.stream().map(e -> e.get(bidProp)).map(String.class::cast).collect(Collectors.toList());
     }
 
     @Override

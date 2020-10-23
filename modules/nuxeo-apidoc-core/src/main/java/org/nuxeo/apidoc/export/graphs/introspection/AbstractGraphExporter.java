@@ -74,8 +74,7 @@ public abstract class AbstractGraphExporter extends AbstractExporter {
         Map<String, Integer> nodeHits = new HashMap<>();
         Set<String> isolatedBundles = new HashSet<>();
 
-        for (String bid : distribution.getBundleIds()) {
-            BundleInfo bundle = distribution.getBundle(bid);
+        for (BundleInfo bundle : distribution.getBundles()) {
             if (filter != null && !filter.accept(bundle)) {
                 continue;
             }
