@@ -108,7 +108,7 @@
     <div id="services">
       <ul>
         <#list services as service>
-        <li><a class="services" href="${Root.path}/${distId}/viewService/${service.id}">${service.id}</a></li>
+        <li><a class="services" href="${Root.path}/${distId}/viewService/${service.id}">${service.label}</a></li>
         </#list>
       </ul>
     </div>

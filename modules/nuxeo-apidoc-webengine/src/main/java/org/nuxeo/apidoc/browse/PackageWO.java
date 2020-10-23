@@ -32,7 +32,6 @@ import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
-import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.export.api.Exporter;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.ecm.webengine.model.Template;
@@ -86,24 +85,6 @@ public class PackageWO extends NuxeoArtifactWebObject<PackageInfo> {
         return res;
     }
 
-    protected List<ServiceInfo> getServiceInfo(List<ComponentInfo> components) {
-        var res = new ArrayList<ServiceInfo>();
-        components.forEach(c -> res.addAll(c.getServices()));
-        return res;
-    }
-
-    protected List<ExtensionPointInfo> getExtensionPointInfo(List<ComponentInfo> components) {
-        var res = new ArrayList<ExtensionPointInfo>();
-        components.forEach(c -> res.addAll(c.getExtensionPoints()));
-        return res;
-    }
-
-    protected List<ExtensionInfo> getContributionInfo(List<ComponentInfo> components) {
-        var res = new ArrayList<ExtensionInfo>();
-        components.forEach(c -> res.addAll(c.getExtensions()));
-        return res;
-    }
-
     @Produces("text/html")
     @Override
     public Object doViewDefault() {
@@ -117,9 +98,18 @@ public class PackageWO extends NuxeoArtifactWebObject<PackageInfo> {
         List<ComponentInfo> components = getComponentInfo(
                 binfo.values().stream().filter(Objects::nonNull).collect(Collectors.toList()));
         t.arg("components", components);
-        t.arg("services", getServiceInfo(components));
-        t.arg("extensionpoints", getExtensionPointInfo(components));
-        t.arg("contributions", getContributionInfo(components));
+        var sLabels = new ArrayList<ArtifactLabel>();
+        var xps = new ArrayList<ExtensionPointInfo>();
+        var conts = new ArrayList<ExtensionInfo>();
+        components.forEach(c -> {
+            c.getServices().stream().map(s -> ArtifactLabel.createLabelFromService(s.getId())).forEach(sLabels::add);
+            xps.addAll(c.getExtensionPoints());
+            conts.addAll(c.getExtensions());
+        });
+        t.arg("services", sLabels);
+        t.arg("extensionpoints", xps);
+        t.arg("contributions", conts);
+
         t.arg("dependencies", getDependenciesInfo(snapshot, pkg.getDependencies()));
         t.arg("optionalDependencies", getDependenciesInfo(snapshot, pkg.getOptionalDependencies()));
         t.arg("conflicts", getDependenciesInfo(snapshot, pkg.getConflicts()));
