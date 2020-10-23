@@ -23,16 +23,20 @@ import static org.nuxeo.ecm.core.api.validation.DocumentValidationService.CTX_MA
 import static org.nuxeo.ecm.core.api.validation.DocumentValidationService.Forcing.TURN_OFF;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
+import org.nuxeo.apidoc.api.QueryHelper;
 import org.nuxeo.apidoc.search.ArtifactSearcher;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
@@ -42,6 +46,7 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.PartialList;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.PropertyException;
 import org.nuxeo.ecm.platform.picture.listener.PictureViewsGenerationListener;
@@ -201,6 +206,13 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
         } else {
             return session.query(query);
         }
+    }
+
+    protected static List<String> queryAndFetchIds(CoreSession session, String idProp, String type,
+            DocumentModel parent, String order) {
+        String query = QueryHelper.select(idProp, type, parent, order);
+        PartialList<Map<String, Serializable>> res = session.queryProjection(query, ArtifactSearcher.MAX_RESULTS, 0);
+        return res.stream().map(e -> e.get(idProp)).map(String.class::cast).collect(Collectors.toList());
     }
 
 }

@@ -39,6 +39,16 @@ public class QueryHelper {
     public static final String NOT_VERSION = NXQL.ECM_ISVERSION + " = 0";
 
     /**
+     * Selects artifacts to return their property value.
+     *
+     * @since 20.1.0
+     */
+    public static String select(String idProp, String type, DocumentModel doc, String order) {
+        return String.format("SELECT %s FROM %s WHERE %s STARTSWITH %s AND %s ORDER BY %s", idProp, type, NXQL.ECM_PATH,
+                NXQL.escapeString(doc.getPathAsString()), NOT_DELETED, order);
+    }
+
+    /**
      * SELECT * FROM type WHERE ecm:path STARTSWITH doc.getPathAsString()
      */
     public static String select(String type, DocumentModel doc) {

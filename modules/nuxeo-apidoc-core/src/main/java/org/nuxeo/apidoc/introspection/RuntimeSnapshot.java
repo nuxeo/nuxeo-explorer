@@ -33,7 +33,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -104,7 +103,9 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
 
     protected boolean opsInitialized = false;
 
-    protected final List<OperationInfo> operations = new ArrayList<>();
+    protected final Map<String, OperationInfo> operations = new LinkedHashMap<>();
+
+    protected final Map<String, String> operationAliases = new HashMap<>();
 
     protected final Map<String, PackageInfo> packages = new HashMap<>();
 
@@ -133,7 +134,7 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
         this.version = version;
         index(bundles, packages);
         if (operations != null) {
-            this.operations.addAll(operations);
+            operations.forEach(this::addOperation);
         }
         this.opsInitialized = true;
         if (pluginSnapshots != null) {
@@ -385,7 +386,7 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
             if (StringUtils.isNotBlank(cid) && !OperationInfo.BUILT_IN.equals(cid)) {
                 bundleToOperations.computeIfAbsent(opi.getContributingComponent(), c -> new ArrayList<>()).add(opi);
             }
-            this.operations.add(opi);
+            addOperation(opi);
         }
         opsInitialized = true;
 
@@ -403,29 +404,31 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
         }
     }
 
+    protected void addOperation(OperationInfo opi) {
+        this.operations.put(opi.getName(), opi);
+        String opName = opi.getName();
+        List<String> aliases = opi.getAliases();
+        if (aliases != null) {
+            aliases.forEach(a -> this.operationAliases.put(a, opName));
+        }
+    }
+
     @Override
     public OperationInfo getOperation(String id) {
+        String finalId = id;
         if (id.startsWith(OperationInfo.ARTIFACT_PREFIX)) {
-            id = id.substring(OperationInfo.ARTIFACT_PREFIX.length());
+            finalId = id.substring(OperationInfo.ARTIFACT_PREFIX.length());
         }
-        for (OperationInfo op : getOperations()) {
-            if (op.getName().equals(id)) {
-                return op;
-            }
-
-            String finalId = id;
-            Optional<String> first = op.getAliases().stream().filter(s -> s.equals(finalId)).findFirst();
-            if (first.isPresent()) {
-                return op;
-            }
+        if (!operations.containsKey(finalId) && operationAliases.containsKey(finalId)) {
+            finalId = operationAliases.get(finalId);
         }
-        return null;
+        return operations.get(finalId);
     }
 
     @Override
     public List<OperationInfo> getOperations() {
         initOperations();
-        return Collections.unmodifiableList(operations);
+        return new ArrayList<>(operations.values());
     }
 
     @Override
