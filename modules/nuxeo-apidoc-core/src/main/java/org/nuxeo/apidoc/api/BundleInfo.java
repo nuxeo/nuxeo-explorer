@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.nuxeo.ecm.core.api.Blob;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 public interface BundleInfo extends NuxeoArtifact {
@@ -168,5 +169,29 @@ public interface BundleInfo extends NuxeoArtifact {
      * @since 11.1
      */
     List<String> getPackages();
+
+    /**
+     * Returns all services for this bundle.
+     *
+     * @since 20.1.0
+     */
+    @JsonIgnore
+    List<ServiceInfo> getServices();
+
+    /**
+     * Returns all extension points for this bundle.
+     *
+     * @since 20.1.0
+     */
+    @JsonIgnore
+    List<ExtensionPointInfo> getExtensionPoints();
+
+    /**
+     * Returns all extensions for this bundle.
+     *
+     * @since 20.1.0
+     */
+    @JsonIgnore
+    List<ExtensionInfo> getExtensions();
 
 }

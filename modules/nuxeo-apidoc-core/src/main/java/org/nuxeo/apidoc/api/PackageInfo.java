@@ -22,9 +22,12 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.services.config.ConfigurationService;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Represents a Nuxeo package.
@@ -103,6 +106,16 @@ public interface PackageInfo extends NuxeoArtifact {
      * @see org.nuxeo.connect.update.Package#getConflicts()
      */
     List<String> getConflicts();
+
+    /**
+     * Returns a map of bundles by bundle id.
+     * <p>
+     * Referenced bundle can be null (when referenced in the package but unknown to the distribution, typically).
+     *
+     * @since 20.1.0
+     */
+    @JsonIgnore
+    Map<String, BundleInfo> getBundleInfo();
 
     /**
      * Returns the corresponding URL for this package on the marketplace.

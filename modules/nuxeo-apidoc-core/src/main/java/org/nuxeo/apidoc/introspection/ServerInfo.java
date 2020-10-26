@@ -226,7 +226,6 @@ public class ServerInfo {
      * @since 11.1
      */
     protected static PackageInfoImpl computePackageInfo(LocalPackage pkg, Map<String, List<LocalPackage>> pkgByBundle) {
-        var bundles = new ArrayList<String>();
         for (File jar : FileUtils.listFiles(pkg.getData().getRoot(), new String[] { "jar" }, true)) {
             Manifest mf = JarUtils.getManifest(jar);
             if (mf != null) {
@@ -244,7 +243,7 @@ public class ServerInfo {
         }
         return new PackageInfoImpl(pkg.getId(), pkg.getName(), pkg.getVersion().toString(), pkg.getTitle(),
                 pkg.getType().toString(), computeDependencies(pkg.getDependencies()),
-                computeDependencies(pkg.getOptionalDependencies()), computeDependencies(pkg.getConflicts()), bundles);
+                computeDependencies(pkg.getOptionalDependencies()), computeDependencies(pkg.getConflicts()));
     }
 
     protected static List<String> computeDependencies(PackageDependency[] deps) {
@@ -554,7 +553,7 @@ public class ServerInfo {
                       .max()
                       .ifPresent(max -> bi.setMaxResolutionOrder(max));
             if (!bi.getPackages().isEmpty()) {
-                bi.getPackages().forEach(pkgName -> server.packages.get(pkgName).addBundle(bi.getId()));
+                bi.getPackages().forEach(pkgName -> server.packages.get(pkgName).addBundle(bi));
             }
         }
 

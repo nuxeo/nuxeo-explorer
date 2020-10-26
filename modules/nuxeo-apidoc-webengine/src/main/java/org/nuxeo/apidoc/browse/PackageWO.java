@@ -32,6 +32,7 @@ import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
+import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.export.api.Exporter;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.ecm.webengine.model.Template;
@@ -73,18 +74,6 @@ public class PackageWO extends NuxeoArtifactWebObject<PackageInfo> {
         return res;
     }
 
-    protected Map<String, BundleInfo> getBundleInfo(DistributionSnapshot snapshot, List<String> bundles) {
-        var res = new LinkedHashMap<String, BundleInfo>();
-        bundles.forEach(bid -> res.put(bid, snapshot.getBundle(bid)));
-        return res;
-    }
-
-    protected List<ComponentInfo> getComponentInfo(List<BundleInfo> bundles) {
-        var res = new ArrayList<ComponentInfo>();
-        bundles.forEach(b -> res.addAll(b.getComponents()));
-        return res;
-    }
-
     @Produces("text/html")
     @Override
     public Object doViewDefault() {
@@ -93,19 +82,24 @@ public class PackageWO extends NuxeoArtifactWebObject<PackageInfo> {
         PackageInfo pkg = getNxArtifact();
         String marketplaceURL = PackageInfo.getMarketplaceURL(pkg, true);
         t.arg("marketplaceURL", marketplaceURL);
-        Map<String, BundleInfo> binfo = getBundleInfo(snapshot, pkg.getBundles());
+        Map<String, BundleInfo> binfo = pkg.getBundleInfo();
         t.arg("bundles", binfo);
-        List<ComponentInfo> components = getComponentInfo(
-                binfo.values().stream().filter(Objects::nonNull).collect(Collectors.toList()));
-        t.arg("components", components);
+
+        var components = new ArrayList<ComponentInfo>();
         var sLabels = new ArrayList<ArtifactLabel>();
         var xps = new ArrayList<ExtensionPointInfo>();
         var conts = new ArrayList<ExtensionInfo>();
-        components.forEach(c -> {
-            c.getServices().stream().map(s -> ArtifactLabel.createLabelFromService(s.getId())).forEach(sLabels::add);
-            xps.addAll(c.getExtensionPoints());
-            conts.addAll(c.getExtensions());
+        binfo.values().stream().filter(Objects::nonNull).forEach(bi -> {
+            components.addAll(bi.getComponents());
+            bi.getServices()
+              .stream()
+              .map(ServiceInfo::getId)
+              .map(ArtifactLabel::createLabelFromService)
+              .forEach(sLabels::add);
+            xps.addAll(bi.getExtensionPoints());
+            conts.addAll(bi.getExtensions());
         });
+        t.arg("components", components);
         t.arg("services", sLabels);
         t.arg("extensionpoints", xps);
         t.arg("contributions", conts);

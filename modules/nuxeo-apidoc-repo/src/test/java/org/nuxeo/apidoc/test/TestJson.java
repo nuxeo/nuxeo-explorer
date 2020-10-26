@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -244,6 +245,32 @@ public class TestJson extends AbstractApidocTest {
         readme = coreBundle.getParentReadme();
         assertNotNull(readme);
         checkContentEquals("apidoc_snapshot/apidoc_readme.txt", readme.getString());
+        assertEquals(List.of("org.nuxeo.apidoc.schemaContrib", "org.nuxeo.apidoc.doctypeContrib",
+                "org.nuxeo.apidoc.lifecycle.contrib", "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+                "org.nuxeo.apidoc.adapterContrib", "org.nuxeo.apidoc.listener.contrib", "org.nuxeo.apidoc.test.works"),
+                bundle.getComponents().stream().map(ComponentInfo::getId).collect(Collectors.toList()));
+        assertEquals(List.of(MOCK_PACKAGE_NAME), bundle.getPackages());
+        // check cache API
+        assertEquals(
+                List.of("org.nuxeo.apidoc.search.ArtifactSearcher", "org.nuxeo.apidoc.snapshot.SnapshotListener",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManager"),
+                bundle.getServices().stream().map(NuxeoArtifact::getId).collect(Collectors.toList()));
+        assertEquals(
+                List.of("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins"),
+                bundle.getExtensionPoints().stream().map(NuxeoArtifact::getId).collect(Collectors.toList()));
+
+        assertEquals(
+                List.of("org.nuxeo.apidoc.adapterContrib--adapters", "org.nuxeo.apidoc.doctypeContrib--doctype",
+                        "org.nuxeo.apidoc.lifecycle.contrib--types", "org.nuxeo.apidoc.listener.contrib--listener",
+                        "org.nuxeo.apidoc.schemaContrib--schema",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+                        "org.nuxeo.apidoc.test.works--queues", "org.nuxeo.apidoc.test.works--queues1"),
+                bundle.getExtensions().stream().map(NuxeoArtifact::getId).collect(Collectors.toList()));
 
         // check introspected bundle group
         BundleGroup group = bundle.getBundleGroup();
@@ -529,6 +556,8 @@ public class TestJson extends AbstractApidocTest {
         assertNotNull(pkg);
         assertEquals(PackageInfo.TYPE_NAME, pkg.getArtifactType());
         assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"), pkg.getBundles());
+        assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"),
+                new ArrayList<>(pkg.getBundleInfo().keySet()));
         assertEquals("platform-explorer-mock-1.0.1", pkg.getId());
         assertEquals("platform-explorer-mock", pkg.getName());
         if (partial) {
