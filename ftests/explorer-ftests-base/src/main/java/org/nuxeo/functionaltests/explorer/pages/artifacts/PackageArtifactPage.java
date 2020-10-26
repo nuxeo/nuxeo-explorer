@@ -115,21 +115,21 @@ public class PackageArtifactPage extends ArtifactPage {
                 + "org.nuxeo.apidoc.adapterContrib\n" //
                 + "org.nuxeo.apidoc.listener.contrib\n" //
                 + "org.nuxeo.apidoc.schemaContrib");
-        checkServices("SnapshotManager\n" //
+        checkServices("ArtifactSearcher\n" //
                 + "SnapshotListener\n" //
-                + "ArtifactSearcher");
-        checkExtensionPoints("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins\n" //
-                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters");
-        checkContributions("org.nuxeo.apidoc.doctypeContrib--doctype\n" //
+                + "SnapshotManager");
+        checkExtensionPoints("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters\n" //
+                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins");
+        checkContributions("org.nuxeo.apidoc.adapterContrib--adapters\n" //
+                + "org.nuxeo.apidoc.doctypeContrib--doctype\n" //
                 + "org.nuxeo.apidoc.lifecycle.contrib--types\n" //
-                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters\n" //
+                + "org.nuxeo.apidoc.listener.contrib--listener\n" //
+                + "org.nuxeo.apidoc.schemaContrib--schema\n" //
                 + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration\n" //
                 + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1\n" //
                 + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2\n" //
                 + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3\n" //
-                + "org.nuxeo.apidoc.adapterContrib--adapters\n" //
-                + "org.nuxeo.apidoc.listener.contrib--listener\n" //
-                + "org.nuxeo.apidoc.schemaContrib--schema");
+                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters");
         WebElement jsonExport = exports.findElement(By.linkText("Json Export"));
         checkJsonLink(jsonExport);
         WebElement graphExport = exports.findElement(By.linkText("Json Graph"));
