@@ -37,7 +37,6 @@ import org.apache.logging.log4j.Logger;
 import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.QueryHelper;
-import org.nuxeo.apidoc.search.ArtifactSearcher;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.common.utils.IdUtils;
@@ -65,6 +64,10 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
 
     protected static final ThreadLocal<CoreSession> localCoreSession = new ThreadLocal<>();
 
+    protected static final String LISTING_LIMIT_PROPERTY = "org.nuxeo.apidoc.listing.limit";
+
+    protected static final String DEFAULT_LISTING_LIMIT = "2000";
+
     public static void setLocalCoreSession(CoreSession session) {
         localCoreSession.set(session);
     }
@@ -79,6 +82,10 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
 
     protected static String computeDocumentName(String name) {
         return IdUtils.generateId(name, "-", true, 500);
+    }
+
+    protected static int getListingLimit() {
+        return Integer.valueOf(Framework.getProperty(LISTING_LIMIT_PROPERTY, DEFAULT_LISTING_LIMIT));
     }
 
     protected static String getRootPath(CoreSession session, String basePath, String suffix) {
@@ -202,7 +209,7 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
     protected static DocumentModelList query(CoreSession session, String query) {
         if (Framework.isBooleanPropertyTrue(SnapshotManager.PROPERTY_USE_ES)) {
             ElasticSearchService ess = Framework.getService(ElasticSearchService.class);
-            return ess.query(new NxQueryBuilder(session).nxql(query).limit(ArtifactSearcher.MAX_RESULTS));
+            return ess.query(new NxQueryBuilder(session).nxql(query).limit(getListingLimit()));
         } else {
             return session.query(query);
         }
@@ -211,7 +218,7 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
     protected static List<String> queryAndFetchIds(CoreSession session, String idProp, String type,
             DocumentModel parent, String order) {
         String query = QueryHelper.select(idProp, type, parent, order);
-        PartialList<Map<String, Serializable>> res = session.queryProjection(query, ArtifactSearcher.MAX_RESULTS, 0);
+        PartialList<Map<String, Serializable>> res = session.queryProjection(query, getListingLimit(), 0);
         return res.stream().map(e -> e.get(idProp)).map(String.class::cast).collect(Collectors.toList());
     }
 

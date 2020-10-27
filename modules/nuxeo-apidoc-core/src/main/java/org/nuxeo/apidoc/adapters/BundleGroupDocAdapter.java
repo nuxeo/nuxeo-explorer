@@ -34,7 +34,6 @@ import org.nuxeo.apidoc.api.BundleGroup;
 import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.QueryHelper;
-import org.nuxeo.apidoc.search.ArtifactSearcher;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.core.api.Blob;
@@ -91,8 +90,7 @@ public class BundleGroupDocAdapter extends BaseNuxeoArtifactDocAdapter implement
         String query = String.format("SELECT %s FROM %s WHERE %s = %s AND %s ORDER BY %s", bidProp,
                 BundleInfo.TYPE_NAME, NXQL.ECM_PARENTID, NXQL.escapeString(doc.getId()), QueryHelper.NOT_DELETED,
                 bidProp);
-        PartialList<Map<String, Serializable>> res = getCoreSession().queryProjection(query,
-                ArtifactSearcher.MAX_RESULTS, 0);
+        PartialList<Map<String, Serializable>> res = getCoreSession().queryProjection(query, getListingLimit(), 0);
         return res.stream().map(e -> e.get(bidProp)).map(String.class::cast).collect(Collectors.toList());
     }
 
