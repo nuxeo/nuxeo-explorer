@@ -21,7 +21,6 @@ package org.nuxeo.apidoc.snapshot;
 import static org.nuxeo.runtime.ComponentEvent.COMPONENT_STARTED;
 import static org.nuxeo.runtime.ComponentEvent.EXTENSION_REGISTERED;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -71,10 +70,6 @@ public class SnapshotListener implements ComponentListener, Listener {
     // extension id -> extension registration counter
     protected final Map<String, Long> registrations = new HashMap<>();
 
-    protected boolean isEvent(ComponentEvent event, int eventId) {
-        return ComponentEvent.getEventName(eventId).equals(event.getEventName());
-    }
-
     @Override
     public void handleEvent(ComponentEvent event) {
         if (!listening || Framework.isBooleanPropertyTrue(SnapshotManagerComponent.PROPERTY_SITE_MODE)) {
@@ -88,7 +83,7 @@ public class SnapshotListener implements ComponentListener, Listener {
             return;
         }
         String name = component.getName().getName();
-        if (isEvent(event, COMPONENT_STARTED)) {
+        if (event.id == COMPONENT_STARTED) {
             starts.put(name, ++startCounter);
             int declaredOrder = event.registrationInfo.getApplicationStartedOrder();
             if (declaredOrder != ComponentStartOrders.DEFAULT && declaredOrder != 0) {
@@ -96,7 +91,7 @@ public class SnapshotListener implements ComponentListener, Listener {
                 // zero sort order: for components without implementation
                 declaredStarts.put(name, Long.valueOf(declaredOrder));
             }
-        } else if (isEvent(event, EXTENSION_REGISTERED)) {
+        } else if (event.id == EXTENSION_REGISTERED) {
             Object data = event.data;
             if (data instanceof Extension) {
                 Extension xt = (Extension) data;
