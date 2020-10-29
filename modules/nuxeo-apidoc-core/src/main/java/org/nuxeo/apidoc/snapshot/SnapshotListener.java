@@ -97,7 +97,7 @@ public class SnapshotListener implements ComponentListener, Listener {
                 declaredStarts.put(name, Long.valueOf(declaredOrder));
             }
         } else if (isEvent(event, EXTENSION_REGISTERED)) {
-            Serializable data = event.data;
+            Object data = event.data;
             if (data instanceof Extension) {
                 Extension xt = (Extension) data;
                 String point = xt.getExtensionPoint();
