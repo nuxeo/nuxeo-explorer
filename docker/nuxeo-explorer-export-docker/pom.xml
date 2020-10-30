@@ -68,7 +68,7 @@
               <pullNewerImage>false</pullNewerImage>
               <noCache>true</noCache>
               <buildArgs>
-                <BASE_IMAGE>docker-private.packages.nuxeo.com/nuxeo/nuxeo:${nuxeo.image.version}</BASE_IMAGE>
+                <BASE_IMAGE>docker.packages.nuxeo.com/nuxeo/nuxeo:${nuxeo.image.version}</BASE_IMAGE>
                 <BUILD_TAG>local-nuxeo-explorer-exporter</BUILD_TAG>
                 <VERSION>${nuxeo.explorer.version}-${nuxeo.image.version}</VERSION>
                 <USE_LOCAL_EXPLORER>${use.local.explorer}</USE_LOCAL_EXPLORER>
