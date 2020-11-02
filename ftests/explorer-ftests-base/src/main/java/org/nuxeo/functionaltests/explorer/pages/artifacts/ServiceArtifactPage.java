@@ -32,12 +32,8 @@ import org.openqa.selenium.support.FindBy;
 public class ServiceArtifactPage extends ArtifactPage {
 
     @Required
-    @FindBy(xpath = "//div[@class='implementation']")
-    public WebElement implementation;
-
-    @Required
-    @FindBy(xpath = "//div[@class='implementation']//a[@class='javadoc']")
-    public WebElement javadocLink;
+    @FindBy(css = ".javadoc")
+    public WebElement javadoc;
 
     public ServiceArtifactPage(WebDriver driver) {
         super(driver);
@@ -49,8 +45,7 @@ public class ServiceArtifactPage extends ArtifactPage {
                 "Service org.nuxeo.apidoc.snapshot.SnapshotManager",
                 "In component org.nuxeo.apidoc.snapshot.SnapshotManagerComponent", null);
         checkDocumentationText(null);
-        checkImplementationText("Javadoc: org.nuxeo.apidoc.snapshot.SnapshotManager");
-        checkJavadocLink("/javadoc/org/nuxeo/apidoc/snapshot/SnapshotManager.html");
+        checkImplementationText("org.nuxeo.apidoc.snapshot.SnapshotManager");
     }
 
     @Override
@@ -59,8 +54,7 @@ public class ServiceArtifactPage extends ArtifactPage {
                 "Service org.nuxeo.ecm.platform.types.TypeManager",
                 "In component org.nuxeo.ecm.platform.types.TypeService", null);
         checkDocumentationText(null);
-        checkImplementationText("Javadoc: org.nuxeo.ecm.platform.types.TypeManager");
-        checkJavadocLink("/javadoc/org/nuxeo/ecm/platform/types/TypeManager.html");
+        checkImplementationText("org.nuxeo.ecm.platform.types.TypeManager");
     }
 
     @Override
@@ -70,11 +64,11 @@ public class ServiceArtifactPage extends ArtifactPage {
     }
 
     public void checkImplementationText(String expected) {
-        assertEquals(expected, implementation.getText());
+        assertEquals(expected, javadoc.getText());
     }
 
     public void checkJavadocLink(String expected) {
-        checkLink(expected, javadocLink);
+        checkLink(expected, javadoc);
     }
 
 }

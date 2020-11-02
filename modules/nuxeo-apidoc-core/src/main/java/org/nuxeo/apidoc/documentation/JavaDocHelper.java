@@ -41,6 +41,9 @@ public class JavaDocHelper {
 
     protected final String docVersion;
 
+    /** @since 20.2.0 */
+    protected Boolean exists;
+
     public JavaDocHelper(String prefix, String version) {
         defaultPrefix = prefix;
 
@@ -55,6 +58,26 @@ public class JavaDocHelper {
             version = "release-" + version;
         }
         docVersion = version;
+    }
+
+    protected String getUrl() {
+        String baseUrl = Framework.getService(ConfigurationService.class).getString(BASE_URL_PROP_NAME, BASE_URL);
+        return String.format("%s%s/%s/javadoc", baseUrl, defaultPrefix, docVersion);
+    }
+
+    /**
+     * Returns true if the target Javadoc URL is valid.
+     * <p>
+     * The URL takes into account the version, and might not be valid in case some Javadoc versions have not been
+     * published.
+     *
+     * @since 20.2.0
+     */
+    public boolean exists() {
+        if (exists == null) {
+            exists = URLHelper.isValid(getUrl());
+        }
+        return exists;
     }
 
     /**
@@ -72,8 +95,7 @@ public class JavaDocHelper {
      * @since 11.1
      */
     public String getUrl(String classCanonicalName, String innerClassName) {
-        String baseUrl = Framework.getService(ConfigurationService.class).getString(BASE_URL_PROP_NAME, BASE_URL);
-        String base = String.format("%s%s/%s/javadoc", baseUrl, defaultPrefix, docVersion);
+        String base = getUrl();
         String classPart = classCanonicalName.replace(".", "/");
         if (innerClassName != null) {
             classPart = String.format("%s.%s", classPart, innerClassName);

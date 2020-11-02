@@ -18,12 +18,10 @@
  */
 package org.nuxeo.apidoc.api;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import org.nuxeo.apidoc.documentation.URLHelper;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.services.config.ConfigurationService;
 
@@ -135,13 +133,7 @@ public interface PackageInfo extends NuxeoArtifact {
                                   .getString(CONNECT_URL_PROP_NAME, DEFAULT_CONNECT_URL);
         String url = String.format("%smarketplace/package/%s?version=%s", baseUrl, pkg.getName(), pkg.getVersion());
         if (checkValidity) {
-            try {
-                HttpURLConnection huc = (HttpURLConnection) new URL(url).openConnection();
-                huc.setRequestMethod("HEAD");
-                if (HttpURLConnection.HTTP_OK != huc.getResponseCode()) {
-                    return null;
-                }
-            } catch (IOException e) {
+            if (!URLHelper.isValid(url)) {
                 return null;
             }
         }

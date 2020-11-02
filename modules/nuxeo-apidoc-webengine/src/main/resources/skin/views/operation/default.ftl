@@ -69,7 +69,7 @@
       <th>Implementation Class</th>
       <td><@javadoc nxItem.operationClass true implementationUrl /></td>
     </tr>
-    <tr>
+    <tr class="contributingComponent">
       <th>Contributing Component</th>
       <td>
         <#if nxItem.contributingComponent=="BuiltIn">

@@ -18,7 +18,8 @@
  */
 package org.nuxeo.functionaltests.explorer.pages.artifacts;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.nuxeo.functionaltests.Required;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
@@ -37,8 +38,8 @@ public class ExtensionPointArtifactPage extends ArtifactPage {
     public WebElement descriptors;
 
     @Required
-    @FindBy(xpath = "//ul[@class='descriptors']//a[@class='javadoc']")
-    public WebElement javadocLink;
+    @FindBy(css = ".javadoc")
+    public WebElement javadoc;
 
     public ExtensionPointArtifactPage(WebDriver driver) {
         super(driver);
@@ -66,8 +67,7 @@ public class ExtensionPointArtifactPage extends ArtifactPage {
                         + "The class should implement the org.nuxeo.apidoc.plugin.Plugin interface.\n" //
                         + "UI elements are used for rendering on webengine pages. The view type should match a webengine resource type, and the module holding this resource should be contributed to the main webengine module as a fragment using:\n" //
                         + "          Fragment-Host: org.nuxeo.apidoc.webengine");
-        checkDescriptorsText("Javadoc: org.nuxeo.apidoc.plugin.PluginDescriptor");
-        checkFirstJavadocLink("/javadoc/org/nuxeo/apidoc/plugin/PluginDescriptor.html");
+        checkDescriptorsText("org.nuxeo.apidoc.plugin.PluginDescriptor");
     }
 
     @Override
@@ -75,10 +75,9 @@ public class ExtensionPointArtifactPage extends ArtifactPage {
         checkCommon("Extension point org.nuxeo.ecm.core.schema.TypeService--doctype", "Extension point doctype",
                 "In component org.nuxeo.ecm.core.schema.TypeService",
                 "Documentation\n" + "Contribution Descriptors\n" + "Existing Contributions");
-        checkDescriptorsText("Javadoc: org.nuxeo.ecm.core.schema.DocumentTypeDescriptor\n"
-                + "Javadoc: org.nuxeo.ecm.core.schema.FacetDescriptor\n"
-                + "Javadoc: org.nuxeo.ecm.core.schema.ProxiesDescriptor");
-        checkFirstJavadocLink("/javadoc/org/nuxeo/ecm/core/schema/DocumentTypeDescriptor.html");
+        checkDescriptorsText("org.nuxeo.ecm.core.schema.DocumentTypeDescriptor");
+        checkDescriptorsText("org.nuxeo.ecm.core.schema.FacetDescriptor");
+        checkDescriptorsText("org.nuxeo.ecm.core.schema.ProxiesDescriptor");
     }
 
     @Override
@@ -93,11 +92,13 @@ public class ExtensionPointArtifactPage extends ArtifactPage {
     }
 
     public void checkDescriptorsText(String expected) {
-        assertEquals(expected, descriptors.getText());
+        String txt = descriptors.getText();
+        assertNotNull(txt);
+        assertTrue(String.format("Expected '%s' to contain '%s'", txt, expected), txt.contains(expected));
     }
 
     public void checkFirstJavadocLink(String expected) {
-        checkLink(expected, javadocLink);
+        checkLink(expected, javadoc);
     }
 
 }
