@@ -125,6 +125,7 @@ public abstract class ArtifactPage extends AbstractExplorerPage {
     protected void checkLink(String expected, WebElement link) {
         try {
             String href = link.getAttribute("href");
+            assertNotNull(href);
             assertFalse("Actual href: " + href, StringUtils.isBlank(expected));
             assertTrue("Actual href: " + href, href.endsWith(expected));
         } catch (NoSuchElementException e) {

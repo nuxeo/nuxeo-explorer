@@ -35,11 +35,8 @@ import org.openqa.selenium.support.FindBy;
  */
 public class ComponentArtifactPage extends ArtifactPage {
 
-    @FindBy(xpath = "//div[@class='implementation']")
-    public WebElement implementation;
-
-    @FindBy(xpath = "//div[@class='implementation']//a[@class='javadoc']")
-    public WebElement javadocLink;
+    @FindBy(css = ".javadoc")
+    public WebElement javadoc;
 
     @FindBy(css = ".resolutionOrder")
     public WebElement resolutionOrder;
@@ -70,8 +67,7 @@ public class ComponentArtifactPage extends ArtifactPage {
         checkDocumentationText(
                 "This component handles the introspection of the current live Runtime as a distribution.\n" //
                         + "It can also persist this introspection as Nuxeo documents, to handle import and export of external distributions.");
-        checkImplementationText("Javadoc: org.nuxeo.apidoc.snapshot.SnapshotManagerComponent");
-        checkJavadocLink("/javadoc/org/nuxeo/apidoc/snapshot/SnapshotManagerComponent.html");
+        checkImplementationText("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent");
         checkResolutionOrder(!legacy);
         checkStartOrder(!legacy);
         checkDeclaredStartOrder(null);
@@ -100,11 +96,11 @@ public class ComponentArtifactPage extends ArtifactPage {
     }
 
     public void checkImplementationText(String expected) {
-        checkTextIfExists(expected, implementation);
+        checkTextIfExists(expected, javadoc);
     }
 
     public void checkJavadocLink(String expected) {
-        checkLink(expected, javadocLink);
+        checkLink(expected, javadoc);
     }
 
     public void checkResolutionOrder(boolean set) {
