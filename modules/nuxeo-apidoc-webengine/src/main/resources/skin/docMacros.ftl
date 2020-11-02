@@ -25,11 +25,13 @@
 </#macro>
 
 <#macro javadoc class addLabel url>
-  <#if addLabel>Javadoc: </#if>
-  <#if url??>
-    <a href="${url}" target="_blank" class="javadoc">${class}</a>
-  <#elseif Root.currentDistribution != null>
-    <a href="${Root.currentDistribution.javaDocHelper.getUrl(class)}" target="_blank" class="javadoc">${class}</a>
+  <#if class??>
+    <#if addLabel>Javadoc: </#if>
+    <#if url??>
+      <a href="${url}" target="_blank" class="javadoc">${class}</a>
+    <#elseif Root.currentDistribution??>
+      <a href="${Root.currentDistribution.javaDocHelper.getUrl(class)}" target="_blank" class="javadoc">${class}</a>
+    </#if>
   </#if>
 </#macro>
 
