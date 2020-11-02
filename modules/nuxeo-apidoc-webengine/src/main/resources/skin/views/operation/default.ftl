@@ -72,10 +72,12 @@
     <tr class="contributingComponent">
       <th>Contributing Component</th>
       <td>
-        <#if nxItem.contributingComponent=="BuiltIn">
-          <span class="components">${nxItem.contributingComponent?html}</span>
-        <#else>
-          <a class="components" href="${Root.path}/${distId}/viewContribution/${nxItem.contributingComponent}--operations">${nxItem.contributingComponent}</a>
+        <#if nxItem.contributingComponent??>
+          <#if nxItem.contributingComponent=="BuiltIn">
+            <span class="components">${nxItem.contributingComponent?html}</span>
+          <#else>
+            <a class="components" href="${Root.path}/${distId}/viewContribution/${nxItem.contributingComponent}--operations">${nxItem.contributingComponent}</a>
+          </#if>
         </#if>
       </td>
     </tr>
