@@ -12,7 +12,7 @@ ${ep.documentation}
   <extension target="${ep.componentId}" point="${ep.name}">
 
   <#list contribution.contributionItems as contributionItem>
-    <#if selectedContribs?seq_contains(contributionItem.id)>
+    <#if !selectedContribs?? || selectedContribs?seq_contains(contributionItem.id)>
     ${contributionItem.rawXml}
     </#if>
   </#list>
