@@ -324,6 +324,18 @@ public class ITExplorerTest extends AbstractExplorerTest {
     }
 
     /**
+     * Non-regression test for NXP-29820.
+     *
+     * @since 20.2.0
+     */
+    @Test
+    public void testOverrideContributionGetURL() throws IOException {
+        String contribUrl = getArtifactURL(ExtensionInfo.TYPE_NAME, "org.nuxeo.apidoc.listener.contrib--listener");
+        open(contribUrl + "/override");
+        checkOverridePage(contribUrl + "/override", "data/override_reference.xml");
+    }
+
+    /**
      * Non-regression test for NXP-19766.
      */
     @Test
