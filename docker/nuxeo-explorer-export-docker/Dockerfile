@@ -25,7 +25,8 @@ USER root
 COPY --chown=900:0 README.md target/nuxeo-platform-explorer-package-*.zip /packages/
 
 RUN if [ "${USE_LOCAL_EXPLORER}" = "true" ]; then \
-    /install-local-packages.sh /packages >&1; \
+    mv /packages/nuxeo-platform-explorer-package-*.zip /packages/nuxeo-platform-explorer-package.zip \
+    /install-packages.sh --offline /packages/nuxeo-platform-explorer-package.zip >&1; \
   elif [ ! -z "${CONNECT_EXPLORER_CLID}" ]; then \
     /install-packages.sh --clid "${CONNECT_EXPLORER_CLID}" --connect-url "${CONNECT_EXPLORER_URL}" ${NUXEO_EXPLORER_PACKAGE} >&1; \
   fi
