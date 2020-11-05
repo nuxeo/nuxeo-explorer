@@ -17,7 +17,8 @@ COPY --chown=900:0 target/nuxeo-platform-explorer-package-*.zip /packages/nuxeo-
 COPY --chown=900:0 target/nuxeo-amazon-s3-package-*.zip /packages/nuxeo-amazon-s3-package.zip
 # Workaround of above permission issues, otherwise we can't clean the package once installed
 USER root
-RUN /install-local-packages.sh /packages
+RUN /install-packages.sh --offline /packages/nuxeo-platform-explorer-package.zip /packages/nuxeo-amazon-s3-package.zip
+
 RUN chown -R 900:0 $NUXEO_HOME \
   && chmod -R g+rwX $NUXEO_HOME
 USER 900
