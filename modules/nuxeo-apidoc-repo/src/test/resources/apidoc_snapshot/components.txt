@@ -73,7 +73,6 @@ NXComponent: org.nuxeo.ecm.core.lifecycle.LifeCycleService *** /grp:org.nuxeo.ec
 NXComponent: org.nuxeo.ecm.core.management.CoreManagementComponent *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.management.CoreManagementComponent *** [org.nuxeo.ecm.core.repository.RepositoryService]
 NXComponent: org.nuxeo.ecm.core.management.contribs *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.management.contribs
 NXComponent: org.nuxeo.ecm.core.management.es.tests *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.ecm.core.management.es.tests
-NXComponent: org.nuxeo.ecm.core.management.listener *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.management.listener
 NXComponent: org.nuxeo.ecm.core.management.runtime.management.contribs *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.management.runtime.management.contribs
 NXComponent: org.nuxeo.ecm.core.management.typesContrib *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.management.typesContrib
 NXComponent: org.nuxeo.ecm.core.managemment.standby *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.managemment.standby *** [org.nuxeo.runtime.management.ResourcePublisher, org.nuxeo.runtime.metrics.MetricsService, org.nuxeo.runtime.EventService]
@@ -190,8 +189,6 @@ NXComponent: org.nuxeo.runtime.jtajca.JtaActivator *** /grp:org.nuxeo.runtime/or
 NXComponent: org.nuxeo.runtime.kv.KeyValueService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.kv/org.nuxeo.runtime.kv.KeyValueService
 NXComponent: org.nuxeo.runtime.management.ResourcePublisher *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.management/org.nuxeo.runtime.management.ResourcePublisher *** [org.nuxeo.runtime.management.ServerLocator]
 NXComponent: org.nuxeo.runtime.management.ServerLocator *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.management/org.nuxeo.runtime.management.ServerLocator
-NXComponent: org.nuxeo.runtime.management.counters *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.management/org.nuxeo.runtime.management.counters
-NXComponent: org.nuxeo.runtime.management.metrics *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.management/org.nuxeo.runtime.management.metrics *** [org.nuxeo.runtime.management.ServerLocator, org.nuxeo.runtime.management.ResourcePublisher]
 NXComponent: org.nuxeo.runtime.metrics.MetricsService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.metrics/org.nuxeo.runtime.metrics.MetricsService
 NXComponent: org.nuxeo.runtime.migration.MigrationService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.migration/org.nuxeo.runtime.migration.MigrationService *** [org.nuxeo.runtime.kv.KeyValueService]
 NXComponent: org.nuxeo.runtime.model.persistence *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.model.persistence
