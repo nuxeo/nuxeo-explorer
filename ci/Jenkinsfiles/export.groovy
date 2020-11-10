@@ -62,6 +62,13 @@ String getPackageList(downloadPackagesFromProd, defaultPackages, additionalPacka
   return res
 }
 
+String getClid(clid) {
+  // replace lines by "--"
+  return sh(returnStdout: true, script: """#!/bin/bash +x
+    echo -e \"${clid}\" | sed ':a;N;\$!ba;s/\\n/--/g'
+  """)
+}
+
 pipeline {
 
   agent {
@@ -92,7 +99,6 @@ pipeline {
 
     CONNECT_PROD_URL = 'https://connect.nuxeo.com/nuxeo/site/'
     CONNECT_PREPROD_URL = 'https://nos-preprod-connect.nuxeocloud.com/nuxeo/site/'
-    CONNECT_EXPLORER_CLID = credentials('explorer-connect-prod-clid')
 
     CONNECT_EXPLORER_URL = "${CONNECT_PROD_URL}"
     NUXEO_EXPLORER_PACKAGE = getExplorerPackageId(params.NUXEO_EXPLORER_VERSION)
@@ -172,13 +178,16 @@ pipeline {
           Image tag: ${VERSION}
           Registry: ${DOCKER_REGISTRY}
           """
-          script {
-            def moduleDir = 'docker/nuxeo-explorer-export-docker'
-            def exportCredsId = "${params.DOWNLOAD_PACKAGES_FROM_PROD ? 'explorer-connect-prod-clid' : 'explorer-connect-preprod-clid'}"
-            // push images to the Jenkins X internal Docker registry
-            withCredentials([string(credentialsId: exportCredsId, variable: 'CONNECT_EXPORT_CLID')]) {
-              sh """
+          withCredentials([string(credentialsId: 'instance-clid', variable: 'INSTANCE_CLID')]) {
+            script {
+              def moduleDir = 'docker/nuxeo-explorer-export-docker'
+              def oneLineClid = getClid("${INSTANCE_CLID}")
+              sh """#!/bin/bash +x
+                CONNECT_EXPLORER_CLID="${oneLineClid}" \
+                CONNECT_EXPORT_CLID="${oneLineClid}" \
                 envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen
+              """
+              sh """
                 skaffold build -f ${moduleDir}/skaffold.yaml~gen
               """
             }
