@@ -119,7 +119,7 @@ pipeline {
         script {
           echo """
           ----------------------------------------
-          Nuxeo version:                 '${params.NUXEO_VERSION}'
+          Nuxeo version:                 '${NUXEO_IMAGE_VERSION}'
           Explorer package:              '${NUXEO_EXPLORER_PACKAGE}'
 
           Connect Explorer URL:          '${CONNECT_EXPLORER_URL}'
@@ -141,6 +141,7 @@ pipeline {
             echo "${message}"
             error(currentBuild.description)
           }
+          currentBuild.description = "Generating reference export for ${NUXEO_IMAGE_VERSION}"
         }
       }
     }
