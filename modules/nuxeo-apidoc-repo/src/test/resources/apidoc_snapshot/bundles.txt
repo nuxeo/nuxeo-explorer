@@ -41,8 +41,7 @@ NXBundle: org.nuxeo.ecm.platform.el *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.pl
 NXBundle: org.nuxeo.ecm.platform.forms.layout.export *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.forms.layout.export *** [org.nuxeo.ecm.platform.forms.layout.api, org.nuxeo.ecm.platform.forms.layout.client]
 NXBundle: org.nuxeo.ecm.platform.login *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.login
 NXBundle: org.nuxeo.ecm.platform.query.api *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.query.api
-NXBundle: org.nuxeo.ecm.platform.usermanager *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.platform.usermanager/org.nuxeo.ecm.platform.usermanager *** [org.nuxeo.ecm.platform.usermanager.api]
-NXBundle: org.nuxeo.ecm.platform.usermanager.api *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.platform.usermanager/org.nuxeo.ecm.platform.usermanager.api
+NXBundle: org.nuxeo.ecm.platform.usermanager *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.usermanager
 NXBundle: org.nuxeo.ecm.platform.web.common *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.web.common
 NXBundle: org.nuxeo.ecm.webengine.core *** /grp:org.nuxeo.ecm.webengine/org.nuxeo.ecm.webengine.core
 NXBundle: org.nuxeo.ecm.webengine.jaxrs *** /grp:org.nuxeo.ecm.webengine/org.nuxeo.ecm.webengine.jaxrs *** [org.nuxeo.ecm.core, org.nuxeo.ecm.core.io, javax.servlet, com.sun.jersey.server, com.sun.jersey.core]

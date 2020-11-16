@@ -5,7 +5,6 @@
 - org.nuxeo.ecm.platform (grp:org.nuxeo.ecm.platform) *** /grp:org.nuxeo.ecm.platform
   - org.nuxeo.apidoc (grp:org.nuxeo.apidoc) *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc
   - org.nuxeo.ecm.directory (grp:org.nuxeo.ecm.directory) *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.directory
-  - org.nuxeo.ecm.platform.usermanager (grp:org.nuxeo.ecm.platform.usermanager) *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.platform.usermanager
 - org.nuxeo.ecm.webengine (grp:org.nuxeo.ecm.webengine) *** /grp:org.nuxeo.ecm.webengine
 - org.nuxeo.elasticsearch (grp:org.nuxeo.elasticsearch) *** /grp:org.nuxeo.elasticsearch
 - org.nuxeo.misc (grp:org.nuxeo.misc) *** /grp:org.nuxeo.misc
