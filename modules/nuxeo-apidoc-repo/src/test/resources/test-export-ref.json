@@ -555,7 +555,7 @@
       "id": "org.nuxeo.ecm.core",
       "location": "mockTestLocation",
       "manifest": "mockTestManifest",
-      "maxResolutionOrder": 125,
+      "maxResolutionOrder": 124,
       "minResolutionOrder": 35,
       "packages": [],
       "requirements": [
@@ -620,7 +620,7 @@
           "hierarchyPath": "/grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.api/org.nuxeo.ecm.core.api.DocumentAdapterService",
           "name": "org.nuxeo.ecm.core.api.DocumentAdapterService",
           "requirements": [],
-          "resolutionOrder": 104,
+          "resolutionOrder": 103,
           "services": [
             {
               "@type": "NXService",
@@ -644,8 +644,8 @@
       "id": "org.nuxeo.ecm.core.api",
       "location": "mockTestLocation",
       "manifest": "mockTestManifest",
-      "maxResolutionOrder": 121,
-      "minResolutionOrder": 104,
+      "maxResolutionOrder": 120,
+      "minResolutionOrder": 103,
       "packages": [],
       "requirements": [],
       "version": "mockTestVersion"

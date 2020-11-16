@@ -62,7 +62,7 @@ public class BundleGroupArtifactPage extends ArtifactPage {
                     "Bundle Subgroups\n" + "Bundles");
             checkDocumentationText(null);
             checkSubGroup("org.nuxeo.ecm.platform.comment");
-            checkSubGroup("org.nuxeo.ecm.platform.filemanager");
+            checkSubGroup("org.nuxeo.ecm.directory");
             checkBundle("org.nuxeo.ecm.platform.api");
         }
     }
