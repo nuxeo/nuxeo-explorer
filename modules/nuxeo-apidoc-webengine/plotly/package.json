@@ -1,0 +1,23 @@
+{
+  "name": "nuxeo-explorer-demo",
+  "version": "1.0.0",
+  "description": "Demo for explorer displays",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx http-server -o test/plotly.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nuxeo/nuxeo-explorer-demo.git"
+  },
+  "author": "Anahide Tchertchian <at@nuxeo.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/nuxeo/nuxeo-explorer-demo/issues"
+  },
+  "homepage": "https://github.com/nuxeo/nuxeo-explorer-demo#readme",
+  "dependencies": {
+    "plotly.js-dist": "^1.52.3"
+  }
+}

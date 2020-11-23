@@ -1,0 +1,99 @@
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Plotly Test</title>
+<style>
+.plotly-graph-selection {
+	text-align: center;
+}
+
+.plotly-graph-div {
+	display: inline-block;
+}
+</style>
+</head>
+<body>
+  <div>
+    <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+    <script src="./plotly/plotly-latest.js"></script>
+    <div id="myDiv" class="plotly-graph-div"></div>
+    
+    <script type="text/javascript">
+    a=[]; b=[]; c=[];
+    for(i=0;i<50;i++)
+      {
+        var a_ = Math.random(); 
+        a.push(a_);
+        
+        var b_ = Math.random(); 
+        b.push(b_);
+        
+        var c_ = Math.random(); 
+        c.push(c_);
+      }
+    // Plotting the mesh
+    var data=[
+        {
+          opacity:0.8,
+          color:'rgb(300,100,200)',
+          type: 'mesh3d',
+          alphahull: 7,
+          x: a,
+          y: b,
+          z: c,
+        }
+    ];
+    console.log(data);
+    var data=[
+        {
+          opacity:0.8,
+          color:'red',
+          type: 'mesh3d',
+          x:[0, 1, 2, 0],
+          y:[0, 0, 1, 2],
+          z:[0, 2, 0, 1],
+        }
+    ];
+//    data = [];
+
+    var line = {
+          x: 0,
+          y: 0,
+          z: 0,
+          //xref: 'x',
+          //yref: 'y',
+          text: 'Annotation Text',
+          showarrow: true,
+          arrowhead: 2,
+          ax: -100,
+          ay: -100,
+        };
+    line['text'] = `<b>x:</b> ${line.x} <b>y:</b> ${line.y}<br /><b>ax:</b> ${line.ax} <b>ay:</b> ${line.ay}`;
+
+    var line2 = {
+            x: 2,
+            y: 2,
+            z: 2,
+            //xref: 'x',
+            //yref: 'y',
+            text: 'Annotation Text',
+            showarrow: true,
+            arrowhead: 2,
+            ax: 0,
+            ay: -200
+          };
+      line2['text'] = `<b>x:</b> ${line2.x} <b>y:</b> ${line2.y}<br /><b>ax:</b> ${line2.ax} <b>ay:</b> ${line2.ay}`;
+
+    var    annotations = [line, line2];
+
+
+    Plotly.newPlot('myDiv', data, {
+        scene: {
+            annotations: annotations,
+        }
+    });
+
+    </script>
+  </div>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Nuxeo Plotly Rendering</title>
+  <style>
+    .plotly-graph-selection {
+      text-align: center;
+    }
+
+    .plotly-graph-div {
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <script type="text/javascript">window.PlotlyConfig = { MathJaxConfig: 'local' };</script>
+    <script src="node_modules/plotly.js-dist/plotly.js"></script>
+    <div id="selection" class="plotly-graph-selection">
+      <form>
+        <div>
+          <label for="ds">Select Datasource:</label>
+          <select id="ds" name="ds">
+            <option value="data/gephi.json" selected="selected">Nuxeo Test Graph</option>
+            <option value="data/gephi_flat.json">Nuxeo Test Graph Flat</option>
+            <option value="data/gephi_bundles.json">Nuxeo Test Bundles</option>
+            <option value="data/gephi_xp.json">Nuxeo Test XP Graph</option>
+            <option value="data/gephi_xp_flat.json">Nuxeo Test XP Graph Flat</option>
+            <option value="data/complete_graph_ref.json">Nuxeo Complete Graph</option>
+            <option value="data/complete_bundles_graph_ref.json">Nuxeo Complete Bundle Graph</option>
+            <option value="data/complete_xp_graph_ref.json">Nuxeo Complete XP graph</option>
+          </select>
+          <input type="checkbox" id="circ" name="circ">
+          <label for="circ">Circular</label>
+        </div>
+        <div>
+          <select class="bundleselectorclass" id="bundleselector" name="bundleselector">
+            <option value="" selected disabled hidden="hidden">Filter on Bundle</option>
+          </select>
+        </div>
+      </form>
+      <div id="graph" class="plotly-graph-div"></div>
+    </div>
+    <script type="module">
+      import plot from '../src/plotly_nuxeo.js';
+
+      const select = document.getElementById('ds');
+      const circCheck = document.getElementById('circ');
+      const bundleselector = document.getElementById('bundleselector');
+
+      const render = () => {
+        const { value, options, selectedIndex } = select;
+        const nxoptions = {
+          datasource: value,
+          datasourcetitle: options[selectedIndex].label,
+          circ: circCheck.checked,
+          bundleselector: '#bundleselector',
+          selectedbundle: bundleselector.value,
+        };
+        plot('graph', nxoptions);
+      }
+
+      select.addEventListener('change', render);
+      circCheck.addEventListener('change', render);
+
+      window.onload = render;
+    </script>
+  </div>
+</body>
+
+</html>

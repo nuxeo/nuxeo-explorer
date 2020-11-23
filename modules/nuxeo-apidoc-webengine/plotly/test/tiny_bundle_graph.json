@@ -1,0 +1,56 @@
+{
+  "id" : "bundles",
+  "type" : "BASIC_LAYOUT",
+  "nodes" : [ {
+    "originalId" : "NXBundle-org.nuxeo.apidoc.core",
+    "label" : "org.nuxeo.apidoc.core",
+    "weight" : 1,
+    "path" : "",
+    "type" : "BUNDLE",
+    "category" : "PLATFORM",
+    "color" : "#FF0000",
+    "id" : 1,
+    "x" : -45.36292,
+    "y" : -14.596023,
+    "z" : 0.0
+  }, {
+    "originalId" : "NXBundle-org.nuxeo.runtime.root",
+    "label" : "org.nuxeo.runtime.root",
+    "weight" : 1,
+    "path" : "",
+    "type" : "BUNDLE",
+    "category" : "RUNTIME",
+    "color" : "#000000",
+    "id" : 64,
+    "x" : -0.030870542,
+    "y" : 0.12001902,
+    "z" : 0.0
+  }, {
+    "originalId" : "NXBundle-org.nuxeo.apidoc.repo",
+    "label" : "org.nuxeo.apidoc.repo",
+    "weight" : 1,
+    "path" : "",
+    "type" : "BUNDLE",
+    "category" : "PLATFORM",
+    "color" : "#FF0000",
+    "id" : 2,
+    "x" : -23.58642,
+    "y" : -52.93276,
+    "z" : 0.0
+  } ],
+  "edges" : [ {
+    "originalSourceId" : "NXBundle-org.nuxeo.apidoc.core",
+    "originalTargetId" : "NXBundle-org.nuxeo.runtime.root",
+    "value" : "REQUIRES",
+    "id" : 92,
+    "source" : 1,
+    "target" : 64
+  }, {
+    "originalSourceId" : "NXBundle-org.nuxeo.apidoc.repo",
+    "originalTargetId" : "NXBundle-org.nuxeo.runtime.root",
+    "value" : "REQUIRES",
+    "id" : 93,
+    "source" : 2,
+    "target" : 64
+ } ]
+}
