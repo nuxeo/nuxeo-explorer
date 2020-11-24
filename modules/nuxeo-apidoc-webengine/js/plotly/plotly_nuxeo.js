@@ -7,6 +7,7 @@ import { getBasicLayout } from './layouting.js';
 import { clearSelections, getUpdateMenus, highlightUnselected, syncAnnotations } from './menus.js';
 import { createFakePoint, selectPoint } from './selecting.js';
 import { getEdgeTrace, getNodeTrace } from './tracing.js';
+import { getPositions } from './positioning.js';
 
 export default (graphDiv, options) => Plotly.d3.json(options.datasource, _render(graphDiv, options));
 
@@ -30,25 +31,17 @@ const _render = (graphDiv, options) => (err, fig) => {
     console.error(err);
     return;
   }
-  if (options.circ) {
-    _renderCirc(graphDiv, fig, options);
-  } else {
-    _renderBasic(graphDiv, fig, options);
-  }
+
+  _renderBasic(graphDiv, fig, options);
 
 };
 
-const _renderCirc = (graphDiv, fig, options) => {
-  // TODO
-}
-
 const _renderBasic = (graphDiv, fig, options) => {
-  console.log(graphDiv);
-  console.log(fig);
-  console.log(options);
 
+  var is3D = (graphType(fig.type) === '3d' || options.threeD === true);
+  console.log(is3D);
+  console.log(options.threeD);
 
-  var is3D = graphType(fig.type) === '3d';
   var nodesById = fig.nodes.reduce(function (map, node) {
     map[node.id] = node;
     return map;
@@ -65,13 +58,6 @@ const _renderBasic = (graphDiv, fig, options) => {
       edgesByNodeId[edge.source] = [];
     }
     edgesByNodeId[edge.source].push(edge.id);
-    // FIXME?
-    // if (edge.value == EDGE_TYPES.REFERENCES) {
-    //   if (!edgesByNodeId[edge.target]) {
-    //     edgesByNodeId[edge.target] = [];
-    //   }
-    //   edgesByNodeId[edge.target].push(edge.id);
-    // }
   }
   // wrap these helpers inside a graph object
   var nxgraph = {
@@ -86,27 +72,40 @@ const _renderBasic = (graphDiv, fig, options) => {
     fig: fig,
   }
 
-  var traces = [
-    // groups of nodes and edges, grouped depending on runtime logics
-    ...getNodeTrace(nxgraph, 'BUNDLE', { legendgroup: 'bundles' }),
-    ...getEdgeTrace(nxgraph, 'REQUIRES', { legendgroup: 'bundles', isFlatEdge: true }),
-    ...getNodeTrace(nxgraph, 'COMPONENT', { legendgroup: 'components' }),
-    ...getEdgeTrace(nxgraph, 'SOFT_REQUIRES', { legendgroup: 'components', isFlatEdge: true }),
-    ...getNodeTrace(nxgraph, 'EXTENSION_POINT', { legendgroup: 'xps' }),
-    ...getNodeTrace(nxgraph, 'CONTRIBUTION', { legendgroup: 'xps' }),
-    ...getEdgeTrace(nxgraph, 'REFERENCES', { legendgroup: 'xps' }),
-  ];
+  if (!fig.type.endsWith("_LAYOUT")) {
+    nxgraph = getPositions(nxgraph, is3D);
+  }
+
+  var traces = [];
+  var legendonlyconf = {
+    visible: 'legendonly',
+  }
+
+  // individual traces and groups of nodes and edges, grouped depending on runtime logics
+  traces = traces.concat([
+    ...getNodeTrace(nxgraph, 'PACKAGE', {}),
+    ...getNodeTrace(nxgraph, 'BUNDLE', {}),
+    ...getNodeTrace(nxgraph, 'BUNDLE', Object.assign({}, legendonlyconf, { legendgroup: 'bundles' })),
+    ...getEdgeTrace(nxgraph, 'REQUIRES', Object.assign({}, legendonlyconf, { legendgroup: 'bundles', isFlatEdge: true })),
+    ...getNodeTrace(nxgraph, 'COMPONENT', {}),
+    ...getNodeTrace(nxgraph, 'COMPONENT', Object.assign({}, legendonlyconf, { legendgroup: 'components' })),
+    ...getEdgeTrace(nxgraph, 'SOFT_REQUIRES', Object.assign({}, legendonlyconf, { legendgroup: 'components', isFlatEdge: true })),
+    ...getNodeTrace(nxgraph, 'SERVICE', {}),
+    ...getNodeTrace(nxgraph, 'EXTENSION_POINT', {}),
+    ...getNodeTrace(nxgraph, 'CONTRIBUTION', {}),
+    ...getNodeTrace(nxgraph, 'EXTENSION_POINT', Object.assign({}, legendonlyconf, { legendgroup: 'xps' })),
+    ...getNodeTrace(nxgraph, 'CONTRIBUTION', Object.assign({}, legendonlyconf, { legendgroup: 'xps' })),
+    ...getEdgeTrace(nxgraph, 'REFERENCES', Object.assign({}, legendonlyconf, { legendgroup: 'xps' })),
+  ]);
 
   // push another set of traces for containment (seems to be more efficient than using the 'groupby'
   // transform)
-  var containsconf = {
+  var containsconf = Object.assign({}, legendonlyconf, {
     legendgroup: 'contains',
-    visible: 'legendonly',
-  }
+  });
   for (var type of Object.keys(NODE_TYPES)) {
     traces.push(...getNodeTrace(nxgraph, type, containsconf));
-  }
-  traces = traces.concat([
+  } traces = traces.concat([
     ...getEdgeTrace(nxgraph, 'CONTAINS', containsconf),
   ]);
 
@@ -199,13 +198,3 @@ function initBundleSelect(lnxgraph, bundles) {
   return selector;
 
 };
-
-// TODO notes after feedback from Nelson:
-// 1. add package.json (with plotly.js-dist as dep)
-// 2. add npm start script to serve the thing (and open plotly.html)
-// 3. split things into modules
-// (cannot load plotly as ESM, see known bug in d3 preventing it from working https://github.com/plotly/plotly.js/issues/3518)
-// 4. higher order functions: see _render a function that return another function
-// 5. const { value, options, selectedIndex } = sel; destructuring assingments
-// 6. spread operator in maps: { …options } (? not sure still valid in WIP branch)
-// 7. flatMap: you can use map and have it produce an array but still end up with a flat array (not an array of arrays)

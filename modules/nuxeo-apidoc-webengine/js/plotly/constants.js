@@ -30,6 +30,7 @@ export const menuName = (id) => MENUS[id]['name'];
 export const menuLabel = (id) => MENUS[id]['label'];
 
 export const graphType = (type) => ({
+    BASIC: '2d',
     BASIC_LAYOUT: '2d',
     BASIC_LAYOUT_3D: '3d',
 })[type];
@@ -37,25 +38,35 @@ export const graphType = (type) => ({
 export const graphElement = (graphDiv) => document.getElementById(graphDiv);
 
 export const NODE_TYPES = {
+    PACKAGE: {
+        label: 'Packages',
+        symbol: 'diamond',
+        level: 1,
+    },
     BUNDLE: {
         label: 'Bundles',
         symbol: 'diamond',
+        level: 2,
     },
     COMPONENT: {
         label: 'Components',
         symbol: 'square',
+        level: 3,
     },
     SERVICE: {
         label: 'Services',
         symbol: 'diamond-open',
+        level: 4,
     },
     EXTENSION_POINT: {
         label: 'Extension Points',
         symbol: 'cross',
+        level: 5,
     },
     CONTRIBUTION: {
         label: 'Contributions',
         symbol: 'circle',
+        level: 6,
     },
 }
 export const nodeLabel = (type) => NODE_TYPES[type]['label'];

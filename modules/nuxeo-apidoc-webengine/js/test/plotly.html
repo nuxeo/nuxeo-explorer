@@ -23,17 +23,13 @@
         <div>
           <label for="ds">Select Datasource:</label>
           <select id="ds" name="ds">
-            <option value="data/gephi.json" selected="selected">Nuxeo Test Graph</option>
-            <option value="data/gephi_flat.json">Nuxeo Test Graph Flat</option>
-            <option value="data/gephi_bundles.json">Nuxeo Test Bundles</option>
-            <option value="data/gephi_xp.json">Nuxeo Test XP Graph</option>
-            <option value="data/gephi_xp_flat.json">Nuxeo Test XP Graph Flat</option>
-            <option value="data/complete_graph_ref.json">Nuxeo Complete Graph</option>
-            <option value="data/complete_bundles_graph_ref.json">Nuxeo Complete Bundle Graph</option>
-            <option value="data/complete_xp_graph_ref.json">Nuxeo Complete XP graph</option>
+            <option value="data/11.3_graph.json" selected="selected">11.3 Graph</option>
+            <option value="data/10.10_graph.json">10.10 Graph</option>
+            <option value="data/11.3_explorer_graph.json">11.3 Explorer Graph</option>
+            <option value="data/basic_graph.json">Test Graph</option>
           </select>
-          <input type="checkbox" id="circ" name="circ">
-          <label for="circ">Circular</label>
+          <input type="checkbox" id="threeD" name="threeD">
+          <label for="threeD">3D</label>
         </div>
         <div>
           <select class="bundleselectorclass" id="bundleselector" name="bundleselector">
@@ -47,7 +43,7 @@
       import plot from '../plotly/plotly_nuxeo.js';
 
       const select = document.getElementById('ds');
-      const circCheck = document.getElementById('circ');
+      const threeDCheck = document.getElementById('threeD');
       const bundleselector = document.getElementById('bundleselector');
 
       const render = () => {
@@ -55,7 +51,7 @@
         const nxoptions = {
           datasource: value,
           datasourcetitle: options[selectedIndex].label,
-          circ: circCheck.checked,
+          threeD: threeDCheck.checked,
           bundleselector: '#bundleselector',
           selectedbundle: bundleselector.value,
         };
@@ -63,7 +59,7 @@
       }
 
       select.addEventListener('change', render);
-      circCheck.addEventListener('change', render);
+      threeDCheck.addEventListener('change', render);
 
       window.onload = render;
     </script>

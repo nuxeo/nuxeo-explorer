@@ -1,0 +1,1127 @@
+{
+  "description": "Json dependency graph",
+  "edges": [
+    {
+      "source": "NXBundle-org.nuxeo.apidoc.repo",
+      "target": "NXComponent-org.nuxeo.apidoc.doctypeContrib",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXComponent-org.nuxeo.apidoc.doctypeContrib",
+      "target": "NXContribution-org.nuxeo.apidoc.doctypeContrib--doctype",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXContribution-org.nuxeo.apidoc.doctypeContrib--doctype",
+      "target": "NXExtensionPoint-org.nuxeo.ecm.core.schema.TypeService--doctype",
+      "value": "REFERENCES",
+      "weight": 1
+    },
+    {
+      "source": "NXBundle-org.nuxeo.apidoc.repo",
+      "target": "NXComponent-org.nuxeo.apidoc.lifecycle.contrib",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXComponent-org.nuxeo.apidoc.lifecycle.contrib",
+      "target": "NXContribution-org.nuxeo.apidoc.lifecycle.contrib--types",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXContribution-org.nuxeo.apidoc.lifecycle.contrib--types",
+      "target": "NXExtensionPoint-org.nuxeo.ecm.core.lifecycle.LifeCycleService--types",
+      "value": "REFERENCES",
+      "weight": 1
+    },
+    {
+      "source": "NXBundle-org.nuxeo.apidoc.repo",
+      "target": "NXComponent-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXComponent-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+      "target": "NXService-org.nuxeo.apidoc.snapshot.SnapshotManager",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXComponent-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+      "target": "NXService-org.nuxeo.apidoc.snapshot.SnapshotListener",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXComponent-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+      "target": "NXService-org.nuxeo.apidoc.search.ArtifactSearcher",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXComponent-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+      "target": "NXExtensionPoint-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXComponent-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+      "target": "NXExtensionPoint-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXComponent-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+      "target": "NXContribution-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXContribution-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+      "target": "NXExtensionPoint-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+      "value": "REFERENCES",
+      "weight": 1
+    },
+    {
+      "source": "NXComponent-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+      "target": "NXContribution-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXContribution-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration",
+      "target": "NXExtensionPoint-org.nuxeo.runtime.ConfigurationService--configuration",
+      "value": "REFERENCES",
+      "weight": 1
+    },
+    {
+      "source": "NXComponent-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+      "target": "NXContribution-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXContribution-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
+      "target": "NXExtensionPoint-org.nuxeo.runtime.ConfigurationService--configuration",
+      "value": "REFERENCES",
+      "weight": 1
+    },
+    {
+      "source": "NXComponent-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+      "target": "NXContribution-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXContribution-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
+      "target": "NXExtensionPoint-org.nuxeo.runtime.ConfigurationService--configuration",
+      "value": "REFERENCES",
+      "weight": 1
+    },
+    {
+      "source": "NXComponent-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+      "target": "NXContribution-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXContribution-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3",
+      "target": "NXExtensionPoint-org.nuxeo.runtime.ConfigurationService--configuration",
+      "value": "REFERENCES",
+      "weight": 1
+    },
+    {
+      "source": "NXBundle-org.nuxeo.apidoc.repo",
+      "target": "NXComponent-org.nuxeo.apidoc.adapterContrib",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXComponent-org.nuxeo.apidoc.adapterContrib",
+      "target": "NXContribution-org.nuxeo.apidoc.adapterContrib--adapters",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXContribution-org.nuxeo.apidoc.adapterContrib--adapters",
+      "target": "NXExtensionPoint-org.nuxeo.ecm.core.api.DocumentAdapterService--adapters",
+      "value": "REFERENCES",
+      "weight": 1
+    },
+    {
+      "source": "NXBundle-org.nuxeo.apidoc.repo",
+      "target": "NXComponent-org.nuxeo.apidoc.listener.contrib",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXComponent-org.nuxeo.apidoc.listener.contrib",
+      "target": "NXContribution-org.nuxeo.apidoc.listener.contrib--listener",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXContribution-org.nuxeo.apidoc.listener.contrib--listener",
+      "target": "NXExtensionPoint-org.nuxeo.ecm.core.event.EventServiceComponent--listener",
+      "value": "REFERENCES",
+      "weight": 1
+    },
+    {
+      "source": "NXBundle-org.nuxeo.apidoc.repo",
+      "target": "NXComponent-org.nuxeo.apidoc.schemaContrib",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXComponent-org.nuxeo.apidoc.schemaContrib",
+      "target": "NXContribution-org.nuxeo.apidoc.schemaContrib--schema",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXContribution-org.nuxeo.apidoc.schemaContrib--schema",
+      "target": "NXExtensionPoint-org.nuxeo.ecm.core.schema.TypeService--schema",
+      "value": "REFERENCES",
+      "weight": 1
+    },
+    {
+      "source": "NXComponent-org.nuxeo.apidoc.schemaContrib",
+      "target": "NXComponent-org.nuxeo.ecm.core.CoreExtensions",
+      "value": "SOFT_REQUIRES",
+      "weight": 1
+    },
+    {
+      "source": "NXBundle-org.nuxeo.apidoc.webengine",
+      "target": "NXBundle-org.nuxeo.ecm.webengine.core",
+      "value": "REQUIRES",
+      "weight": 1
+    },
+    {
+      "source": "NXBundle-org.nuxeo.apidoc.webengine",
+      "target": "NXBundle-org.nuxeo.apidoc.core",
+      "value": "REQUIRES",
+      "weight": 1
+    },
+    {
+      "source": "NXBundle-org.nuxeo.ecm.webengine.core",
+      "target": "NXBundle-org.nuxeo.runtime.root",
+      "value": "REQUIRES",
+      "weight": 1
+    },
+    {
+      "source": "NXBundle-org.nuxeo.apidoc.repo",
+      "target": "NXBundle-org.nuxeo.runtime.root",
+      "value": "REQUIRES",
+      "weight": 1
+    },
+    {
+      "source": "NXBundle-org.nuxeo.ecm.webengine.ui",
+      "target": "NXBundle-org.nuxeo.runtime.root",
+      "value": "REQUIRES",
+      "weight": 1
+    },
+    {
+      "source": "NXBundle-org.nuxeo.apidoc.core",
+      "target": "NXBundle-org.nuxeo.runtime.root",
+      "value": "REQUIRES",
+      "weight": 1
+    },
+    {
+      "source": "NXPackage-platform-explorer-20.0.0",
+      "target": "NXBundle-org.nuxeo.apidoc.core",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXPackage-platform-explorer-20.0.0",
+      "target": "NXBundle-org.nuxeo.apidoc.repo",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXPackage-platform-explorer-20.0.0",
+      "target": "NXBundle-org.nuxeo.apidoc.webengine",
+      "value": "CONTAINS",
+      "weight": 1
+    },
+    {
+      "source": "NXPackage-platform-explorer-20.0.0",
+      "target": "NXBundle-org.nuxeo.ecm.webengine.ui",
+      "value": "CONTAINS",
+      "weight": 1
+    }
+  ],
+  "name": "jsonGraph",
+  "nodes": [
+    {
+      "id": "NXBundle-org.nuxeo.apidoc.core",
+      "label": "org.nuxeo.apidoc.core",
+      "type": "BUNDLE",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXBundle",
+        "artifactId": "nuxeo-apidoc-core",
+        "artifactVersion": "20.0.0",
+        "bundleGroup": {
+          "@type": "NXBundleGroup",
+          "bundleIds": [
+            "org.nuxeo.apidoc.core",
+            "org.nuxeo.apidoc.repo",
+            "org.nuxeo.apidoc.webengine"
+          ],
+          "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc",
+          "id": "grp:org.nuxeo.apidoc",
+          "name": "org.nuxeo.apidoc",
+          "parentIds": [
+            "grp:org.nuxeo.ecm.platform"
+          ],
+          "readmes": [
+            {
+              "content": "## About Explorer\n\nThese modules provide an API to browse the Nuxeo distribution tree:\n\n    - BundleGroup (maven group or artificial grouping)\n      - Bundle\n        - Component\n          - Service\n          - Extension Points\n          - Contributions\n    - Operations\n    - Packages\n\nThe Nuxeo Distribution can be:\n\n - live: in memory (meaning runtime introspection)\n - persisted: saved in Nuxeo Repository as a tree of Documents\n\nThe following documentation items are also extracted:\n\n - documentation that is built-in Nuxeo Runtime descriptors\n - readme files that may be embedded inside the jar\n\n## What it can be used for\n\n - browse you distribution\n - check that a given contribution is deployed\n - play with Nuxeo Runtime\n\n## Configuration\n\nThe template `explorer-sitemode` enables the nuxeo.conf property `org.nuxeo.apidoc.site.mode` and\ndefines an anonymous user.\nThe property `org.nuxeo.apidoc.site.mode` comes with a more user friendly design and hides the current\n\"live\" distribution from display and API.\n\nThe template `explorer-virtualadmin` disables the usual `Administrator` user creation at database\ninitialization and adds a virtual admin user with name `apidocAdmin`, whose password can be changed using\nnuxeo.conf property `org.nuxeo.apidoc.apidocAdmin.password`.\n\n## Modules\n\nThis plugin is composed of 3 bundles:\n\n - nuxeo-apidoc-core: for the low level API on the live runtime\n - nuxeo-apidoc-repo: for the persistence of exported content on the Nuxeo repository\n - nuxeo-apidoc-webengine: for JAX-RS API and Webview\n",
+              "digest": "98a73189d33adbdad6ba967610342145",
+              "encoding": "UTF-8",
+              "length": 1541,
+              "mimeType": "text/plain",
+              "name": "ReadMe.md"
+            }
+          ],
+          "version": "11.3"
+        },
+        "bundleId": "org.nuxeo.apidoc.core",
+        "fileName": "nuxeo-apidoc-core-20.0.0.jar",
+        "groupId": "org.nuxeo.ecm.platform",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.core",
+        "id": "org.nuxeo.apidoc.core",
+        "location": "",
+        "manifest": "Manifest-Version: 1.0\r\nArchiver-Version: Plexus Archiver\r\nCreated-By: Apache Maven\r\nBuilt-By: root\r\nBuild-Jdk: 11.0.8\r\nBundle-ManifestVersion: 1\r\nBundle-Version: 0.0.1\r\nBundle-SymbolicName: org.nuxeo.apidoc.core;singleton:=true\r\nBundle-Name: nuxeo api documentation server\r\nBundle-Vendor: Nuxeo\r\n\r\n",
+        "maxResolutionOrder": null,
+        "minResolutionOrder": null,
+        "packages": [
+          "platform-explorer"
+        ],
+        "parentReadme": {
+          "content": "## About Explorer\n\nThese modules provide an API to browse the Nuxeo distribution tree:\n\n    - BundleGroup (maven group or artificial grouping)\n      - Bundle\n        - Component\n          - Service\n          - Extension Points\n          - Contributions\n    - Operations\n    - Packages\n\nThe Nuxeo Distribution can be:\n\n - live: in memory (meaning runtime introspection)\n - persisted: saved in Nuxeo Repository as a tree of Documents\n\nThe following documentation items are also extracted:\n\n - documentation that is built-in Nuxeo Runtime descriptors\n - readme files that may be embedded inside the jar\n\n## What it can be used for\n\n - browse you distribution\n - check that a given contribution is deployed\n - play with Nuxeo Runtime\n\n## Configuration\n\nThe template `explorer-sitemode` enables the nuxeo.conf property `org.nuxeo.apidoc.site.mode` and\ndefines an anonymous user.\nThe property `org.nuxeo.apidoc.site.mode` comes with a more user friendly design and hides the current\n\"live\" distribution from display and API.\n\nThe template `explorer-virtualadmin` disables the usual `Administrator` user creation at database\ninitialization and adds a virtual admin user with name `apidocAdmin`, whose password can be changed using\nnuxeo.conf property `org.nuxeo.apidoc.apidocAdmin.password`.\n\n## Modules\n\nThis plugin is composed of 3 bundles:\n\n - nuxeo-apidoc-core: for the low level API on the live runtime\n - nuxeo-apidoc-repo: for the persistence of exported content on the Nuxeo repository\n - nuxeo-apidoc-webengine: for JAX-RS API and Webview\n",
+          "digest": "98a73189d33adbdad6ba967610342145",
+          "encoding": "UTF-8",
+          "length": 1541,
+          "mimeType": "text/plain",
+          "name": "ReadMe.md"
+        },
+        "readme": {
+          "content": "## About nuxeo-apidoc-core\n\nThis bundle provides an API to browse the Nuxeo distribution tree:\n\n    - BundleGroup (maven group or artificial grouping)\n      - Bundle\n        - Component\n          - Service\n          - Extension Points\n          - Contributions\n    - Operations\n    - Packages\n\nThis API has 2 implementations:\n - org.nuxeo.apidoc.introspection: Nuxeo Runtime in memory introspection\n - org.nuxeo.apidoc.adapters: DocumentModel adapters implementing the same API\n\nThe following documentation items are also extracted:\n - documentation that is built-in Nuxeo Runtime descriptors\n - readme files that may be embedded inside the jar\n\nThe service is made pluggable in two ways:\n - the plugins extension point allows to:\n    - add more introspection to the live runtime\n    - persist this introspection\n    - display this introspection in the webengine UI\n - the exports extension point allows to generate custom exports from a live distribution\n",
+          "digest": "e39fbcaf23f8bd511b34e291c2b605af",
+          "encoding": "UTF-8",
+          "length": 956,
+          "mimeType": "text/plain",
+          "name": "ReadMe.md"
+        },
+        "requirements": [],
+        "version": "20.0.0"
+      }
+    },
+    {
+      "id": "NXBundle-org.nuxeo.apidoc.repo",
+      "label": "org.nuxeo.apidoc.repo",
+      "type": "BUNDLE",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXBundle",
+        "artifactId": "nuxeo-apidoc-repo",
+        "artifactVersion": "20.0.0",
+        "bundleGroup": {
+          "@type": "NXBundleGroup",
+          "bundleIds": [
+            "org.nuxeo.apidoc.core",
+            "org.nuxeo.apidoc.repo",
+            "org.nuxeo.apidoc.webengine"
+          ],
+          "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc",
+          "id": "grp:org.nuxeo.apidoc",
+          "name": "org.nuxeo.apidoc",
+          "parentIds": [
+            "grp:org.nuxeo.ecm.platform"
+          ],
+          "readmes": [
+            {
+              "content": "## About Explorer\n\nThese modules provide an API to browse the Nuxeo distribution tree:\n\n    - BundleGroup (maven group or artificial grouping)\n      - Bundle\n        - Component\n          - Service\n          - Extension Points\n          - Contributions\n    - Operations\n    - Packages\n\nThe Nuxeo Distribution can be:\n\n - live: in memory (meaning runtime introspection)\n - persisted: saved in Nuxeo Repository as a tree of Documents\n\nThe following documentation items are also extracted:\n\n - documentation that is built-in Nuxeo Runtime descriptors\n - readme files that may be embedded inside the jar\n\n## What it can be used for\n\n - browse you distribution\n - check that a given contribution is deployed\n - play with Nuxeo Runtime\n\n## Configuration\n\nThe template `explorer-sitemode` enables the nuxeo.conf property `org.nuxeo.apidoc.site.mode` and\ndefines an anonymous user.\nThe property `org.nuxeo.apidoc.site.mode` comes with a more user friendly design and hides the current\n\"live\" distribution from display and API.\n\nThe template `explorer-virtualadmin` disables the usual `Administrator` user creation at database\ninitialization and adds a virtual admin user with name `apidocAdmin`, whose password can be changed using\nnuxeo.conf property `org.nuxeo.apidoc.apidocAdmin.password`.\n\n## Modules\n\nThis plugin is composed of 3 bundles:\n\n - nuxeo-apidoc-core: for the low level API on the live runtime\n - nuxeo-apidoc-repo: for the persistence of exported content on the Nuxeo repository\n - nuxeo-apidoc-webengine: for JAX-RS API and Webview\n",
+              "digest": "98a73189d33adbdad6ba967610342145",
+              "encoding": "UTF-8",
+              "length": 1541,
+              "mimeType": "text/plain",
+              "name": "ReadMe.md"
+            }
+          ],
+          "version": "11.3"
+        },
+        "bundleId": "org.nuxeo.apidoc.repo",
+        "fileName": "nuxeo-apidoc-repo-20.0.0.jar",
+        "groupId": "org.nuxeo.ecm.platform",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo",
+        "id": "org.nuxeo.apidoc.repo",
+        "location": "",
+        "manifest": "Manifest-Version: 1.0\r\nArchiver-Version: Plexus Archiver\r\nCreated-By: Apache Maven\r\nBuilt-By: root\r\nBuild-Jdk: 11.0.8\r\nBundle-ManifestVersion: 1\r\nBundle-Version: 0.0.1\r\nBundle-Name: nuxeo api documentation repository\r\nBundle-SymbolicName: org.nuxeo.apidoc.repo;singleton:=true\r\nBundle-Vendor: Nuxeo\r\nNuxeo-Component: OSGI-INF/schema-contrib.xml, OSGI-INF/doctype-contrib\r\n .xml, OSGI-INF/life-cycle-contrib.xml, OSGI-INF/snapshot-service-fram\r\n ework.xml, OSGI-INF/adapter-contrib.xml, OSGI-INF/listener-contrib.xml\r\n\r\n",
+        "maxResolutionOrder": 56,
+        "minResolutionOrder": 29,
+        "packages": [
+          "platform-explorer"
+        ],
+        "parentReadme": {
+          "content": "## About Explorer\n\nThese modules provide an API to browse the Nuxeo distribution tree:\n\n    - BundleGroup (maven group or artificial grouping)\n      - Bundle\n        - Component\n          - Service\n          - Extension Points\n          - Contributions\n    - Operations\n    - Packages\n\nThe Nuxeo Distribution can be:\n\n - live: in memory (meaning runtime introspection)\n - persisted: saved in Nuxeo Repository as a tree of Documents\n\nThe following documentation items are also extracted:\n\n - documentation that is built-in Nuxeo Runtime descriptors\n - readme files that may be embedded inside the jar\n\n## What it can be used for\n\n - browse you distribution\n - check that a given contribution is deployed\n - play with Nuxeo Runtime\n\n## Configuration\n\nThe template `explorer-sitemode` enables the nuxeo.conf property `org.nuxeo.apidoc.site.mode` and\ndefines an anonymous user.\nThe property `org.nuxeo.apidoc.site.mode` comes with a more user friendly design and hides the current\n\"live\" distribution from display and API.\n\nThe template `explorer-virtualadmin` disables the usual `Administrator` user creation at database\ninitialization and adds a virtual admin user with name `apidocAdmin`, whose password can be changed using\nnuxeo.conf property `org.nuxeo.apidoc.apidocAdmin.password`.\n\n## Modules\n\nThis plugin is composed of 3 bundles:\n\n - nuxeo-apidoc-core: for the low level API on the live runtime\n - nuxeo-apidoc-repo: for the persistence of exported content on the Nuxeo repository\n - nuxeo-apidoc-webengine: for JAX-RS API and Webview\n",
+          "digest": "98a73189d33adbdad6ba967610342145",
+          "encoding": "UTF-8",
+          "length": 1541,
+          "mimeType": "text/plain",
+          "name": "ReadMe.md"
+        },
+        "readme": null,
+        "requirements": [],
+        "version": "20.0.0"
+      }
+    },
+    {
+      "id": "NXComponent-org.nuxeo.apidoc.doctypeContrib",
+      "label": "org.nuxeo.apidoc.doctypeContrib",
+      "type": "COMPONENT",
+      "weight": 2,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXComponent",
+        "componentClass": null,
+        "declaredStartOrder": null,
+        "documentation": null,
+        "documentationHtml": "",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.doctypeContrib",
+        "name": "org.nuxeo.apidoc.doctypeContrib",
+        "requirements": [],
+        "resolutionOrder": 29,
+        "startOrder": 26,
+        "version": "20.0.0",
+        "xmlFileContent": "<?xml version=\"1.0\"?>\n<component name=\"org.nuxeo.apidoc.doctypeContrib\">\n\n  <extension target=\"org.nuxeo.ecm.core.schema.TypeService\" point=\"doctype\">\n    <documentation>\n      These contributions provide document types that handle persistence of introspected distributions.\n    </documentation>\n\n    <doctype name=\"NXDistribution\" extends=\"Folder\">\n      <schema name=\"common\" />\n      <schema name=\"dublincore\" />\n      <schema name=\"file\" />\n      <schema name=\"nxdistribution\" />\n\n      <facet name=\"Commentable\" />\n      <facet name=\"Versionable\" />\n      <facet name=\"Folderish\" />\n\n      <subtypes>\n        <type>NXBundleGroup</type>\n        <type>NXBundle</type>\n        <type>NXOperation</type>\n        <type>NXPackage</type>\n        <type>Workspace</type>\n      </subtypes>\n    </doctype>\n\n    <doctype name=\"NXBundleGroup\" extends=\"OrderedFolder\">\n      <schema name=\"common\" />\n      <schema name=\"dublincore\" />\n      <schema name=\"file\" />\n      <schema name=\"files\" />\n      <schema name=\"nxbundlegroup\" />\n\n      <facet name=\"Commentable\" />\n      <facet name=\"Versionable\" />\n      <facet name=\"Folderish\" />\n\n      <subtypes>\n        <type>NXBundleGroup</type>\n      </subtypes>\n    </doctype>\n\n\n    <doctype name=\"NXBundle\" extends=\"OrderedFolder\">\n      <schema name=\"common\" />\n      <schema name=\"dublincore\" />\n      <schema name=\"file\" />\n      <schema name=\"nxbundle\" />\n\n      <facet name=\"Commentable\" />\n      <facet name=\"Versionable\" />\n      <facet name=\"Folderish\" />\n      <subtypes>\n        <type>NXComponent</type>\n        <type>NXService</type>\n        <type>NXExtensionPoint</type>\n        <type>NXContribution</type>\n      </subtypes>\n    </doctype>\n\n    <doctype name=\"NXComponent\" extends=\"OrderedFolder\">\n      <schema name=\"common\" />\n      <schema name=\"dublincore\" />\n      <schema name=\"file\" />\n      <schema name=\"nxcomponent\" />\n\n      <facet name=\"Commentable\" />\n      <facet name=\"Versionable\" />\n      <facet name=\"Folderish\" />\n      <subtypes>\n        <type>NXService</type>\n        <type>NXExtensionPoint</type>\n        <type>NXContribution</type>\n      </subtypes>\n    </doctype>\n\n    <doctype name=\"NXExtensionPoint\" extends=\"OrderedFolder\">\n      <schema name=\"common\" />\n      <schema name=\"dublincore\" />\n      <schema name=\"file\" />\n      <schema name=\"nxextensionpoint\" />\n      <schema name=\"apidoccommon\" />\n\n      <facet name=\"Commentable\" />\n      <facet name=\"Versionable\" />\n      <facet name=\"Folderish\" />\n    </doctype>\n\n    <doctype name=\"NXContribution\" extends=\"Document\">\n      <schema name=\"common\" />\n      <schema name=\"dublincore\" />\n      <schema name=\"file\" />\n      <schema name=\"nxcontribution\" />\n      <schema name=\"apidoccommon\" />\n\n      <facet name=\"Commentable\" />\n      <facet name=\"Versionable\" />\n    </doctype>\n\n    <doctype name=\"NXService\" extends=\"Document\">\n      <schema name=\"common\" />\n      <schema name=\"dublincore\" />\n      <schema name=\"file\" />\n      <schema name=\"nxservice\" />\n\n      <facet name=\"Commentable\" />\n      <facet name=\"Versionable\" />\n    </doctype>\n\n    <doctype name=\"NXOperation\" extends=\"Document\">\n      <schema name=\"common\" />\n      <schema name=\"dublincore\" />\n      <schema name=\"file\" />\n\n      <schema name=\"nxoperation\" />\n      <facet name=\"Commentable\" />\n      <facet name=\"Versionable\" />\n    </doctype>\n\n    <doctype name=\"NXPackage\" extends=\"Document\">\n      <schema name=\"common\" />\n      <schema name=\"dublincore\" />\n\n      <schema name=\"nxpackage\" />\n      <facet name=\"Commentable\" />\n      <facet name=\"Versionable\" />\n    </doctype>\n\n  </extension>\n\n</component>\n",
+        "xmlFileName": "/OSGI-INF/doctype-contrib.xml",
+        "xmlPureComponent": true
+      }
+    },
+    {
+      "id": "NXContribution-org.nuxeo.apidoc.doctypeContrib--doctype",
+      "label": "org.nuxeo.apidoc.doctypeContrib--doctype",
+      "type": "CONTRIBUTION",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXContribution",
+        "documentation": "\n      These contributions provide document types that handle persistence of introspected distributions.\n    \n",
+        "documentationHtml": "<p>\nThese contributions provide document types that handle persistence of introspected distributions.\n</p><p></p>",
+        "extensionPoint": "org.nuxeo.ecm.core.schema.TypeService--doctype",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.doctypeContrib/Contributions/org.nuxeo.apidoc.doctypeContrib--doctype",
+        "id": "org.nuxeo.apidoc.doctypeContrib--doctype",
+        "registrationOrder": 0,
+        "targetComponentName": {
+          "rawName": "service:org.nuxeo.ecm.core.schema.TypeService",
+          "name": "org.nuxeo.ecm.core.schema.TypeService",
+          "type": "service"
+        },
+        "version": "20.0.0",
+        "xml": "<extension point=\"doctype\" target=\"org.nuxeo.ecm.core.schema.TypeService\">\n    <documentation>\n      These contributions provide document types that handle persistence of introspected distributions.\n    </documentation>\n\n    <doctype extends=\"Folder\" name=\"NXDistribution\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n      <schema name=\"file\"/>\n      <schema name=\"nxdistribution\"/>\n\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n      <facet name=\"Folderish\"/>\n\n      <subtypes>\n        <type>NXBundleGroup</type>\n        <type>NXBundle</type>\n        <type>NXOperation</type>\n        <type>NXPackage</type>\n        <type>Workspace</type>\n      </subtypes>\n    </doctype>\n\n    <doctype extends=\"OrderedFolder\" name=\"NXBundleGroup\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n      <schema name=\"file\"/>\n      <schema name=\"files\"/>\n      <schema name=\"nxbundlegroup\"/>\n\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n      <facet name=\"Folderish\"/>\n\n      <subtypes>\n        <type>NXBundleGroup</type>\n      </subtypes>\n    </doctype>\n\n\n    <doctype extends=\"OrderedFolder\" name=\"NXBundle\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n      <schema name=\"file\"/>\n      <schema name=\"nxbundle\"/>\n\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n      <facet name=\"Folderish\"/>\n      <subtypes>\n        <type>NXComponent</type>\n        <type>NXService</type>\n        <type>NXExtensionPoint</type>\n        <type>NXContribution</type>\n      </subtypes>\n    </doctype>\n\n    <doctype extends=\"OrderedFolder\" name=\"NXComponent\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n      <schema name=\"file\"/>\n      <schema name=\"nxcomponent\"/>\n\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n      <facet name=\"Folderish\"/>\n      <subtypes>\n        <type>NXService</type>\n        <type>NXExtensionPoint</type>\n        <type>NXContribution</type>\n      </subtypes>\n    </doctype>\n\n    <doctype extends=\"OrderedFolder\" name=\"NXExtensionPoint\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n      <schema name=\"file\"/>\n      <schema name=\"nxextensionpoint\"/>\n      <schema name=\"apidoccommon\"/>\n\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n      <facet name=\"Folderish\"/>\n    </doctype>\n\n    <doctype extends=\"Document\" name=\"NXContribution\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n      <schema name=\"file\"/>\n      <schema name=\"nxcontribution\"/>\n      <schema name=\"apidoccommon\"/>\n\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n    </doctype>\n\n    <doctype extends=\"Document\" name=\"NXService\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n      <schema name=\"file\"/>\n      <schema name=\"nxservice\"/>\n\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n    </doctype>\n\n    <doctype extends=\"Document\" name=\"NXOperation\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n      <schema name=\"file\"/>\n\n      <schema name=\"nxoperation\"/>\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n    </doctype>\n\n    <doctype extends=\"Document\" name=\"NXPackage\">\n      <schema name=\"common\"/>\n      <schema name=\"dublincore\"/>\n\n      <schema name=\"nxpackage\"/>\n      <facet name=\"Commentable\"/>\n      <facet name=\"Versionable\"/>\n    </doctype>\n\n  </extension>"
+      }
+    },
+    {
+      "id": "NXComponent-org.nuxeo.apidoc.lifecycle.contrib",
+      "label": "org.nuxeo.apidoc.lifecycle.contrib",
+      "type": "COMPONENT",
+      "weight": 2,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXComponent",
+        "componentClass": null,
+        "declaredStartOrder": null,
+        "documentation": null,
+        "documentationHtml": "",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.lifecycle.contrib",
+        "name": "org.nuxeo.apidoc.lifecycle.contrib",
+        "requirements": [],
+        "resolutionOrder": 30,
+        "startOrder": 27,
+        "version": "20.0.0",
+        "xmlFileContent": "<?xml version=\"1.0\"?>\n<component name=\"org.nuxeo.apidoc.lifecycle.contrib\">\n\n  <extension target=\"org.nuxeo.ecm.core.lifecycle.LifeCycleService\" point=\"types\">\n    <types>\n      <type name=\"NXDistribution\">default</type>\n      <type name=\"NXBundleGroup\">default</type>\n      <type name=\"NXBundle\">default</type>\n      <type name=\"NXComponent\">default</type>\n      <type name=\"NXService\">default</type>\n      <type name=\"NXExtensionPoint\">default</type>\n      <type name=\"NXContribution\">default</type>\n      <type name=\"NXOperation\">default</type>\n    </types>\n  </extension>\n\n</component>\n",
+        "xmlFileName": "/OSGI-INF/life-cycle-contrib.xml",
+        "xmlPureComponent": true
+      }
+    },
+    {
+      "id": "NXContribution-org.nuxeo.apidoc.lifecycle.contrib--types",
+      "label": "org.nuxeo.apidoc.lifecycle.contrib--types",
+      "type": "CONTRIBUTION",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXContribution",
+        "documentation": null,
+        "documentationHtml": "",
+        "extensionPoint": "org.nuxeo.ecm.core.lifecycle.LifeCycleService--types",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.lifecycle.contrib/Contributions/org.nuxeo.apidoc.lifecycle.contrib--types",
+        "id": "org.nuxeo.apidoc.lifecycle.contrib--types",
+        "registrationOrder": 0,
+        "targetComponentName": {
+          "rawName": "service:org.nuxeo.ecm.core.lifecycle.LifeCycleService",
+          "name": "org.nuxeo.ecm.core.lifecycle.LifeCycleService",
+          "type": "service"
+        },
+        "version": "20.0.0",
+        "xml": "<extension point=\"types\" target=\"org.nuxeo.ecm.core.lifecycle.LifeCycleService\">\n    <types>\n      <type name=\"NXDistribution\">default</type>\n      <type name=\"NXBundleGroup\">default</type>\n      <type name=\"NXBundle\">default</type>\n      <type name=\"NXComponent\">default</type>\n      <type name=\"NXService\">default</type>\n      <type name=\"NXExtensionPoint\">default</type>\n      <type name=\"NXContribution\">default</type>\n      <type name=\"NXOperation\">default</type>\n    </types>\n  </extension>"
+      }
+    },
+    {
+      "id": "NXComponent-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+      "label": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+      "type": "COMPONENT",
+      "weight": 11,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXComponent",
+        "componentClass": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+        "declaredStartOrder": null,
+        "documentation": "<p>\n      This component handles the introspection of the current live Runtime as a distribution.\n    </p>\n<p>\n      It can also persist this introspection as Nuxeo documents, to handle import and export of external distributions.\n    </p>\n",
+        "documentationHtml": "<p>\n</p><p>\nThis component handles the introspection of the current live Runtime as a distribution.\n</p>\n<p>\nIt can also persist this introspection as Nuxeo documents, to handle import and export of external distributions.\n</p>",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+        "name": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+        "requirements": [],
+        "resolutionOrder": 31,
+        "startOrder": 521,
+        "version": "20.0.0",
+        "xmlFileContent": "<?xml version='1.0' encoding='UTF-8'?>\n<component name=\"org.nuxeo.apidoc.snapshot.SnapshotManagerComponent\">\n  <documentation>\n    <p>\n      This component handles the introspection of the current live Runtime as a distribution.\n    </p>\n    <p>\n      It can also persist this introspection as Nuxeo documents, to handle import and export of external distributions.\n    </p>\n  </documentation>\n  <implementation class=\"org.nuxeo.apidoc.snapshot.SnapshotManagerComponent\"/>\n\n  <service>\n    <provide interface=\"org.nuxeo.apidoc.snapshot.SnapshotManager\"/>\n    <provide interface=\"org.nuxeo.apidoc.snapshot.SnapshotListener\"/>\n    <provide interface=\"org.nuxeo.apidoc.search.ArtifactSearcher\"/>\n  </service>\n\n  <extension-point name=\"plugins\">\n    <documentation>\n      <p>\n        A plugin can introspect and persist information related to the current runtime environment.\n      </p>\n      <p>\n        Sample contribution:\n        <code>\n          <extension target=\"org.nuxeo.apidoc.snapshot.SnapshotManagerComponent\" point=\"plugins\">\n            <plugin id=\"seam\" class=\"org.nuxeo.apidoc.seam.plugin.SeamPlugin\" snapshotClass=\"org.nuxeo.apidoc.seam.introspection.SeamRuntimeSnapshot\">\n              <ui>\n                <label>Seam Components</label>\n                <viewType>seam</viewType>\n                <homeView>listSeamComponents</homeView>\n                <styleClass>seam</styleClass>\n              </ui>\n            </plugin>\n          </extension>\n        </code>\n      </p>\n      <p>\n        The class should implement the\n        <b>org.nuxeo.apidoc.plugin.Plugin</b>\n        interface.\n      </p>\n      <p>\n        UI elements are used for rendering on webengine pages. The view type should match a webengine resource type,\n        and\n        the module holding this resource should be contributed to the main webengine module as a fragment using:\n        <code>\n          Fragment-Host: org.nuxeo.apidoc.webengine\n        </code>\n      </p>\n    </documentation>\n    <object class=\"org.nuxeo.apidoc.plugin.PluginDescriptor\"/>\n  </extension-point>\n\n  <extension-point name=\"exporters\">\n    <documentation>\n      Extension point for pluggable export generation.\n    </documentation>\n    <object class=\"org.nuxeo.apidoc.export.api.ExporterDescriptor\"/>\n  </extension-point>\n\n  <extension target=\"org.nuxeo.apidoc.snapshot.SnapshotManagerComponent\" point=\"exporters\">\n    <exporter id=\"jsonGraph\" class=\"org.nuxeo.apidoc.export.graphs.plugins.JsonGraphExporter\">\n      <title>Json Graph</title>\n      <description>Json dependency graph</description>\n      <filename>graph.json</filename>\n      <mimetype>application/json</mimetype>\n      <display>\n        <on>home</on>\n        <on>bundle</on>\n        <on>package</on>\n      </display>\n    </exporter>\n    <exporter id=\"dotGraph\" class=\"org.nuxeo.apidoc.export.graphs.plugins.DOTGraphExporter\">\n      <title>DOT Graph</title>\n      <description>Dependency graph exported in DOT format</description>\n      <filename>graph.dot</filename>\n      <mimetype>application/octet-stream</mimetype>\n      <display>\n        <on>home</on>\n      </display>\n    </exporter>\n  </extension>\n\n  <extension target=\"org.nuxeo.runtime.ConfigurationService\" point=\"configuration\">\n    <documentation>\n      URL base for Javadoc Links.\n    </documentation>\n    <property name=\"org.nuxeo.apidoc.javadoc.url\">\n      https://community.nuxeo.com/api/\n    </property>\n  </extension>\n\n  <extension target=\"org.nuxeo.runtime.ConfigurationService\" point=\"configuration\">\n    <documentation>\n      URL base for Connect Links (for Marketplace Packages).\n    </documentation>\n    <property name=\"org.nuxeo.apidoc.connect.url\">\n      https://connect.nuxeo.com/nuxeo/site/\n    </property>\n  </extension>\n\n  <extension target=\"org.nuxeo.runtime.ConfigurationService\" point=\"configuration\">\n    <documentation>\n      Default groups for application managers and readers.\n    </documentation>\n    <property name=\"org.nuxeo.apidoc.apidocmanagers.group\">\n      ApidocManagers\n    </property>\n    <property name=\"org.nuxeo.apidoc.apidocreaders.group\">\n      Everyone\n    </property>\n  </extension>\n\n  <extension target=\"org.nuxeo.runtime.ConfigurationService\" point=\"configuration\">\n    <documentation>\n      Properties controlling sensitive configuration exposure, when extracted from runtime contributions by\n      explorer logics.\n\n      @since 20.0.0\n    </documentation>\n    <property name=\"org.nuxeo.apidoc.secure.xml.keywords\">\n      password, Password, secret, apiKey, TMPDIR, TMP, TEMP, TEMPDIR\n    </property>\n    <property name=\"org.nuxeo.apidoc.secure.xml.keywords.whitelisted\">\n      passwordField, passwordHashAlgorithm\n    </property>\n  </extension>\n\n</component>",
+        "xmlFileName": "/OSGI-INF/snapshot-service-framework.xml",
+        "xmlPureComponent": false
+      }
+    },
+    {
+      "id": "NXService-org.nuxeo.apidoc.snapshot.SnapshotManager",
+      "label": "org.nuxeo.apidoc.snapshot.SnapshotManager",
+      "type": "SERVICE",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXService",
+        "componentId": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/Services/org.nuxeo.apidoc.snapshot.SnapshotManager",
+        "id": "org.nuxeo.apidoc.snapshot.SnapshotManager",
+        "overriden": false,
+        "version": "20.0.0"
+      }
+    },
+    {
+      "id": "NXService-org.nuxeo.apidoc.snapshot.SnapshotListener",
+      "label": "org.nuxeo.apidoc.snapshot.SnapshotListener",
+      "type": "SERVICE",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXService",
+        "componentId": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/Services/org.nuxeo.apidoc.snapshot.SnapshotListener",
+        "id": "org.nuxeo.apidoc.snapshot.SnapshotListener",
+        "overriden": false,
+        "version": "20.0.0"
+      }
+    },
+    {
+      "id": "NXService-org.nuxeo.apidoc.search.ArtifactSearcher",
+      "label": "org.nuxeo.apidoc.search.ArtifactSearcher",
+      "type": "SERVICE",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXService",
+        "componentId": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/Services/org.nuxeo.apidoc.search.ArtifactSearcher",
+        "id": "org.nuxeo.apidoc.search.ArtifactSearcher",
+        "overriden": false,
+        "version": "20.0.0"
+      }
+    },
+    {
+      "id": "NXExtensionPoint-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins",
+      "label": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins",
+      "type": "EXTENSION_POINT",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXExtensionPoint",
+        "componentId": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+        "descriptors": [
+          "org.nuxeo.apidoc.plugin.PluginDescriptor"
+        ],
+        "documentation": "<p>\n        A plugin can introspect and persist information related to the current runtime environment.\n      </p>\n<p>\n        Sample contribution:\n        <code>\n        <extension point=\"plugins\" target=\"org.nuxeo.apidoc.snapshot.SnapshotManagerComponent\">\n            <plugin class=\"org.nuxeo.apidoc.seam.plugin.SeamPlugin\"\n                id=\"seam\" snapshotClass=\"org.nuxeo.apidoc.seam.introspection.SeamRuntimeSnapshot\">\n                <ui>\n                    <label>Seam Components</label>\n                    <viewType>seam</viewType>\n                    <homeView>listSeamComponents</homeView>\n                    <styleClass>seam</styleClass>\n                </ui>\n            </plugin>\n        </extension>\n    </code>\n</p>\n<p>\n        The class should implement the\n        <b>org.nuxeo.apidoc.plugin.Plugin</b>\n        interface.\n      </p>\n<p>\n        UI elements are used for rendering on webengine pages. The view type should match a webengine resource type,\n        and\n        the module holding this resource should be contributed to the main webengine module as a fragment using:\n        <code>\n          Fragment-Host: org.nuxeo.apidoc.webengine\n        </code>\n</p>\n",
+        "documentationHtml": "<p>\n</p><p>\nA plugin can introspect and persist information related to the current runtime environment.\n</p>\n<p>\nSample contribution:\n</p><p></p><pre><code>        &lt;extension point&#61;&#34;plugins&#34; target&#61;&#34;org.nuxeo.apidoc.snapshot.SnapshotManagerComponent&#34;&gt;\n            &lt;plugin class&#61;&#34;org.nuxeo.apidoc.seam.plugin.SeamPlugin&#34;\n                id&#61;&#34;seam&#34; snapshotClass&#61;&#34;org.nuxeo.apidoc.seam.introspection.SeamRuntimeSnapshot&#34;&gt;\n                &lt;ui&gt;\n                    &lt;label&gt;Seam Components&lt;/label&gt;\n                    &lt;viewType&gt;seam&lt;/viewType&gt;\n                    &lt;homeView&gt;listSeamComponents&lt;/homeView&gt;\n                    &lt;styleClass&gt;seam&lt;/styleClass&gt;\n                &lt;/ui&gt;\n            &lt;/plugin&gt;\n        &lt;/extension&gt;\n</code></pre><p>\n</p>\n<p>\nThe class should implement the\n<b>org.nuxeo.apidoc.plugin.Plugin</b>\ninterface.\n</p>\n<p>\nUI elements are used for rendering on webengine pages. The view type should match a webengine resource type,\nand\nthe module holding this resource should be contributed to the main webengine module as a fragment using:\n</p><p></p><pre><code>          Fragment-Host: org.nuxeo.apidoc.webengine\n</code></pre><p>\n</p>",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/ExtensionPoints/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins",
+        "id": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins",
+        "label": "plugins (org.nuxeo.apidoc.snapshot.SnapshotManagerComponent)",
+        "name": "plugins",
+        "version": "20.0.0"
+      }
+    },
+    {
+      "id": "NXExtensionPoint-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+      "label": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+      "type": "EXTENSION_POINT",
+      "weight": 2,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXExtensionPoint",
+        "componentId": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+        "descriptors": [
+          "org.nuxeo.apidoc.export.api.ExporterDescriptor"
+        ],
+        "documentation": "\n      Extension point for pluggable export generation.\n    \n",
+        "documentationHtml": "<p>\nExtension point for pluggable export generation.\n</p><p></p>",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/ExtensionPoints/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+        "id": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+        "label": "exporters (org.nuxeo.apidoc.snapshot.SnapshotManagerComponent)",
+        "name": "exporters",
+        "version": "20.0.0"
+      }
+    },
+    {
+      "id": "NXContribution-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+      "label": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+      "type": "CONTRIBUTION",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXContribution",
+        "documentation": null,
+        "documentationHtml": "",
+        "extensionPoint": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/Contributions/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+        "id": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+        "registrationOrder": 0,
+        "targetComponentName": {
+          "rawName": "service:org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+          "name": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+          "type": "service"
+        },
+        "version": "20.0.0",
+        "xml": "<extension point=\"exporters\" target=\"org.nuxeo.apidoc.snapshot.SnapshotManagerComponent\">\n    <exporter class=\"org.nuxeo.apidoc.export.graphs.plugins.JsonGraphExporter\" id=\"jsonGraph\">\n      <title>Json Graph</title>\n      <description>Json dependency graph</description>\n      <filename>graph.json</filename>\n      <mimetype>application/json</mimetype>\n      <display>\n        <on>home</on>\n        <on>bundle</on>\n        <on>package</on>\n      </display>\n    </exporter>\n    <exporter class=\"org.nuxeo.apidoc.export.graphs.plugins.DOTGraphExporter\" id=\"dotGraph\">\n      <title>DOT Graph</title>\n      <description>Dependency graph exported in DOT format</description>\n      <filename>graph.dot</filename>\n      <mimetype>application/octet-stream</mimetype>\n      <display>\n        <on>home</on>\n      </display>\n    </exporter>\n  </extension>"
+      }
+    },
+    {
+      "id": "NXContribution-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration",
+      "label": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration",
+      "type": "CONTRIBUTION",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXContribution",
+        "documentation": "\n      URL base for Javadoc Links.\n    \n",
+        "documentationHtml": "<p>\nURL base for Javadoc Links.\n</p><p></p>",
+        "extensionPoint": "org.nuxeo.runtime.ConfigurationService--configuration",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/Contributions/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration",
+        "id": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration",
+        "registrationOrder": 2,
+        "targetComponentName": {
+          "rawName": "service:org.nuxeo.runtime.ConfigurationService",
+          "name": "org.nuxeo.runtime.ConfigurationService",
+          "type": "service"
+        },
+        "version": "20.0.0",
+        "xml": "<extension point=\"configuration\" target=\"org.nuxeo.runtime.ConfigurationService\">\n    <documentation>\n      URL base for Javadoc Links.\n    </documentation>\n    <property name=\"org.nuxeo.apidoc.javadoc.url\">\n      https://community.nuxeo.com/api/\n    </property>\n  </extension>"
+      }
+    },
+    {
+      "id": "NXContribution-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
+      "label": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
+      "type": "CONTRIBUTION",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXContribution",
+        "documentation": "\n      URL base for Connect Links (for Marketplace Packages).\n    \n",
+        "documentationHtml": "<p>\nURL base for Connect Links (for Marketplace Packages).\n</p><p></p>",
+        "extensionPoint": "org.nuxeo.runtime.ConfigurationService--configuration",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/Contributions/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
+        "id": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
+        "registrationOrder": 3,
+        "targetComponentName": {
+          "rawName": "service:org.nuxeo.runtime.ConfigurationService",
+          "name": "org.nuxeo.runtime.ConfigurationService",
+          "type": "service"
+        },
+        "version": "20.0.0",
+        "xml": "<extension point=\"configuration\" target=\"org.nuxeo.runtime.ConfigurationService\">\n    <documentation>\n      URL base for Connect Links (for Marketplace Packages).\n    </documentation>\n    <property name=\"org.nuxeo.apidoc.connect.url\">\n      https://connect.nuxeo.com/nuxeo/site/\n    </property>\n  </extension>"
+      }
+    },
+    {
+      "id": "NXContribution-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
+      "label": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
+      "type": "CONTRIBUTION",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXContribution",
+        "documentation": "\n      Default groups for application managers and readers.\n    \n",
+        "documentationHtml": "<p>\nDefault groups for application managers and readers.\n</p><p></p>",
+        "extensionPoint": "org.nuxeo.runtime.ConfigurationService--configuration",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/Contributions/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
+        "id": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
+        "registrationOrder": 4,
+        "targetComponentName": {
+          "rawName": "service:org.nuxeo.runtime.ConfigurationService",
+          "name": "org.nuxeo.runtime.ConfigurationService",
+          "type": "service"
+        },
+        "version": "20.0.0",
+        "xml": "<extension point=\"configuration\" target=\"org.nuxeo.runtime.ConfigurationService\">\n    <documentation>\n      Default groups for application managers and readers.\n    </documentation>\n    <property name=\"org.nuxeo.apidoc.apidocmanagers.group\">\n      ApidocManagers\n    </property>\n    <property name=\"org.nuxeo.apidoc.apidocreaders.group\">\n      Everyone\n    </property>\n  </extension>"
+      }
+    },
+    {
+      "id": "NXContribution-org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3",
+      "label": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3",
+      "type": "CONTRIBUTION",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXContribution",
+        "documentation": "\n      Properties controlling sensitive configuration exposure, when extracted from runtime contributions by\n      explorer logics.\n\n      @since 20.0.0\n    \n",
+        "documentationHtml": "<p>\nProperties controlling sensitive configuration exposure, when extracted from runtime contributions by\nexplorer logics.\n</p><p>\n&#64;since 20.0.0\n</p><p></p>",
+        "extensionPoint": "org.nuxeo.runtime.ConfigurationService--configuration",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent/Contributions/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3",
+        "id": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3",
+        "registrationOrder": 5,
+        "targetComponentName": {
+          "rawName": "service:org.nuxeo.runtime.ConfigurationService",
+          "name": "org.nuxeo.runtime.ConfigurationService",
+          "type": "service"
+        },
+        "version": "20.0.0",
+        "xml": "<?xml version='1.0' encoding='UTF-8'?>\n<extension point=\"configuration\" target=\"org.nuxeo.runtime.ConfigurationService\">\n    <documentation>\n      Properties controlling sensitive configuration exposure, when extracted from runtime contributions by\n      explorer logics.\n\n      @since 20.0.0\n    </documentation>\n    <property name=\"org.nuxeo.apidoc.secure.xml.keywords\">\n      password, Password, secret, apiKey, TMPDIR, TMP, TEMP, TEMPDIR\n    </property>\n    <property name=\"org.nuxeo.apidoc.secure.xml.keywords.whitelisted\">\n      passwordField, passwordHashAlgorithm\n    </property>\n  </extension>"
+      }
+    },
+    {
+      "id": "NXComponent-org.nuxeo.apidoc.adapterContrib",
+      "label": "org.nuxeo.apidoc.adapterContrib",
+      "type": "COMPONENT",
+      "weight": 2,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXComponent",
+        "componentClass": null,
+        "declaredStartOrder": null,
+        "documentation": null,
+        "documentationHtml": "",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.adapterContrib",
+        "name": "org.nuxeo.apidoc.adapterContrib",
+        "requirements": [],
+        "resolutionOrder": 32,
+        "startOrder": 25,
+        "version": "20.0.0",
+        "xmlFileContent": "<?xml version=\"1.0\"?>\n<component name=\"org.nuxeo.apidoc.adapterContrib\">\n\n  <extension target=\"org.nuxeo.ecm.core.api.DocumentAdapterService\" point=\"adapters\">\n    <documentation>\n      These contributions provide a mapping between live introspections and persisted representations of a\n      distribution.\n    </documentation>\n\n    <adapter type=\"NXBundleGroup\" class=\"org.nuxeo.apidoc.api.BundleGroup\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n    <adapter type=\"NXBundle\" class=\"org.nuxeo.apidoc.api.BundleInfo\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n    <adapter type=\"NXComponent\" class=\"org.nuxeo.apidoc.api.ComponentInfo\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n    <adapter type=\"NXExtensionPoint\" class=\"org.nuxeo.apidoc.api.ExtensionPointInfo\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n    <adapter type=\"NXContribution\" class=\"org.nuxeo.apidoc.api.ExtensionInfo\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n    <adapter type=\"NXService\" class=\"org.nuxeo.apidoc.api.ServiceInfo\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n    <adapter type=\"NXDistribution\" class=\"org.nuxeo.apidoc.snapshot.DistributionSnapshot\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n    <adapter type=\"NXOperation\" class=\"org.nuxeo.apidoc.api.OperationInfo\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n    <adapter type=\"NXPackage\" class=\"org.nuxeo.apidoc.api.PackageInfo\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n\n    <adapter type=\"NXBundleGroup\" class=\"org.nuxeo.apidoc.api.NuxeoArtifact\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n    <adapter type=\"NXBundle\" class=\"org.nuxeo.apidoc.api.NuxeoArtifact\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n    <adapter type=\"NXComponent\" class=\"org.nuxeo.apidoc.api.NuxeoArtifact\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n    <adapter type=\"NXExtensionPoint\" class=\"org.nuxeo.apidoc.api.NuxeoArtifact\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n    <adapter type=\"NXContribution\" class=\"org.nuxeo.apidoc.api.NuxeoArtifact\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n    <adapter type=\"NXService\" class=\"org.nuxeo.apidoc.api.NuxeoArtifact\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n    <adapter type=\"NXOperation\" class=\"org.nuxeo.apidoc.api.NuxeoArtifact\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n    <adapter type=\"NXPackage\" class=\"org.nuxeo.apidoc.api.NuxeoArtifact\"\n      factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" />\n\n  </extension>\n\n</component>\n",
+        "xmlFileName": "/OSGI-INF/adapter-contrib.xml",
+        "xmlPureComponent": true
+      }
+    },
+    {
+      "id": "NXContribution-org.nuxeo.apidoc.adapterContrib--adapters",
+      "label": "org.nuxeo.apidoc.adapterContrib--adapters",
+      "type": "CONTRIBUTION",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXContribution",
+        "documentation": "\n      These contributions provide a mapping between live introspections and persisted representations of a\n      distribution.\n    \n",
+        "documentationHtml": "<p>\nThese contributions provide a mapping between live introspections and persisted representations of a\ndistribution.\n</p><p></p>",
+        "extensionPoint": "org.nuxeo.ecm.core.api.DocumentAdapterService--adapters",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.adapterContrib/Contributions/org.nuxeo.apidoc.adapterContrib--adapters",
+        "id": "org.nuxeo.apidoc.adapterContrib--adapters",
+        "registrationOrder": 0,
+        "targetComponentName": {
+          "rawName": "service:org.nuxeo.ecm.core.api.DocumentAdapterService",
+          "name": "org.nuxeo.ecm.core.api.DocumentAdapterService",
+          "type": "service"
+        },
+        "version": "20.0.0",
+        "xml": "<extension point=\"adapters\" target=\"org.nuxeo.ecm.core.api.DocumentAdapterService\">\n    <documentation>\n      These contributions provide a mapping between live introspections and persisted representations of a\n      distribution.\n    </documentation>\n\n    <adapter class=\"org.nuxeo.apidoc.api.BundleGroup\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXBundleGroup\"/>\n    <adapter class=\"org.nuxeo.apidoc.api.BundleInfo\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXBundle\"/>\n    <adapter class=\"org.nuxeo.apidoc.api.ComponentInfo\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXComponent\"/>\n    <adapter class=\"org.nuxeo.apidoc.api.ExtensionPointInfo\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXExtensionPoint\"/>\n    <adapter class=\"org.nuxeo.apidoc.api.ExtensionInfo\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXContribution\"/>\n    <adapter class=\"org.nuxeo.apidoc.api.ServiceInfo\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXService\"/>\n    <adapter class=\"org.nuxeo.apidoc.snapshot.DistributionSnapshot\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXDistribution\"/>\n    <adapter class=\"org.nuxeo.apidoc.api.OperationInfo\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXOperation\"/>\n    <adapter class=\"org.nuxeo.apidoc.api.PackageInfo\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXPackage\"/>\n\n    <adapter class=\"org.nuxeo.apidoc.api.NuxeoArtifact\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXBundleGroup\"/>\n    <adapter class=\"org.nuxeo.apidoc.api.NuxeoArtifact\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXBundle\"/>\n    <adapter class=\"org.nuxeo.apidoc.api.NuxeoArtifact\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXComponent\"/>\n    <adapter class=\"org.nuxeo.apidoc.api.NuxeoArtifact\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXExtensionPoint\"/>\n    <adapter class=\"org.nuxeo.apidoc.api.NuxeoArtifact\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXContribution\"/>\n    <adapter class=\"org.nuxeo.apidoc.api.NuxeoArtifact\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXService\"/>\n    <adapter class=\"org.nuxeo.apidoc.api.NuxeoArtifact\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXOperation\"/>\n    <adapter class=\"org.nuxeo.apidoc.api.NuxeoArtifact\" factory=\"org.nuxeo.apidoc.adapters.AdapterFactory\" type=\"NXPackage\"/>\n\n  </extension>"
+      }
+    },
+    {
+      "id": "NXComponent-org.nuxeo.apidoc.listener.contrib",
+      "label": "org.nuxeo.apidoc.listener.contrib",
+      "type": "COMPONENT",
+      "weight": 2,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXComponent",
+        "componentClass": null,
+        "declaredStartOrder": null,
+        "documentation": null,
+        "documentationHtml": "",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.listener.contrib",
+        "name": "org.nuxeo.apidoc.listener.contrib",
+        "requirements": [],
+        "resolutionOrder": 33,
+        "startOrder": 28,
+        "version": "20.0.0",
+        "xmlFileContent": "<?xml version=\"1.0\"?>\n<component name=\"org.nuxeo.apidoc.listener.contrib\">\n\n  <extension target=\"org.nuxeo.ecm.core.event.EventServiceComponent\" point=\"listener\">\n    <documentation>\n      These contributions are used for latest distribution flag update and XML attributes extractions in\n      extension points.\n    </documentation>\n\n    <listener name=\"latestDistributionsListener\" async=\"false\" postCommit=\"false\"\n      class=\"org.nuxeo.apidoc.listener.LatestDistributionsListener\">\n      <documentation>\n        Updates latest distribution flag.\n      </documentation>\n      <event>aboutToCreate</event>\n      <event>beforeDocumentModification</event>\n    </listener>\n\n    <listener name=\"AttributesExtractorStater\" async=\"false\" postCommit=\"false\"\n      class=\"org.nuxeo.apidoc.listener.AttributesExtractorStater\">\n      <documentation>\n        Listener in charge of triggering AttributesExtractorScheduler.\n      </documentation>\n      <event>aboutToCreate</event>\n      <event>beforeDocumentModification</event>\n    </listener>\n\n    <listener name=\"AttributesExtractorScheduler\" async=\"false\" postCommit=\"false\"\n      class=\"org.nuxeo.apidoc.listener.AttributesExtractorScheduler\" priority=\"20\">\n      <description>\n        Schedules a work for XML attributes extraction.\n      </description>\n      <event>documentCreated</event>\n      <event>documentModified</event>\n    </listener>\n  </extension>\n\n</component>\n",
+        "xmlFileName": "/OSGI-INF/listener-contrib.xml",
+        "xmlPureComponent": true
+      }
+    },
+    {
+      "id": "NXContribution-org.nuxeo.apidoc.listener.contrib--listener",
+      "label": "org.nuxeo.apidoc.listener.contrib--listener",
+      "type": "CONTRIBUTION",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXContribution",
+        "documentation": "\n      These contributions are used for latest distribution flag update and XML attributes extractions in\n      extension points.\n    \n",
+        "documentationHtml": "<p>\nThese contributions are used for latest distribution flag update and XML attributes extractions in\nextension points.\n</p><p></p>",
+        "extensionPoint": "org.nuxeo.ecm.core.event.EventServiceComponent--listener",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.listener.contrib/Contributions/org.nuxeo.apidoc.listener.contrib--listener",
+        "id": "org.nuxeo.apidoc.listener.contrib--listener",
+        "registrationOrder": 0,
+        "targetComponentName": {
+          "rawName": "service:org.nuxeo.ecm.core.event.EventServiceComponent",
+          "name": "org.nuxeo.ecm.core.event.EventServiceComponent",
+          "type": "service"
+        },
+        "version": "20.0.0",
+        "xml": "<extension point=\"listener\" target=\"org.nuxeo.ecm.core.event.EventServiceComponent\">\n    <documentation>\n      These contributions are used for latest distribution flag update and XML attributes extractions in\n      extension points.\n    </documentation>\n\n    <listener async=\"false\" class=\"org.nuxeo.apidoc.listener.LatestDistributionsListener\" name=\"latestDistributionsListener\" postCommit=\"false\">\n      <documentation>\n        Updates latest distribution flag.\n      </documentation>\n      <event>aboutToCreate</event>\n      <event>beforeDocumentModification</event>\n    </listener>\n\n    <listener async=\"false\" class=\"org.nuxeo.apidoc.listener.AttributesExtractorStater\" name=\"AttributesExtractorStater\" postCommit=\"false\">\n      <documentation>\n        Listener in charge of triggering AttributesExtractorScheduler.\n      </documentation>\n      <event>aboutToCreate</event>\n      <event>beforeDocumentModification</event>\n    </listener>\n\n    <listener async=\"false\" class=\"org.nuxeo.apidoc.listener.AttributesExtractorScheduler\" name=\"AttributesExtractorScheduler\" postCommit=\"false\" priority=\"20\">\n      <description>\n        Schedules a work for XML attributes extraction.\n      </description>\n      <event>documentCreated</event>\n      <event>documentModified</event>\n    </listener>\n  </extension>"
+      }
+    },
+    {
+      "id": "NXComponent-org.nuxeo.apidoc.schemaContrib",
+      "label": "org.nuxeo.apidoc.schemaContrib",
+      "type": "COMPONENT",
+      "weight": 2,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXComponent",
+        "componentClass": null,
+        "declaredStartOrder": null,
+        "documentation": null,
+        "documentationHtml": "",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.schemaContrib",
+        "name": "org.nuxeo.apidoc.schemaContrib",
+        "requirements": [
+          "org.nuxeo.ecm.core.CoreExtensions"
+        ],
+        "resolutionOrder": 56,
+        "startOrder": 29,
+        "version": "20.0.0",
+        "xmlFileContent": "<?xml version=\"1.0\"?>\n<component name=\"org.nuxeo.apidoc.schemaContrib\">\n  <require>org.nuxeo.ecm.core.CoreExtensions</require>\n  <extension target=\"org.nuxeo.ecm.core.schema.TypeService\" point=\"schema\">\n\n    <schema name=\"nxbundle\" src=\"schemas/nxbundle.xsd\" prefix=\"nxbundle\" />\n    <schema name=\"nxbundlegroup\" src=\"schemas/nxbundlegroup.xsd\" prefix=\"nxbundlegroup\" />\n    <schema name=\"nxcomponent\" src=\"schemas/nxcomponent.xsd\" prefix=\"nxcomponent\" />\n    <schema name=\"nxcontribution\" src=\"schemas/nxcontribution.xsd\" prefix=\"nxcontribution\" />\n    <schema name=\"nxdistribution\" src=\"schemas/nxdistribution.xsd\" prefix=\"nxdistribution\" />\n    <schema name=\"nxextensionpoint\" src=\"schemas/nxextensionpoint.xsd\" prefix=\"nxextensionpoint\" />\n    <schema name=\"nxservice\" src=\"schemas/nxservice.xsd\" prefix=\"nxservice\" />\n    <schema name=\"nxoperation\" src=\"schemas/nxoperation.xsd\" prefix=\"nxop\" />\n    <schema name=\"nxpackage\" src=\"schemas/nxpackage.xsd\" prefix=\"nxpackage\" />\n    <schema name=\"apidoccommon\" src=\"schemas/apidoccommon.xsd\" prefix=\"adc\" />\n\n  </extension>\n</component>\n",
+        "xmlFileName": "/OSGI-INF/schema-contrib.xml",
+        "xmlPureComponent": true
+      }
+    },
+    {
+      "id": "NXContribution-org.nuxeo.apidoc.schemaContrib--schema",
+      "label": "org.nuxeo.apidoc.schemaContrib--schema",
+      "type": "CONTRIBUTION",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXContribution",
+        "documentation": null,
+        "documentationHtml": "",
+        "extensionPoint": "org.nuxeo.ecm.core.schema.TypeService--schema",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.schemaContrib/Contributions/org.nuxeo.apidoc.schemaContrib--schema",
+        "id": "org.nuxeo.apidoc.schemaContrib--schema",
+        "registrationOrder": 1,
+        "targetComponentName": {
+          "rawName": "service:org.nuxeo.ecm.core.schema.TypeService",
+          "name": "org.nuxeo.ecm.core.schema.TypeService",
+          "type": "service"
+        },
+        "version": "20.0.0",
+        "xml": "<extension point=\"schema\" target=\"org.nuxeo.ecm.core.schema.TypeService\">\n\n    <schema name=\"nxbundle\" prefix=\"nxbundle\" src=\"schemas/nxbundle.xsd\"/>\n    <schema name=\"nxbundlegroup\" prefix=\"nxbundlegroup\" src=\"schemas/nxbundlegroup.xsd\"/>\n    <schema name=\"nxcomponent\" prefix=\"nxcomponent\" src=\"schemas/nxcomponent.xsd\"/>\n    <schema name=\"nxcontribution\" prefix=\"nxcontribution\" src=\"schemas/nxcontribution.xsd\"/>\n    <schema name=\"nxdistribution\" prefix=\"nxdistribution\" src=\"schemas/nxdistribution.xsd\"/>\n    <schema name=\"nxextensionpoint\" prefix=\"nxextensionpoint\" src=\"schemas/nxextensionpoint.xsd\"/>\n    <schema name=\"nxservice\" prefix=\"nxservice\" src=\"schemas/nxservice.xsd\"/>\n    <schema name=\"nxoperation\" prefix=\"nxop\" src=\"schemas/nxoperation.xsd\"/>\n    <schema name=\"nxpackage\" prefix=\"nxpackage\" src=\"schemas/nxpackage.xsd\"/>\n    <schema name=\"apidoccommon\" prefix=\"adc\" src=\"schemas/apidoccommon.xsd\"/>\n\n  </extension>"
+      }
+    },
+    {
+      "id": "NXBundle-org.nuxeo.apidoc.webengine",
+      "label": "org.nuxeo.apidoc.webengine",
+      "type": "BUNDLE",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXBundle",
+        "artifactId": "nuxeo-apidoc-webengine",
+        "artifactVersion": "20.0.0",
+        "bundleGroup": {
+          "@type": "NXBundleGroup",
+          "bundleIds": [
+            "org.nuxeo.apidoc.core",
+            "org.nuxeo.apidoc.repo",
+            "org.nuxeo.apidoc.webengine"
+          ],
+          "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc",
+          "id": "grp:org.nuxeo.apidoc",
+          "name": "org.nuxeo.apidoc",
+          "parentIds": [
+            "grp:org.nuxeo.ecm.platform"
+          ],
+          "readmes": [
+            {
+              "content": "## About Explorer\n\nThese modules provide an API to browse the Nuxeo distribution tree:\n\n    - BundleGroup (maven group or artificial grouping)\n      - Bundle\n        - Component\n          - Service\n          - Extension Points\n          - Contributions\n    - Operations\n    - Packages\n\nThe Nuxeo Distribution can be:\n\n - live: in memory (meaning runtime introspection)\n - persisted: saved in Nuxeo Repository as a tree of Documents\n\nThe following documentation items are also extracted:\n\n - documentation that is built-in Nuxeo Runtime descriptors\n - readme files that may be embedded inside the jar\n\n## What it can be used for\n\n - browse you distribution\n - check that a given contribution is deployed\n - play with Nuxeo Runtime\n\n## Configuration\n\nThe template `explorer-sitemode` enables the nuxeo.conf property `org.nuxeo.apidoc.site.mode` and\ndefines an anonymous user.\nThe property `org.nuxeo.apidoc.site.mode` comes with a more user friendly design and hides the current\n\"live\" distribution from display and API.\n\nThe template `explorer-virtualadmin` disables the usual `Administrator` user creation at database\ninitialization and adds a virtual admin user with name `apidocAdmin`, whose password can be changed using\nnuxeo.conf property `org.nuxeo.apidoc.apidocAdmin.password`.\n\n## Modules\n\nThis plugin is composed of 3 bundles:\n\n - nuxeo-apidoc-core: for the low level API on the live runtime\n - nuxeo-apidoc-repo: for the persistence of exported content on the Nuxeo repository\n - nuxeo-apidoc-webengine: for JAX-RS API and Webview\n",
+              "digest": "98a73189d33adbdad6ba967610342145",
+              "encoding": "UTF-8",
+              "length": 1541,
+              "mimeType": "text/plain",
+              "name": "ReadMe.md"
+            }
+          ],
+          "version": "11.3"
+        },
+        "bundleId": "org.nuxeo.apidoc.webengine",
+        "fileName": "nuxeo-apidoc-webengine-20.0.0.jar",
+        "groupId": "org.nuxeo.ecm.platform",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.webengine",
+        "id": "org.nuxeo.apidoc.webengine",
+        "location": "",
+        "manifest": "Manifest-Version: 1.0\r\nArchiver-Version: Plexus Archiver\r\nCreated-By: Apache Maven\r\nBuilt-By: root\r\nBuild-Jdk: 11.0.8\r\nBundle-ManifestVersion: 1\r\nBundle-Version: 0.0.1\r\nBundle-Name: nuxeo api documentation browser\r\nBundle-SymbolicName: org.nuxeo.apidoc.webengine;singleton:=true\r\nBundle-Vendor: Nuxeo\r\nNuxeo-Require: org.nuxeo.ecm.webengine.core,org.nuxeo.apidoc.core\r\nNuxeo-WebModule: org.nuxeo.apidoc.browse.ApiDocApplication\r\n\r\n",
+        "maxResolutionOrder": null,
+        "minResolutionOrder": null,
+        "packages": [
+          "platform-explorer"
+        ],
+        "parentReadme": {
+          "content": "## About Explorer\n\nThese modules provide an API to browse the Nuxeo distribution tree:\n\n    - BundleGroup (maven group or artificial grouping)\n      - Bundle\n        - Component\n          - Service\n          - Extension Points\n          - Contributions\n    - Operations\n    - Packages\n\nThe Nuxeo Distribution can be:\n\n - live: in memory (meaning runtime introspection)\n - persisted: saved in Nuxeo Repository as a tree of Documents\n\nThe following documentation items are also extracted:\n\n - documentation that is built-in Nuxeo Runtime descriptors\n - readme files that may be embedded inside the jar\n\n## What it can be used for\n\n - browse you distribution\n - check that a given contribution is deployed\n - play with Nuxeo Runtime\n\n## Configuration\n\nThe template `explorer-sitemode` enables the nuxeo.conf property `org.nuxeo.apidoc.site.mode` and\ndefines an anonymous user.\nThe property `org.nuxeo.apidoc.site.mode` comes with a more user friendly design and hides the current\n\"live\" distribution from display and API.\n\nThe template `explorer-virtualadmin` disables the usual `Administrator` user creation at database\ninitialization and adds a virtual admin user with name `apidocAdmin`, whose password can be changed using\nnuxeo.conf property `org.nuxeo.apidoc.apidocAdmin.password`.\n\n## Modules\n\nThis plugin is composed of 3 bundles:\n\n - nuxeo-apidoc-core: for the low level API on the live runtime\n - nuxeo-apidoc-repo: for the persistence of exported content on the Nuxeo repository\n - nuxeo-apidoc-webengine: for JAX-RS API and Webview\n",
+          "digest": "98a73189d33adbdad6ba967610342145",
+          "encoding": "UTF-8",
+          "length": 1541,
+          "mimeType": "text/plain",
+          "name": "ReadMe.md"
+        },
+        "readme": {
+          "content": "\n## About nuxeo-apidoc-webengine\n\nThis bundle provide a WebEngine API on top of the nuxeo-apidoc-core API.\n\nEach object provided by the core layer is wrapped in a WebObject that is then associated with views.\n\nThe same WebEngine API can be used in 2 mode :\n\n - embedded mode: can be embedded as frames, as it was embedded inside the JSF admin center, for instance\n - full model: in /site/distribution/\n",
+          "digest": "d371e977af9ef6599555b72d17acd3e8",
+          "encoding": "UTF-8",
+          "length": 402,
+          "mimeType": "text/plain",
+          "name": "ReadMe.md"
+        },
+        "requirements": [
+          "org.nuxeo.ecm.webengine.core",
+          "org.nuxeo.apidoc.core"
+        ],
+        "version": "20.0.0"
+      }
+    },
+    {
+      "id": "NXBundle-org.nuxeo.ecm.webengine.ui",
+      "label": "org.nuxeo.ecm.webengine.ui",
+      "type": "BUNDLE",
+      "weight": 1,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXBundle",
+        "artifactId": "nuxeo-webengine-ui",
+        "artifactVersion": "11.3.56",
+        "bundleGroup": {
+          "@type": "NXBundleGroup",
+          "bundleIds": [
+            "org.nuxeo.ecm.webengine.base",
+            "org.nuxeo.ecm.webengine.core",
+            "org.nuxeo.ecm.webengine.invite",
+            "org.nuxeo.ecm.webengine.jaxrs",
+            "org.nuxeo.ecm.webengine.ui"
+          ],
+          "hierarchyPath": "/grp:org.nuxeo.ecm.webengine",
+          "id": "grp:org.nuxeo.ecm.webengine",
+          "name": "org.nuxeo.ecm.webengine",
+          "parentIds": [],
+          "readmes": [],
+          "version": "11.3"
+        },
+        "bundleId": "org.nuxeo.ecm.webengine.ui",
+        "fileName": "nuxeo-webengine-ui-11.3.56.jar",
+        "groupId": "org.nuxeo.ecm.webengine",
+        "hierarchyPath": "/grp:org.nuxeo.ecm.webengine/org.nuxeo.ecm.webengine.ui",
+        "id": "org.nuxeo.ecm.webengine.ui",
+        "location": "",
+        "manifest": "Manifest-Version: 1.0\r\nArchiver-Version: Plexus Archiver\r\nCreated-By: 1.6.0_20 (Sun Microsystems Inc.)\r\nBuilt-By: root\r\nBuild-Jdk: 11.0.8\r\nBundle-ManifestVersion: 2\r\nBundle-Version: 5.3.2.SNAPSHOT\r\nExport-Package: org.nuxeo.ecm.webengine.ui;version=\"5.3.2.SNAPSHOT\",or\r\n g.nuxeo.ecm.webengine.ui.json;version=\"5.3.2.SNAPSHOT\",org.nuxeo.ecm.\r\n webengine.ui.tree;version=\"5.3.2.SNAPSHOT\",org.nuxeo.ecm.webengine.ui\r\n .tree.directory;version=\"5.3.2.SNAPSHOT\",org.nuxeo.ecm.webengine.ui.t\r\n ree.document;version=\"5.3.2.SNAPSHOT\"\r\nPrivate-Package: .\r\nBundle-ActivationPolicy: lazy\r\nBundle-ClassPath: .\r\nTool: Bnd-0.0.394\r\nBundle-Name: Nuxeo Webengine UI\r\nBundle-RequiredExecutionEnvironment: JavaSE-1.6\r\nBnd-LastModified: 1278083029945\r\nBundle-SymbolicName: org.nuxeo.ecm.webengine.ui;singleton:=true\r\nImport-Package: javax.annotation;version=\"1.0\",javax.ws.rs,org.apache.\r\n commons.logging,org.nuxeo.common.utils,org.nuxeo.ecm.core;api=split,o\r\n rg.nuxeo.ecm.core.api;api=split,org.nuxeo.ecm.core.api.repository,org\r\n .nuxeo.ecm.directory;api=split,org.nuxeo.ecm.directory.api,org.nuxeo.\r\n ecm.webengine,org.nuxeo.ecm.webengine.forms,org.nuxeo.ecm.webengine.m\r\n odel,org.nuxeo.runtime.api\r\nNuxeo-WebModule: org.nuxeo.ecm.webengine.app.WebEngineModule\r\n\r\n",
+        "maxResolutionOrder": null,
+        "minResolutionOrder": null,
+        "packages": [
+          "platform-explorer"
+        ],
+        "parentReadme": null,
+        "readme": null,
+        "requirements": [],
+        "version": "11.3.56"
+      }
+    },
+    {
+      "id": "NXBundle-org.nuxeo.runtime.root",
+      "label": "org.nuxeo.runtime.root",
+      "type": "BUNDLE",
+      "weight": 1,
+      "attributes": {
+        "category": "RUNTIME"
+      },
+      "object": null
+    },
+    {
+      "id": "NXExtensionPoint-org.nuxeo.ecm.core.schema.TypeService--doctype",
+      "label": "org.nuxeo.ecm.core.schema.TypeService--doctype",
+      "type": "EXTENSION_POINT",
+      "weight": 2,
+      "attributes": {
+        "category": "CORE"
+      },
+      "object": null
+    },
+    {
+      "id": "NXExtensionPoint-org.nuxeo.ecm.core.lifecycle.LifeCycleService--types",
+      "label": "org.nuxeo.ecm.core.lifecycle.LifeCycleService--types",
+      "type": "EXTENSION_POINT",
+      "weight": 2,
+      "attributes": {
+        "category": "CORE"
+      },
+      "object": null
+    },
+    {
+      "id": "NXExtensionPoint-org.nuxeo.runtime.ConfigurationService--configuration",
+      "label": "org.nuxeo.runtime.ConfigurationService--configuration",
+      "type": "EXTENSION_POINT",
+      "weight": 5,
+      "attributes": {
+        "category": "RUNTIME"
+      },
+      "object": null
+    },
+    {
+      "id": "NXExtensionPoint-org.nuxeo.ecm.core.api.DocumentAdapterService--adapters",
+      "label": "org.nuxeo.ecm.core.api.DocumentAdapterService--adapters",
+      "type": "EXTENSION_POINT",
+      "weight": 2,
+      "attributes": {
+        "category": "CORE"
+      },
+      "object": null
+    },
+    {
+      "id": "NXExtensionPoint-org.nuxeo.ecm.core.event.EventServiceComponent--listener",
+      "label": "org.nuxeo.ecm.core.event.EventServiceComponent--listener",
+      "type": "EXTENSION_POINT",
+      "weight": 2,
+      "attributes": {
+        "category": "CORE"
+      },
+      "object": null
+    },
+    {
+      "id": "NXExtensionPoint-org.nuxeo.ecm.core.schema.TypeService--schema",
+      "label": "org.nuxeo.ecm.core.schema.TypeService--schema",
+      "type": "EXTENSION_POINT",
+      "weight": 2,
+      "attributes": {
+        "category": "CORE"
+      },
+      "object": null
+    },
+    {
+      "id": "NXComponent-org.nuxeo.ecm.core.CoreExtensions",
+      "label": "org.nuxeo.ecm.core.CoreExtensions",
+      "type": "COMPONENT",
+      "weight": 1,
+      "attributes": {
+        "category": "CORE"
+      },
+      "object": null
+    },
+    {
+      "id": "NXBundle-org.nuxeo.ecm.webengine.core",
+      "label": "org.nuxeo.ecm.webengine.core",
+      "type": "BUNDLE",
+      "weight": 1,
+      "attributes": {
+        "category": "CORE"
+      },
+      "object": null
+    },
+    {
+      "id": "NXPackage-platform-explorer-20.0.0",
+      "label": "platform-explorer-20.0.0",
+      "type": "PACKAGE",
+      "weight": 5,
+      "attributes": {
+        "category": "PLATFORM"
+      },
+      "object": {
+        "@type": "NXPackage",
+        "bundles": [
+          "org.nuxeo.apidoc.core",
+          "org.nuxeo.apidoc.repo",
+          "org.nuxeo.apidoc.webengine",
+          "org.nuxeo.ecm.webengine.ui"
+        ],
+        "conflicts": [],
+        "dependencies": [],
+        "hierarchyPath": "/platform-explorer-20.0.0",
+        "id": "platform-explorer-20.0.0",
+        "name": "platform-explorer",
+        "optionalDependencies": [],
+        "packageType": "addon",
+        "title": "Platform Explorer",
+        "version": "20.0.0"
+      }
+    }
+  ],
+  "title": "Json Graph",
+  "type": "BASIC"
+}

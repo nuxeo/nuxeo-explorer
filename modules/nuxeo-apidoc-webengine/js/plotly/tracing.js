@@ -1,7 +1,7 @@
 import { edgeColor, edgeLabel, edgeLineMarkerSize, edgeLineMarkerSymbol, MARKER_OPACITY, MARKER_TYPES, nodeColor, nodeLabel, nodeSymbol, nodeWeight, TRACE_TYPES } from './constants.js';
 
 const HOVERTEMPLATE = "%{customdata.annotation}<extra></extra>";
-const nodeMarkerAnnotation = (node) => `<b>${node.label}</b><br />Type: ${node.type}<br />Category: ${node.category}<br />Weight: ${node.weight}`;
+const nodeMarkerAnnotation = (node) => `<b>${node.label}</b><br />Type: ${node.type}<br />Category: ${node.attributes.category}<br />Weight: ${node.weight}`;
 const edgeLineMarkerAnnotation = (edge, source, target) => `${source.label}<br /><b>${edge.value}</b><br />${target.label}`;
 
 function getNodeMarkerCustomData(nxgraph, node) {
@@ -37,7 +37,7 @@ function getNodeTrace(nxgraph, type, config) {
     map[node.id] = [index];
     return map;
   }, {});
-  var colors = nodes.map(node => nodeColor(node.category));
+  var colors = nodes.map(node => nodeColor(node.attributes.category));
   var trace = {
     name: `<b>${type ? nodeLabel(type) : "Nodes"}</b>`,
     type: 'scatter',
@@ -120,8 +120,6 @@ function getEdgeTrace(nxgraph, type, config) {
     Object.assign(markers, {
       type: 'scatter3d',
       z: computeEdgeLineMarkers(edges, nxgraph.nodesById, 'z', nbiterations),
-
-
     });
   }
   Object.assign(markers, config);

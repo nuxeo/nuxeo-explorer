@@ -78,7 +78,7 @@ function getUpdateMenus(traces) {
       label: menuLabel('NODE_SIZE_MENU'),
       method: 'restyle',
       // toggle args
-      args: ['marker.size', '6'],
+      args: ['marker.size', '2'],
       // will put selected markers back to original size
       args2: ['marker.size', msizes],
     }],
