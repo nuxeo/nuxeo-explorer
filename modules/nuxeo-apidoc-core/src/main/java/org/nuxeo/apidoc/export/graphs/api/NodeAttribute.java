@@ -25,7 +25,7 @@ import java.util.Locale;
  */
 public enum NodeAttribute {
 
-    CATEGORY;
+    CATEGORY, INDEX;
 
     public String key() {
         return name().toLowerCase(Locale.ENGLISH);

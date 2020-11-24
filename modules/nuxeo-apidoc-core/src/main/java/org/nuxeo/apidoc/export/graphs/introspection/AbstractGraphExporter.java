@@ -23,8 +23,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.OptionalLong;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
@@ -185,7 +188,15 @@ public abstract class AbstractGraphExporter extends AbstractExporter {
             if (filter != null && !filter.accept(pkg)) {
                 continue;
             }
-            Node<?> pkgNode = createPackageNode(pkg, NodeCategory.PLATFORM);
+            OptionalLong index = pkg.getBundleInfo()
+                                    .values()
+                                    .stream()
+                                    .filter(Objects::nonNull)
+                                    .map(BundleInfo::getMinResolutionOrder)
+                                    .filter(Objects::nonNull)
+                                    .mapToLong(Long::longValue)
+                                    .min();
+            Node<?> pkgNode = createPackageNode(pkg, NodeCategory.PLATFORM, index.orElseGet(null));
             graph.addNode(pkgNode);
             for (String bundleId : pkg.getBundles()) {
                 Node<?> refNode = createReferenceNode(NodeType.BUNDLE.prefix(bundleId), NodeType.BUNDLE.name());
@@ -228,7 +239,7 @@ public abstract class AbstractGraphExporter extends AbstractExporter {
         NodeType type = NodeType.guess(id);
         String unprefixedId = type.unprefix(id);
         cat = NodeCategory.guess(unprefixedId);
-        Node<?> node = createNode(id, unprefixedId, type.name(), getDefaultNodeWeight(), cat.name(), null);
+        Node<?> node = createNode(id, unprefixedId, type.name(), getDefaultNodeWeight(), cat.name(), null, null);
         graph.addNode(node);
         return node;
     }
@@ -245,57 +256,67 @@ public abstract class AbstractGraphExporter extends AbstractExporter {
         return 1;
     }
 
-    protected Node<?> createNode(String id, String label, String type, int weight, String category,
+    protected Node<?> createNode(String id, String label, String type, int weight, String category, Long index,
             NuxeoArtifact object) {
         Node<?> node = new NodeImpl<>(id, label, type, weight, object);
-        node.setAttribute(NodeAttribute.CATEGORY.key(), category);
+        if (StringUtils.isNotBlank(category)) {
+            node.setAttribute(NodeAttribute.CATEGORY.key(), category);
+        }
+        if (index != null) {
+            node.setAttribute(NodeAttribute.INDEX.key(), String.valueOf(index));
+        }
         return node;
     }
 
     protected Node<?> createReferenceNode(String id, String type) {
         // No category, no extra info
-        return createNode(id, id, type, getDefaultNodeWeight(), null, null);
+        return createNode(id, id, type, getDefaultNodeWeight(), null, null, null);
     }
 
     protected Node<?> createBundleRoot() {
         return createNode(getBundleRootId(), BundleInfo.RUNTIME_ROOT_PSEUDO_BUNDLE, NodeType.BUNDLE.name(),
-                getDefaultNodeWeight(), NodeCategory.RUNTIME.name(), null);
+                getDefaultNodeWeight(), NodeCategory.RUNTIME.name(), null, null);
     }
 
     protected Node<?> createBundleNode(BundleInfo bundle, NodeCategory cat) {
         String bid = bundle.getId();
         String pbid = NodeType.BUNDLE.prefix(bid);
-        return createNode(pbid, bid, NodeType.BUNDLE.name(), getDefaultNodeWeight(), cat.name(), bundle);
+        return createNode(pbid, bid, NodeType.BUNDLE.name(), getDefaultNodeWeight(), cat.name(),
+                bundle.getMinResolutionOrder(), bundle);
     }
 
     protected Node<?> createComponentNode(ComponentInfo component, NodeCategory cat) {
         String compid = component.getId();
         String pcompid = NodeType.COMPONENT.prefix(compid);
-        return createNode(pcompid, compid, NodeType.COMPONENT.name(), getDefaultNodeWeight(), cat.name(), component);
+        return createNode(pcompid, compid, NodeType.COMPONENT.name(), getDefaultNodeWeight(), cat.name(),
+                component.getResolutionOrder(), component);
     }
 
     protected Node<?> createServiceNode(ServiceInfo service, NodeCategory cat) {
         String sid = service.getId();
         String psid = NodeType.SERVICE.prefix(sid);
-        return createNode(psid, sid, NodeType.SERVICE.name(), getDefaultNodeWeight(), cat.name(), service);
+        return createNode(psid, sid, NodeType.SERVICE.name(), getDefaultNodeWeight(), cat.name(),
+                service.getComponent().getResolutionOrder(), service);
     }
 
     protected Node<?> createXPNode(ExtensionPointInfo xp, NodeCategory cat) {
         String xpid = xp.getId();
         String pxpid = NodeType.EXTENSION_POINT.prefix(xpid);
-        return createNode(pxpid, xpid, NodeType.EXTENSION_POINT.name(), getDefaultNodeWeight(), cat.name(), xp);
+        return createNode(pxpid, xpid, NodeType.EXTENSION_POINT.name(), getDefaultNodeWeight(), cat.name(),
+                xp.getComponent().getResolutionOrder(), xp);
     }
 
     protected Node<?> createContributionNode(ExtensionInfo contribution, NodeCategory cat) {
         String cid = contribution.getId();
         String pcid = NodeType.CONTRIBUTION.prefix(cid);
-        return createNode(pcid, cid, NodeType.CONTRIBUTION.name(), getDefaultNodeWeight(), cat.name(), contribution);
+        return createNode(pcid, cid, NodeType.CONTRIBUTION.name(), getDefaultNodeWeight(), cat.name(),
+                contribution.getComponent().getResolutionOrder(), contribution);
     }
 
-    protected Node<?> createPackageNode(PackageInfo pkg, NodeCategory cat) {
+    protected Node<?> createPackageNode(PackageInfo pkg, NodeCategory cat, Long index) {
         String pid = pkg.getId();
         String ppid = NodeType.PACKAGE.prefix(pid);
-        return createNode(ppid, pid, NodeType.PACKAGE.name(), getDefaultNodeWeight(), cat.name(), pkg);
+        return createNode(ppid, pid, NodeType.PACKAGE.name(), getDefaultNodeWeight(), cat.name(), index, pkg);
     }
 
     protected Edge createEdge(Node<?> source, Node<?> target, String value) {

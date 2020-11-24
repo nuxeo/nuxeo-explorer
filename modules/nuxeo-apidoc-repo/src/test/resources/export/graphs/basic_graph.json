@@ -324,7 +324,8 @@
       "type": "BUNDLE",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "66"
       },
       "object": {
         "@type": "NXBundle",
@@ -385,7 +386,8 @@
       "type": "COMPONENT",
       "weight": 2,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "66"
       },
       "object": {
         "@type": "NXComponent",
@@ -412,7 +414,8 @@
       "type": "CONTRIBUTION",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "66"
       },
       "object": {
         "@type": "NXContribution",
@@ -437,7 +440,8 @@
       "type": "COMPONENT",
       "weight": 2,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "67"
       },
       "object": {
         "@type": "NXComponent",
@@ -462,7 +466,8 @@
       "type": "CONTRIBUTION",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "67"
       },
       "object": {
         "@type": "NXContribution",
@@ -487,7 +492,8 @@
       "type": "COMPONENT",
       "weight": 2,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "68"
       },
       "object": {
         "@type": "NXComponent",
@@ -512,7 +518,8 @@
       "type": "CONTRIBUTION",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "68"
       },
       "object": {
         "@type": "NXContribution",
@@ -537,7 +544,8 @@
       "type": "COMPONENT",
       "weight": 11,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "69"
       },
       "object": {
         "@type": "NXComponent",
@@ -562,7 +570,8 @@
       "type": "SERVICE",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "69"
       },
       "object": {
         "@type": "NXService",
@@ -579,7 +588,8 @@
       "type": "SERVICE",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "69"
       },
       "object": {
         "@type": "NXService",
@@ -596,7 +606,8 @@
       "type": "SERVICE",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "69"
       },
       "object": {
         "@type": "NXService",
@@ -613,7 +624,8 @@
       "type": "EXTENSION_POINT",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "69"
       },
       "object": {
         "@type": "NXExtensionPoint",
@@ -636,7 +648,8 @@
       "type": "EXTENSION_POINT",
       "weight": 2,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "69"
       },
       "object": {
         "@type": "NXExtensionPoint",
@@ -659,7 +672,8 @@
       "type": "CONTRIBUTION",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "69"
       },
       "object": {
         "@type": "NXContribution",
@@ -684,7 +698,8 @@
       "type": "CONTRIBUTION",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "69"
       },
       "object": {
         "@type": "NXContribution",
@@ -709,7 +724,8 @@
       "type": "CONTRIBUTION",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "69"
       },
       "object": {
         "@type": "NXContribution",
@@ -734,7 +750,8 @@
       "type": "CONTRIBUTION",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "69"
       },
       "object": {
         "@type": "NXContribution",
@@ -759,7 +776,8 @@
       "type": "CONTRIBUTION",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "69"
       },
       "object": {
         "@type": "NXContribution",
@@ -784,7 +802,8 @@
       "type": "COMPONENT",
       "weight": 2,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "70"
       },
       "object": {
         "@type": "NXComponent",
@@ -809,7 +828,8 @@
       "type": "CONTRIBUTION",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "70"
       },
       "object": {
         "@type": "NXContribution",
@@ -834,7 +854,8 @@
       "type": "COMPONENT",
       "weight": 2,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "71"
       },
       "object": {
         "@type": "NXComponent",
@@ -859,7 +880,8 @@
       "type": "CONTRIBUTION",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "71"
       },
       "object": {
         "@type": "NXContribution",
@@ -884,7 +906,8 @@
       "type": "COMPONENT",
       "weight": 3,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "72"
       },
       "object": {
         "@type": "NXComponent",
@@ -909,7 +932,8 @@
       "type": "CONTRIBUTION",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "72"
       },
       "object": {
         "@type": "NXContribution",
@@ -934,7 +958,8 @@
       "type": "CONTRIBUTION",
       "weight": 1,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "72"
       },
       "object": {
         "@type": "NXContribution",
@@ -1049,7 +1074,8 @@
       "type": "PACKAGE",
       "weight": 3,
       "attributes": {
-        "category": "PLATFORM"
+        "category": "PLATFORM",
+        "index": "66"
       },
       "object": {
         "@type": "NXPackage",
