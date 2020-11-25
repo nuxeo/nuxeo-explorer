@@ -330,15 +330,43 @@ public class Distribution extends ModuleRoot {
 
     @POST
     @Path(SAVE_ACTION)
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object doSave() {
-        return performSave(null);
+        return performSave(null, true);
+    }
+
+    /**
+     * Performs save without redirecting to success/error views.
+     *
+     * @since 20.3.0
+     */
+    @POST
+    @Path(SAVE_ACTION)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Object doSaveRequest() {
+        return performSave(null, false);
     }
 
     @POST
     @Path(SAVE_EXTENDED_ACTION)
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object doSaveExtended() {
+        return performSave(getSaveFilter(), true);
+    }
+
+    /**
+     * Performs extended save without redirecting to success/error views.
+     *
+     * @since 20.3.0
+     */
+    @POST
+    @Path(SAVE_EXTENDED_ACTION)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Object doSaveExtendedRequest() {
+        return performSave(getSaveFilter(), false);
+    }
+
+    protected SnapshotFilter getSaveFilter() {
         FormData formData = getContext().getForm();
 
         String bundleList = formData.getString("bundles");
@@ -347,7 +375,7 @@ public class Distribution extends ModuleRoot {
 
         if (StringUtils.isBlank(bundleList) && StringUtils.isBlank(javaPkgList) && StringUtils.isBlank(nxPkgList)) {
             // no actual filtering
-            return performSave(null);
+            return null;
         }
 
         String distribLabel = formData.getString("name");
@@ -371,7 +399,7 @@ public class Distribution extends ModuleRoot {
                   .forEach(pkg -> filter.addNuxeoPackage(pkg));
         }
 
-        return performSave(filter);
+        return filter;
     }
 
     protected Map<String, Serializable> readUploadFormData(FormData formData) {
@@ -391,7 +419,7 @@ public class Distribution extends ModuleRoot {
         return properties;
     }
 
-    protected Object performSave(SnapshotFilter filter) {
+    protected Object performSave(SnapshotFilter filter, boolean redirect) {
         if (!canSave()) {
             return show404();
         }
@@ -399,18 +427,38 @@ public class Distribution extends ModuleRoot {
         FormData formData = getContext().getForm();
         String source = formData.getString("source");
         Template view;
+        boolean hasError = false;
+        String errorMessage = null;
         try {
             getSnapshotManager().persistRuntimeSnapshot(getContext().getCoreSession(), formData.getString("name"),
                     readUploadFormData(formData), SUB_DISTRIBUTION_PATH_RESERVED, filter);
-            view = getView("saved").arg("source", source);
+            hasError = false;
         } catch (NuxeoException e) {
             log.error("Error during storage", e);
             TransactionHelper.setTransactionRollbackOnly();
-            view = getView("savedKO").arg("message", e.getMessage()).arg("source", source);
+            hasError = false;
+            errorMessage = e.getMessage();
         }
 
         commitOrRollbackAndRestartTransaction();
-        return view;
+        if (redirect) {
+            if (hasError) {
+                view = getView("savedKO").arg("message", errorMessage).arg("source", source);
+            } else {
+                view = getView("saved").arg("source", source);
+            }
+            return view;
+        } else {
+            if (hasError) {
+                return Response.status(Status.INTERNAL_SERVER_ERROR)
+                               .type(MediaType.TEXT_PLAIN)
+                               .entity("Save failed: " + errorMessage)
+                               .build();
+            } else {
+                return Response.status(Status.OK).type(MediaType.TEXT_PLAIN).entity("Save done.").build();
+            }
+        }
+
     }
 
     protected File getExportTmpFile() {
