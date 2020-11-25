@@ -28,7 +28,6 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -36,13 +35,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.naming.NamingException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -192,6 +184,11 @@ public class Distribution extends ModuleRoot {
         return Response.status(404).type(MediaType.TEXT_HTML_TYPE).entity(Resource404.getPageContent()).build();
     }
 
+    protected void commitOrRollbackAndRestartTransaction() {
+        TransactionHelper.commitOrRollbackTransaction();
+        TransactionHelper.startTransaction();
+    }
+
     protected static SnapshotManager getSnapshotManager() {
         return Framework.getService(SnapshotManager.class);
     }
@@ -334,16 +331,14 @@ public class Distribution extends ModuleRoot {
     @POST
     @Path(SAVE_ACTION)
     @Produces("text/html")
-    public Object doSave() throws NamingException, NotSupportedException, SystemException, RollbackException,
-            HeuristicMixedException, HeuristicRollbackException, ParseException {
+    public Object doSave() {
         return performSave(null);
     }
 
     @POST
     @Path(SAVE_EXTENDED_ACTION)
     @Produces("text/html")
-    public Object doSaveExtended() throws NamingException, NotSupportedException, SystemException, SecurityException,
-            RollbackException, HeuristicMixedException, HeuristicRollbackException {
+    public Object doSaveExtended() {
         FormData formData = getContext().getForm();
 
         String bundleList = formData.getString("bundles");
@@ -396,36 +391,26 @@ public class Distribution extends ModuleRoot {
         return properties;
     }
 
-    protected Object performSave(SnapshotFilter filter) throws NamingException, NotSupportedException, SystemException,
-            SecurityException, RollbackException, HeuristicMixedException, HeuristicRollbackException {
+    protected Object performSave(SnapshotFilter filter) {
         if (!canSave()) {
             return show404();
         }
 
-        boolean startedTx = false;
-        UserTransaction tx = TransactionHelper.lookupUserTransaction();
-        if (tx != null && !TransactionHelper.isTransactionActiveOrMarkedRollback()) {
-            tx.begin();
-            startedTx = true;
-        }
-
         FormData formData = getContext().getForm();
         String source = formData.getString("source");
+        Template view;
         try {
             getSnapshotManager().persistRuntimeSnapshot(getContext().getCoreSession(), formData.getString("name"),
                     readUploadFormData(formData), SUB_DISTRIBUTION_PATH_RESERVED, filter);
+            view = getView("saved").arg("source", source);
         } catch (NuxeoException e) {
             log.error("Error during storage", e);
-            if (tx != null) {
-                tx.rollback();
-            }
-            return getView("savedKO").arg("message", e.getMessage()).arg("source", source);
+            TransactionHelper.setTransactionRollbackOnly();
+            view = getView("savedKO").arg("message", e.getMessage()).arg("source", source);
         }
 
-        if (tx != null && startedTx) {
-            tx.commit();
-        }
-        return getView("saved").arg("source", source);
+        commitOrRollbackAndRestartTransaction();
+        return view;
     }
 
     protected File getExportTmpFile() {
@@ -493,12 +478,14 @@ public class Distribution extends ModuleRoot {
                     SUB_DISTRIBUTION_PATH_RESERVED);
         } catch (IOException | IllegalArgumentException | NuxeoException e) {
             log.error(e, e);
+            TransactionHelper.setTransactionRollbackOnly();
             return Response.status(Status.INTERNAL_SERVER_ERROR)
                            .type(MediaType.TEXT_PLAIN)
                            .entity("Upload not done: " + e.getMessage())
                            .build();
         }
 
+        commitOrRollbackAndRestartTransaction();
         return Response.status(Status.OK).type(MediaType.TEXT_PLAIN).entity("Upload done.").build();
     }
 
@@ -525,8 +512,11 @@ public class Distribution extends ModuleRoot {
                 view = getView("uploadEdit").arg("tmpSnap", snap).arg("snapObject", snapObject);
             }
         } catch (IOException | IllegalArgumentException | NuxeoException e) {
+            TransactionHelper.setTransactionRollbackOnly();
             view = getView("importKO").arg("message", e.getMessage());
         }
+
+        commitOrRollbackAndRestartTransaction();
 
         view.arg("source", formData.getString("source"));
         return view;
@@ -551,7 +541,10 @@ public class Distribution extends ModuleRoot {
             view = getView("importDone");
         } catch (IllegalArgumentException | NuxeoException e) {
             view = getView("importKO").arg("message", e.getMessage());
+            TransactionHelper.setTransactionRollbackOnly();
         }
+
+        commitOrRollbackAndRestartTransaction();
 
         view.arg("source", formData.getString("source"));
         return view;
