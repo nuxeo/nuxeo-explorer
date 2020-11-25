@@ -27,6 +27,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.apidoc.api.ComponentInfo;
@@ -40,7 +41,7 @@ import org.nuxeo.ecm.webengine.model.WebObject;
 @WebObject(type = "component")
 public class ComponentWO extends NuxeoArtifactWebObject<ComponentInfo> {
 
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Override
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();

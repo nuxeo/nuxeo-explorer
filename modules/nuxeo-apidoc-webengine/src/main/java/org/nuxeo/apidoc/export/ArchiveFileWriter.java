@@ -34,7 +34,7 @@ import org.apache.commons.io.IOUtils;
 import org.nuxeo.ecm.core.api.NuxeoException;
 
 @Provider
-@Produces({ "*/*", "text/plain" })
+@Produces({ MediaType.WILDCARD, MediaType.TEXT_PLAIN })
 public class ArchiveFileWriter implements MessageBodyWriter<ArchiveFile> {
 
     @Override

@@ -24,6 +24,7 @@ import java.net.URLEncoder;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
@@ -86,12 +87,12 @@ public abstract class NuxeoArtifactWebObject<T extends NuxeoArtifact> extends De
      * @since 11.1
      */
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object doGet() {
         return doViewDefault();
     }
 
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object doViewDefault() {
         NuxeoArtifact nxItem = getNxArtifact();
         if (nxItem == null) {

@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.apidoc.api.ExtensionInfo;
@@ -45,7 +46,7 @@ public class ExtensionPointWO extends NuxeoArtifactWebObject<ExtensionPointInfo>
         return nxArtifact;
     }
 
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Override
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();
