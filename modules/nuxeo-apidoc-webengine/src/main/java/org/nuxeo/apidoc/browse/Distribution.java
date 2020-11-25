@@ -51,6 +51,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -484,7 +485,6 @@ public class Distribution extends ModuleRoot {
         }
         FormData formData = getContext().getForm();
         Blob blob = formData.getFirstBlob();
-        String source = formData.getString("source");
         Map<String, Serializable> updateProperties = RepositoryDistributionSnapshot.getUpdateProperties(
                 formData.getFormFields());
 
@@ -493,10 +493,13 @@ public class Distribution extends ModuleRoot {
                     SUB_DISTRIBUTION_PATH_RESERVED);
         } catch (IOException | IllegalArgumentException | NuxeoException e) {
             log.error(e, e);
-            return getView("importKO").arg("message", e.getMessage()).arg("source", source);
+            return Response.status(Status.INTERNAL_SERVER_ERROR)
+                           .type(MediaType.TEXT_PLAIN)
+                           .entity("Upload not done: " + e.getMessage())
+                           .build();
         }
 
-        return Response.status(200).type(MediaType.TEXT_PLAIN).entity("Upload done.").build();
+        return Response.status(Status.OK).type(MediaType.TEXT_PLAIN).entity("Upload done.").build();
     }
 
     @POST
