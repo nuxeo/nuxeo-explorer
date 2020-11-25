@@ -19,7 +19,9 @@
   },
   "homepage": "https://github.com/nuxeo/nuxeo-explorer-demo#readme",
   "dependencies": {
-    "plotly.js-dist": "^1.57.1"
+    "plotly.js-dist": "^1.57.1",
+    "cytoscape": "^3.17.0",
+    "circos": "^2.1.0"
   },
   "devDependencies": {
     "rollup": "^2.33.3",
