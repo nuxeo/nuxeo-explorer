@@ -239,7 +239,7 @@ public class Distribution extends ModuleRoot {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object doGet() {
         return getView("index");
     }
@@ -514,7 +514,7 @@ public class Distribution extends ModuleRoot {
 
     @POST
     @Path(UPLOAD_ACTION)
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object uploadDistrib() {
         if (!canImportOrExportDistributions()) {
             return show404();
@@ -542,7 +542,7 @@ public class Distribution extends ModuleRoot {
 
     @POST
     @Path(UPLOAD_TMP_ACTION)
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object uploadDistribTmp() {
         if (!canImportOrExportDistributions()) {
             return show404();
@@ -575,7 +575,7 @@ public class Distribution extends ModuleRoot {
 
     @POST
     @Path(UPLOAD_TMP_VALID_ACTION)
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object uploadDistribTmpValid() {
         if (!canImportOrExportDistributions()) {
             return show404();
@@ -627,7 +627,7 @@ public class Distribution extends ModuleRoot {
      */
     @GET
     @Path(UPDATE_ACTION + "/{distribId}")
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object updateDistribForm(@PathParam("distribId") String distribId,
             @QueryParam("distribDocId") String distribDocId) {
         return updateDistribForm(distribId, distribDocId, null, null);
@@ -659,7 +659,7 @@ public class Distribution extends ModuleRoot {
      */
     @POST
     @Path(DO_UPDATE_ACTION)
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object updateDistrib() {
         if (!showManageDistributions()) {
             return show404();
@@ -699,7 +699,7 @@ public class Distribution extends ModuleRoot {
 
     @GET
     @Path(REINDEX_ACTION)
-    @Produces("text/plain")
+    @Produces(MediaType.TEXT_PLAIN)
     public Object reindex() {
         NuxeoPrincipal nxPrincipal = getContext().getPrincipal();
         if (!nxPrincipal.isAdministrator()) {
@@ -794,7 +794,7 @@ public class Distribution extends ModuleRoot {
      */
     @GET
     @Path(DELETE_ACTION + "/{distribId}")
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object deleteDistrib(@PathParam("distribId") String distribId,
             @QueryParam("distribDocId") String distribDocId) throws IOException {
         if (!showManageDistributions()) {

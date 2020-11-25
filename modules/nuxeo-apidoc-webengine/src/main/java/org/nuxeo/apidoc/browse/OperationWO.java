@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.documentation.JavaDocHelper;
@@ -80,7 +81,7 @@ public class OperationWO extends NuxeoArtifactWebObject<OperationInfo> {
         return "";
     }
 
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Override
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();

@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
@@ -74,7 +75,7 @@ public class PackageWO extends NuxeoArtifactWebObject<PackageInfo> {
         return res;
     }
 
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Override
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();

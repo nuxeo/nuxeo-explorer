@@ -35,6 +35,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -109,7 +110,7 @@ public class ApiBrowser extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object doGet() {
         String viewId = "index";
         DistributionSnapshot snap = getDistribution();
@@ -142,7 +143,7 @@ public class ApiBrowser extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path(ApiBrowserConstants.LIST_BUNDLEGROUPS)
     public Object getMavenGroups() {
         BundleGroupTreeHelper bgth = new BundleGroupTreeHelper(
@@ -154,7 +155,7 @@ public class ApiBrowser extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path(ApiBrowserConstants.LIST_BUNDLES)
     public Object getBundles() {
         List<String> bundleIds = getDistribution().getBundleIds();
@@ -168,7 +169,7 @@ public class ApiBrowser extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path(ApiBrowserConstants.LIST_COMPONENTS)
     public Object getComponents() {
         DistributionSnapshot snapshot = getDistribution();
@@ -192,7 +193,7 @@ public class ApiBrowser extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path(ApiBrowserConstants.LIST_SERVICES)
     public Object getServices() {
         List<String> serviceIds = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession())
@@ -211,7 +212,7 @@ public class ApiBrowser extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path(ApiBrowserConstants.LIST_CONTRIBUTIONS)
     public Object getContributions() {
         DistributionSnapshot snapshot = getDistribution();
@@ -222,7 +223,7 @@ public class ApiBrowser extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path(ApiBrowserConstants.LIST_EXTENSIONPOINTS)
     public Object getExtensionPoints() {
         List<String> epIds = getDistribution().getExtensionPointIds();
@@ -238,7 +239,7 @@ public class ApiBrowser extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path("filterContributions")
     public Object filterContributions(@QueryParam("fulltext") String fulltext) {
         if (StringUtils.isBlank(fulltext)) {
@@ -357,7 +358,7 @@ public class ApiBrowser extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path(ApiBrowserConstants.LIST_OPERATIONS)
     public Object listOperations() {
         List<OperationInfo> operations = getDistribution().getOperations();
@@ -373,7 +374,7 @@ public class ApiBrowser extends DefaultObject {
 
     /** @since 11.1 */
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path(ApiBrowserConstants.LIST_PACKAGES)
     public Object listPackages() {
         List<PackageInfo> packages = getDistribution().getPackages();

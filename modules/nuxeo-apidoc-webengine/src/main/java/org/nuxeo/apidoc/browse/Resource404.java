@@ -41,7 +41,7 @@ public class Resource404 extends DefaultObject {
     public static final String TYPE = "error";
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object doGet() {
         return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_HTML_TYPE).entity(Resource404.getPageContent()).build();
     }

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.nuxeo.apidoc.api.BundleGroup;
 import org.nuxeo.apidoc.introspection.EmbeddedDocExtractor;
@@ -43,7 +44,7 @@ public class BundleGroupWO extends NuxeoArtifactWebObject<BundleGroup> {
         return nxArtifact;
     }
 
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Override
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();
