@@ -25,6 +25,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.nuxeo.ecm.webengine.model.WebObject;
 import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
@@ -42,7 +43,7 @@ public class Resource404 extends DefaultObject {
     @GET
     @Produces("text/html")
     public Object doGet() {
-        return Response.status(404).type(MediaType.TEXT_HTML_TYPE).entity(Resource404.getPageContent()).build();
+        return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_HTML_TYPE).entity(Resource404.getPageContent()).build();
     }
 
     public static String getPageContent() {

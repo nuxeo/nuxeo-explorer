@@ -177,11 +177,14 @@ public class Distribution extends ModuleRoot {
         pw.println("</body>");
         pw.println("</html>");
         pw.close();
-        return Response.status(404).type(MediaType.TEXT_HTML_TYPE).entity(sw.toString()).build();
+        return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_HTML_TYPE).entity(sw.toString()).build();
     }
 
     protected Object show404() {
-        return Response.status(404).type(MediaType.TEXT_HTML_TYPE).entity(Resource404.getPageContent()).build();
+        return Response.status(Status.NOT_FOUND)
+                       .type(MediaType.TEXT_HTML_TYPE)
+                       .entity(Resource404.getPageContent())
+                       .build();
     }
 
     protected void commitOrRollbackAndRestartTransaction() {
@@ -474,7 +477,7 @@ public class Distribution extends ModuleRoot {
     @Path(DOWNLOAD_ACTION + "/{distributionId}")
     public Response downloadDistrib(@PathParam("distributionId") String distribId) throws IOException {
         if (!canImportOrExportDistributions()) {
-            return Response.status(404).build();
+            return Response.status(Status.NOT_FOUND).build();
         }
 
         File tmp = getExportTmpFile();

@@ -36,6 +36,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.apidoc.api.BundleGroup;
@@ -348,7 +349,7 @@ public class ApiBrowser extends DefaultObject {
             return viewContribution(id);
         }
 
-        return Response.status(404).build();
+        return Response.status(Status.NOT_FOUND).build();
     }
 
     public String getLabel(String id) {
@@ -435,7 +436,7 @@ public class ApiBrowser extends DefaultObject {
                 includeReferences);
         Exporter exporter = getSnapshotManager().getExporter(exporterName);
         if (exporter == null) {
-            return Response.status(404).build();
+            return Response.status(Status.NOT_FOUND).build();
         }
         File tmp = getExportTmpFile();
         try (OutputStream out = new FileOutputStream(tmp)) {
