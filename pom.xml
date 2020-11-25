@@ -19,6 +19,10 @@
     <dockerfile.maven.version>1.4.12</dockerfile.maven.version>
     <jgrapht.version>1.5.0</jgrapht.version>
     <commonmark.version>0.15.2</commonmark.version>
+    <frontend.maven.version>1.6</frontend.maven.version>
+    <node.version>v10.6.0</node.version>
+    <yarn.version>v1.7.0</yarn.version>
+
   </properties>
 
   <modules>

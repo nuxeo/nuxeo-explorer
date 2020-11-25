@@ -37,3 +37,8 @@ helm/preview/charts
 helm/preview/requirements.lock
 helm/export/charts
 helm/export/requirements.lock
+
+# plotly
+modules/nuxeo-apidoc-webengine/js/node
+modules/nuxeo-apidoc-webengine/js/node_modules
+modules/nuxeo-apidoc-webengine/js/package-lock.json

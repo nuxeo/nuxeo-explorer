@@ -17,7 +17,7 @@
 <body>
   <div>
     <script type="text/javascript">window.PlotlyConfig = { MathJaxConfig: 'local' };</script>
-    <script src="node_modules/plotly.js-dist/plotly.js"></script>
+    <script src="../node_modules/plotly.js-dist/plotly.js"></script>
     <div id="selection" class="plotly-graph-selection">
       <form>
         <div>
@@ -44,7 +44,7 @@
       <div id="graph" class="plotly-graph-div"></div>
     </div>
     <script type="module">
-      import plot from '../src/plotly_nuxeo.js';
+      import plot from '../plotly/plotly_nuxeo.js';
 
       const select = document.getElementById('ds');
       const circCheck = document.getElementById('circ');
