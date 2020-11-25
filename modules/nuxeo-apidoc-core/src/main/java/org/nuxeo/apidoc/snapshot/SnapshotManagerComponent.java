@@ -107,6 +107,9 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
 
     protected static final String IMPORT_TMP = "tmpImport";
 
+    // save every 3000 documents
+    protected static final int UPLOAD_SAVE_INTERVAL = 3000;
+
     protected final SnapshotPersister persister = new SnapshotPersister();
 
     protected SnapshotListener componentListener;
@@ -330,7 +333,7 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
 
         // run import
         DocumentReader reader = new NuxeoArchiveReader(is);
-        DocumentWriter writer = new DocumentModelWriter(session, tmp.getPathAsString()) {
+        DocumentWriter writer = new DocumentModelWriter(session, tmp.getPathAsString(), UPLOAD_SAVE_INTERVAL) {
             @Override
             protected void beforeCreateDocument(DocumentModel doc) {
                 BaseNuxeoArtifactDocAdapter.fillContextData(doc);
