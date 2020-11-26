@@ -44,6 +44,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -54,6 +55,7 @@ import org.nuxeo.apidoc.listener.AttributesExtractorStater;
 import org.nuxeo.apidoc.plugin.Plugin;
 import org.nuxeo.apidoc.repository.RepositoryDistributionSnapshot;
 import org.nuxeo.apidoc.security.SecurityHelper;
+import org.nuxeo.apidoc.sitemap.SitemapGenerator;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotFilter;
@@ -140,6 +142,9 @@ public class Distribution extends ModuleRoot {
 
     /** @since 20.0.0 */
     public static final String LOGIN_ACTION = "apidocLogin";
+
+    /** @since 20.3.0 */
+    public static final String SITEMAP = "sitemap.xml";
 
     /**
      * List of subviews, used for validation of distribution names and aliases.
@@ -829,6 +834,21 @@ public class Distribution extends ModuleRoot {
                 NXAuthConstants.REQUESTED_URL, getPath() //
         )));
         return Response.seeOther(uri).build();
+    }
+
+    /**
+     * Returns the XML sitemap for the site.
+     *
+     * @throws JAXBException
+     * @since 20.3.0
+     */
+    @GET
+    @Path(SITEMAP)
+    @Produces(MediaType.TEXT_XML)
+    public Object getSitemap() throws JAXBException {
+        StringWriter sw = new StringWriter();
+        SitemapGenerator.generateXML(getURL(), ctx.getCoreSession(), sw);
+        return Response.ok().type(MediaType.TEXT_XML).entity(sw.toString()).build();
     }
 
 }

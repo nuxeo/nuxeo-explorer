@@ -23,6 +23,9 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
@@ -39,7 +42,9 @@ import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.browse.ApiBrowserConstants;
+import org.nuxeo.apidoc.browse.Distribution;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
+import org.nuxeo.common.utils.URIUtils;
 import org.nuxeo.functionaltests.RestHelper;
 import org.nuxeo.functionaltests.explorer.pages.DistribAdminPage;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
@@ -404,6 +409,29 @@ public class ITExplorerTest extends AbstractExplorerTest {
         openAndCheck(getArtifactURL(ServiceInfo.TYPE_NAME, "foo"), true);
         openAndCheck(getArtifactURL(PackageInfo.TYPE_NAME, "foo"), true);
         openAndCheck(getArtifactURL(OperationInfo.TYPE_NAME, "foo"), true);
+    }
+
+    /**
+     * @since 20.3.0
+     */
+    @Test
+    public void testSitemap() throws IOException {
+        driver.get(NUXEO_URL + ExplorerHomePage.URL + Distribution.SITEMAP);
+        try {
+            String ref = AbstractExplorerTest.getReferenceContent(Paths.get("data/sitemap.xml"));
+            // replace distribution name
+            ref = ref.replace("DIST_KEY", URIUtils.quoteURIPathComponent(getDistribId(LIVE_NAME, liveVersion), true));
+            // replace dates
+            String today = OffsetDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE);
+            ref = ref.replace("<lastmod>TODAY</lastmod>", "<lastmod>" + today + "</lastmod>");
+            // replace base url
+            ref = ref.replace("http://localhost:8080/nuxeo", NUXEO_URL);
+            assertEquals(ref, driver.getPageSource());
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        // perform home navigation after, to avoid LogTestWatchMan failing on taking a screenshot of this XML page...
+        driver.get(NUXEO_URL);
     }
 
 }
