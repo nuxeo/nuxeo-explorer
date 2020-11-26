@@ -196,11 +196,11 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
     }
 
     @Override
-    public List<DistributionSnapshotDesc> getAvailableDistributions(CoreSession session) {
-        List<DistributionSnapshotDesc> distribs = RepositoryDistributionSnapshot.readPersistentSnapshots(session)
-                                                                                .stream()
-                                                                                .filter(snap -> !snap.isHidden())
-                                                                                .collect(Collectors.toList());
+    public List<DistributionSnapshot> getAvailableDistributions(CoreSession session) {
+        List<DistributionSnapshot> distribs = RepositoryDistributionSnapshot.readPersistentSnapshots(session)
+                                                                            .stream()
+                                                                            .filter(snap -> !snap.isHidden())
+                                                                            .collect(Collectors.toList());
         distribs.sort(DISTRIBUTION_COMPARATOR);
         if (canSeeRuntimeSnapshot(session)) {
             distribs.add(0, getRuntimeSnapshot());

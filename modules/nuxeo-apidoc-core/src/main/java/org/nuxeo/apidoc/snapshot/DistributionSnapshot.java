@@ -21,6 +21,7 @@ package org.nuxeo.apidoc.snapshot;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +38,7 @@ import org.nuxeo.apidoc.plugin.PluginSnapshot;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.PrettyPrinter;
 
-public interface DistributionSnapshot extends DistributionSnapshotDesc {
+public interface DistributionSnapshot {
 
     String TYPE_NAME = "NXDistribution";
 
@@ -78,6 +79,17 @@ public interface DistributionSnapshot extends DistributionSnapshotDesc {
      * @since 11.1
      */
     String PROP_CREATED = "dc:created";
+
+    String getVersion();
+
+    String getName();
+
+    Date getCreationDate();
+
+    Date getReleaseDate();
+
+    @JsonIgnore
+    boolean isLive();
 
     /**
      * Returns a key, combining {@link #getName()} and {@link #getVersion()}.

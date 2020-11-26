@@ -55,7 +55,6 @@ import org.nuxeo.apidoc.plugin.Plugin;
 import org.nuxeo.apidoc.repository.RepositoryDistributionSnapshot;
 import org.nuxeo.apidoc.security.SecurityHelper;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
-import org.nuxeo.apidoc.snapshot.DistributionSnapshotDesc;
 import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
@@ -306,7 +305,7 @@ public class Distribution extends ModuleRoot {
         return ctx.newObject(ApiBrowser.TYPE, distributionId, embeddedMode, snapshot);
     }
 
-    public List<DistributionSnapshotDesc> getAvailableDistributions() {
+    public List<DistributionSnapshot> getAvailableDistributions() {
         return getSnapshotManager().getAvailableDistributions(ctx.getCoreSession());
     }
 

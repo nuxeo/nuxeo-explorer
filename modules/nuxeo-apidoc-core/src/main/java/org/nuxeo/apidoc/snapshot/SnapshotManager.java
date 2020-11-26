@@ -76,11 +76,11 @@ public interface SnapshotManager {
 
     public static String PROPERTY_USE_ES = "org.nuxeo.apidoc.use.elasticsearch";
 
-    static Comparator<DistributionSnapshotDesc> DISTRIBUTION_COMPARATOR = Comparator.comparing(
-            DistributionSnapshotDesc::getVersion, new VersionComparator())
-                                                                                    .reversed()
-                                                                                    .thenComparing(
-                                                                                            DistributionSnapshotDesc::getName);
+    static Comparator<DistributionSnapshot> DISTRIBUTION_COMPARATOR = Comparator.comparing(
+            DistributionSnapshot::getVersion, new VersionComparator())
+                                                                                .reversed()
+                                                                                .thenComparing(
+                                                                                        DistributionSnapshot::getName);
 
     /**
      * Initializes the web context, as potentially needed by plugins.
@@ -144,7 +144,7 @@ public interface SnapshotManager {
      * Live distribution may be included, see
      * {@link SecurityHelper#canSnapshotLiveDistribution(org.nuxeo.ecm.core.api.NuxeoPrincipal)}
      */
-    List<DistributionSnapshotDesc> getAvailableDistributions(CoreSession session);
+    List<DistributionSnapshot> getAvailableDistributions(CoreSession session);
 
     List<String> getAvailableVersions(CoreSession session, NuxeoArtifact nxItem);
 
