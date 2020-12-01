@@ -37,7 +37,7 @@ void getReleaseVersion(givenVersion, version) {
 
 void getNuxeoVersion(version) {
   if (version.isEmpty()) {
-    return readMavenPom().getProperties().getProperty('nuxeo.image.version')
+    return sh(returnStdout: true, script: 'mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=nuxeo.platform.version -q -DforceStdout').trim()
   }
   return version
 }
@@ -126,7 +126,7 @@ pipeline {
           Release version:            '${RELEASE_VERSION}'
           Next version:               '${params.NEXT_VERSION}'
 
-          Nuxeo version:              '${params.NUXEO_VERSION}'
+          Nuxeo version:              '${NUXEO_IMAGE_VERSION}'
           Next Nuxeo version:         '${params.NEXT_NUXEO_VERSION}'
 
           Jira issue:                 '${params.JIRA_ISSUE}'
@@ -187,7 +187,7 @@ pipeline {
               sh """
                 # nuxeo version
                 # only replace the first <version> occurrence
-                perl -i -pe '!\$x && s|<version>.*?</version>|<version>${NUXEO_VERSION}</version>| && (\$x=1)' pom.xml
+                perl -i -pe '!\$x && s|<version>.*?</version>|<version>${params.NUXEO_VERSION}</version>| && (\$x=1)' pom.xml
               """
             }
 
@@ -219,7 +219,7 @@ pipeline {
             ----------------------------------------
             Image tag: ${RELEASE_VERSION}
             Registry: ${DOCKER_REGISTRY}
-            Nuxeo Image tag: ${NUXEO_VERSION}
+            Nuxeo Image tag: ${NUXEO_IMAGE_VERSION}
             """
             def moduleDir="docker/nuxeo-explorer-docker"
             // push images to the Jenkins X internal Docker registry
