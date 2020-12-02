@@ -246,20 +246,22 @@ pipeline {
                 """
                 String distribId = "${params.SNAPSHOT_NAME}-${NUXEO_IMAGE_VERSION}".replaceAll(" ", "%20")
                 String curlCommand = "curl --user Administrator:Administrator ${CURL_OPTIONS}"
-                sh """
-                  kubectl rollout status deployment export \
-                    --timeout=15m \
-                    --namespace=${PREVIEW_NAMESPACE}
-
-                  ${curlCommand} ${explorerUrl} --output home.html
-                  ${curlCommand} -d 'name=${params.SNAPSHOT_NAME}' -d 'version=${NUXEO_IMAGE_VERSION}' -H 'Accept: text/plain' ${explorerUrl}/save
-                  ${curlCommand} ${explorerUrl} --output home_after_save.html
-                  ${curlCommand} ${explorerUrl}/download/${distribId} --output export.zip
-                """
-                if (params.PERFORM_JSON_EXPORT) {
+                retry (2) {
                   sh """
-                    ${curlCommand} ${explorerUrl}/${distribId}/json --output export.json
+                    kubectl rollout status deployment export \
+                      --timeout=15m \
+                      --namespace=${PREVIEW_NAMESPACE}
+
+                    ${curlCommand} ${explorerUrl} --output home.html
+                    ${curlCommand} -d 'name=${params.SNAPSHOT_NAME}' -d 'version=${NUXEO_IMAGE_VERSION}' -H 'Accept: text/plain' ${explorerUrl}/save
+                    ${curlCommand} ${explorerUrl} --output home_after_save.html
+                    ${curlCommand} ${explorerUrl}/download/${distribId} --output export.zip
                   """
+                  if (params.PERFORM_JSON_EXPORT) {
+                    sh """
+                      ${curlCommand} ${explorerUrl}/${distribId}/json --output export.json
+                    """
+                  }
                 }
               } finally {
                 // cleanup jx namespace
