@@ -247,9 +247,11 @@ pipeline {
                 error("nuxeo image version is empty")
             }
             // push images to the Jenkins X internal Docker registry
+            sh "NUXEO_IMAGE_VERSION=${nuxeoImageVersion} envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen"
+            retry(2) {
+              sh "skaffold build -f ${moduleDir}/skaffold.yaml~gen"
+            }
             sh """
-              NUXEO_IMAGE_VERSION=${nuxeoImageVersion} envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen
-              skaffold build -f ${moduleDir}/skaffold.yaml~gen
               # waiting skaffold + kaniko + container-stucture-tests issue
               #  see https://github.com/GoogleContainerTools/skaffold/issues/3907
               docker pull ${DOCKER_REGISTRY}/nuxeo/nuxeo-explorer:${VERSION}

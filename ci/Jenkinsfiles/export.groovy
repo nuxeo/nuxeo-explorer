@@ -188,9 +188,9 @@ pipeline {
                 CONNECT_EXPORT_CLID="${oneLineClid}" \
                 envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen
               """
-              sh """
-                skaffold build -f ${moduleDir}/skaffold.yaml~gen
-              """
+              retry(2) {
+                sh "skaffold build -f ${moduleDir}/skaffold.yaml~gen"
+              }
             }
           }
         }

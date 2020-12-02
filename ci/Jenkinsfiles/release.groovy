@@ -223,9 +223,11 @@ pipeline {
             """
             def moduleDir="docker/nuxeo-explorer-docker"
             // push images to the Jenkins X internal Docker registry
+            sh "envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen"
+            retry(2) {
+              sh "skaffold build -f ${moduleDir}/skaffold.yaml~gen"
+            }
             sh """
-              envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen
-              skaffold build -f ${moduleDir}/skaffold.yaml~gen
               # waiting skaffold + kaniko + container-stucture-tests issue
               #  see https://github.com/GoogleContainerTools/skaffold/issues/3907
               docker pull ${DOCKER_REGISTRY}/nuxeo/nuxeo-explorer:${RELEASE_VERSION}
