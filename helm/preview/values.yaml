@@ -72,12 +72,8 @@ nuxeo:
       usage: preview
   elasticsearch:
     deploy: ${PERSISTENCE}
-    master:
-      persistence:
-        enabled: ${PERSISTENCE}
-    data:
-      persistence:
-        enabled: ${PERSISTENCE}
+    persistence:
+      enabled: ${PERSISTENCE}
 
 # needed for instance-clid replicator and local usage
 local:
