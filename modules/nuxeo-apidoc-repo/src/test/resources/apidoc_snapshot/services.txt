@@ -91,6 +91,7 @@ NXService: org.nuxeo.runtime.api.login.Authenticator *** /grp:org.nuxeo.ecm.plat
 NXService: org.nuxeo.runtime.api.login.LoginAs *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.LoginAsComponent/Services/org.nuxeo.runtime.api.login.LoginAs
 NXService: org.nuxeo.runtime.api.login.LoginService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.LoginComponent/Services/org.nuxeo.runtime.api.login.LoginService
 NXService: org.nuxeo.runtime.avro.AvroService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.stream/org.nuxeo.runtime.avro/Services/org.nuxeo.runtime.avro.AvroService
+NXService: org.nuxeo.runtime.capabilities.CapabilitiesService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.capabilities.CapabilitiesService/Services/org.nuxeo.runtime.capabilities.CapabilitiesService
 NXService: org.nuxeo.runtime.cluster.ClusterService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.cluster/org.nuxeo.runtime.cluster.ClusterService/Services/org.nuxeo.runtime.cluster.ClusterService
 NXService: org.nuxeo.runtime.codec.CodecService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.stream/org.nuxeo.runtime.codec.service/Services/org.nuxeo.runtime.codec.CodecService
 NXService: org.nuxeo.runtime.datasource.PooledDataSourceRegistry *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.datasource/org.nuxeo.runtime.datasource/Services/org.nuxeo.runtime.datasource.PooledDataSourceRegistry

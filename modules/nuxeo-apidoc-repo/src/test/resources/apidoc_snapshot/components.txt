@@ -181,6 +181,7 @@ NXComponent: org.nuxeo.runtime.LoginComponent *** /grp:org.nuxeo.runtime/org.nux
 NXComponent: org.nuxeo.runtime.RuntimeComponent *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.RuntimeComponent
 NXComponent: org.nuxeo.runtime.avro *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.stream/org.nuxeo.runtime.avro
 NXComponent: org.nuxeo.runtime.avro.contrib *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.stream/org.nuxeo.runtime.avro.contrib
+NXComponent: org.nuxeo.runtime.capabilities.CapabilitiesService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.capabilities.CapabilitiesService
 NXComponent: org.nuxeo.runtime.cluster.ClusterService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.cluster/org.nuxeo.runtime.cluster.ClusterService *** [org.nuxeo.runtime.kv.KeyValueService]
 NXComponent: org.nuxeo.runtime.cluster.test.feature *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.cluster.test.feature
 NXComponent: org.nuxeo.runtime.codec.service *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.stream/org.nuxeo.runtime.codec.service
