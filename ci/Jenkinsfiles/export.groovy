@@ -232,6 +232,8 @@ pipeline {
                 // third build and deploy the chart
                 // waiting for https://github.com/jenkins-x/jx/issues/5797 to be fixed in order to remove --source-url
                 sh """
+                  helm init --client-only --stable-repo-url=https://charts.helm.sh/stable
+                  helm repo add local-jenkins-x http://jenkins-x-chartmuseum:8080
                   jx step helm build --verbose
                   mkdir target && helm template . --output-dir target
                   ${previewCommand}
