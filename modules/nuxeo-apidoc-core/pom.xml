@@ -120,7 +120,7 @@
     </dependency>
     <dependency>
       <groupId>org.jgrapht</groupId>
-      <artifactId>jgrapht-ext</artifactId>
+      <artifactId>jgrapht-io</artifactId>
     </dependency>
     <dependency>
       <groupId>com.atlassian.commonmark</groupId>
