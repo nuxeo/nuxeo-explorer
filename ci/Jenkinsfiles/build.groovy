@@ -41,6 +41,12 @@ String getVersion(referenceBranch) {
   return BRANCH_NAME == referenceBranch ? version : version + "-${BRANCH_NAME}"
 }
 
+void getNuxeoVersion() {
+  container('maven') {
+    return sh(returnStdout: true, script: 'mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=nuxeo.platform.version -q -DforceStdout').trim()
+  }
+}
+
 String getCommitSha1() {
   return sh(returnStdout: true, script: 'git rev-parse HEAD').trim();
 }
@@ -95,6 +101,7 @@ pipeline {
     VERSION = "${getVersion(REFERENCE_BRANCH)}"
     PERSISTENCE = "${BRANCH_NAME == REFERENCE_BRANCH}"
     NUXEO_TEMPLATE_OVERRIDE = "${getPreviewTemplatesOverride(BRANCH_NAME == REFERENCE_BRANCH)}"
+    NUXEO_IMAGE_VERSION = getNuxeoVersion()
     NUXEO_DOCKER_REGISTRY = 'docker-private.packages.nuxeo.com'
     PREVIEW_NAMESPACE = "nuxeo-explorer-${BRANCH_NAME.toLowerCase()}"
     // APP_NAME and ORG needed for PR preview
@@ -242,12 +249,8 @@ pipeline {
           """
           script {
             def moduleDir = 'docker/nuxeo-explorer-docker'
-            def nuxeoImageVersion = sh(returnStdout: true, script: 'mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=nuxeo.platform.version -q -DforceStdout').trim();
-            if (nuxeoImageVersion.isEmpty()) {
-                error("nuxeo image version is empty")
-            }
             // push images to the Jenkins X internal Docker registry
-            sh "NUXEO_IMAGE_VERSION=${nuxeoImageVersion} envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen"
+            sh "envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen"
             retry(2) {
               sh "skaffold build -f ${moduleDir}/skaffold.yaml~gen"
             }
