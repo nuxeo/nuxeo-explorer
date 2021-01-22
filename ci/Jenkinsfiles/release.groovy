@@ -36,12 +36,12 @@ void getReleaseVersion(givenVersion, version) {
 }
 
 void getNuxeoVersion(version) {
-  if (version.isEmpty()) {
-    container('maven') {
+  container('maven') {
+    if (version.isEmpty()) {
       return sh(returnStdout: true, script: 'mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=nuxeo.platform.version -q -DforceStdout').trim()
     }
+    return version
   }
-  return version
 }
 
 void getMavenReleaseOptions(Boolean skipTests, Boolean skipFunctionalTests) {
