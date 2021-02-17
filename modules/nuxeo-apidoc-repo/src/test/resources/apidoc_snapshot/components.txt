@@ -109,6 +109,7 @@ NXComponent: org.nuxeo.ecm.core.trash.service.migrator *** /grp:org.nuxeo.ecm.co
 NXComponent: org.nuxeo.ecm.core.uidgen.UIDGeneratorService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.uidgen.UIDGeneratorService
 NXComponent: org.nuxeo.ecm.core.uidseq.keyvaluestore *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.uidseq.keyvaluestore
 NXComponent: org.nuxeo.ecm.core.versioning.VersioningDocumentAdapter *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.versioning.VersioningDocumentAdapter
+NXComponent: org.nuxeo.ecm.core.versioning.config *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.versioning.config
 NXComponent: org.nuxeo.ecm.core.versioning.default-policies *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.versioning.default-policies *** [org.nuxeo.ecm.platform.el.service]
 NXComponent: org.nuxeo.ecm.core.work.config *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.event/org.nuxeo.ecm.core.work.config
 NXComponent: org.nuxeo.ecm.core.work.service *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.event/org.nuxeo.ecm.core.work.service
@@ -163,6 +164,7 @@ NXComponent: org.nuxeo.ecm.platform.web.common.locale *** /grp:org.nuxeo.ecm.pla
 NXComponent: org.nuxeo.ecm.platform.web.common.locale.default.contrib *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.web.common/org.nuxeo.ecm.platform.web.common.locale.default.contrib
 NXComponent: org.nuxeo.ecm.platform.web.common.requestcontroller.service.RequestControllerService *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.web.common/org.nuxeo.ecm.platform.web.common.requestcontroller.service.RequestControllerService
 NXComponent: org.nuxeo.ecm.platform.web.common.requestcontroller.service.RequestControllerService.defaultContrib *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.web.common/org.nuxeo.ecm.platform.web.common.requestcontroller.service.RequestControllerService.defaultContrib
+NXComponent: org.nuxeo.ecm.platform.web.idempotency *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.web.common/org.nuxeo.ecm.platform.web.idempotency
 NXComponent: org.nuxeo.ecm.webengine.WebEngineComponent *** /grp:org.nuxeo.ecm.webengine/org.nuxeo.ecm.webengine.core/org.nuxeo.ecm.webengine.WebEngineComponent *** [org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService]
 NXComponent: org.nuxeo.ecm.webengine.core.service.json *** /grp:org.nuxeo.ecm.webengine/org.nuxeo.ecm.webengine.core/org.nuxeo.ecm.webengine.core.service.json
 NXComponent: org.nuxeo.ecm.webengine.jaxrs.servlet.config.ServletRegistryComponent *** /grp:org.nuxeo.ecm.webengine/org.nuxeo.ecm.webengine.jaxrs/org.nuxeo.ecm.webengine.jaxrs.servlet.config.ServletRegistryComponent

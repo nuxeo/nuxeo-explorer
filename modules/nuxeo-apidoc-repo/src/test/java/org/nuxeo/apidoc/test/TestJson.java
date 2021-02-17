@@ -235,7 +235,7 @@ public class TestJson extends AbstractApidocTest {
         checkContentEquals("apidoc_snapshot/apidoc_readme.txt", parentReadme.getString());
         assertEquals(Arrays.asList(), bundle.getRequirements());
         assertEquals(Long.valueOf(6), bundle.getMinRegistrationOrder());
-        assertEquals(Long.valueOf(185), bundle.getMaxRegistrationOrder());
+        assertEquals(Long.valueOf(187), bundle.getMaxRegistrationOrder());
         assertEquals(version, bundle.getVersion());
         // check readme on core bundle instead
         BundleInfo coreBundle = snapshot.getBundle("org.nuxeo.apidoc.core");

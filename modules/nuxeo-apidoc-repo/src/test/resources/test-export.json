@@ -727,7 +727,7 @@
           ],
           "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.schemaContrib",
           "name": "org.nuxeo.apidoc.schemaContrib",
-          "registrationOrder": 163,
+          "registrationOrder": 165,
           "requirements": [
             "org.nuxeo.ecm.core.CoreExtensions"
           ],
@@ -791,7 +791,7 @@
           ],
           "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.test.works",
           "name": "org.nuxeo.apidoc.test.works",
-          "registrationOrder": 185,
+          "registrationOrder": 187,
           "requirements": [],
           "services": [],
           "version": "mockTestVersion",
@@ -806,7 +806,7 @@
       "id": "org.nuxeo.apidoc.repo",
       "location": "mockTestLocation",
       "manifest": "mockTestManifest",
-      "maxRegistrationOrder": 185,
+      "maxRegistrationOrder": 187,
       "minRegistrationOrder": 6,
       "packages": [
         "platform-explorer-mock"
