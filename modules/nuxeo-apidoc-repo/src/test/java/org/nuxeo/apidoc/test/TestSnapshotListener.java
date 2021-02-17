@@ -54,8 +54,8 @@ public class TestSnapshotListener extends AbstractApidocTest {
 
     @Test
     public void testStartOrders() {
-        check(207, listener.getStartTotal());
-        check(137, listener.getStartOrder(SNAPSHOT_COMP));
+        check(206, listener.getStartTotal());
+        check(141, listener.getStartOrder(SNAPSHOT_COMP));
         assertNull(listener.getDeclaredStartOrder(SNAPSHOT_COMP));
         // check XML comp
         assertNull(listener.getDeclaredStartOrder("org.nuxeo.apidoc.lifecycle.contrib"));

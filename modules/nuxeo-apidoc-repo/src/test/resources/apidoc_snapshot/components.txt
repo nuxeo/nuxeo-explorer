@@ -70,7 +70,7 @@ NXComponent: org.nuxeo.ecm.core.io.MarshallerRegistry.marshallers *** /grp:org.n
 NXComponent: org.nuxeo.ecm.core.io.avro.factories *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.io/org.nuxeo.ecm.core.io.avro.factories
 NXComponent: org.nuxeo.ecm.core.io.download.DownloadService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.io/org.nuxeo.ecm.core.io.download.DownloadService *** [org.nuxeo.ecm.core.transientstore.TransientStorageComponent]
 NXComponent: org.nuxeo.ecm.core.lifecycle.LifeCycleService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.lifecycle.LifeCycleService
-NXComponent: org.nuxeo.ecm.core.management.CoreManagementComponent *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.management.CoreManagementComponent *** [org.nuxeo.ecm.core.repository.RepositoryService]
+NXComponent: org.nuxeo.ecm.core.management.CoreManagementComponent *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.management.CoreManagementComponent *** [org.nuxeo.ecm.core.repository.RepositoryServiceComponent]
 NXComponent: org.nuxeo.ecm.core.management.contribs *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.management.contribs
 NXComponent: org.nuxeo.ecm.core.management.es.tests *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.ecm.core.management.es.tests
 NXComponent: org.nuxeo.ecm.core.management.runtime.management.contribs *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.management.runtime.management.contribs
@@ -79,7 +79,6 @@ NXComponent: org.nuxeo.ecm.core.managemment.standby *** /grp:org.nuxeo.ecm.core/
 NXComponent: org.nuxeo.ecm.core.operation.OperationServiceComponent *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.core/org.nuxeo.ecm.core.operation.OperationServiceComponent *** [org.nuxeo.runtime.management.ServerLocator]
 NXComponent: org.nuxeo.ecm.core.orphanVersionsCleanup *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.orphanVersionsCleanup
 NXComponent: org.nuxeo.ecm.core.query.properties *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.query/org.nuxeo.ecm.core.query.properties
-NXComponent: org.nuxeo.ecm.core.repository.RepositoryService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.sql/org.nuxeo.ecm.core.repository.RepositoryService *** [org.nuxeo.ecm.core.storage.sql.RepositoryService]
 NXComponent: org.nuxeo.ecm.core.repository.RepositoryServiceComponent *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.repository.RepositoryServiceComponent *** [org.nuxeo.runtime.cluster.ClusterService, org.nuxeo.ecm.core.api.repository.RepositoryManager]
 NXComponent: org.nuxeo.ecm.core.retention.contrib *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.retention.contrib
 NXComponent: org.nuxeo.ecm.core.scheduler.SchedulerService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.event/org.nuxeo.ecm.core.scheduler.SchedulerService *** [org.nuxeo.runtime.cluster.ClusterService]
