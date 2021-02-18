@@ -74,7 +74,7 @@ public abstract class AbstractExplorerTest extends AbstractTest {
     protected static String MANAGER_USERNAME = "apidocmanager";
 
     /** @since 22 */
-    protected static final NuxeoClient.Builder JSON_CLIENT_BUILDER = new RestHelper.NuxeoClientForNuxeo.BuilderForNuxeo().url(
+    protected static final NuxeoClient.Builder JSON_CLIENT_BUILDER = new NuxeoClient.Builder().url(
             NUXEO_URL).header("Accept", MediaType.APPLICATION_JSON);
 
     public static LoginPage getLoginPageStatic() {

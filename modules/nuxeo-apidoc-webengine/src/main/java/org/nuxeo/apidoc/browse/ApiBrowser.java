@@ -401,7 +401,8 @@ public class ApiBrowser extends DefaultObject {
                                                  .stream()
                                                  .map(PackageInfo::getName)
                                                  .collect(Collectors.toList());
-        String json = new ObjectMapper().writer(getPrinter(pretty)).writeValueAsString(Map.of("packages", packages));
+        String json = new ObjectMapper().writer(getPrinter(pretty))
+                                        .writeValueAsString(Collections.singletonMap("packages", packages));
         return Response.ok(json, MediaType.APPLICATION_JSON).build();
     }
 
