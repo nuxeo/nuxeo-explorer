@@ -31,10 +31,13 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.core.MediaType;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.nuxeo.apidoc.browse.ApiBrowserConstants;
 import org.nuxeo.apidoc.repository.SnapshotPersister;
+import org.nuxeo.client.NuxeoClient;
 import org.nuxeo.functionaltests.AbstractTest;
 import org.nuxeo.functionaltests.JavaScriptErrorCollector;
 import org.nuxeo.functionaltests.Locator;
@@ -59,6 +62,8 @@ import org.openqa.selenium.support.ui.Wait;
 
 import com.google.common.base.Function;
 
+import okhttp3.Response;
+
 /**
  * @since 11.1
  */
@@ -67,6 +72,10 @@ public abstract class AbstractExplorerTest extends AbstractTest {
     protected static String READER_USERNAME = TEST_USERNAME;
 
     protected static String MANAGER_USERNAME = "apidocmanager";
+
+    /** @since 22 */
+    protected static final NuxeoClient.Builder JSON_CLIENT_BUILDER = new RestHelper.NuxeoClientForNuxeo.BuilderForNuxeo().url(
+            NUXEO_URL).header("Accept", MediaType.APPLICATION_JSON);
 
     public static LoginPage getLoginPageStatic() {
         return get(NUXEO_URL + "/logout", LoginPage.class);
@@ -405,6 +414,23 @@ public abstract class AbstractExplorerTest extends AbstractTest {
             checkJsonPageContent();
         }
         RestHelper.logOnServer("warn", String.format("End json export for distribution '%s'", distributionId));
+    }
+
+    /**
+     * Use Rest client to perform request with json content type.
+     *
+     * @throws IOException
+     * @since 22.
+     */
+    protected String getJsonContent(String username, String password, String url, boolean check404) throws IOException {
+        NuxeoClient client = JSON_CLIENT_BUILDER.authentication(username, password).connect();
+        Response r = client.get(url);
+        if (check404) {
+            assertEquals(HttpStatus.SC_NOT_FOUND, r.code());
+            return null;
+        } else {
+            return r.body().string();
+        }
     }
 
     protected String previousWindowHandle;

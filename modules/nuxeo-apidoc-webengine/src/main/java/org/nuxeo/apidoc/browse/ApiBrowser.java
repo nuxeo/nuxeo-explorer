@@ -69,7 +69,9 @@ import org.nuxeo.ecm.webengine.model.exceptions.WebResourceNotFoundException;
 import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
 import org.nuxeo.runtime.api.Framework;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.PrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebObject(type = ApiBrowser.TYPE)
 public class ApiBrowser extends DefaultObject {
@@ -384,6 +386,25 @@ public class ApiBrowser extends DefaultObject {
                                                          .arg("hideNav", Boolean.valueOf(false));
     }
 
+    /**
+     * Returns a simple json export of packages names.
+     * <p>
+     * Sample: {"packages":["platform-explorer"]}
+     *
+     * @since 22
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(ApiBrowserConstants.LIST_PACKAGES)
+    public Object jsonListPackages(@QueryParam("pretty") Boolean pretty) throws JsonProcessingException {
+        List<String> packages = getDistribution().getPackages()
+                                                 .stream()
+                                                 .map(PackageInfo::getName)
+                                                 .collect(Collectors.toList());
+        String json = new ObjectMapper().writer(getPrinter(pretty)).writeValueAsString(Map.of("packages", packages));
+        return Response.ok(json, MediaType.APPLICATION_JSON).build();
+    }
+
     protected File getExportTmpFile() throws IOException {
         File tmpFile = File.createTempFile("apidoc-export", null, Environment.getDefault().getTemp());
         if (tmpFile.exists()) {
@@ -393,14 +414,18 @@ public class ApiBrowser extends DefaultObject {
         return tmpFile;
     }
 
+    protected PrettyPrinter getPrinter(Boolean pretty) {
+        return Boolean.TRUE.equals(pretty) ? new JsonPrettyPrinter() : null;
+    }
+
     /**
      * Returns the distribution json export.
      *
      * @since 20.0.0
      */
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(ApiBrowserConstants.JSON_ACTION)
-    @Produces("application/json")
     public Object getJson(@QueryParam("bundles") List<String> bundles,
             @QueryParam("nuxeoPackages") List<String> nuxeoPackages,
             @QueryParam("javaPackagePrefixes") List<String> javaPackagePrefixes,
@@ -409,10 +434,9 @@ public class ApiBrowser extends DefaultObject {
             throws IOException {
         SnapshotFilter filter = getSnapshotFilter(bundles, nuxeoPackages, javaPackagePrefixes, checkAsPrefixes,
                 includeReferences);
-        PrettyPrinter printer = Boolean.TRUE.equals(pretty) ? new JsonPrettyPrinter() : null;
         File tmp = getExportTmpFile();
         try (OutputStream out = new FileOutputStream(tmp)) {
-            getDistribution().writeJson(out, filter, printer);
+            getDistribution().writeJson(out, filter, getPrinter(pretty));
         }
 
         ArchiveFile aFile = new ArchiveFile(tmp.getAbsolutePath());
@@ -445,8 +469,8 @@ public class ApiBrowser extends DefaultObject {
         }
 
         ArchiveFile aFile = new ArchiveFile(tmp.getAbsolutePath());
-        if ("application/json".equals(exporter.getMimetype())) {
-            return Response.ok(aFile).type("application/json").build();
+        if (MediaType.APPLICATION_JSON.equals(exporter.getMimetype())) {
+            return Response.ok(aFile).type(MediaType.APPLICATION_JSON).build();
         } else {
             return Response.ok(aFile)
                            .header("Content-Disposition", "attachment;filename=" + exporter.getFilename())
