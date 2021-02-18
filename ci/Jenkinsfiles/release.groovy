@@ -55,32 +55,10 @@ void getMavenReleaseOptions(Boolean skipTests, Boolean skipFunctionalTests) {
   return options
 }
 
-void dockerPull(String image) {
-  sh "docker pull ${image}"
-}
-
-void dockerTag(String image, String tag) {
-  sh "docker tag ${image} ${tag}"
-}
-
-void dockerPush(String image) {
-  sh "docker push ${image}"
-}
-
-void dockerDeploy(String releaseVersion) {
-  String imageTag = "nuxeo/nuxeo-explorer:${releaseVersion}"
-  String internalImage = "${DOCKER_REGISTRY}/${imageTag}"
-  String explorerImage = "${NUXEO_DOCKER_REGISTRY}/${imageTag}"
-  echo "Push ${explorerImage}"
-  dockerPull(internalImage)
-  dockerTag(internalImage, explorerImage)
-  dockerPush(explorerImage)
-}
-
 pipeline {
 
   agent {
-    label 'jenkins-nuxeo-package-11'
+    label 'jenkins-nuxeo-package-10'
   }
 
   options {
@@ -88,27 +66,23 @@ pipeline {
   }
 
   parameters {
-    string(name: 'BRANCH_NAME', defaultValue: 'master', description: 'The branch to release')
+    string(name: 'BRANCH_NAME', defaultValue: '18.0_10.10', description: 'The branch to release')
     string(name: 'RELEASE_VERSION', defaultValue: '', description: 'Release Explorer version (optional)')
     string(name: 'NEXT_VERSION', defaultValue: '', description: 'Next Explorer version (next minor version if unset)')
     string(name: 'NUXEO_VERSION', defaultValue: '', description: 'Version of the Nuxeo Server dependency (unchanged if unset)')
-    booleanParam(name: 'NUXEO_VERSION_IS_PROMOTED', defaultValue: true, description: 'Uncheck if releasing a RC version, against a non-promoted Nuxeo build')
     string(name: 'NEXT_NUXEO_VERSION', defaultValue: '', description: 'Next Version of the Nuxeo Server dependency (unchanged if unset)')
     string(name: 'JIRA_ISSUE', defaultValue: '', description: 'Id of the Jira issue for this release')
     booleanParam(name: 'SKIP_TESTS', defaultValue: false, description: 'Skip all tests')
-    booleanParam(name: 'SKIP_FUNCTIONAL_TESTS', defaultValue: false, description: 'Skip functional tests')
+    booleanParam(name: 'SKIP_FUNCTIONAL_TESTS', defaultValue: true, description: 'Skip functional tests (no FF on 10.10 pod anyway)')
     booleanParam(name: 'DRY_RUN', defaultValue: true, description: 'Dry run')
   }
 
   environment {
     CURRENT_VERSION = getCurrentVersion()
     RELEASE_VERSION = getReleaseVersion(params.RELEASE_VERSION, CURRENT_VERSION)
-    NUXEO_IMAGE_VERSION = getNuxeoVersion(params.NUXEO_VERSION)
     MAVEN_ARGS = '-B -nsu -Prelease'
     MAVEN_RELEASE_OPTIONS = getMavenReleaseOptions(params.SKIP_TESTS, params.SKIP_FUNCTIONAL_TESTS)
     MAVEN_SKIP_ENFORCER = ' -Dnuxeo.skip.enforcer=true'
-    CONNECT_PROD_URL = 'https://connect.nuxeo.com/nuxeo'
-    NUXEO_DOCKER_REGISTRY = 'docker-private.packages.nuxeo.com'
     VERSION = "${RELEASE_VERSION}"
     DRY_RUN = "${params.DRY_RUN}"
     BRANCH_NAME = "${params.BRANCH_NAME}"
@@ -128,7 +102,7 @@ pipeline {
           Release version:            '${RELEASE_VERSION}'
           Next version:               '${params.NEXT_VERSION}'
 
-          Nuxeo version:              '${NUXEO_IMAGE_VERSION}'
+          Nuxeo version:              '${params.NUXEO_VERSION}'
           Next Nuxeo version:         '${params.NEXT_NUXEO_VERSION}'
 
           Jira issue:                 '${params.JIRA_ISSUE}'
@@ -139,13 +113,6 @@ pipeline {
           Dry run:                    '${params.DRY_RUN}'
           ----------------------------------------
           """
-          if (!params.NUXEO_VERSION_IS_PROMOTED && !RELEASE_VERSION.contains('RC')) {
-            currentBuild.result = 'ABORTED';
-            def message = 'Can only release a RC against a non-promoted Nuxeo version'
-            currentBuild.description = "${message}"
-            echo "Aborting release with message: ${message}"
-            error(currentBuild.description)
-          }
         }
       }
     }
@@ -179,12 +146,6 @@ pipeline {
             sh """
               git checkout ${BRANCH_NAME}
             """
-            if (!params.NUXEO_VERSION_IS_PROMOTED) {
-              sh """
-                # hack: use nuxeo-ecm instead of nuxeo-parent to retrieve a non-promoted nuxeo version
-                perl -i -pe 's|<artifactId>nuxeo-parent</artifactId>|<artifactId>nuxeo-ecm</artifactId>|' pom.xml
-              """
-            }
             if (!params.NUXEO_VERSION.isEmpty()) {
               sh """
                 # nuxeo version
@@ -196,6 +157,7 @@ pipeline {
             sh """
               # explorer version
               mvn ${MAVEN_ARGS} ${MAVEN_SKIP_ENFORCER} versions:set -DnewVersion=${RELEASE_VERSION} -DgenerateBackupPoms=false
+              git diff
             """
           }
         }
@@ -215,32 +177,12 @@ pipeline {
               mvn ${MAVEN_ARGS} ${MAVEN_RELEASE_OPTIONS} install
             """
 
-            echo """
-            ----------------------------------------
-            Build Explorer Docker image
-            ----------------------------------------
-            Image tag: ${RELEASE_VERSION}
-            Registry: ${DOCKER_REGISTRY}
-            Nuxeo Image tag: ${NUXEO_IMAGE_VERSION}
-            """
-            def moduleDir="docker/nuxeo-explorer-docker"
-            // push images to the Jenkins X internal Docker registry
-            sh "envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen"
-            retry(2) {
-              sh "skaffold build -f ${moduleDir}/skaffold.yaml~gen"
-            }
-            sh """
-              # waiting skaffold + kaniko + container-stucture-tests issue
-              #  see https://github.com/GoogleContainerTools/skaffold/issues/3907
-              docker pull ${DOCKER_REGISTRY}/nuxeo/nuxeo-explorer:${RELEASE_VERSION}
-              container-structure-test test --image ${DOCKER_REGISTRY}/nuxeo/nuxeo-explorer:${RELEASE_VERSION} --config ${moduleDir}/test/*
-            """
-
             def message = "Release ${RELEASE_VERSION}"
             if (!params.JIRA_ISSUE.isEmpty()) {
               message = "${params.JIRA_ISSUE}: ${message}"
             }
             sh """
+              git diff
               git commit -a -m "${message}"
               git tag -a v${RELEASE_VERSION} -m "${message}"
             """
@@ -286,48 +228,6 @@ pipeline {
       }
     }
 
-    stage('Upload Nuxeo Packages') {
-      when {
-        not {
-          environment name: 'DRY_RUN', value: 'true'
-        }
-      }
-      steps {
-        container('maven') {
-          echo """
-          ----------------------------------------
-          Upload Nuxeo Packages to ${CONNECT_PROD_URL}
-          ----------------------------------------"""
-          withCredentials([usernameColonPassword(credentialsId: 'connect-prod', variable: 'CONNECT_PASS')]) {
-            sh """
-              PACKAGES_TO_UPLOAD="packages/nuxeo-*-package/target/nuxeo-*-package*.zip"
-              for file in \$PACKAGES_TO_UPLOAD ; do
-                curl --fail -i -u "$CONNECT_PASS" -F package=@\$(ls \$file) "$CONNECT_PROD_URL"/site/marketplace/upload?batch=true ;
-              done
-            """
-          }
-        }
-      }
-    }
-
-    stage('Promote Docker images') {
-      when {
-        not {
-          environment name: 'DRY_RUN', value: 'true'
-        }
-      }
-      steps {
-        container('maven') {
-          echo """
-          -----------------------------------------------
-          Tag Docker images with version ${RELEASE_VERSION}
-          -----------------------------------------------
-          """
-          dockerDeploy("${RELEASE_VERSION}")
-        }
-      }
-    }
-
     stage('Bump branch version') {
       steps {
         container('maven') {
@@ -343,12 +243,6 @@ pipeline {
             Update ${BRANCH_NAME} version from ${CURRENT_VERSION} to ${nextVersion}
             -----------------------------------------------
             """
-            if (!params.NUXEO_VERSION_IS_PROMOTED) {
-              sh """
-                # hack: replace back nuxeo-ecm replacement
-                perl -i -pe 's|<artifactId>nuxeo-ecm</artifactId>|<artifactId>nuxeo-parent</artifactId>|' pom.xml
-              """
-            }
             def nextNuxeoVersion = "${params.NEXT_NUXEO_VERSION}"
             if (!nextNuxeoVersion.isEmpty()) {
               sh """
@@ -365,6 +259,7 @@ pipeline {
               # explorer version
               mvn ${MAVEN_ARGS} ${MAVEN_SKIP_ENFORCER} versions:set -DnewVersion=${nextVersion} -DgenerateBackupPoms=false
 
+              git diff
               git commit -a -m "${message}"
             """
 
