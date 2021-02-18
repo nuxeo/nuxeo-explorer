@@ -18,6 +18,7 @@
  */
 package org.nuxeo.functionaltests.explorer.nomode;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
@@ -36,7 +37,9 @@ import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
+import org.nuxeo.apidoc.browse.ApiBrowserConstants;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
+import org.nuxeo.functionaltests.Constants;
 import org.nuxeo.functionaltests.Locator;
 import org.nuxeo.functionaltests.explorer.pages.DistribAdminPage;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHomePage;
@@ -305,8 +308,19 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
     }
 
     @Test
-    public void testJson() throws IOException {
+    public void testJson() {
         checkJson(SnapshotManager.DISTRIBUTION_ALIAS_CURRENT, !isAdminTest());
+    }
+
+    /** @since 22 */
+    @Test
+    public void testPackagesJson() throws IOException {
+        String url = String.format("%s%s%s/%s/", NUXEO_URL, ExplorerHomePage.URL,
+                SnapshotManager.DISTRIBUTION_ALIAS_CURRENT, ApiBrowserConstants.LIST_PACKAGES);
+        String username = isAdminTest() ? Constants.ADMINISTRATOR : MANAGER_USERNAME;
+        String password = isAdminTest() ? Constants.ADMINISTRATOR : TEST_PASSWORD;
+        String expected = isAdminTest() ? "{\"packages\":[\"platform-explorer\"]}" : null;
+        assertEquals(expected, getJsonContent(username, password, url, !isAdminTest()));
     }
 
     protected String getArtifactURL(String type, String id) {

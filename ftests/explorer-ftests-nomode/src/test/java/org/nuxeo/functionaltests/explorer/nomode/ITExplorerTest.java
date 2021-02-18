@@ -329,7 +329,7 @@ public class ITExplorerTest extends AbstractExplorerTest {
      * @since 20.2.0
      */
     @Test
-    public void testOverrideContributionGetURL() throws IOException {
+    public void testOverrideContributionGetURL() {
         String contribUrl = getArtifactURL(ExtensionInfo.TYPE_NAME, "org.nuxeo.apidoc.listener.contrib--listener");
         open(contribUrl + "/override");
         checkOverridePage(contribUrl + "/override", "data/override_reference.xml");
@@ -339,7 +339,7 @@ public class ITExplorerTest extends AbstractExplorerTest {
      * Non-regression test for NXP-19766.
      */
     @Test
-    public void testOverrideContributionWithXMLComments() throws Exception {
+    public void testOverrideContributionWithXMLComments() {
         goToArtifact(ExtensionInfo.TYPE_NAME, "org.nuxeo.ecm.platform.comment.defaultPermissions--permissions");
         ContributionArtifactPage apage = asPage(ContributionArtifactPage.class);
         apage.toggleGenerateOverride();
@@ -368,7 +368,7 @@ public class ITExplorerTest extends AbstractExplorerTest {
      * Non-regression test for NXP-29378.
      */
     @Test
-    public void testPseudoComponent() throws IOException {
+    public void testPseudoComponent() {
         goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.runtime.started");
         ComponentArtifactPage apage = asPage(ComponentArtifactPage.class);
         apage.checkCommon("Component org.nuxeo.runtime.started", "Component org.nuxeo.runtime.started",
@@ -384,7 +384,7 @@ public class ITExplorerTest extends AbstractExplorerTest {
     }
 
     @Test
-    public void testJson() throws IOException {
+    public void testJson() {
         try {
             // setup page load timeout of 3 mins as persisted export can take time (default: 1 min)
             driver.manage().timeouts().pageLoadTimeout(180, TimeUnit.SECONDS);
@@ -392,6 +392,15 @@ public class ITExplorerTest extends AbstractExplorerTest {
         } finally {
             driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
         }
+    }
+
+    /** @since 22 */
+    @Test
+    public void testPackagesJson() throws IOException {
+        String url = String.format("%s%s%s/%s/", NUXEO_URL, ExplorerHomePage.URL, getDistribId(LIVE_NAME, liveVersion),
+                ApiBrowserConstants.LIST_PACKAGES);
+        assertEquals("{\"packages\":[\"platform-explorer\"]}",
+                getJsonContent(READER_USERNAME, TEST_PASSWORD, url, false));
     }
 
     @Test
