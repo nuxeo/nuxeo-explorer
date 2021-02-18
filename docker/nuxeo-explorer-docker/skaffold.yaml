@@ -9,7 +9,7 @@ kind: Config
 build:
   tagPolicy:
     envTemplate:
-      template: "{{.DOCKER_REGISTRY}}/{{.ORG}}/{{.IMAGE_NAME}}:{{.VERSION}}"
+      template: "{{.DOCKER_REGISTRY}}/nuxeo/{{.IMAGE_NAME}}:{{.VERSION}}"
   artifacts:
     - image: nuxeo-explorer
       context: docker/nuxeo-explorer-docker
@@ -18,12 +18,12 @@ build:
         buildContext:
           localDir: {}
         buildArgs:
-          BASE_IMAGE: ${DOCKER_REGISTRY}/${ORG}/nuxeo:11.x
+          BASE_IMAGE: ${NUXEO_DOCKER_REGISTRY}/nuxeo/nuxeo:${NUXEO_IMAGE_VERSION}
           BUILD_TAG: "{{.BUILD_TAG}}"
           SCM_REF: "{{.SCM_REF}}"
           VERSION: "{{.VERSION}}"
         cache:
-          repo: ${DOCKER_REGISTRY}/${ORG}/nuxeo-explorer/cache
+          repo: ${DOCKER_REGISTRY}/nuxeo/nuxeo-explorer/cache
   cluster:
     namespace: platform
     dockerConfig:
@@ -35,4 +35,3 @@ build:
 #  - image: nuxeo-explorer
 #    structureTests:
 #      - './docker/nuxeo-explorer-docker/test/*'
-

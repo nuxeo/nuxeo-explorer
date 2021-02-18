@@ -22,6 +22,7 @@ package org.nuxeo.apidoc.introspection;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,10 @@ import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
 import org.nuxeo.apidoc.api.BundleGroup;
 import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
+import org.nuxeo.apidoc.api.ExtensionInfo;
+import org.nuxeo.apidoc.api.ExtensionPointInfo;
+import org.nuxeo.apidoc.api.NuxeoArtifact;
+import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.ecm.core.api.Blob;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -61,13 +66,21 @@ public class BundleInfoImpl extends BaseNuxeoArtifact implements BundleInfo {
     protected Blob parentReadme;
 
     /** @since 20.0.0 */
-    protected Long minRegistrationOrder;
+    protected Long minResolutionOrder;
 
     /** @since 20.0.0 */
-    protected Long maxRegistrationOrder;
+    protected Long maxResolutionOrder;
 
     /** @since 11.1 */
     protected final List<String> packages = new ArrayList<>();
+
+    // cache lists
+
+    protected List<ExtensionPointInfo> extensionPoints;
+
+    protected List<ServiceInfo> services;
+
+    protected List<ExtensionInfo> extensions;
 
     public BundleInfoImpl(String bundleId) {
         this.bundleId = bundleId;
@@ -125,9 +138,7 @@ public class BundleInfoImpl extends BaseNuxeoArtifact implements BundleInfo {
 
     @Override
     public List<String> getPackages() {
-        return packages.stream()
-                       .sorted()
-                       .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+        return packages.stream().sorted().collect(Collectors.toList());
     }
 
     public void setPackages(List<String> packages) {
@@ -222,23 +233,53 @@ public class BundleInfoImpl extends BaseNuxeoArtifact implements BundleInfo {
     }
 
     @Override
-    public Long getMinRegistrationOrder() {
-        return minRegistrationOrder;
+    public Long getMinResolutionOrder() {
+        return minResolutionOrder;
     }
 
     @Override
-    public void setMinRegistrationOrder(Long minRegistrationOrder) {
-        this.minRegistrationOrder = minRegistrationOrder;
+    public void setMinResolutionOrder(Long order) {
+        this.minResolutionOrder = order;
     }
 
     @Override
-    public Long getMaxRegistrationOrder() {
-        return maxRegistrationOrder;
+    public Long getMaxResolutionOrder() {
+        return maxResolutionOrder;
     }
 
     @Override
-    public void setMaxRegistrationOrder(Long maxRegistrationOrder) {
-        this.maxRegistrationOrder = maxRegistrationOrder;
+    public void setMaxResolutionOrder(Long order) {
+        this.maxResolutionOrder = order;
+    }
+
+    @Override
+    public List<ServiceInfo> getServices() {
+        if (services == null) {
+            services = new ArrayList<>();
+            getComponents().forEach(c -> services.addAll(c.getServices()));
+            services.sort(Comparator.comparing(NuxeoArtifact::getId));
+        }
+        return Collections.unmodifiableList(services);
+    }
+
+    @Override
+    public List<ExtensionPointInfo> getExtensionPoints() {
+        if (extensionPoints == null) {
+            extensionPoints = new ArrayList<>();
+            getComponents().forEach(c -> extensionPoints.addAll(c.getExtensionPoints()));
+            extensionPoints.sort(Comparator.comparing(NuxeoArtifact::getId));
+        }
+        return Collections.unmodifiableList(extensionPoints);
+    }
+
+    @Override
+    public List<ExtensionInfo> getExtensions() {
+        if (extensions == null) {
+            extensions = new ArrayList<>();
+            getComponents().forEach(c -> extensions.addAll(c.getExtensions()));
+            extensions.sort(Comparator.comparing(NuxeoArtifact::getId));
+        }
+        return Collections.unmodifiableList(extensions);
     }
 
 }

@@ -19,6 +19,7 @@
 package org.nuxeo.apidoc.filter;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.time.FastDateFormat;
+import org.nuxeo.ecm.core.api.NuxeoPrincipal;
 import org.nuxeo.ecm.platform.ui.web.auth.plugins.AnonymousAuthenticator;
 import org.nuxeo.runtime.api.Framework;
 
@@ -49,6 +51,11 @@ public class CacheAndAuthFilter extends BaseApiDocFilter {
         return forceAnonymous.booleanValue();
     }
 
+    protected boolean isAnonymousRequest(HttpServletRequest httpRequest) {
+        Principal user = httpRequest.getUserPrincipal();
+        return user == null || ((user instanceof NuxeoPrincipal) && ((NuxeoPrincipal) user).isAnonymous());
+    }
+
     @Override
     protected void internalDoFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -57,11 +64,11 @@ public class CacheAndAuthFilter extends BaseApiDocFilter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         boolean activateCaching = false;
-        String anonymousHeader = httpRequest.getHeader("X-NUXEO-ANONYMOUS-ACCESS");
-        if ("true".equals(anonymousHeader) || forceAnonymous()) {
+        if (isAnonymousRequest(httpRequest) || forceAnonymous()) {
             // activate cache
             activateCaching = true;
-        } else {
+        }
+        if (forceAnonymous()) {
             // deactivate anonymous login
             httpRequest.setAttribute(AnonymousAuthenticator.BLOCK_ANONYMOUS_LOGIN_KEY, Boolean.TRUE);
         }
@@ -76,9 +83,9 @@ public class CacheAndAuthFilter extends BaseApiDocFilter {
 
     public static void addCacheHeader(HttpServletResponse httpResponse, boolean isPrivate, String cacheTime) {
         if (isPrivate) {
-            httpResponse.addHeader("Cache-Control", "private, max-age=" + cacheTime);
+            httpResponse.setHeader("Cache-Control", "private, max-age=" + cacheTime);
         } else {
-            httpResponse.addHeader("Cache-Control", "public, max-age=" + cacheTime);
+            httpResponse.setHeader("Cache-Control", "public, max-age=" + cacheTime);
         }
 
         // Generating expires using current date and adding cache time.

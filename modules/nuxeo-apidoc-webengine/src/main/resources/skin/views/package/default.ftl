@@ -9,7 +9,7 @@
 <div class="tabscontent">
   <@toc />
 
-  <h2>General Information</h2>
+  <h2 class="toc">General Information</h2>
   <div class="info">
     <table class="listTable">
       <tr>
@@ -37,33 +37,45 @@
   <#if nxItem.dependencies?size gt 0 || nxItem.optionalDependencies?size gt 0 || nxItem.conflicts?size gt 0>
   <div id="alldependencies">
     <#if nxItem.dependencies?size gt 0>
-    <h2>Dependencies</h2>
+    <h2 class="toc">Dependencies</h2>
     <ul id="dependencies">
       <#list nxItem.dependencies as dep>
-      <li><a class="packages" href="${Root.path}/${distId}/viewPackage/${dep}">${dep}</a></li>
+        <#if dependencies[dep]??>
+          <li><a class="packages" href="${Root.path}/${distId}/viewPackage/${dependencies[dep].name}">${dep}</a></li>
+        <#else>
+          <li><span class="packages">${dep}</li>
+        </#if>
       </#list>
-    <ul>
+    </ul>
     </#if>
     <#if nxItem.optionalDependencies?size gt 0>
-    <h2>Optional Dependencies</h2>
+    <h2 class="toc">Optional Dependencies</h2>
     <ul id="optionalDependencies">
       <#list nxItem.optionalDependencies as dep>
-      <li><a class="packages" href="${Root.path}/${distId}/viewPackage/${dep}">${dep}</a></li>
+        <#if optionalDependencies[dep]??>
+          <li><a class="packages" href="${Root.path}/${distId}/viewPackage/${dep}">${dep}</a></li>
+        <#else>
+          <li><span class="packages">${dep}</li>
+        </#if>
       </#list>
-    <ul>
+    </ul>
     </#if>
     <#if nxItem.conflicts?size gt 0>
-    <h2>Conflicts</h2>
+    <h2 class="toc">Conflicts</h2>
     <ul id="conflicts">
       <#list nxItem.conflicts as dep>
-      <li><a class="packages" href="${Root.path}/${distId}/viewPackage/${dep}">${dep}</a></li>
+        <#if conflicts[dep]??>
+          <li><a class="packages" href="${Root.path}/${distId}/viewPackage/${dep}">${dep}</a></li>
+        <#else>
+          <li><span class="packages">${dep}</li>
+        </#if>
       </#list>
-    <ul>
+    </ul>
     </#if>
   </div>
   </#if>
 
-  <h2>Bundles</h2>
+  <h2 class="toc">Bundles</h2>
   <div id="bundles">
   <#if nxItem.bundles?size gt 0>
     <ul>
@@ -81,7 +93,7 @@
   </div>
 
   <#if components?size gt 0>
-    <h2>Components</h2>
+    <h2 class="toc">Components</h2>
     <div id="components">
       <ul>
         <#list components as component>
@@ -92,18 +104,18 @@
   </#if>
 
   <#if services?size gt 0>
-    <h2>Services</h2>
+    <h2 class="toc">Services</h2>
     <div id="services">
       <ul>
         <#list services as service>
-        <li><a class="services" href="${Root.path}/${distId}/viewService/${service.id}">${service.id}</a></li>
+        <li><a class="services" href="${Root.path}/${distId}/viewService/${service.id}">${service.label}</a></li>
         </#list>
       </ul>
     </div>
   </#if>
 
   <#if extensionpoints?size gt 0>
-    <h2>Extension Points</h2>
+    <h2 class="toc">Extension Points</h2>
     <div id="extensionpoints">
       <ul>
         <#list extensionpoints as xp>
@@ -114,7 +126,7 @@
   </#if>
 
   <#if contributions?size gt 0>
-    <h2>Contributions</h2>
+    <h2 class="toc">Contributions</h2>
     <div id="contributions">
       <ul>
         <#list contributions as contribution>
@@ -124,7 +136,7 @@
     </div>
   </#if>
 
-  <h2>Exports</h2>
+  <h2 class="toc">Exports</h2>
   <ul class="exports">
     <li>
       <a href="${Root.path}/${distId}/json?nuxeoPackages=${nxItem.name}&pretty=true">Json Export</a>

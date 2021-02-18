@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -234,8 +235,8 @@ public class TestJson extends AbstractApidocTest {
         assertNotNull(parentReadme);
         checkContentEquals("apidoc_snapshot/apidoc_readme.txt", parentReadme.getString());
         assertEquals(Arrays.asList(), bundle.getRequirements());
-        assertEquals(Long.valueOf(6), bundle.getMinRegistrationOrder());
-        assertEquals(Long.valueOf(187), bundle.getMaxRegistrationOrder());
+        assertEquals(Long.valueOf(65), bundle.getMinResolutionOrder());
+        assertEquals(Long.valueOf(71), bundle.getMaxResolutionOrder());
         assertEquals(version, bundle.getVersion());
         // check readme on core bundle instead
         BundleInfo coreBundle = snapshot.getBundle("org.nuxeo.apidoc.core");
@@ -245,6 +246,32 @@ public class TestJson extends AbstractApidocTest {
         readme = coreBundle.getParentReadme();
         assertNotNull(readme);
         checkContentEquals("apidoc_snapshot/apidoc_readme.txt", readme.getString());
+        assertEquals(Arrays.asList("org.nuxeo.apidoc.schemaContrib", "org.nuxeo.apidoc.doctypeContrib",
+                "org.nuxeo.apidoc.lifecycle.contrib", "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
+                "org.nuxeo.apidoc.adapterContrib", "org.nuxeo.apidoc.listener.contrib", "org.nuxeo.apidoc.test.works"),
+                bundle.getComponents().stream().map(ComponentInfo::getId).collect(Collectors.toList()));
+        assertEquals(Arrays.asList(MOCK_PACKAGE_NAME), bundle.getPackages());
+        // check cache API
+        assertEquals(
+                Arrays.asList("org.nuxeo.apidoc.search.ArtifactSearcher", "org.nuxeo.apidoc.snapshot.SnapshotListener",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManager"),
+                bundle.getServices().stream().map(NuxeoArtifact::getId).collect(Collectors.toList()));
+        assertEquals(
+                Arrays.asList("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins"),
+                bundle.getExtensionPoints().stream().map(NuxeoArtifact::getId).collect(Collectors.toList()));
+
+        assertEquals(
+                Arrays.asList("org.nuxeo.apidoc.adapterContrib--adapters", "org.nuxeo.apidoc.doctypeContrib--doctype",
+                        "org.nuxeo.apidoc.lifecycle.contrib--types", "org.nuxeo.apidoc.listener.contrib--listener",
+                        "org.nuxeo.apidoc.schemaContrib--schema",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+                        "org.nuxeo.apidoc.test.works--queues", "org.nuxeo.apidoc.test.works--queues1"),
+                bundle.getExtensions().stream().map(NuxeoArtifact::getId).collect(Collectors.toList()));
 
         // check introspected bundle group
         BundleGroup group = bundle.getBundleGroup();
@@ -331,7 +358,9 @@ public class TestJson extends AbstractApidocTest {
         assertFalse(smcomp.isXmlPureComponent());
         checkContentEquals("apidoc_snapshot/processed-snapshot-service-framework.xml", smcomp.getXmlFileContent());
         assertEquals(Arrays.asList(), smcomp.getRequirements());
-        assertEquals(Long.valueOf(60), smcomp.getRegistrationOrder());
+        assertEquals(Long.valueOf(68), smcomp.getResolutionOrder());
+        assertNull(smcomp.getDeclaredStartOrder());
+        assertEquals(Long.valueOf(132), smcomp.getStartOrder());
 
         // check json back reference
         assertNotNull(smcomp.getBundle());
@@ -339,7 +368,7 @@ public class TestJson extends AbstractApidocTest {
 
         // check services
         assertNotNull(smcomp.getServices());
-        assertEquals(2, smcomp.getServices().size());
+        assertEquals(3, smcomp.getServices().size());
         ServiceInfo service = smcomp.getServices().get(0);
         assertEquals(ServiceInfo.TYPE_NAME, service.getArtifactType());
         assertEquals("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent", service.getComponentId());
@@ -352,7 +381,9 @@ public class TestJson extends AbstractApidocTest {
         // check json back reference
         assertNotNull(service.getComponent());
         // check second service id
-        assertEquals("org.nuxeo.apidoc.search.ArtifactSearcher", smcomp.getServices().get(1).getId());
+        assertEquals("org.nuxeo.apidoc.snapshot.SnapshotListener", smcomp.getServices().get(1).getId());
+        // check third service id
+        assertEquals("org.nuxeo.apidoc.search.ArtifactSearcher", smcomp.getServices().get(2).getId());
 
         // check extension points
         assertNotNull(smcomp.getExtensionPoints());
@@ -466,6 +497,8 @@ public class TestJson extends AbstractApidocTest {
                 ext.getHierarchyPath());
         assertEquals(new ComponentName("service:org.nuxeo.ecm.core.schema.TypeService"), ext.getTargetComponentName());
         assertEquals(version, ext.getVersion());
+        // not working on 10.10
+        assertNull(ext.getRegistrationOrder());
         // check json back reference
         assertNotNull(ext.getComponent());
 
@@ -525,6 +558,8 @@ public class TestJson extends AbstractApidocTest {
         assertNotNull(pkg);
         assertEquals(PackageInfo.TYPE_NAME, pkg.getArtifactType());
         assertEquals(Arrays.asList("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"), pkg.getBundles());
+        assertEquals(Arrays.asList("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"),
+                new ArrayList<>(pkg.getBundleInfo().keySet()));
         assertEquals("platform-explorer-mock-1.0.1", pkg.getId());
         assertEquals("platform-explorer-mock", pkg.getName());
         if (partial) {

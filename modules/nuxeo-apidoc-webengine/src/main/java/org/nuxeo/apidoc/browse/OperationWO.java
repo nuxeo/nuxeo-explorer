@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.documentation.JavaDocHelper;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
@@ -40,15 +40,18 @@ import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
 @WebObject(type = "operation")
-public class OperationWO extends NuxeoArtifactWebObject {
+public class OperationWO extends NuxeoArtifactWebObject<OperationInfo> {
 
     protected OperationInfo getTargetComponentInfo() {
-        return getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession()).getOperation(nxArtifactId);
+        return getSnapshot().getOperation(nxArtifactId);
     }
 
     @Override
-    public NuxeoArtifact getNxArtifact() {
-        return getTargetComponentInfo();
+    public OperationInfo getNxArtifact() {
+        if (nxArtifact == null) {
+            nxArtifact = getTargetComponentInfo();
+        }
+        return nxArtifact;
     }
 
     protected String getSignatureInfo(OperationInfo op, boolean isInput) {
@@ -78,12 +81,12 @@ public class OperationWO extends NuxeoArtifactWebObject {
         return "";
     }
 
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Override
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();
         try {
-            OperationInfo opInfo = getTargetComponentInfo();
+            OperationInfo opInfo = getNxArtifact();
             OperationDocumentation opDoc = OperationInfo.getDocumentation(opInfo);
 
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -93,7 +96,7 @@ public class OperationWO extends NuxeoArtifactWebObject {
 
             if (Constants.CAT_CHAIN.equals(opInfo.getCategory())) {
                 // handle chains use case, where implementation type is an inner class
-                DistributionSnapshot dist = getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession());
+                DistributionSnapshot dist = getSnapshot();
                 JavaDocHelper helper = JavaDocHelper.getHelper(dist.getName(), dist.getVersion());
                 String javadocUrl = helper.getUrl(OperationChainCompiler.class.getCanonicalName(), "CompiledChainImpl");
                 t.arg("implementationUrl", javadocUrl);

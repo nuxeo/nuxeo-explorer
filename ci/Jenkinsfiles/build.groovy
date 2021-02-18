@@ -1,6 +1,18 @@
 /*
  * (C) Copyright 2018-2020 Nuxeo (http://nuxeo.com/) and others.
  *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  * Contributors:
  *     Kevin Leturc <kleturc@nuxeo.com>
  *     Anahide Tchertchian
@@ -20,9 +32,19 @@ void setGitHubBuildStatus(String context, String message, String state) {
   ])
 }
 
+def isPullRequest() {
+  return BRANCH_NAME =~ /PR-.*/
+}
+
 String getVersion(referenceBranch) {
   String version = readMavenPom().getVersion()
   return BRANCH_NAME == referenceBranch ? version : version + "-${BRANCH_NAME}"
+}
+
+void getNuxeoVersion() {
+  container('maven') {
+    return sh(returnStdout: true, script: 'mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=nuxeo.platform.version -q -DforceStdout').trim()
+  }
 }
 
 String getCommitSha1() {
@@ -42,13 +64,22 @@ void dockerPush(String image) {
 }
 
 void dockerDeploy(String imageName) {
-  String imageTag = "${ORG}/${imageName}:${VERSION}"
+  String imageTag = "nuxeo/${imageName}:${VERSION}"
   String internalImage = "${DOCKER_REGISTRY}/${imageTag}"
   String explorerImage = "${NUXEO_DOCKER_REGISTRY}/${imageTag}"
   echo "Push ${explorerImage}"
   dockerPull(internalImage)
   dockerTag(internalImage, explorerImage)
   dockerPush(explorerImage)
+}
+
+String getPreviewTemplatesOverride(isReferenceBranch) {
+  if (isReferenceBranch) {
+    // activate dedicated profiles on master preview
+    return 'nuxeo.templates=default,mongodb,explorer-sitemode,explorer-virtualadmin'
+  }
+  // NXP-29494: override templates to avoid activating s3 in PR preview
+  return 'nuxeo.templates=default'
 }
 
 pipeline {
@@ -62,22 +93,24 @@ pipeline {
     )
   }
   environment {
-    APP_NAME = 'nuxeo-explorer'
-    // waiting for https://github.com/jenkins-x/jx/issues/4076 to put it in Global EnvVars
-    CONNECT_PROD_UPLOAD = "https://connect.nuxeo.com/nuxeo/site/marketplace/upload?batch=true"
+    CONNECT_PROD_URL = "https://connect.nuxeo.com/nuxeo"
     MAVEN_OPTS = "$MAVEN_OPTS -Xms512m -Xmx3072m"
-    REFERENCE_BRANCH = "master"
+    MAVEN_ARGS = '-B -nsu'
+    REFERENCE_BRANCH = 'master'
     SCM_REF = "${getCommitSha1()}"
     VERSION = "${getVersion(REFERENCE_BRANCH)}"
     PERSISTENCE = "${BRANCH_NAME == REFERENCE_BRANCH}"
-    // NXP-29494: override templates to avoid activating s3 in PR preview
-    NUXEO_TEMPLATE_OVERRIDE = "${BRANCH_NAME == REFERENCE_BRANCH ? '' : 'nuxeo.templates=default'}"
-    NUXEO_DOCKER_REGISTRY = "docker-private.packages.nuxeo.com"
-    PREVIEW_NAMESPACE = "$APP_NAME-${BRANCH_NAME.toLowerCase()}"
-    ORG = "nuxeo"
+    NUXEO_TEMPLATE_OVERRIDE = "${getPreviewTemplatesOverride(BRANCH_NAME == REFERENCE_BRANCH)}"
+    NUXEO_IMAGE_VERSION = getNuxeoVersion()
+    NUXEO_DOCKER_REGISTRY = 'docker-private.packages.nuxeo.com'
+    PREVIEW_NAMESPACE = "nuxeo-explorer-${BRANCH_NAME.toLowerCase()}"
+    // APP_NAME and ORG needed for PR preview
+    APP_NAME = 'nuxeo-explorer'
+    ORG = 'nuxeo'
+    SLACK_CHANNEL = 'explorer-notifs'
   }
   stages {
-    stage('Set labels') {
+    stage('Set Labels') {
       steps {
         container('maven') {
           echo """
@@ -92,29 +125,78 @@ pipeline {
         }
       }
     }
-    stage('Compile and test') {
+    stage('Compile') {
       steps {
-        setGitHubBuildStatus('explorer/compile', 'Compile and test', 'PENDING')
+        setGitHubBuildStatus('explorer/compile', 'Compile', 'PENDING')
         container('maven') {
           echo """
           ----------------------------------------
           Compile
           ----------------------------------------"""
           echo "MAVEN_OPTS=$MAVEN_OPTS"
-          sh 'mvn -B -nsu -DskipDocker install'
+          sh "mvn ${MAVEN_ARGS} -DskipTests -DskipDocker install"
+        }
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: '**/target/*.jar, **/target/*.war, **/target/nuxeo-*-package-*.zip'
+        }
+        success {
+          setGitHubBuildStatus('explorer/compile', 'Compile', 'SUCCESS')
+        }
+        unsuccessful {
+          setGitHubBuildStatus('explorer/compile', 'Compile', 'FAILURE')
+        }
+      }
+    }
+    stage('Run Unit Tests') {
+      steps {
+        setGitHubBuildStatus('explorer/utests', 'Run Unit Tests', 'PENDING')
+        container('maven') {
+          echo """
+          ----------------------------------------
+          Run Unit Tests
+          ----------------------------------------"""
+          echo "MAVEN_OPTS=$MAVEN_OPTS"
+          sh "mvn  ${MAVEN_ARGS} -f modules test"
+        }
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: '**/target/*.jar, **/target/*.war, **/target/nuxeo-*-package-*.zip, **/target/**/*.log, **/target/*.png, **/target/*.html'
+          junit testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: true
+        }
+        success {
+          setGitHubBuildStatus('explorer/utests', 'Run Unit Tests', 'SUCCESS')
+        }
+        unsuccessful {
+          setGitHubBuildStatus('explorer/utests', 'Run Unit Tests', 'FAILURE')
+        }
+      }
+    }
+    stage('Run Functional Tests') {
+      steps {
+        setGitHubBuildStatus('explorer/ftests', 'Run Functional Tests', 'PENDING')
+        container('maven') {
+          echo """
+          ----------------------------------------
+          Run Functional Tests
+          ----------------------------------------"""
+          echo "MAVEN_OPTS=$MAVEN_OPTS"
+          sh "mvn ${MAVEN_ARGS} -f ftests verify"
         }
         findText regexp: ".*ERROR.*", fileSet: "ftests/**/log/server.log", unstableIfFound: true
       }
       post {
         always {
-          archiveArtifacts artifacts: '**/target/*.jar, **/target/*.war, **/target/nuxeo-*-package-*.zip, **/target/**/*.log, **/target/*.png, **/target/*.html'
-          junit testResults: '**/target/surefire-reports/*.xml, **/target/failsafe-reports/*.xml', allowEmptyResults: true
+          archiveArtifacts artifacts: '**/target/**/*.log, **/target/*.png, **/target/*.html'
+          junit testResults: '**/target/failsafe-reports/*.xml', allowEmptyResults: true
         }
         success {
-          setGitHubBuildStatus('explorer/compile', 'Compile and test', 'SUCCESS')
+          setGitHubBuildStatus('explorer/ftests', 'Run Functional Tests', 'SUCCESS')
         }
         unsuccessful {
-          setGitHubBuildStatus('explorer/compile', 'Compile and test', 'FAILURE')
+          setGitHubBuildStatus('explorer/ftests', 'Run Functional Tests', 'FAILURE')
         }
       }
     }
@@ -123,17 +205,17 @@ pipeline {
         branch "${REFERENCE_BRANCH}"
       }
       steps {
-        setGitHubBuildStatus('explorer/package/deploy', 'Deploy Nuxeo packages', 'PENDING')
+        setGitHubBuildStatus('explorer/package/deploy', 'Deploy Nuxeo Packages', 'PENDING')
         container('maven') {
           echo """
           ----------------------------------------
-          Deploy Nuxeo packages
+          Upload Nuxeo Packages to ${CONNECT_PROD_URL}
           ----------------------------------------"""
           withCredentials([usernameColonPassword(credentialsId: 'connect-prod', variable: 'CONNECT_PASS')]) {
             sh """
               PACKAGES_TO_UPLOAD="packages/nuxeo-*-package/target/nuxeo-*-package*.zip"
               for file in \$PACKAGES_TO_UPLOAD ; do
-                curl -i -u "$CONNECT_PASS" -F package=@\$(ls \$file) "$CONNECT_PROD_UPLOAD" ;
+                curl --fail -i -u "$CONNECT_PASS" -F package=@\$(ls \$file) "$CONNECT_PROD_URL"/site/marketplace/upload?batch=true ;
               done
             """
           }
@@ -141,14 +223,14 @@ pipeline {
       }
       post {
         success {
-          setGitHubBuildStatus('explorer/package/deploy', 'Deploy Nuxeo packages', 'SUCCESS')
+          setGitHubBuildStatus('explorer/package/deploy', 'Deploy Nuxeo Packages', 'SUCCESS')
         }
         unsuccessful {
-          setGitHubBuildStatus('explorer/package/deploy', 'Deploy Nuxeo packages', 'FAILURE')
+          setGitHubBuildStatus('explorer/package/deploy', 'Deploy Nuxeo Packages', 'FAILURE')
         }
       }
     }
-    stage('Build Docker images') {
+    stage('Build Docker Images') {
       when {
         anyOf {
           branch 'PR-*'
@@ -166,34 +248,36 @@ pipeline {
           Registry: ${DOCKER_REGISTRY}
           """
           script {
-            def moduleDir="docker/nuxeo-explorer-docker"
+            def moduleDir = 'docker/nuxeo-explorer-docker'
             // push images to the Jenkins X internal Docker registry
+            sh "envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen"
+            retry(2) {
+              sh "skaffold build -f ${moduleDir}/skaffold.yaml~gen"
+            }
             sh """
-              envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen
-              skaffold build -f ${moduleDir}/skaffold.yaml~gen
               # waiting skaffold + kaniko + container-stucture-tests issue
               #  see https://github.com/GoogleContainerTools/skaffold/issues/3907
-              docker pull ${DOCKER_REGISTRY}/${ORG}/nuxeo-explorer:${VERSION}
-              container-structure-test test --image ${DOCKER_REGISTRY}/${ORG}/nuxeo-explorer:${VERSION} --config ${moduleDir}/test/*
+              docker pull ${DOCKER_REGISTRY}/nuxeo/nuxeo-explorer:${VERSION}
+              container-structure-test test --image ${DOCKER_REGISTRY}/nuxeo/nuxeo-explorer:${VERSION} --config ${moduleDir}/test/*
             """
           }
         }
       }
       post {
         success {
-          setGitHubBuildStatus('explorer/docker/build', 'Build Docker images', 'SUCCESS')
+          setGitHubBuildStatus('explorer/docker/build', 'Build Docker Images', 'SUCCESS')
         }
         unsuccessful {
-          setGitHubBuildStatus('explorer/docker/build', 'Build Docker images', 'FAILURE')
+          setGitHubBuildStatus('explorer/docker/build', 'Build Docker Images', 'FAILURE')
         }
       }
     }
-    stage('Deploy Docker images') {
+    stage('Deploy Docker Images') {
       when {
         branch "${REFERENCE_BRANCH}"
       }
       steps {
-        setGitHubBuildStatus('explorer/docker/deploy', 'Deploy Docker images', 'PENDING')
+        setGitHubBuildStatus('explorer/docker/deploy', 'Deploy Docker Images', 'PENDING')
         container('maven') {
           echo """
           ----------------------------------------
@@ -207,10 +291,10 @@ pipeline {
       }
       post {
         success {
-          setGitHubBuildStatus('explorer/docker/deploy', 'Deploy Docker images', 'SUCCESS')
+          setGitHubBuildStatus('explorer/docker/deploy', 'Deploy Docker Images', 'SUCCESS')
         }
         unsuccessful {
-          setGitHubBuildStatus('explorer/docker/deploy', 'Deploy Docker images', 'FAILURE')
+          setGitHubBuildStatus('explorer/docker/deploy', 'Deploy Docker Images', 'FAILURE')
         }
       }
     }
@@ -227,20 +311,25 @@ pipeline {
         }
       }
       steps {
-        setGitHubBuildStatus('explorer/preview/deploy', 'Deploy Explorer Preview', 'PENDING')
+        setGitHubBuildStatus('explorer/preview/deploy', 'Deploy Preview', 'PENDING')
         container('maven') {
           dir('helm/preview') {
             echo """
             ----------------------------------------
             Deploy Preview environment
             ----------------------------------------"""
-            // first substitute docker image names and versions
-            sh """
-              mv values.yaml values.yaml.tosubst
-              envsubst < values.yaml.tosubst > values.yaml
-            """
-            // second create target namespace (if doesn't exist) and copy secrets to target namespace
             script {
+              boolean isReferenceBranch = BRANCH_NAME == REFERENCE_BRANCH
+              // first substitute docker image names and versions
+              withCredentials([usernamePassword(credentialsId: 'explorer-preview', passwordVariable: 'EXPLORER_PASSWORD', usernameVariable: 'UNUSED_USERNAME')]) {
+                def explorerPasswordProp = "org.nuxeo.apidoc.apidocAdmin.password=${EXPLORER_PASSWORD}"
+                sh """
+                  mv values.yaml values.yaml.tosubst
+                  NUXEO_EXPLORER_CUSTOM_PARAMS=${isReferenceBranch ? explorerPasswordProp : ''} \
+                  envsubst < values.yaml.tosubst > values.yaml
+                """
+              }
+              // second create target namespace (if doesn't exist) and copy secrets to target namespace
               String currentNs = sh(returnStdout: true, script: 'jx -b ns | sed -r "s/^Using namespace \'([^\']+)\'.+\\$/\\1/"').trim()
               boolean nsExist = sh(returnStatus: true, script: "kubectl get namespace ${PREVIEW_NAMESPACE}") == 0
               // Only used with jx preview on pr branches
@@ -252,32 +341,42 @@ pipeline {
               } else {
                 sh "kubectl create namespace ${PREVIEW_NAMESPACE}"
               }
-              sh "kubectl --namespace platform get secret kubernetes-docker-cfg -ojsonpath='{.data.\\.dockerconfigjson}' | base64 --decode > /tmp/config.json"
-              sh """kubectl create secret generic kubernetes-docker-cfg \
-                  --namespace=${PREVIEW_NAMESPACE} \
-                  --from-file=.dockerconfigjson=/tmp/config.json \
-                  --type=kubernetes.io/dockerconfigjson --dry-run -o yaml | kubectl apply -f -"""
-              boolean isReferenceBranch = BRANCH_NAME == REFERENCE_BRANCH
-              String previewCommand = isReferenceBranch ?
-                // To avoid jx gc cron job, reference branch previews are deployed by calling jx step helm install instead of jx preview
-                "jx step helm install --namespace ${PREVIEW_NAMESPACE} --name ${PREVIEW_NAMESPACE} --verbose ."
-                // When deploying a pr preview, we use jx preview which gc the merged pull requests
-                : "jx preview --namespace ${PREVIEW_NAMESPACE} --verbose --source-url=https://github.com/nuxeo/nuxeo-explorer --preview-health-timeout 15m ${noCommentOpt}"
+              try {
+                sh "kubectl --namespace platform get secret kubernetes-docker-cfg -ojsonpath='{.data.\\.dockerconfigjson}' | base64 --decode > /tmp/config.json"
+                sh """kubectl create secret generic kubernetes-docker-cfg \
+                    --namespace=${PREVIEW_NAMESPACE} \
+                    --from-file=.dockerconfigjson=/tmp/config.json \
+                    --type=kubernetes.io/dockerconfigjson --dry-run -o yaml | kubectl apply -f -"""
+                String previewCommand = isReferenceBranch ?
+                  // To avoid jx gc cron job, reference branch previews are deployed by calling jx step helm install instead of jx preview
+                  "jx step helm install --namespace ${PREVIEW_NAMESPACE} --name ${PREVIEW_NAMESPACE} --verbose ."
+                  // When deploying a pr preview, we use jx preview which gc the merged pull requests
+                  : "jx preview --namespace ${PREVIEW_NAMESPACE} --verbose --source-url=https://github.com/nuxeo/nuxeo-explorer --preview-health-timeout 15m ${noCommentOpt}"
 
-              // third build and deploy the chart
-              // waiting for https://github.com/jenkins-x/jx/issues/5797 to be fixed in order to remove --source-url
-              sh """
-                jx step helm build --verbose
-                mkdir target && helm template . --output-dir target
-                ${previewCommand}
-              """
-              if (isReferenceBranch) {
-                // When not using jx preview, we need to expose the nuxeo url by hand
-                url = sh(returnStdout: true, script: "kubectl get svc --namespace ${PREVIEW_NAMESPACE} preview -o go-template='{{index .metadata.annotations \"fabric8.io/exposeUrl\"}}'")
-                echo """
-                  ----------------------------------------
-                  Preview available at: ${url}
-                  ----------------------------------------"""
+                // third build and deploy the chart
+                // waiting for https://github.com/jenkins-x/jx/issues/5797 to be fixed in order to remove --source-url
+                sh """
+                  helm init --client-only --stable-repo-url=https://charts.helm.sh/stable
+                  helm repo add local-jenkins-x http://jenkins-x-chartmuseum:8080
+                  jx step helm build --verbose
+                  mkdir target && helm template . --output-dir target
+                  ${previewCommand}
+                """
+                if (isReferenceBranch) {
+                  // When not using jx preview, we need to expose the nuxeo url by hand
+                  url = sh(returnStdout: true, script: "kubectl get svc --namespace ${PREVIEW_NAMESPACE} preview -o go-template='{{index .metadata.annotations \"fabric8.io/exposeUrl\"}}'")
+                  echo """
+                    ----------------------------------------
+                    Preview available at: ${url}
+                    ----------------------------------------"""
+                }
+              } catch (err) {
+                echo "Error while deploying preview environment: ${err}"
+                if (!nsExist) {
+                  echo "Deleting namespace ${PREVIEW_NAMESPACE}"
+                  sh "kubectl delete namespace ${PREVIEW_NAMESPACE}"
+                }
+                throw err
               }
             }
           }
@@ -288,22 +387,41 @@ pipeline {
           archiveArtifacts allowEmptyArchive: true, artifacts: '**/requirements.lock, **/charts/*.tgz, **/target/**/*.yaml'
         }
         success {
-          setGitHubBuildStatus('explorer/preview/deploy', 'Deploy Explorer Preview', 'SUCCESS')
+          setGitHubBuildStatus('explorer/preview/deploy', 'Deploy Preview', 'SUCCESS')
         }
         unsuccessful {
-          setGitHubBuildStatus('explorer/preview/deploy', 'Deploy Explorer Preview', 'FAILURE')
+          setGitHubBuildStatus('explorer/preview/deploy', 'Deploy Preview', 'FAILURE')
         }
       }
     }
   }
+
   post {
     always {
       script {
-        if (BRANCH_NAME == REFERENCE_BRANCH) {
+        if (!isPullRequest()) {
           // update JIRA issue
           step([$class: 'JiraIssueUpdater', issueSelector: [$class: 'DefaultIssueSelector'], scm: scm])
         }
       }
     }
+    success {
+      script {
+        if (!isPullRequest()) {
+          def prevStatus = currentBuild.getPreviousBuild()?.getResult()
+          if (!hudson.model.Result.SUCCESS.toString().equals(prevStatus) && !hudson.model.Result.UNSTABLE.toString().equals(prevStatus)) {
+            slackSend(channel: "${SLACK_CHANNEL}", color: "good", message: "Successfully built <${BUILD_URL}|nuxeo-explorer ${BRANCH_NAME} #${BUILD_NUMBER}>")
+          }
+        }
+      }
+    }
+    failure { // use failure instead of "unsuccessful" because of frequent UNSTABLE status on ftests
+      script {
+        if (!isPullRequest()) {
+          slackSend(channel: "${SLACK_CHANNEL}", color: "danger", message: "Failed to build <${BUILD_URL}|nuxeo-explorer ${BRANCH_NAME} #${BUILD_NUMBER}>")
+        }
+      }
+    }
   }
+
 }

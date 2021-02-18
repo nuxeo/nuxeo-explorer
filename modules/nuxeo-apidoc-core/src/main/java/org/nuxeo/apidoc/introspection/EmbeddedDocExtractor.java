@@ -24,16 +24,29 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.commonmark.Extension;
+import org.commonmark.ext.gfm.tables.TablesExtension;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.impl.blob.StringBlob;
+import org.nuxeo.ecm.platform.htmlsanitizer.HtmlSanitizerService;
+import org.nuxeo.runtime.api.Framework;
 
 public class EmbeddedDocExtractor {
+
+    private static final Logger log = LogManager.getLogger(EmbeddedDocExtractor.class);
 
     public static final String DOC_PREFIX = "doc/";
 
@@ -45,6 +58,12 @@ public class EmbeddedDocExtractor {
      * @since 11.1
      */
     protected static final String README = "ReadMe.md";
+
+    protected static List<Extension> MD_EXTENSIONS = Arrays.asList(TablesExtension.create());
+
+    protected static Parser MD_PARSER = Parser.builder().extensions(MD_EXTENSIONS).build();
+
+    protected static HtmlRenderer MD_RENDERER = HtmlRenderer.builder().extensions(MD_EXTENSIONS).build();
 
     /**
      * Navigates hierarchy to find target file.
@@ -137,6 +156,30 @@ public class EmbeddedDocExtractor {
     protected static Blob getReadme(String name, InputStream is) throws IOException {
         String content = IOUtils.toString(is, StandardCharsets.UTF_8);
         return new StringBlob(content, "text/plain", StandardCharsets.UTF_8.name(), name);
+    }
+
+    /**
+     * Returns Markdown ReadMe content, converted to HTML.
+     *
+     * @since 20.0.0
+     */
+    public static String getHtmlFromMarkdown(Blob readme) {
+        if (readme != null) {
+            try {
+                return getHtmlFromMarkdown(readme.getString());
+            } catch (IOException e) {
+                log.error(e, e);
+            }
+        }
+        return null;
+    }
+
+    public static String getHtmlFromMarkdown(String md) {
+        if (StringUtils.isNotBlank(md)) {
+            return Framework.getService(HtmlSanitizerService.class)
+                            .sanitizeString(MD_RENDERER.render(MD_PARSER.parse(md)), null);
+        }
+        return null;
     }
 
 }

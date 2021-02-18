@@ -40,6 +40,7 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.PartialList;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.query.sql.NXQL;
 
@@ -85,13 +86,12 @@ public class BundleGroupDocAdapter extends BaseNuxeoArtifactDocAdapter implement
 
     @Override
     public List<String> getBundleIds() {
-        List<DocumentModel> children = getCoreSession().getChildren(doc.getRef());
-        return children.stream()
-                       .map(doc -> doc.getAdapter(BundleInfo.class))
-                       .filter(Objects::nonNull)
-                       .map(BundleInfo::getId)
-                       .filter(id -> !id.equals(getId()))
-                       .collect(Collectors.toList());
+        String bidProp = BundleInfo.PROP_BUNDLE_ID;
+        String query = String.format("SELECT %s FROM %s WHERE %s = %s AND %s ORDER BY %s", bidProp,
+                BundleInfo.TYPE_NAME, NXQL.ECM_PARENTID, NXQL.escapeString(doc.getId()), QueryHelper.NOT_DELETED,
+                bidProp);
+        PartialList<Map<String, Serializable>> res = getCoreSession().queryProjection(query, getListingLimit(), 0);
+        return res.stream().map(e -> e.get(bidProp)).map(String.class::cast).collect(Collectors.toList());
     }
 
     @Override
@@ -102,7 +102,7 @@ public class BundleGroupDocAdapter extends BaseNuxeoArtifactDocAdapter implement
     @Override
     public List<BundleGroup> getSubGroups() {
         String query = QueryHelper.select(TYPE_NAME, doc, NXQL.ECM_POS);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(BundleGroup.class))
                    .filter(Objects::nonNull)

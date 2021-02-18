@@ -18,13 +18,14 @@
  */
 package org.nuxeo.apidoc.api;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
+import org.nuxeo.apidoc.documentation.URLHelper;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.services.config.ConfigurationService;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Represents a Nuxeo package.
@@ -105,6 +106,16 @@ public interface PackageInfo extends NuxeoArtifact {
     List<String> getConflicts();
 
     /**
+     * Returns a map of bundles by bundle id.
+     * <p>
+     * Referenced bundle can be null (when referenced in the package but unknown to the distribution, typically).
+     *
+     * @since 20.1.0
+     */
+    @JsonIgnore
+    Map<String, BundleInfo> getBundleInfo();
+
+    /**
      * Returns the corresponding URL for this package on the marketplace.
      * <p>
      * URLs are in the form:
@@ -122,13 +133,7 @@ public interface PackageInfo extends NuxeoArtifact {
                                   .getString(CONNECT_URL_PROP_NAME, DEFAULT_CONNECT_URL);
         String url = String.format("%smarketplace/package/%s?version=%s", baseUrl, pkg.getName(), pkg.getVersion());
         if (checkValidity) {
-            try {
-                HttpURLConnection huc = (HttpURLConnection) new URL(url).openConnection();
-                huc.setRequestMethod("HEAD");
-                if (HttpURLConnection.HTTP_OK != huc.getResponseCode()) {
-                    return null;
-                }
-            } catch (IOException e) {
+            if (!URLHelper.isValid(url)) {
                 return null;
             }
         }

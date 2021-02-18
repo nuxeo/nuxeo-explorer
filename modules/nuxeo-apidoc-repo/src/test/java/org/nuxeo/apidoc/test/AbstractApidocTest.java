@@ -155,7 +155,8 @@ public abstract class AbstractApidocTest {
                     res += line + "\n";
                 }
             }
-            for (String kw : Arrays.asList("version", "fileName", "location", "artifactVersion", "xmlFileName", "digest")) {
+            for (String kw : Arrays.asList("version", "fileName", "location", "artifactVersion", "xmlFileName",
+                    "digest")) {
                 String p = String.format("\"%s\": \"[^\"]*\"", kw);
                 String r = String.format("\"%s\": \"mockTest%s\"", kw,
                         kw.substring(0, 1).toUpperCase(Locale.ENGLISH) + kw.substring(1));

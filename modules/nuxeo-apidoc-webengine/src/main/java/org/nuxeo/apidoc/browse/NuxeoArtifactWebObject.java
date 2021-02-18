@@ -24,21 +24,26 @@ import java.net.URLEncoder;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.ecm.webengine.model.Template;
+import org.nuxeo.ecm.webengine.model.exceptions.WebResourceNotFoundException;
 import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
 import org.nuxeo.runtime.api.Framework;
 
-public abstract class NuxeoArtifactWebObject extends DefaultObject {
+public abstract class NuxeoArtifactWebObject<T extends NuxeoArtifact> extends DefaultObject {
 
     protected String nxArtifactId;
+
+    protected T nxArtifact;
 
     @Override
     protected void initialize(Object... args) {
         nxArtifactId = (String) args[0];
+        nxArtifact = null;
     }
 
     protected String getNxArtifactId() {
@@ -58,7 +63,7 @@ public abstract class NuxeoArtifactWebObject extends DefaultObject {
         return super.getView(viewId).arg(Distribution.DIST_ID, getDistributionId()).arg("onArtifact", true);
     }
 
-    public abstract NuxeoArtifact getNxArtifact();
+    public abstract T getNxArtifact();
 
     protected String getDistributionId() {
         return (String) ctx.getProperty(Distribution.DIST_ID);
@@ -82,18 +87,23 @@ public abstract class NuxeoArtifactWebObject extends DefaultObject {
      * @since 11.1
      */
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object doGet() {
         return doViewDefault();
     }
 
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object doViewDefault() {
         NuxeoArtifact nxItem = getNxArtifact();
+        if (nxItem == null) {
+            throw new WebResourceNotFoundException(String.format("No artifact found with id '%s' for resource %s",
+                    getNxArtifactId(), getClass().getName()));
+        }
         return getView("default").arg("nxItem", nxItem);
     }
 
     public String getSearchCriterion() {
         return String.format("'%s'", getNxArtifactId());
     }
+
 }

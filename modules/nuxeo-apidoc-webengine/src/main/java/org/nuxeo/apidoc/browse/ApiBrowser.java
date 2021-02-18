@@ -30,14 +30,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.apidoc.api.BundleGroup;
@@ -80,6 +80,8 @@ public class ApiBrowser extends DefaultObject {
 
     protected boolean embeddedMode = false;
 
+    protected DistributionSnapshot distribution;
+
     protected SnapshotManager getSnapshotManager() {
         return Framework.getService(SnapshotManager.class);
     }
@@ -95,27 +97,34 @@ public class ApiBrowser extends DefaultObject {
             Boolean embed = (Boolean) args[1];
             embeddedMode = embed != null && embed;
         }
+        distribution = args.length > 2 ? (DistributionSnapshot) args[2] : null;
+        // init potential resources depending on request
         getSnapshotManager().initWebContext(getContext().getRequest());
     }
 
+    protected DistributionSnapshot getDistribution() {
+        if (distribution != null) {
+            return distribution;
+        }
+        return getSnapshotManager().getSnapshot(distributionId, getContext().getCoreSession());
+    }
+
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object doGet() {
         String viewId = "index";
-        DistributionSnapshot snap = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
+        DistributionSnapshot snap = getDistribution();
         List<String> bundleIds = snap.getBundleIds();
         Map<String, Integer> stats = new HashMap<String, Integer>();
         stats.put("bundles", bundleIds.size());
         stats.put("components", snap.getComponentIds().size());
         stats.put("services", snap.getServiceIds().size());
         stats.put("xps", snap.getExtensionPointIds().size());
-        stats.put("contribs", snap.getComponentIds().size());
+        stats.put("contribs", snap.getContributionIds().size());
         stats.put("operations", snap.getOperations().size());
         stats.put("packages", snap.getPackages().size());
         if (embeddedMode) {
             viewId = "indexSimple";
-            stats.put("jComponents", snap.getJavaComponentIds().size());
-            stats.put("xComponents", snap.getXmlComponentIds().size());
         } else {
             stats.put("bundlegroups", snap.getBundleGroups().size());
         }
@@ -134,7 +143,7 @@ public class ApiBrowser extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path(ApiBrowserConstants.LIST_BUNDLEGROUPS)
     public Object getMavenGroups() {
         BundleGroupTreeHelper bgth = new BundleGroupTreeHelper(
@@ -146,11 +155,10 @@ public class ApiBrowser extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path(ApiBrowserConstants.LIST_BUNDLES)
     public Object getBundles() {
-        DistributionSnapshot snapshot = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
-        List<String> bundleIds = snapshot.getBundleIds();
+        List<String> bundleIds = getDistribution().getBundleIds();
         List<ArtifactLabel> bundles = new ArrayList<>();
         for (String bid : bundleIds) {
             bundles.add(new ArtifactLabel(bid, bid, null));
@@ -161,24 +169,23 @@ public class ApiBrowser extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path(ApiBrowserConstants.LIST_COMPONENTS)
     public Object getComponents() {
-        DistributionSnapshot snapshot = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
-        List<String> javaComponentIds = snapshot.getJavaComponentIds();
-        List<ArtifactLabel> javaLabels = javaComponentIds.stream()
-                                                         .map(ArtifactLabel::createLabelFromComponent)
-                                                         .sorted()
-                                                         .collect(Collectors.toList());
-        javaLabels.stream().forEach(l -> l.setOrder(snapshot.getComponent(l.getId()).getRegistrationOrder()));
-
-        List<String> xmlComponentIds = snapshot.getXmlComponentIds();
-        List<ArtifactLabel> xmlLabels = xmlComponentIds.stream()
-                                                       .map(ArtifactLabel::createLabelFromComponent)
-                                                       .sorted()
-                                                       .collect(Collectors.toList());
-        xmlLabels.stream().forEach(l -> l.setOrder(snapshot.getComponent(l.getId()).getRegistrationOrder()));
-
+        DistributionSnapshot snapshot = getDistribution();
+        List<ComponentInfo> comps = snapshot.getComponents();
+        List<ArtifactLabel> javaLabels = new ArrayList<ArtifactLabel>();
+        List<ArtifactLabel> xmlLabels = new ArrayList<ArtifactLabel>();
+        comps.forEach(c -> {
+            ArtifactLabel l = ArtifactLabel.createLabelFromComponent(c.getId());
+            l.setOrder(c.getResolutionOrder());
+            l.setAdditionalOrder(c.getDeclaredStartOrder());
+            if (c.isXmlPureComponent()) {
+                xmlLabels.add(l);
+            } else {
+                javaLabels.add(l);
+            }
+        });
         return getView(ApiBrowserConstants.LIST_COMPONENTS).arg("javaComponents", javaLabels)
                                                            .arg("xmlComponents", xmlLabels)
                                                            .arg(Distribution.DIST_ID,
@@ -186,7 +193,7 @@ public class ApiBrowser extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path(ApiBrowserConstants.LIST_SERVICES)
     public Object getServices() {
         List<String> serviceIds = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession())
@@ -205,10 +212,10 @@ public class ApiBrowser extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path(ApiBrowserConstants.LIST_CONTRIBUTIONS)
     public Object getContributions() {
-        DistributionSnapshot snapshot = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
+        DistributionSnapshot snapshot = getDistribution();
         return getView(ApiBrowserConstants.LIST_CONTRIBUTIONS).arg("contributions", snapshot.getContributions())
                                                               .arg("isLive", snapshot.isLive())
                                                               .arg(Distribution.DIST_ID,
@@ -216,11 +223,10 @@ public class ApiBrowser extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path(ApiBrowserConstants.LIST_EXTENSIONPOINTS)
     public Object getExtensionPoints() {
-        List<String> epIds = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession())
-                                                 .getExtensionPointIds();
+        List<String> epIds = getDistribution().getExtensionPointIds();
 
         List<ArtifactLabel> labels = epIds.stream()
                                           .map(ArtifactLabel::createLabelFromExtensionPoint)
@@ -232,109 +238,10 @@ public class ApiBrowser extends DefaultObject {
                                                                         ctx.getProperty(Distribution.DIST_ID));
     }
 
-    /**
-     * XXX Not used?
-     */
-    @POST
-    @Produces("text/html")
-    @Path("filterComponents")
-    public Object filterComponents(@FormParam("fulltext") String fulltext) {
-        if (StringUtils.isBlank(fulltext)) {
-            return getComponents();
-        }
-        List<NuxeoArtifact> artifacts = getSearcher().filterArtifact(getContext().getCoreSession(), distributionId,
-                ComponentInfo.TYPE_NAME, fulltext);
-
-        List<ArtifactLabel> xmlLabels = new ArrayList<>();
-        List<ArtifactLabel> javaLabels = new ArrayList<>();
-
-        for (NuxeoArtifact item : artifacts) {
-            ComponentInfo ci = (ComponentInfo) item;
-            if (ci.isXmlPureComponent()) {
-                xmlLabels.add(ArtifactLabel.createLabelFromComponent(ci.getId()));
-            } else {
-                javaLabels.add(ArtifactLabel.createLabelFromComponent(ci.getId()));
-            }
-        }
-        return getView(ApiBrowserConstants.LIST_COMPONENTS).arg("javaComponents", javaLabels)
-                                                           .arg("xmlComponents", xmlLabels)
-                                                           .arg(Distribution.DIST_ID,
-                                                                   ctx.getProperty(Distribution.DIST_ID))
-                                                           .arg("searchFilter", sanitize(fulltext));
-    }
-
-    /**
-     * XXX Not used?
-     */
-    @POST
-    @Produces("text/html")
-    @Path("filterBundles")
-    public Object filterBundles(@FormParam("fulltext") String fulltext) {
-        if (StringUtils.isBlank(fulltext)) {
-            return getBundles();
-        }
-        List<NuxeoArtifact> artifacts = getSearcher().filterArtifact(getContext().getCoreSession(), distributionId,
-                BundleInfo.TYPE_NAME, fulltext);
-        List<String> bundleIds = new ArrayList<>();
-        for (NuxeoArtifact item : artifacts) {
-            bundleIds.add(item.getId());
-        }
-        return getView(ApiBrowserConstants.LIST_BUNDLES).arg("bundleIds", bundleIds)
-                                                        .arg(Distribution.DIST_ID,
-                                                                ctx.getProperty(Distribution.DIST_ID))
-                                                        .arg("searchFilter", sanitize(fulltext));
-    }
-
-    /**
-     * XXX Not used?
-     */
-    @POST
-    @Produces("text/html")
-    @Path("filterServices")
-    public Object filterServices(@FormParam("fulltext") String fulltext) {
-        if (StringUtils.isBlank(fulltext)) {
-            return getServices();
-        }
-        List<NuxeoArtifact> artifacts = getSearcher().filterArtifact(getContext().getCoreSession(), distributionId,
-                ServiceInfo.TYPE_NAME, fulltext);
-        List<String> serviceIds = new ArrayList<>();
-        for (NuxeoArtifact item : artifacts) {
-            serviceIds.add(item.getId());
-        }
-        List<ArtifactLabel> serviceLabels = new ArrayList<>();
-
-        for (String id : serviceIds) {
-            serviceLabels.add(ArtifactLabel.createLabelFromService(id));
-        }
-        return getView(ApiBrowserConstants.LIST_SERVICES).arg("services", serviceLabels)
-                                                         .arg(Distribution.DIST_ID,
-                                                                 ctx.getProperty(Distribution.DIST_ID))
-                                                         .arg("searchFilter", sanitize(fulltext));
-    }
-
-    @POST
-    @Produces("text/html")
-    @Path("filterExtensionPoints")
-    public Object filterExtensionPoints(@FormParam("fulltext") String fulltext) {
-        if (StringUtils.isBlank(fulltext)) {
-            return getExtensionPoints();
-        }
-        List<NuxeoArtifact> artifacts = getSearcher().filterArtifact(getContext().getCoreSession(), distributionId,
-                ExtensionPointInfo.TYPE_NAME, fulltext);
-        List<String> eps = artifacts.stream().map(NuxeoArtifact::getId).collect(Collectors.toList());
-        List<ArtifactLabel> labels = eps.stream()
-                                        .map(ArtifactLabel::createLabelFromExtensionPoint)
-                                        .collect(Collectors.toList());
-        return getView(ApiBrowserConstants.LIST_EXTENSIONPOINTS).arg("eps", labels)
-                                                                .arg(Distribution.DIST_ID,
-                                                                        ctx.getProperty(Distribution.DIST_ID))
-                                                                .arg("searchFilter", sanitize(fulltext));
-    }
-
-    @POST
-    @Produces("text/html")
+    @GET
+    @Produces(MediaType.TEXT_HTML)
     @Path("filterContributions")
-    public Object filterContributions(@FormParam("fulltext") String fulltext) {
+    public Object filterContributions(@QueryParam("fulltext") String fulltext) {
         if (StringUtils.isBlank(fulltext)) {
             return getContributions();
         }
@@ -356,80 +263,62 @@ public class ApiBrowser extends DefaultObject {
         return ctx.newObject(pluginId, distributionId, embeddedMode);
     }
 
-    @Path(ApiBrowserConstants.VIEW_BUNDLE + "/{bundleId}")
-    public Resource viewBundle(@PathParam("bundleId") String bundleId) {
-        NuxeoArtifactWebObject wo = (NuxeoArtifactWebObject) ctx.newObject("bundle", bundleId);
-        NuxeoArtifact nxItem = wo.getNxArtifact();
+    protected Resource getNxResource(String type, String id) {
+        Resource wo = ctx.newObject(type, id);
+        NuxeoArtifact nxItem = null;
+        if (wo instanceof NuxeoArtifactWebObject<?>) {
+            nxItem = ((NuxeoArtifactWebObject<?>) wo).getNxArtifact();
+        }
         if (nxItem == null) {
-            throw new WebResourceNotFoundException(bundleId);
+            throw new WebResourceNotFoundException(id);
         }
         return wo;
+    }
+
+    @Path(ApiBrowserConstants.VIEW_BUNDLE + "/{bundleId}")
+    public Resource viewBundle(@PathParam("bundleId") String bundleId) {
+        return getNxResource("bundle", bundleId);
     }
 
     @Path(ApiBrowserConstants.VIEW_COMPONENT + "/{componentId}")
     public Resource viewComponent(@PathParam("componentId") String componentId) {
-        NuxeoArtifactWebObject wo = (NuxeoArtifactWebObject) ctx.newObject("component", componentId);
-        NuxeoArtifact nxItem = wo.getNxArtifact();
-        if (nxItem == null) {
-            throw new WebResourceNotFoundException(componentId);
-        }
-        return wo;
+        return getNxResource("component", componentId);
     }
 
     @Path(ApiBrowserConstants.VIEW_OPERATION + "/{opId}")
     public Resource viewOperation(@PathParam("opId") String opId) {
-        return ctx.newObject("operation", opId);
+        return getNxResource("operation", opId);
     }
 
     @Path(ApiBrowserConstants.VIEW_SERVICE + "/{serviceId}")
     public Resource viewService(@PathParam("serviceId") String serviceId) {
-        NuxeoArtifactWebObject wo = (NuxeoArtifactWebObject) ctx.newObject("service", serviceId);
-        NuxeoArtifact nxItem = wo.getNxArtifact();
-        if (nxItem == null) {
-            throw new WebResourceNotFoundException(serviceId);
-        }
-        return wo;
+        return getNxResource("service", serviceId);
     }
 
     @Path(ApiBrowserConstants.VIEW_EXTENSIONPOINT + "/{epId}")
     public Resource viewExtensionPoint(@PathParam("epId") String epId) {
-        NuxeoArtifactWebObject wo = (NuxeoArtifactWebObject) ctx.newObject("extensionPoint", epId);
-        NuxeoArtifact nxItem = wo.getNxArtifact();
-        if (nxItem == null) {
-            throw new WebResourceNotFoundException(epId);
-        }
-        return wo;
+        return getNxResource("extensionPoint", epId);
     }
 
     @Path(ApiBrowserConstants.VIEW_CONTRIBUTION + "/{cId}")
     public Resource viewContribution(@PathParam("cId") String cId) {
-        NuxeoArtifactWebObject wo = (NuxeoArtifactWebObject) ctx.newObject("contribution", cId);
-        NuxeoArtifact nxItem = wo.getNxArtifact();
-        if (nxItem == null) {
-            throw new WebResourceNotFoundException(cId);
-        }
-        return wo;
+        return getNxResource("contribution", cId);
     }
 
     @Path(ApiBrowserConstants.VIEW_BUNDLEGROUP + "/{gId}")
     public Resource viewBundleGroup(@PathParam("gId") String gId) {
-        NuxeoArtifactWebObject wo = (NuxeoArtifactWebObject) ctx.newObject("bundleGroup", gId);
-        NuxeoArtifact nxItem = wo.getNxArtifact();
-        if (nxItem == null) {
-            throw new WebResourceNotFoundException(gId);
-        }
-        return wo;
+        return getNxResource("bundleGroup", gId);
     }
 
     /** @since 11.1 */
     @Path(ApiBrowserConstants.VIEW_PACKAGE + "/{pkgId}")
     public Resource viewPackage(@PathParam("pkgId") String pkgId) {
-        return ctx.newObject(PackageWO.TYPE, pkgId);
+        return getNxResource(PackageWO.TYPE, pkgId);
     }
 
     @Path("viewArtifact/{id}")
     public Object viewArtifact(@PathParam("id") String id) {
-        DistributionSnapshot snap = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
+        DistributionSnapshot snap = getDistribution();
 
         BundleGroup bg = snap.getBundleGroup(id);
         if (bg != null) {
@@ -461,7 +350,7 @@ public class ApiBrowser extends DefaultObject {
             return viewContribution(id);
         }
 
-        return Response.status(404).build();
+        return Response.status(Status.NOT_FOUND).build();
     }
 
     public String getLabel(String id) {
@@ -469,11 +358,10 @@ public class ApiBrowser extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path(ApiBrowserConstants.LIST_OPERATIONS)
     public Object listOperations() {
-        DistributionSnapshot snap = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
-        List<OperationInfo> operations = snap.getOperations();
+        List<OperationInfo> operations = getDistribution().getOperations();
         return getView(ApiBrowserConstants.LIST_OPERATIONS).arg("operations", operations)
                                                            .arg(Distribution.DIST_ID,
                                                                    ctx.getProperty(Distribution.DIST_ID))
@@ -486,11 +374,10 @@ public class ApiBrowser extends DefaultObject {
 
     /** @since 11.1 */
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path(ApiBrowserConstants.LIST_PACKAGES)
     public Object listPackages() {
-        DistributionSnapshot snap = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
-        List<PackageInfo> packages = snap.getPackages();
+        List<PackageInfo> packages = getDistribution().getPackages();
         return getView(ApiBrowserConstants.LIST_PACKAGES).arg("packages", packages)
                                                          .arg(Distribution.DIST_ID,
                                                                  ctx.getProperty(Distribution.DIST_ID))
@@ -520,17 +407,12 @@ public class ApiBrowser extends DefaultObject {
             @QueryParam("checkAsPrefixes") Boolean checkAsPrefixes,
             @QueryParam("includeReferences") Boolean includeReferences, @QueryParam("pretty") Boolean pretty)
             throws IOException {
-        SnapshotManager sm = getSnapshotManager();
-        DistributionSnapshot snapshot = sm.getSnapshot(distributionId, ctx.getCoreSession());
-        // init potential resources depending on request
-        sm.initWebContext(getContext().getRequest());
-
         SnapshotFilter filter = getSnapshotFilter(bundles, nuxeoPackages, javaPackagePrefixes, checkAsPrefixes,
                 includeReferences);
         PrettyPrinter printer = Boolean.TRUE.equals(pretty) ? new JsonPrettyPrinter() : null;
         File tmp = getExportTmpFile();
         try (OutputStream out = new FileOutputStream(tmp)) {
-            snapshot.writeJson(out, filter, printer);
+            getDistribution().writeJson(out, filter, printer);
         }
 
         ArchiveFile aFile = new ArchiveFile(tmp.getAbsolutePath());
@@ -550,21 +432,16 @@ public class ApiBrowser extends DefaultObject {
             @QueryParam("checkAsPrefixes") Boolean checkAsPrefixes,
             @QueryParam("includeReferences") Boolean includeReferences, @QueryParam("pretty") Boolean pretty)
             throws IOException {
-        SnapshotManager sm = getSnapshotManager();
-        DistributionSnapshot snapshot = sm.getSnapshot(distributionId, ctx.getCoreSession());
-        // init potential resources depending on request
-        sm.initWebContext(getContext().getRequest());
-
         Map<String, String> props = Boolean.TRUE.equals(pretty) ? Collections.singletonMap("pretty", "true") : null;
         SnapshotFilter filter = getSnapshotFilter(bundles, nuxeoPackages, javaPackagePrefixes, checkAsPrefixes,
                 includeReferences);
-        Exporter exporter = sm.getExporter(exporterName);
+        Exporter exporter = getSnapshotManager().getExporter(exporterName);
         if (exporter == null) {
-            return Response.status(404).build();
+            return Response.status(Status.NOT_FOUND).build();
         }
         File tmp = getExportTmpFile();
         try (OutputStream out = new FileOutputStream(tmp)) {
-            exporter.export(out, snapshot, filter, props);
+            exporter.export(out, getDistribution(), filter, props);
         }
 
         ArchiveFile aFile = new ArchiveFile(tmp.getAbsolutePath());

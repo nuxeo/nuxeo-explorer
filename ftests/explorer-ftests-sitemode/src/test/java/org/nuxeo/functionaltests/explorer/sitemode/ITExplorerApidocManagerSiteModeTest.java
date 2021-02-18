@@ -28,7 +28,7 @@ import org.nuxeo.functionaltests.RestHelper;
  *
  * @since 20.0.0
  */
-public class ITExplorerApidocManagerSideModeTest extends ITExplorerAdminSiteModeTest {
+public class ITExplorerApidocManagerSiteModeTest extends ITExplorerAdminSiteModeTest {
 
     @Override
     @Before

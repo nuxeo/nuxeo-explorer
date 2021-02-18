@@ -72,9 +72,10 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
         doc.setPropertyValue(PROP_COMPONENT_CLASS, componentInfo.getComponentClass());
         doc.setPropertyValue(PROP_BUILT_IN_DOC, componentInfo.getDocumentation());
         doc.setPropertyValue(PROP_IS_XML, Boolean.valueOf(componentInfo.isXmlPureComponent()));
-        doc.setPropertyValue(PROP_SERVICES, (Serializable) componentInfo.getServiceNames());
         doc.setPropertyValue(PROP_REQUIREMENTS, (Serializable) componentInfo.getRequirements());
-        doc.setPropertyValue(PROP_REGISTRATION_ORDER, componentInfo.getRegistrationOrder());
+        doc.setPropertyValue(PROP_RESOLUTION_ORDER, componentInfo.getResolutionOrder());
+        doc.setPropertyValue(PROP_DECLARED_START_ORDER, componentInfo.getDeclaredStartOrder());
+        doc.setPropertyValue(PROP_START_ORDER, componentInfo.getStartOrder());
 
         Blob xmlBlob = Blobs.createBlob(componentInfo.getXmlFileContent(), "text/xml", null,
                 componentInfo.getXmlFileName());
@@ -113,7 +114,7 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
     @Override
     public List<ExtensionPointInfo> getExtensionPoints() {
         String query = QueryHelper.select(ExtensionPointInfo.TYPE_NAME, doc, NXQL.ECM_POS);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(ExtensionPointInfo.class))
                    .filter(Objects::nonNull)
@@ -123,7 +124,7 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
     @Override
     public List<ExtensionInfo> getExtensions() {
         String query = QueryHelper.select(ExtensionInfo.TYPE_NAME, doc, NXQL.ECM_POS);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(ExtensionInfo.class))
                    .filter(Objects::nonNull)
@@ -133,11 +134,6 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
     @Override
     public String getName() {
         return safeGet(PROP_COMPONENT_NAME);
-    }
-
-    @Override
-    public List<String> getServiceNames() {
-        return safeGet(PROP_SERVICES);
     }
 
     @Override
@@ -188,7 +184,7 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
     @Override
     public List<ServiceInfo> getServices() {
         String query = QueryHelper.select(ServiceInfo.TYPE_NAME, doc, NXQL.ECM_POS);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(ServiceInfo.class))
                    .filter(Objects::nonNull)
@@ -201,12 +197,32 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
     }
 
     @Override
-    public Long getRegistrationOrder() {
-        return safeGet(PROP_REGISTRATION_ORDER);
+    public Long getResolutionOrder() {
+        return safeGet(PROP_RESOLUTION_ORDER);
     }
 
     @Override
-    public void setRegistrationOrder(Long order) {
+    public void setResolutionOrder(Long order) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Long getDeclaredStartOrder() {
+        return safeGet(PROP_DECLARED_START_ORDER);
+    }
+
+    @Override
+    public void setDeclaredStartOrder(Long order) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Long getStartOrder() {
+        return safeGet(PROP_START_ORDER);
+    }
+
+    @Override
+    public void setStartOrder(Long order) {
         throw new UnsupportedOperationException();
     }
 
@@ -214,7 +230,7 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
     public List<OperationInfo> getOperations() {
         String query = QueryHelper.select(OperationInfo.TYPE_NAME, doc, OperationInfo.PROP_CONTRIBUTING_COMPONENT,
                 getName());
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream().map(doc -> doc.getAdapter(OperationInfo.class)).collect(Collectors.toList());
     }
 

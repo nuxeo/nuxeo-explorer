@@ -20,19 +20,23 @@ package org.nuxeo.apidoc.introspection;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
+import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @since 11.1
  */
 public class PackageInfoImpl extends BaseNuxeoArtifact implements PackageInfo {
 
-    protected final List<String> bundles = new ArrayList<>();
+    protected final Map<String, BundleInfo> bundles = new LinkedHashMap<>();
 
     protected final String id;
 
@@ -51,8 +55,7 @@ public class PackageInfoImpl extends BaseNuxeoArtifact implements PackageInfo {
     protected final List<String> conflicts = new ArrayList<>();
 
     public PackageInfoImpl(String id, String name, String version, String title, String packageType,
-            List<String> dependencies, List<String> optionalDependencies, List<String> conflicts,
-            List<String> bundles) {
+            List<String> dependencies, List<String> optionalDependencies, List<String> conflicts) {
         this.id = id;
         this.name = name;
         this.title = title;
@@ -66,9 +69,6 @@ public class PackageInfoImpl extends BaseNuxeoArtifact implements PackageInfo {
         }
         if (conflicts != null) {
             this.conflicts.addAll(conflicts);
-        }
-        if (bundles != null) {
-            this.bundles.addAll(bundles);
         }
     }
 
@@ -118,12 +118,19 @@ public class PackageInfoImpl extends BaseNuxeoArtifact implements PackageInfo {
 
     @Override
     public List<String> getBundles() {
-        return Collections.unmodifiableList(bundles);
+        return new ArrayList<>(bundles.keySet());
     }
 
-    public void addBundle(String bundle) {
-        if (!bundles.contains(bundle)) {
-            bundles.add(bundle);
+    @JsonProperty("bundles")
+    protected void setBundles(List<String> bundles) {
+        if (bundles != null) {
+            bundles.forEach(b -> this.bundles.put(b, null));
+        }
+    }
+
+    public void addBundle(BundleInfo bundle) {
+        if (bundle != null) {
+            bundles.putIfAbsent(bundle.getId(), bundle);
         }
     }
 
@@ -140,6 +147,11 @@ public class PackageInfoImpl extends BaseNuxeoArtifact implements PackageInfo {
     @Override
     public List<String> getConflicts() {
         return Collections.unmodifiableList(conflicts);
+    }
+
+    @Override
+    public Map<String, BundleInfo> getBundleInfo() {
+        return Collections.unmodifiableMap(bundles);
     }
 
 }

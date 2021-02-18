@@ -87,16 +87,12 @@ public class BundleGroupImpl extends BaseNuxeoArtifact implements BundleGroup {
 
     @Override
     public List<BundleGroup> getSubGroups() {
-        return subGroups.stream()
-                        .sorted(new NuxeoArtifactComparator())
-                        .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+        return subGroups.stream().sorted(new NuxeoArtifactComparator()).collect(Collectors.toList());
     }
 
     @Override
     public List<String> getBundleIds() {
-        return bundleIds.stream()
-                        .sorted()
-                        .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+        return bundleIds.stream().sorted().collect(Collectors.toList());
     }
 
     @Override

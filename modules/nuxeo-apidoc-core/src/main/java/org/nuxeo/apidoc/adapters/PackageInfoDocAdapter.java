@@ -19,10 +19,19 @@
 package org.nuxeo.apidoc.adapters;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.nuxeo.apidoc.api.BundleInfo;
+import org.nuxeo.apidoc.api.ComponentInfo;
+import org.nuxeo.apidoc.api.ExtensionInfo;
+import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.PackageInfo;
+import org.nuxeo.apidoc.api.ServiceInfo;
+import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -32,6 +41,18 @@ import org.nuxeo.ecm.core.api.PathRef;
  * @since 11.1
  */
 public class PackageInfoDocAdapter extends BaseNuxeoArtifactDocAdapter implements PackageInfo {
+
+    // cache lists
+
+    protected Map<String, BundleInfo> bundles;
+
+    protected List<ComponentInfo> components;
+
+    protected List<ExtensionPointInfo> extensionPoints;
+
+    protected List<ServiceInfo> services;
+
+    protected List<ExtensionInfo> extensions;
 
     public static PackageInfoDocAdapter create(PackageInfo pkg, CoreSession session, String containerPath) {
 
@@ -116,6 +137,18 @@ public class PackageInfoDocAdapter extends BaseNuxeoArtifactDocAdapter implement
     @Override
     public List<String> getConflicts() {
         return safeGet(PROP_CONFLICTS);
+    }
+
+    @Override
+    public Map<String, BundleInfo> getBundleInfo() {
+        if (bundles == null) {
+            bundles = new LinkedHashMap<>();
+            DistributionSnapshot snap = getParentNuxeoArtifact(DistributionSnapshot.class);
+            getBundles().forEach(b -> {
+                bundles.put(b, snap.getBundle(b));
+            });
+        }
+        return Collections.unmodifiableMap(bundles);
     }
 
 }

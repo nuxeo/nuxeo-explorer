@@ -111,11 +111,13 @@ public interface DistributionSnapshot extends DistributionSnapshotDesc {
     @JsonIgnore
     List<String> getComponentIds();
 
+    /**
+     * Returns the list of all components, sorted by id.
+     *
+     * @since 20.1.0
+     */
     @JsonIgnore
-    List<String> getJavaComponentIds();
-
-    @JsonIgnore
-    List<String> getXmlComponentIds();
+    List<ComponentInfo> getComponents();
 
     ComponentInfo getComponent(String id);
 

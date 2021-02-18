@@ -23,7 +23,9 @@ package org.nuxeo.apidoc.api;
 import java.net.URL;
 import java.util.List;
 
+import org.nuxeo.runtime.model.Component;
 import org.nuxeo.runtime.model.ComponentManager;
+import org.nuxeo.runtime.model.ComponentStartOrders;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -44,12 +46,16 @@ public interface ComponentInfo extends NuxeoArtifact {
     /** @since 11.1 */
     String PROP_REQUIREMENTS = "nxcomponent:requirements";
 
-    /** @since 11.1 */
-    String PROP_REGISTRATION_ORDER = "nxcomponent:registrationOrder";
+    /** @since 20.0.0 */
+    String PROP_RESOLUTION_ORDER = "nxcomponent:resolutionOrder";
+
+    /** @since 20.0.0 */
+    String PROP_DECLARED_START_ORDER = "nxcomponent:declaredStartOrder";
+
+    /** @since 20.0.0 */
+    String PROP_START_ORDER = "nxcomponent:startOrder";
 
     String PROP_IS_XML = "nxcomponent:isXML";
-
-    String PROP_SERVICES = "nxcomponent:services";
 
     @Override
     @JsonIgnore
@@ -69,9 +75,6 @@ public interface ComponentInfo extends NuxeoArtifact {
     String getDocumentation();
 
     String getDocumentationHtml();
-
-    @JsonIgnore
-    List<String> getServiceNames();
 
     @JsonManagedReference("service")
     List<ServiceInfo> getServices();
@@ -95,18 +98,49 @@ public interface ComponentInfo extends NuxeoArtifact {
     List<String> getRequirements();
 
     /**
-     * Returns the registration order as indicated by {@link ComponentManager}.
+     * Returns the resolution order as indicated by {@link ComponentManager}.
      *
-     * @since 11.1
+     * @since 20.0.0
      */
-    Long getRegistrationOrder();
+    Long getResolutionOrder();
 
     /**
-     * Sets the registration order as indicated by {@link ComponentManager}.
+     * Sets the resolution order as indicated by {@link ComponentManager}.
      *
-     * @since 11.1
+     * @since 20.0.0
      */
-    void setRegistrationOrder(Long order);
+    void setResolutionOrder(Long order);
+
+    /**
+     * Returns the start order as indicated by {@link ComponentManager}.
+     *
+     * @since 20.0.0
+     */
+    Long getStartOrder();
+
+    /**
+     * Sets the start order as indicated by {@link ComponentManager}.
+     *
+     * @since 20.0.0
+     */
+    void setStartOrder(Long order);
+
+    /**
+     * Returns the declared start order as indicated by {@link Component#getApplicationStartedOrder()}.
+     * <p>
+     * Returns null if no particular order is set, although the framework will use 0 for XML components, and
+     * {@link ComponentStartOrders#DEFAULT} for java components.
+     *
+     * @since 20.0.0
+     */
+    Long getDeclaredStartOrder();
+
+    /**
+     * Sets the declared start order as indicated by {@link Component#getApplicationStartedOrder()}.
+     *
+     * @since 20.0.0
+     */
+    void setDeclaredStartOrder(Long order);
 
     /** @since 20.0.0 */
     @JsonIgnore

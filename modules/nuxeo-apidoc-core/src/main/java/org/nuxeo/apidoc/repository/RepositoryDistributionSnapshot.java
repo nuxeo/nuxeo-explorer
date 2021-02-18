@@ -61,7 +61,6 @@ import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.JsonMapper;
 import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
-import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
@@ -86,24 +85,23 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     protected JavaDocHelper jdocHelper = null;
 
     public static RepositoryDistributionSnapshot create(DistributionSnapshot distrib, CoreSession session,
-            String containerPath, String label, Map<String, Serializable> properties) {
+            String containerPath, String label, Map<String, Serializable> properties, List<String> reservedKeys)
+            throws DocumentValidationException {
+
         DocumentModel doc = session.createDocumentModel(TYPE_NAME);
         String name = computeDocumentName(distrib.getKey());
         if (label != null) {
             name = computeDocumentName(label);
         }
-        String targetPath = new Path(containerPath).append(name).toString();
-
-        boolean exist = false;
-        if (session.exists(new PathRef(targetPath))) {
-            exist = true;
-            doc = session.getDocument(new PathRef(targetPath));
-        }
+        String version = distrib.getVersion();
 
         // Set first properties passed by parameter to not override default
         // behavior
         if (properties != null) {
             properties.forEach(doc::setPropertyValue);
+            if (properties.containsKey(PROP_VERSION)) {
+                version = (String) properties.get(PROP_VERSION);
+            }
         }
 
         doc.setPathInfo(containerPath, name);
@@ -113,27 +111,45 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
             doc.setPropertyValue(PROP_NAME, distrib.getName());
         } else {
             doc.setPropertyValue(TITLE_PROPERTY_PATH, label);
-            doc.setPropertyValue(PROP_KEY, label + "-" + distrib.getVersion());
+            doc.setPropertyValue(PROP_KEY, label + "-" + version);
             doc.setPropertyValue(PROP_NAME, label);
         }
         doc.setPropertyValue(PROP_LATEST_FT, distrib.isLatestFT());
         doc.setPropertyValue(PROP_LATEST_LTS, distrib.isLatestLTS());
-        doc.setPropertyValue(PROP_VERSION, distrib.getVersion());
+        doc.setPropertyValue(PROP_VERSION, version);
 
-        DocumentModel ret;
         fillContextData(doc);
-        if (exist) {
-            ret = session.saveDocument(doc);
-        } else {
-            ret = session.createDocument(doc);
-        }
-        return new RepositoryDistributionSnapshot(ret);
+        return new RepositoryDistributionSnapshot(session.createDocument(doc));
     }
 
     public static List<DistributionSnapshot> readPersistentSnapshots(CoreSession session) {
         String query = String.format("SELECT * FROM %s where %s AND %s", TYPE_NAME, QueryHelper.NOT_DELETED,
                 QueryHelper.NOT_VERSION);
-        DocumentModelList docs = session.query(query);
+        DocumentModelList docs = query(session, query);
+        return docs.stream()
+                   .map(doc -> doc.getAdapter(DistributionSnapshot.class))
+                   .filter(Objects::nonNull)
+                   .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns a list of sorted distribution with given key, maybe including aliases.
+     *
+     * @since 20.0.0
+     */
+    public static List<DistributionSnapshot> readPersistentSnapshots(CoreSession session, String key,
+            boolean includeAliases) {
+        String query = String.format("SELECT * FROM %s where %s AND %s", TYPE_NAME, QueryHelper.NOT_DELETED,
+                QueryHelper.NOT_VERSION);
+        String escapedKey = NXQL.escapeString(key);
+        if (includeAliases) {
+            query += String.format(" AND (%s = %s OR %s = %s)", DistributionSnapshot.PROP_KEY, escapedKey,
+                    DistributionSnapshot.PROP_ALIASES, escapedKey);
+        } else {
+            query += String.format(" AND %s = %s", DistributionSnapshot.PROP_KEY, escapedKey);
+        }
+        query += " ORDER BY " + NXQL.ECM_UUID;
+        DocumentModelList docs = query(session, query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(DistributionSnapshot.class))
                    .filter(Objects::nonNull)
@@ -144,15 +160,15 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         super(doc);
     }
 
-    protected <T> List<T> getChildren(Class<T> adapter, String docType) {
-        String query = QueryHelper.select(docType, doc, NXQL.ECM_POS);
-        DocumentModelList docs = getCoreSession().query(query);
+    protected <T> List<T> getChildren(Class<T> adapter, String docType, String sort) {
+        String query = QueryHelper.select(docType, doc, sort);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream().map(doc -> doc.getAdapter(adapter)).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     protected <T> T getChild(Class<T> adapter, String docType, String idField, String id) {
         String query = QueryHelper.select(docType, doc, idField, id);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         if (docs.isEmpty()) {
             log.debug(String.format("Unable to find %s with id '%s'", docType, id));
             return null;
@@ -194,7 +210,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     @Override
     public List<BundleGroup> getBundleGroups() {
         String query = QueryHelper.select(BundleGroup.TYPE_NAME, doc, NXQL.ECM_PARENTID, getBundleContainer().getId());
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(BundleGroup.class))
                    .filter(Objects::nonNull)
@@ -204,15 +220,13 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
 
     @Override
     public List<BundleInfo> getBundles() {
-        return getChildren(BundleInfo.class, BundleInfo.TYPE_NAME);
+        return getChildren(BundleInfo.class, BundleInfo.TYPE_NAME, NXQL.ECM_POS);
     }
 
     @Override
     public List<String> getBundleIds() {
-        return getChildren(BundleInfo.class, BundleInfo.TYPE_NAME).stream()
-                                                                  .map(NuxeoArtifact::getId)
-                                                                  .sorted()
-                                                                  .collect(Collectors.toList());
+        return queryAndFetchIds(getCoreSession(), BundleInfo.PROP_BUNDLE_ID, BundleInfo.TYPE_NAME, doc,
+                BundleInfo.PROP_BUNDLE_ID);
     }
 
     @Override
@@ -222,10 +236,13 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
 
     @Override
     public List<String> getComponentIds() {
-        return getChildren(ComponentInfo.class, ComponentInfo.TYPE_NAME).stream()
-                                                                        .map(NuxeoArtifact::getId)
-                                                                        .sorted()
-                                                                        .collect(Collectors.toList());
+        return queryAndFetchIds(getCoreSession(), ComponentInfo.PROP_COMPONENT_ID, ComponentInfo.TYPE_NAME, doc,
+                ComponentInfo.PROP_COMPONENT_ID);
+    }
+
+    @Override
+    public List<ComponentInfo> getComponents() {
+        return getChildren(ComponentInfo.class, ComponentInfo.TYPE_NAME, ComponentInfo.PROP_COMPONENT_ID);
     }
 
     @Override
@@ -235,15 +252,13 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
 
     @Override
     public List<String> getContributionIds() {
-        return getChildren(ExtensionInfo.class, ExtensionInfo.TYPE_NAME).stream()
-                                                                        .map(NuxeoArtifact::getId)
-                                                                        .sorted()
-                                                                        .collect(Collectors.toList());
+        return queryAndFetchIds(getCoreSession(), ExtensionInfo.PROP_CONTRIB_ID, ExtensionInfo.TYPE_NAME, doc,
+                ExtensionInfo.PROP_CONTRIB_ID);
     }
 
     @Override
     public List<ExtensionInfo> getContributions() {
-        return getChildren(ExtensionInfo.class, ExtensionInfo.TYPE_NAME);
+        return getChildren(ExtensionInfo.class, ExtensionInfo.TYPE_NAME, NXQL.ECM_POS);
     }
 
     @Override
@@ -253,25 +268,19 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
 
     @Override
     public List<String> getExtensionPointIds() {
-        return getChildren(ExtensionPointInfo.class, ExtensionPointInfo.TYPE_NAME).stream()
-                                                                                  .map(NuxeoArtifact::getId)
-                                                                                  .sorted()
-                                                                                  .collect(Collectors.toList());
+        return queryAndFetchIds(getCoreSession(), ExtensionPointInfo.PROP_EP_ID, ExtensionPointInfo.TYPE_NAME, doc,
+                ExtensionPointInfo.PROP_EP_ID);
     }
 
     public List<String> getBundleGroupIds() {
-        return getChildren(BundleGroup.class, BundleGroup.TYPE_NAME).stream()
-                                                                    .map(NuxeoArtifact::getId)
-                                                                    .sorted()
-                                                                    .collect(Collectors.toList());
+        return queryAndFetchIds(getCoreSession(), BundleGroup.PROP_KEY, BundleGroup.TYPE_NAME, doc,
+                BundleGroup.PROP_KEY);
     }
 
     @Override
     public List<String> getServiceIds() {
-        return getChildren(ServiceInfo.class, ServiceInfo.TYPE_NAME).stream()
-                                                                    .map(NuxeoArtifact::getId)
-                                                                    .sorted()
-                                                                    .collect(Collectors.toList());
+        return queryAndFetchIds(getCoreSession(), ServiceInfo.PROP_CLASS_NAME, ServiceInfo.TYPE_NAME, doc,
+                ServiceInfo.PROP_CLASS_NAME);
     }
 
     @Override
@@ -305,29 +314,25 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         String query = String.format("%s AND (%s = 0 OR %s is NULL)",
                 QueryHelper.select(ServiceInfo.TYPE_NAME, getDoc(), ServiceInfo.PROP_CLASS_NAME, id),
                 ServiceInfo.PROP_OVERRIDEN, ServiceInfo.PROP_OVERRIDEN);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
+        if (docs.size() == 0) {
+            return null;
+        }
         if (docs.size() > 1) {
             throw new AssertionError("Multiple services found for " + id);
         }
         return docs.get(0).getAdapter(ServiceInfo.class);
     }
 
-    @Override
-    public List<String> getJavaComponentIds() {
-        return getChildren(ComponentInfo.class, ComponentInfo.TYPE_NAME).stream()
-                                                                        .filter(ci -> !ci.isXmlPureComponent())
-                                                                        .map(NuxeoArtifact::getId)
-                                                                        .sorted()
-                                                                        .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<String> getXmlComponentIds() {
-        return getChildren(ComponentInfo.class, ComponentInfo.TYPE_NAME).stream()
-                                                                        .filter(ComponentInfo::isXmlPureComponent)
-                                                                        .map(NuxeoArtifact::getId)
-                                                                        .sorted()
-                                                                        .collect(Collectors.toList());
+    protected List<String> getComponentIds(boolean isXML) {
+        String query = String.format("%s AND %s = %s ORDER BY %s", QueryHelper.select(ComponentInfo.TYPE_NAME, doc),
+                ComponentInfo.PROP_IS_XML, isXML ? 1 : 0, ComponentInfo.PROP_COMPONENT_NAME);
+        DocumentModelList docs = query(getCoreSession(), query);
+        return docs.stream()
+                   .map(doc -> doc.getAdapter(ComponentInfo.class))
+                   .filter(Objects::nonNull)
+                   .map(NuxeoArtifact::getId)
+                   .collect(Collectors.toList());
     }
 
     @Override
@@ -355,14 +360,14 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         String query = String.format("%s OR %s = %s",
                 QueryHelper.select(OperationInfo.TYPE_NAME, getDoc(), OperationInfo.PROP_NAME, id),
                 OperationInfo.PROP_ALIASES, NXQL.escapeString(id));
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.isEmpty() ? null : docs.get(0).getAdapter(OperationInfo.class);
     }
 
     @Override
     public List<OperationInfo> getOperations() {
         String query = QueryHelper.select(OperationInfo.TYPE_NAME, getDoc(), NXQL.ECM_POS);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         List<OperationInfo> res = docs.stream()
                                       .map(doc -> doc.getAdapter(OperationInfo.class))
                                       .filter(Objects::nonNull)
@@ -374,14 +379,14 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     @Override
     public PackageInfo getPackage(String name) {
         String query = QueryHelper.select(PackageInfo.TYPE_NAME, getDoc(), PackageInfo.PROP_PACKAGE_NAME, name);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.isEmpty() ? null : docs.get(0).getAdapter(PackageInfo.class);
     }
 
     @Override
     public List<PackageInfo> getPackages() {
         String query = QueryHelper.select(PackageInfo.TYPE_NAME, getDoc(), PackageInfo.PROP_PACKAGE_ID);
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(PackageInfo.class))
                    .filter(Objects::nonNull)
@@ -398,7 +403,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     @Override
     public void cleanPreviousArtifacts() {
         String query = QueryHelper.select("Document", getDoc());
-        DocumentModelList docs = getCoreSession().query(query);
+        DocumentModelList docs = query(getCoreSession(), query);
         getCoreSession().removeDocuments(docs.stream().map(doc -> doc.getRef()).toArray(size -> new DocumentRef[size]));
     }
 
@@ -498,10 +503,11 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
      *
      * @since 20.0.0
      */
-    public Map<String, String> getUpdateProperties() {
-        Map<String, String> props = new HashMap<>();
+    public Map<String, Serializable> getUpdateProperties() {
+        Map<String, Serializable> props = new HashMap<>();
         Arrays.asList(TITLE_PROPERTY_PATH, PROP_NAME, PROP_VERSION, PROP_KEY).forEach(p -> props.put(p, safeGet(p)));
-        if (StringUtils.isBlank(props.get(TITLE_PROPERTY_PATH))) {
+        if (StringUtils.isBlank((String) props.get(TITLE_PROPERTY_PATH))
+                && StringUtils.isNotBlank((String) props.get(PROP_NAME))) {
             props.put(TITLE_PROPERTY_PATH, props.get(PROP_NAME));
         }
         Arrays.asList(PROP_LATEST_LTS, PROP_LATEST_FT, PROP_HIDE)
@@ -518,16 +524,17 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
      *
      * @since 20.0.0
      */
-    public Map<String, String> getUpdateProperties(Map<String, String[]> formFields) {
-        Map<String, String> props = new HashMap<>();
+    public static Map<String, Serializable> getUpdateProperties(Map<String, String[]> formFields) {
+        Map<String, Serializable> props = new HashMap<>();
         if (formFields != null) {
-            Stream.of(TITLE_PROPERTY_PATH, PROP_NAME, PROP_VERSION, PROP_KEY, PROP_LATEST_LTS, PROP_LATEST_FT,
-                    PROP_HIDE, PROP_RELEASED, PROP_ALIASES)
+            Stream.of(TITLE_PROPERTY_PATH, PROP_NAME, PROP_VERSION, PROP_KEY, PROP_RELEASED, PROP_ALIASES)
                   .filter(formFields::containsKey)
                   .forEach(p -> props.put(p, formFields.get(p)[0]));
-            if (StringUtils.isBlank(props.get(TITLE_PROPERTY_PATH))) {
+            if (StringUtils.isBlank((String) props.get(TITLE_PROPERTY_PATH))
+                    && StringUtils.isNotBlank((String) props.get(PROP_NAME))) {
                 props.put(TITLE_PROPERTY_PATH, props.get(PROP_NAME));
             }
+            // checkboxes will fill the request (with value "on"), only when checked
             Arrays.asList(PROP_LATEST_LTS, PROP_LATEST_FT, PROP_HIDE)
                   .forEach(p -> props.put(p, Boolean.toString(formFields.containsKey(p))));
         }
@@ -539,7 +546,7 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
      *
      * @since 20.0.0
      */
-    public DocumentModel updateDocument(CoreSession session, Map<String, String> updateProperties, String comment,
+    public DocumentModel updateDocument(CoreSession session, Map<String, Serializable> updateProperties, String comment,
             List<String> reservedKeys) throws DocumentValidationException {
         final DocumentModel doc = getDoc();
         if (updateProperties == null) {
@@ -547,15 +554,16 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         }
         // validations
         if (Stream.of(TITLE_PROPERTY_PATH, PROP_NAME, PROP_VERSION, PROP_KEY)
-                  .anyMatch(p -> updateProperties.containsKey(p) && StringUtils.isBlank(updateProperties.get(p)))) {
+                  .anyMatch(p -> updateProperties.containsKey(p)
+                          && StringUtils.isBlank((String) updateProperties.get(p)))) {
             throw new IllegalArgumentException("Please fill all required fields.");
         }
         if (updateProperties.containsKey(PROP_KEY)) {
-            validateKeyOrAlias(updateProperties.get(PROP_KEY), reservedKeys);
+            validateKeyOrAlias((String) updateProperties.get(PROP_KEY), reservedKeys);
         }
         List<String> aliases = null;
         if (updateProperties.containsKey(PROP_ALIASES)) {
-            aliases = Arrays.stream(updateProperties.get(PROP_ALIASES).split("\n"))
+            aliases = Arrays.stream(((String) updateProperties.get(PROP_ALIASES)).split("\n"))
                             .map(String::trim)
                             .filter(StringUtils::isNotBlank)
                             .collect(Collectors.toList());
@@ -568,7 +576,8 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         Arrays.asList(PROP_LATEST_LTS, PROP_LATEST_FT, PROP_HIDE)
               .forEach(p -> doc.setPropertyValue(p, updateProperties.get(p)));
         if (updateProperties.containsKey(PROP_RELEASED)) {
-            doc.setPropertyValue(DistributionSnapshot.PROP_RELEASED, convertDate(updateProperties.get(PROP_RELEASED)));
+            doc.setPropertyValue(DistributionSnapshot.PROP_RELEASED,
+                    convertDate((String) updateProperties.get(PROP_RELEASED)));
         }
         if (aliases != null) {
             doc.setPropertyValue(PROP_ALIASES, (Serializable) aliases);
@@ -583,7 +592,8 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
     }
 
     protected void validateKeyOrAlias(String keyOrAlias, List<String> reservedKeys) throws DocumentValidationException {
-        List<String> forbidden = new ArrayList<>(Arrays.asList(
+        List<String> forbidden = new ArrayList<>();
+        forbidden.addAll(Arrays.asList(
                 // reserved for live distrib
                 SnapshotManager.DISTRIBUTION_ALIAS_CURRENT, SnapshotManager.DISTRIBUTION_ALIAS_ADM,
                 // added automatically

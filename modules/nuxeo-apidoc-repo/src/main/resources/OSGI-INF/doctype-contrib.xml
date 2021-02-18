@@ -23,6 +23,7 @@
         <type>NXPackage</type>
         <type>Workspace</type>
       </subtypes>
+      <prefetch>dublincore</prefetch>
     </doctype>
 
     <doctype name="NXBundleGroup" extends="OrderedFolder">
@@ -39,6 +40,7 @@
       <subtypes>
         <type>NXBundleGroup</type>
       </subtypes>
+      <prefetch></prefetch>
     </doctype>
 
 
@@ -57,6 +59,7 @@
         <type>NXExtensionPoint</type>
         <type>NXContribution</type>
       </subtypes>
+      <prefetch></prefetch>
     </doctype>
 
     <doctype name="NXComponent" extends="OrderedFolder">
@@ -73,6 +76,7 @@
         <type>NXExtensionPoint</type>
         <type>NXContribution</type>
       </subtypes>
+      <prefetch></prefetch>
     </doctype>
 
     <doctype name="NXExtensionPoint" extends="OrderedFolder">
@@ -85,6 +89,7 @@
       <facet name="Commentable" />
       <facet name="Versionable" />
       <facet name="Folderish" />
+      <prefetch></prefetch>
     </doctype>
 
     <doctype name="NXContribution" extends="Document">
@@ -96,6 +101,7 @@
 
       <facet name="Commentable" />
       <facet name="Versionable" />
+      <prefetch></prefetch>
     </doctype>
 
     <doctype name="NXService" extends="Document">
@@ -106,6 +112,7 @@
 
       <facet name="Commentable" />
       <facet name="Versionable" />
+      <prefetch></prefetch>
     </doctype>
 
     <doctype name="NXOperation" extends="Document">
@@ -116,6 +123,7 @@
       <schema name="nxoperation" />
       <facet name="Commentable" />
       <facet name="Versionable" />
+      <prefetch></prefetch>
     </doctype>
 
     <doctype name="NXPackage" extends="Document">
@@ -125,6 +133,7 @@
       <schema name="nxpackage" />
       <facet name="Commentable" />
       <facet name="Versionable" />
+      <prefetch></prefetch>
     </doctype>
 
   </extension>

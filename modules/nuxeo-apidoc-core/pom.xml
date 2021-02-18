@@ -125,6 +125,14 @@
       <groupId>org.jgrapht</groupId>
       <artifactId>jgrapht-ext</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.atlassian.commonmark</groupId>
+      <artifactId>commonmark</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.atlassian.commonmark</groupId>
+      <artifactId>commonmark-ext-gfm-tables</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>

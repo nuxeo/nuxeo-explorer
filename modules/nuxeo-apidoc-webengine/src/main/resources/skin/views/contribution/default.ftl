@@ -15,13 +15,13 @@
   inside ${nxItem.component.bundle.fileName} ${nxItem.component.xmlFileName}
 
   <#if nxItem.documentationHtml?has_content>
-    <h2>Documentation</h2>
+    <h2 class="toc">Documentation</h2>
     <div class="documentation">
       ${nxItem.documentationHtml}
     </div>
   </#if>
 
-  <h2>Extension Point</h2>
+  <h2 class="toc">Extension Point</h2>
   Extension point
   <#if ep>
     <a class="tag extensions" href="${Root.path}/${distId}/viewExtensionPoint/${ep.id}">${point}</a>
@@ -35,12 +35,28 @@
     <a class="tag components">${epCompName}</a>
   </#if>
 
-  <h2>Contributed Items</h2>
+  <#if nxItem.registrationOrder??>
+    <h2 class="toc">Registration Order</h2>
+    <div id="registrationOrder" class="registrationOrder">
+      ${nxItem.registrationOrder?string.computer}
+    </div>
+    <small id="registrationOrderHelp">
+      The registration order represents the order in which this contribution was registered on its target extention
+      point.
+      This will impact the override/merge behaviour when it is implemented on the target service, and is useful for
+      proper customization of existing contributions.
+      <br />
+      You can influence this order by adding "require" tags in the containing component declaration, to make sure
+      it is resolved after another component (see "Resolution Order" on components).
+    </small>
+  </#if>
+
+  <h2 class="toc">Contributed Items</h2>
   <#if ep>
     <form method="POST" action="${Root.path}/${distId}/viewContribution/${nxItem.id}/override" target="_blank">
       <ul class="block-list">
       <#list nxItem.contributionItems as contributionItem>
-        <li>
+        <li class="block-item">
           <div>
             <pre><code>${contributionItem.xml}</code></pre>
           </div>
@@ -72,7 +88,7 @@
   <#else>
     <ul class="block-list">
     <#list nxItem.contributionItems as contributionItem>
-      <li>
+      <li class="block-item">
         <div>
           <pre><code>${contributionItem.xml}</code></pre>
         </div>
@@ -89,7 +105,7 @@
     </ul>
   </#if>
 
-  <h2>XML Source</h2>
+  <h2 class="toc">XML Source</h2>
   <div>
     <pre><code>${nxItem.xml?html}</code></pre>
   </div>

@@ -19,25 +19,38 @@
  */
 package org.nuxeo.apidoc.adapters;
 
+import static org.nuxeo.ecm.core.api.validation.DocumentValidationService.CTX_MAP_KEY;
+import static org.nuxeo.ecm.core.api.validation.DocumentValidationService.Forcing.TURN_OFF;
+
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
+import org.nuxeo.apidoc.api.QueryHelper;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
+import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.common.utils.IdUtils;
 import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.PartialList;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.PropertyException;
+import org.nuxeo.elasticsearch.api.ElasticSearchService;
+import org.nuxeo.elasticsearch.query.NxQueryBuilder;
+import org.nuxeo.runtime.api.Framework;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -48,6 +61,10 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
     protected DocumentModel doc;
 
     protected static final ThreadLocal<CoreSession> localCoreSession = new ThreadLocal<>();
+
+    protected static final String LISTING_LIMIT_PROPERTY = "org.nuxeo.apidoc.listing.limit";
+
+    protected static final String DEFAULT_LISTING_LIMIT = "2000";
 
     public static void setLocalCoreSession(CoreSession session) {
         localCoreSession.set(session);
@@ -63,6 +80,10 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
 
     protected static String computeDocumentName(String name) {
         return IdUtils.generateId(name, "-", true, 500);
+    }
+
+    protected static int getListingLimit() {
+        return Integer.valueOf(Framework.getProperty(LISTING_LIMIT_PROPERTY, DEFAULT_LISTING_LIMIT));
     }
 
     protected static String getRootPath(CoreSession session, String basePath, String suffix) {
@@ -167,14 +188,38 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
         return path;
     }
 
-    // not avail on 10.10
-    protected static void fillContextData(DocumentModel doc) {
+    /**
+     * Fills context data to avoid useless processings on snapshot documents create/update.
+     *
+     * @since 20.0.0
+     */
+    public static void fillContextData(DocumentModel doc) {
+        // disable validation
+        doc.putContextData(CTX_MAP_KEY, TURN_OFF);
         // NXP-28928: disable useless thumbnail computation for explorer documents: could be costly and is not needed in
         // this context
+        // not avail on 10.10
         // doc.putContextData(ThumbnailConstants.DISABLE_THUMBNAIL_COMPUTATION, true);
         // NXP-29435: disable picture view computation even if explorer documents should not actually go through it,
         // hoping it speeds things in some edge cases (see server logs attached to NXP-29433)
+        // not avail on 10.10
         // doc.putContextData(PictureViewsGenerationListener.DISABLE_PICTURE_VIEWS_GENERATION_LISTENER, true);
+    }
+
+    protected static DocumentModelList query(CoreSession session, String query) {
+        if (Framework.isBooleanPropertyTrue(SnapshotManager.PROPERTY_USE_ES)) {
+            ElasticSearchService ess = Framework.getService(ElasticSearchService.class);
+            return ess.query(new NxQueryBuilder(session).nxql(query).limit(getListingLimit()));
+        } else {
+            return session.query(query);
+        }
+    }
+
+    protected static List<String> queryAndFetchIds(CoreSession session, String idProp, String type,
+            DocumentModel parent, String order) {
+        String query = QueryHelper.select(idProp, type, parent, order);
+        PartialList<Map<String, Serializable>> res = session.queryProjection(query, getListingLimit(), 0);
+        return res.stream().map(e -> e.get(idProp)).map(String.class::cast).collect(Collectors.toList());
     }
 
 }

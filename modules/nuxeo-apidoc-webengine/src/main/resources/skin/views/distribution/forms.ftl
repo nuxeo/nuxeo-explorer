@@ -42,9 +42,9 @@
             <input type="button" value="Save Partial Snapshot" id="savePartial"
               onclick="$('#extendedSave').css('display','block');$('#saveBtn').css('display','none')">
           </form>
-          <form method="GET" action="${Root.path}/json">
-            <input type="submit" value="Export as Json" />
-          </form>
+          <a class="button" href="${Root.path}/current/json" onclick="$.fn.clickButton(this)" target="_blank">
+            Export as json
+          </a>
         </div>
         <div style="display:none" id="stdSave">
           <form method="POST" action="${Root.path}/save">
@@ -62,7 +62,6 @@
                 <td><span name="version">${rtSnap.version}</span></td>
               </tr>
             </table>
-            <i>Existing snapshot with the same name and version will be updated.</i><br/>
             <input type="hidden" name="source" value="admin">
             <input type="submit" value="Save" id="doSave" class="button primary" onclick="$.fn.clickButton(this)" />
             <input type="button" value="Cancel" id="save"
@@ -120,6 +119,11 @@
       <tr>
         <td>
           <a class="distrib button" href="${Root.path}/${distrib.key}/">${distrib.name}</a>
+          <#if Root.isKeyDuplicated(distrib.key)>
+            <div class="message error duplicateKey">
+              Duplicate key detected: '${distrib.key}'
+            </div>
+          </#if>
         </td>
         <td>
           <#if distrib.aliases?size gt 0>
@@ -146,18 +150,19 @@
         </td>
         <td>
           <p>
-            <a class="button" href="${Root.path}/updateDistrib/${distrib.key}" onclick="$.fn.clickButton(this)">
+            <a class="button" href="${Root.path}/updateDistrib/${distrib.key}?distribDocId=${distrib.doc.id}" onclick="$.fn.clickButton(this)">
               Update
+            </a>
+            <a class="button" href="${Root.path}/delete/${distrib.key}?distribDocId=${distrib.doc.id}" onclick="if (confirm('Please confirm deletion')) {$.fn.clickButton(this); return true; } else { return false; }">
+              Delete
             </a>
           </p>
           <p>
             <a class="button" href="${Root.path}/download/${distrib.key}" onclick="$.fn.clickButton(this)">
               Export as zip
             </a>
-          </p>
-          <p>
-            <a class="button" href="${Root.path}/delete/${distrib.key}" onclick="if (confirm('Please confirm deletion')) {$.fn.clickButton(this); return true; } else { return false; }">
-              Delete
+            <a class="button" href="${Root.path}/${distrib.key}/json" onclick="$.fn.clickButton(this)" target="_blank">
+              Export as json
             </a>
           </p>
         </td>

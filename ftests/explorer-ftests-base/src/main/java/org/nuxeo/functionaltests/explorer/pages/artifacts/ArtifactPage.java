@@ -86,6 +86,20 @@ public abstract class ArtifactPage extends AbstractExplorerPage {
         checkTextIfExists(expected, description);
     }
 
+    /**
+     * @since 20.0.0
+     */
+    public void checkDocumentationHTML(String expected) {
+        try {
+            String expectedStripped = expected != null ? expected.trim() : null;
+            String html = documentation.getAttribute("innerHTML").trim();
+            assertEquals(expectedStripped, html);
+        } catch (NoSuchElementException e) {
+            assertNull(expected);
+        }
+
+    }
+
     public void checkDocumentationText(String expected) {
         checkTextIfExists(expected, documentation);
     }
@@ -111,6 +125,7 @@ public abstract class ArtifactPage extends AbstractExplorerPage {
     protected void checkLink(String expected, WebElement link) {
         try {
             String href = link.getAttribute("href");
+            assertNotNull(href);
             assertFalse("Actual href: " + href, StringUtils.isBlank(expected));
             assertTrue("Actual href: " + href, href.endsWith(expected));
         } catch (NoSuchElementException e) {

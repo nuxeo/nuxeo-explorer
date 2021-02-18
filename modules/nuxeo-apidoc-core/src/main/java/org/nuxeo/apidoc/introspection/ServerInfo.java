@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.PropertyResourceBundle;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
@@ -61,6 +61,7 @@ import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.documentation.SecureXMLHelper;
+import org.nuxeo.apidoc.snapshot.SnapshotListener;
 import org.nuxeo.common.Environment;
 import org.nuxeo.common.utils.JarUtils;
 import org.nuxeo.common.utils.StringUtils;
@@ -75,6 +76,7 @@ import org.nuxeo.osgi.BundleImpl;
 import org.nuxeo.runtime.RuntimeService;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.deployment.preprocessor.DeploymentPreprocessor;
+import org.nuxeo.runtime.model.ComponentName;
 import org.nuxeo.runtime.model.Extension;
 import org.nuxeo.runtime.model.ExtensionPoint;
 import org.nuxeo.runtime.model.RegistrationInfo;
@@ -224,7 +226,6 @@ public class ServerInfo {
      * @since 11.1
      */
     protected static PackageInfoImpl computePackageInfo(LocalPackage pkg, Map<String, List<LocalPackage>> pkgByBundle) {
-        List<String> bundles = new ArrayList<String>();
         for (File jar : FileUtils.listFiles(pkg.getData().getRoot(), new String[] { "jar" }, true)) {
             Manifest mf = JarUtils.getManifest(jar);
             if (mf != null) {
@@ -242,7 +243,7 @@ public class ServerInfo {
         }
         return new PackageInfoImpl(pkg.getId(), pkg.getName(), pkg.getVersion().toString(), pkg.getTitle(),
                 pkg.getType().toString(), computeDependencies(pkg.getDependencies()),
-                computeDependencies(pkg.getOptionalDependencies()), computeDependencies(pkg.getConflicts()), bundles);
+                computeDependencies(pkg.getOptionalDependencies()), computeDependencies(pkg.getConflicts()));
     }
 
     protected static List<String> computeDependencies(PackageDependency[] deps) {
@@ -440,12 +441,14 @@ public class ServerInfo {
         Map<String, ExtensionPointInfoImpl> xpRegistry = new HashMap<>();
         List<ExtensionInfoImpl> contribRegistry = new ArrayList<>();
 
-        Collection<RegistrationInfo> registrations = runtime.getComponentManager().getRegistrations();
-        // this list is actually ordered by deployment order (including component requirements) - we can deduce bundle
-        // range ordering from it depending on contained registrations
-        long registrationOrder = 0;
-        for (RegistrationInfo ri : registrations) {
-            String cname = ri.getName().getName();
+        SnapshotListener snapshotListener = Framework.getService(SnapshotListener.class);
+        // This list is ordered by resolution order (including component requirements): we can deduce bundle range
+        // ordering from it, depending on contained registrations. It does not account for unresolved registrations that
+        // should be handled separately.
+        Collection<ComponentName> registrations = runtime.getComponentManager().getResolvedRegistrations();
+        long resolutionOrder = 0;
+        for (ComponentName cname : registrations) {
+            RegistrationInfo ri = runtime.getComponentManager().getRegistrationInfo(cname);
             Bundle bundle = ri.getContext().getBundle();
             BundleInfoImpl binfo = null;
 
@@ -465,8 +468,11 @@ public class ServerInfo {
                 }
             }
 
-            ComponentInfoImpl component = new ComponentInfoImpl(binfo, cname);
-            component.setRegistrationOrder(registrationOrder++);
+            ComponentInfoImpl component = new ComponentInfoImpl(binfo, cname.getName());
+            component.setResolutionOrder(resolutionOrder++);
+            // set additional orders from snapshot listener
+            component.setDeclaredStartOrder(snapshotListener.getDeclaredStartOrder(cname.getName()));
+            component.setStartOrder(snapshotListener.getStartOrder(cname.getName()));
 
             if (ri.getExtensionPoints() != null) {
                 for (ExtensionPoint xp : ri.getExtensionPoints()) {
@@ -496,16 +502,18 @@ public class ServerInfo {
             }
 
             if (ri.getExtensions() != null) {
-                Map<String, AtomicInteger> comps = new HashMap<>();
+                Map<String, AtomicLong> comps = new HashMap<>();
                 for (Extension xt : ri.getExtensions()) {
                     // handle multiple contributions to the same extension point
                     String id = xt.getExtensionPoint();
-                    comps.computeIfAbsent(id, k -> new AtomicInteger(-1)).incrementAndGet();
+                    comps.computeIfAbsent(id, k -> new AtomicLong(-1)).incrementAndGet();
                     ExtensionInfoImpl xtinfo = new ExtensionInfoImpl(component, xt.getExtensionPoint(),
                             comps.get(id).get());
                     xtinfo.setTargetComponentName(xt.getTargetComponent());
                     xtinfo.setDocumentation(xt.getDocumentation());
                     xtinfo.setXml(SecureXMLHelper.secure(xt.toXML()));
+                    // set additional order from snapshot listener
+                    xtinfo.setRegistrationOrder(snapshotListener.getExtensionRegistrationOrder(xtinfo.getId()));
 
                     contribRegistry.add(xtinfo);
 
@@ -524,7 +532,7 @@ public class ServerInfo {
 
         // post process all bundles to:
         // - register bundles that contain no components
-        // - set the bundle min and max registration orders as held by the runtime context
+        // - set the bundle min and max resolution orders as held by the runtime context
         // - try to match the bundle to a package
         Bundle[] allbundles = runtime.getContext().getBundle().getBundleContext().getBundles();
         for (Bundle bundle : allbundles) {
@@ -537,15 +545,15 @@ public class ServerInfo {
             }
             List<ComponentInfo> components = bi.getComponents();
             components.stream()
-                      .mapToLong(ComponentInfo::getRegistrationOrder)
+                      .mapToLong(ComponentInfo::getResolutionOrder)
                       .min()
-                      .ifPresent(min -> bi.setMinRegistrationOrder(min));
+                      .ifPresent(min -> bi.setMinResolutionOrder(min));
             components.stream()
-                      .mapToLong(ComponentInfo::getRegistrationOrder)
+                      .mapToLong(ComponentInfo::getResolutionOrder)
                       .max()
-                      .ifPresent(max -> bi.setMaxRegistrationOrder(max));
+                      .ifPresent(max -> bi.setMaxResolutionOrder(max));
             if (!bi.getPackages().isEmpty()) {
-                bi.getPackages().forEach(pkgName -> server.packages.get(pkgName).addBundle(bi.getId()));
+                bi.getPackages().forEach(pkgName -> server.packages.get(pkgName).addBundle(bi));
             }
         }
 

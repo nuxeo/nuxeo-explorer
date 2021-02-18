@@ -22,13 +22,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.nuxeo.ecm.webengine.model.WebObject;
 import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
 
 @WebObject(type = RedirectResource.TYPE)
-@Produces("text/html")
+@Produces(MediaType.TEXT_HTML)
 public class RedirectResource extends DefaultObject {
 
     /** @since 20.0.0 */
@@ -46,13 +47,13 @@ public class RedirectResource extends DefaultObject {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object get() {
         return newLocation(targetDistributionId, null);
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Path("/{subPath:.*}")
     public Object catchAll(@PathParam("subPath") String subPath) {
         return newLocation(targetDistributionId, subPath);

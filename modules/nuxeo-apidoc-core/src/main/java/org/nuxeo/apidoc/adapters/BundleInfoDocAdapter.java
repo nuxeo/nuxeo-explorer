@@ -20,6 +20,7 @@
 package org.nuxeo.apidoc.adapters;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -27,15 +28,31 @@ import java.util.stream.Collectors;
 import org.nuxeo.apidoc.api.BundleGroup;
 import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
+import org.nuxeo.apidoc.api.ExtensionInfo;
+import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
+import org.nuxeo.apidoc.api.QueryHelper;
+import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.Blobs;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.PathRef;
+import org.nuxeo.ecm.core.query.sql.NXQL;
 
 public class BundleInfoDocAdapter extends BaseNuxeoArtifactDocAdapter implements BundleInfo {
+
+    // cache lists
+
+    protected List<ComponentInfo> components;
+
+    protected List<ExtensionPointInfo> extensionPoints;
+
+    protected List<ServiceInfo> services;
+
+    protected List<ExtensionInfo> extensions;
 
     public static BundleInfoDocAdapter create(BundleInfo bundleInfo, CoreSession session, String containerPath) {
 
@@ -55,8 +72,8 @@ public class BundleInfoDocAdapter extends BaseNuxeoArtifactDocAdapter implements
         doc.setPropertyValue(PROP_BUNDLE_ID, bundleInfo.getId());
         doc.setPropertyValue(PROP_JAR_NAME, bundleInfo.getFileName());
         doc.setPropertyValue(PROP_REQUIREMENTS, (Serializable) bundleInfo.getRequirements());
-        doc.setPropertyValue(PROP_MIN_REGISTRATION_ORDER, bundleInfo.getMinRegistrationOrder());
-        doc.setPropertyValue(PROP_MAX_REGISTRATION_ORDER, bundleInfo.getMaxRegistrationOrder());
+        doc.setPropertyValue(PROP_MIN_REGISTRATION_ORDER, bundleInfo.getMinResolutionOrder());
+        doc.setPropertyValue(PROP_MAX_REGISTRATION_ORDER, bundleInfo.getMaxResolutionOrder());
         doc.setPropertyValue(PROP_PACKAGES, (Serializable) bundleInfo.getPackages());
         String manifest = bundleInfo.getManifest();
         if (manifest != null) {
@@ -93,11 +110,15 @@ public class BundleInfoDocAdapter extends BaseNuxeoArtifactDocAdapter implements
 
     @Override
     public List<ComponentInfo> getComponents() {
-        List<DocumentModel> children = getCoreSession().getChildren(doc.getRef());
-        return children.stream()
-                       .map(doc -> doc.getAdapter(ComponentInfo.class))
-                       .filter(Objects::nonNull)
-                       .collect(Collectors.toList());
+        if (components == null) {
+            String query = QueryHelper.select(ComponentInfo.TYPE_NAME, doc, NXQL.ECM_POS);
+            DocumentModelList docs = query(getCoreSession(), query);
+            components = docs.stream()
+                             .map(doc -> doc.getAdapter(ComponentInfo.class))
+                             .filter(Objects::nonNull)
+                             .collect(Collectors.toList());
+        }
+        return Collections.unmodifiableList(components);
     }
 
     @Override
@@ -177,23 +198,62 @@ public class BundleInfoDocAdapter extends BaseNuxeoArtifactDocAdapter implements
     }
 
     @Override
-    public Long getMinRegistrationOrder() {
+    public Long getMinResolutionOrder() {
         return safeGet(PROP_MIN_REGISTRATION_ORDER);
     }
 
     @Override
-    public void setMinRegistrationOrder(Long order) {
+    public void setMinResolutionOrder(Long order) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Long getMaxRegistrationOrder() {
+    public Long getMaxResolutionOrder() {
         return safeGet(PROP_MAX_REGISTRATION_ORDER);
     }
 
     @Override
-    public void setMaxRegistrationOrder(Long order) {
+    public void setMaxResolutionOrder(Long order) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<ServiceInfo> getServices() {
+        if (services == null) {
+            String query = QueryHelper.select(ServiceInfo.TYPE_NAME, doc, ServiceInfo.PROP_CLASS_NAME);
+            DocumentModelList docs = query(getCoreSession(), query);
+            services = docs.stream()
+                           .map(doc -> doc.getAdapter(ServiceInfo.class))
+                           .filter(Objects::nonNull)
+                           .collect(Collectors.toList());
+        }
+        return Collections.unmodifiableList(services);
+    }
+
+    @Override
+    public List<ExtensionPointInfo> getExtensionPoints() {
+        if (extensionPoints == null) {
+            String query = QueryHelper.select(ExtensionPointInfo.TYPE_NAME, doc, ExtensionPointInfo.PROP_EP_ID);
+            DocumentModelList docs = query(getCoreSession(), query);
+            extensionPoints = docs.stream()
+                                  .map(doc -> doc.getAdapter(ExtensionPointInfo.class))
+                                  .filter(Objects::nonNull)
+                                  .collect(Collectors.toList());
+        }
+        return Collections.unmodifiableList(extensionPoints);
+    }
+
+    @Override
+    public List<ExtensionInfo> getExtensions() {
+        if (extensions == null) {
+            String query = QueryHelper.select(ExtensionInfo.TYPE_NAME, doc, ExtensionInfo.PROP_CONTRIB_ID);
+            DocumentModelList docs = query(getCoreSession(), query);
+            extensions = docs.stream()
+                             .map(doc -> doc.getAdapter(ExtensionInfo.class))
+                             .filter(Objects::nonNull)
+                             .collect(Collectors.toList());
+        }
+        return Collections.unmodifiableList(extensions);
     }
 
 }

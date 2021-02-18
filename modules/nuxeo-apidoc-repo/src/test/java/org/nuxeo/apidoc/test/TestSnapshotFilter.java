@@ -105,9 +105,27 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                             "org.nuxeo.apidoc.test.automation", "org.nuxeo.apidoc.test.works"),
                     snapshot.getComponentIds());
         }
-        assertEquals(
-                Arrays.asList("org.nuxeo.apidoc.search.ArtifactSearcher", "org.nuxeo.apidoc.snapshot.SnapshotManager"),
-                snapshot.getServiceIds());
+        if (isRef) {
+            assertEquals(Arrays.asList("org.nuxeo.apidoc.search.ArtifactSearcher",
+                    "org.nuxeo.apidoc.snapshot.SnapshotListener", "org.nuxeo.apidoc.snapshot.SnapshotManager",
+                    "org.nuxeo.automation.scripting.api.AutomationScriptingService",
+                    "org.nuxeo.ecm.automation.AutomationAdmin", "org.nuxeo.ecm.automation.AutomationService",
+                    "org.nuxeo.ecm.automation.context.ContextService",
+                    "org.nuxeo.ecm.automation.core.events.EventHandlerRegistry",
+                    "org.nuxeo.ecm.automation.core.trace.TracerFactory",
+                    "org.nuxeo.ecm.core.api.adapter.DocumentAdapterService", "org.nuxeo.ecm.core.event.EventProducer",
+                    "org.nuxeo.ecm.core.event.EventService", "org.nuxeo.ecm.core.event.EventServiceAdmin",
+                    "org.nuxeo.ecm.core.lifecycle.LifeCycleService",
+                    "org.nuxeo.ecm.core.schema.PropertyCharacteristicHandler",
+                    "org.nuxeo.ecm.core.schema.SchemaManager", "org.nuxeo.ecm.core.schema.TypeProvider",
+                    "org.nuxeo.ecm.core.work.api.WorkManager",
+                    "org.nuxeo.runtime.services.config.ConfigurationService"), snapshot.getServiceIds());
+        } else {
+            assertEquals(
+                    Arrays.asList("org.nuxeo.apidoc.search.ArtifactSearcher",
+                            "org.nuxeo.apidoc.snapshot.SnapshotListener", "org.nuxeo.apidoc.snapshot.SnapshotManager"),
+                    snapshot.getServiceIds());
+        }
         if (isRef) {
             assertEquals(Arrays.asList(
                     // inner extension points
@@ -155,7 +173,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, false, null);
         filter.addBundle("org.nuxeo.apidoc");
 
-        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         assertNotNull(snapshot);
         // nothing selected: filter should hold exact bundle names
         assertEquals(0, snapshot.getBundleIds().size());
@@ -163,7 +181,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         filter = new PersistSnapshotFilter(filterName, false, null);
         filter.addBundle("org.nuxeo.apidoc.core");
         filter.addBundle("org.nuxeo.apidoc.repo");
-        snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
 
         checkApiDoc(filterName, snapshot, false);
     }
@@ -174,7 +192,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName);
         filter.addBundle("org.nuxeo.apidoc");
 
-        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         assertNotNull(snapshot);
 
         checkApiDoc(filterName, snapshot, false);
@@ -187,7 +205,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                 TargetExtensionPointSnapshotFilter.class);
         filter.addBundle("org.nuxeo.apidoc");
 
-        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         checkApiDoc(filterName, snapshot, true);
     }
 
@@ -197,7 +215,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, false, null);
         filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
 
-        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         checkApiDoc(filterName, snapshot, false);
     }
 
@@ -207,7 +225,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, true, null);
         filter.addNuxeoPackage("platform-");
 
-        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         checkApiDoc(filterName, snapshot, false);
     }
 
@@ -218,7 +236,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                 TargetExtensionPointSnapshotFilter.class);
         filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
 
-        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         checkApiDoc(filterName, snapshot, true);
     }
 
@@ -228,7 +246,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         filter.addPackagesPrefix("org.nuxeo.ecm.automation.core.operations.services.query");
         filter.addPackagesPrefix("org.nuxeo.ecm.automation.core.operations.services.workmanager");
 
-        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         assertNotNull(snapshot);
 
         assertEquals(Arrays.asList("apidoc-java"),

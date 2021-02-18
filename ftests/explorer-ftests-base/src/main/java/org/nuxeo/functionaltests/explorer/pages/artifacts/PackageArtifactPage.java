@@ -109,26 +109,27 @@ public class PackageArtifactPage extends ArtifactPage {
                 + "org.nuxeo.apidoc.repo\n" //
                 + "org.nuxeo.apidoc.webengine\n"//
                 + "org.nuxeo.ecm.webengine.ui");
-        checkComponents("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent\n" //
+        checkComponents("org.nuxeo.apidoc.doctypeContrib\n" //
                 + "org.nuxeo.apidoc.lifecycle.contrib\n" //
-                + "org.nuxeo.apidoc.schemaContrib\n" //
-                + "org.nuxeo.apidoc.listener.contrib\n" //
+                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent\n" //
                 + "org.nuxeo.apidoc.adapterContrib\n" //
-                + "org.nuxeo.apidoc.doctypeContrib");
-        checkServices("org.nuxeo.apidoc.snapshot.SnapshotManager\n" //
-                + "org.nuxeo.apidoc.search.ArtifactSearcher");
-        checkExtensionPoints("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins\n" //
-                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters");
-        checkContributions("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters\n" //
+                + "org.nuxeo.apidoc.listener.contrib\n" //
+                + "org.nuxeo.apidoc.schemaContrib");
+        checkServices("ArtifactSearcher\n" //
+                + "SnapshotListener\n" //
+                + "SnapshotManager");
+        checkExtensionPoints("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters\n" //
+                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins");
+        checkContributions("org.nuxeo.apidoc.adapterContrib--adapters\n" //
+                + "org.nuxeo.apidoc.doctypeContrib--doctype\n" //
+                + "org.nuxeo.apidoc.lifecycle.contrib--types\n" //
+                + "org.nuxeo.apidoc.listener.contrib--listener\n" //
+                + "org.nuxeo.apidoc.schemaContrib--schema\n" //
                 + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration\n" //
                 + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1\n" //
                 + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2\n" //
                 + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3\n" //
-                + "org.nuxeo.apidoc.lifecycle.contrib--types\n" //
-                + "org.nuxeo.apidoc.schemaContrib--schema\n" //
-                + "org.nuxeo.apidoc.listener.contrib--listener\n" //
-                + "org.nuxeo.apidoc.adapterContrib--adapters\n" //
-                + "org.nuxeo.apidoc.doctypeContrib--doctype");
+                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters");
         WebElement jsonExport = exports.findElement(By.linkText("Json Export"));
         checkJsonLink(jsonExport);
         WebElement graphExport = exports.findElement(By.linkText("Json Graph"));

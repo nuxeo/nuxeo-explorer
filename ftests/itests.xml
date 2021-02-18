@@ -23,7 +23,7 @@
     </copy>
   </target>
 
-  <target name="prepare-packages">
+  <target name="prepare-packages" depends="_init">
     <copy todir="${out.dir}/packages">
       <artifact:set>
         <includes>

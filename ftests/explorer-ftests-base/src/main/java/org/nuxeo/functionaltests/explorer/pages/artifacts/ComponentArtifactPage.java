@@ -24,7 +24,6 @@ import static org.junit.Assert.assertFalse;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
-import org.nuxeo.functionaltests.Required;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -36,15 +35,17 @@ import org.openqa.selenium.support.FindBy;
  */
 public class ComponentArtifactPage extends ArtifactPage {
 
-    @FindBy(xpath = "//div[@class='implementation']")
-    public WebElement implementation;
+    @FindBy(css = ".javadoc")
+    public WebElement javadoc;
 
-    @FindBy(xpath = "//div[@class='implementation']//a[@class='javadoc']")
-    public WebElement javadocLink;
+    @FindBy(css = ".resolutionOrder")
+    public WebElement resolutionOrder;
 
-    @Required
-    @FindBy(xpath = "//div[@id='registrationOrder']")
-    public WebElement registrationOrder;
+    @FindBy(css = ".startOrder")
+    public WebElement startOrder;
+
+    @FindBy(css = ".declaredStartOrder")
+    public WebElement declaredStartOrder;
 
     @FindBy(xpath = "//div[@id='xmlSource']")
     public WebElement xmlSource;
@@ -55,11 +56,10 @@ public class ComponentArtifactPage extends ArtifactPage {
 
     @Override
     public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
-        String toc = "Documentation\n" + "Registration Order\n" + "Implementation\n" + "Services\n"
+        String toc = "Documentation\n" + "Resolution Order\n" + "Start Order\n" + "Implementation\n" + "Services\n"
                 + "Extension Points\n" + "Contributions\n" + "XML Source";
         if (legacy) {
-            toc = "Documentation\n" + "Registration Order\n" + "Implementation\n" + "Services\n" + "Extension Points\n"
-                    + "XML Source";
+            toc = "Documentation\n" + "Implementation\n" + "Services\n" + "Extension Points\n" + "XML Source";
         }
         checkCommon("Component org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
                 "Component org.nuxeo.apidoc.snapshot.SnapshotManagerComponent", "In bundle org.nuxeo.apidoc.repo", toc);
@@ -67,9 +67,10 @@ public class ComponentArtifactPage extends ArtifactPage {
         checkDocumentationText(
                 "This component handles the introspection of the current live Runtime as a distribution.\n" //
                         + "It can also persist this introspection as Nuxeo documents, to handle import and export of external distributions.");
-        checkImplementationText("Javadoc: org.nuxeo.apidoc.snapshot.SnapshotManagerComponent");
-        checkJavadocLink("/javadoc/org/nuxeo/apidoc/snapshot/SnapshotManagerComponent.html");
-        checkRegistrationOrder(!legacy);
+        checkImplementationText("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent");
+        checkResolutionOrder(!legacy);
+        checkStartOrder(!legacy);
+        checkDeclaredStartOrder(null);
         checkXMLSource(true);
     }
 
@@ -77,12 +78,14 @@ public class ComponentArtifactPage extends ArtifactPage {
     public void checkAlternative() {
         checkCommon("Component org.nuxeo.ecm.automation.server.marshallers",
                 "Component org.nuxeo.ecm.automation.server.marshallers", "In bundle org.nuxeo.ecm.automation.io",
-                "Requirements\n" + "Registration Order\n" + "Contributions\n" + "XML Source");
+                "Requirements\n" + "Resolution Order\n" + "Contributions\n" + "XML Source");
         checkRequirements(Arrays.asList("org.nuxeo.ecm.platform.contentview.json.marshallers"));
         checkDocumentationText(null);
         checkImplementationText(null);
         checkJavadocLink(null);
-        checkRegistrationOrder(true);
+        checkResolutionOrder(true);
+        checkStartOrder(false);
+        checkDeclaredStartOrder(null);
         checkXMLSource(true);
     }
 
@@ -93,15 +96,23 @@ public class ComponentArtifactPage extends ArtifactPage {
     }
 
     public void checkImplementationText(String expected) {
-        checkTextIfExists(expected, implementation);
+        checkTextIfExists(expected, javadoc);
     }
 
     public void checkJavadocLink(String expected) {
-        checkLink(expected, javadocLink);
+        checkLink(expected, javadoc);
     }
 
-    public void checkRegistrationOrder(boolean set) {
-        assertEquals(!set, StringUtils.isBlank(registrationOrder.getText()));
+    public void checkResolutionOrder(boolean set) {
+        checkSetIfExists(set, resolutionOrder);
+    }
+
+    public void checkStartOrder(boolean set) {
+        checkSetIfExists(set, startOrder);
+    }
+
+    public void checkDeclaredStartOrder(Long value) {
+        checkTextIfExists(value != null ? value.toString() : null, declaredStartOrder);
     }
 
     /** @since 20.0.0 */

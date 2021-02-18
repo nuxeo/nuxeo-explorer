@@ -25,6 +25,9 @@ import org.nuxeo.ecm.core.api.CoreSession;
 
 public interface ArtifactSearcher {
 
+    /** @since 20.1.0 */
+    public static final int MAX_RESULTS = 1000;
+
     List<NuxeoArtifact> searchArtifact(CoreSession session, String distribId, String fulltext);
 
     List<NuxeoArtifact> filterArtifact(CoreSession session, String distribId, String type, String fulltext);

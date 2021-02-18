@@ -47,11 +47,12 @@ public class OperationArtifactPage extends ArtifactPage {
     public WebElement signature;
 
     @Required
-    @FindBy(xpath = "//div[@class='implementation']")
-    public WebElement implementation;
+    @FindBy(css = ".javadoc")
+    public WebElement javadoc;
 
-    @FindBy(xpath = "//div[@class='implementation']//a[@class='javadoc']")
-    public WebElement javadocLink;
+    @Required
+    @FindBy(css = ".contributingComponent")
+    public WebElement contributingComponent;
 
     @FindBy(xpath = "//div[@class='json']")
     public WebElement json;
@@ -80,10 +81,8 @@ public class OperationArtifactPage extends ArtifactPage {
                 + "save boolean no true ");
         checkSignatureText("Inputs document, documents\n" //
                 + "Outputs document, documents");
-        checkImplementationText(
-                "Implementation Class Javadoc: org.nuxeo.ecm.automation.core.operations.document.AddFacet\n" //
-                        + "Contributing Component org.nuxeo.ecm.core.automation.coreContrib");
-        checkJavadocLink("/javadoc/org/nuxeo/ecm/automation/core/operations/document/AddFacet.html");
+        checkImplementationText("org.nuxeo.ecm.automation.core.operations.document.AddFacet");
+        checkContributingComponentText("Contributing Component org.nuxeo.ecm.core.automation.coreContrib");
         checkJsonText("{\n" //
                 + "  \"id\" : \"Document.AddFacet\",\n" //
                 + "  \"aliases\" : [ \"Document.AddFacet\" ],\n" //
@@ -122,10 +121,8 @@ public class OperationArtifactPage extends ArtifactPage {
                 // not backported to 10.10...
                 "In component BuiltIn",
                 "Parameters\n" + "Signature\n" + "Implementation Information\n" + "JSON Definition");
-        checkImplementationText(
-                "Implementation Class Javadoc: org.nuxeo.ecm.automation.core.impl.OperationChainCompiler.CompiledChainImpl\n"//
-                        + "Contributing Component BuiltIn");
-        checkJavadocLink("/javadoc/org/nuxeo/ecm/automation/core/impl/OperationChainCompiler.CompiledChainImpl.html");
+        checkImplementationText("org.nuxeo.ecm.automation.core.impl.OperationChainCompiler.CompiledChainImpl");
+        // checkJavadocLink("/javadoc/org/nuxeo/ecm/automation/core/impl/OperationChainCompiler.CompiledChainImpl.html");
     }
 
     @Override
@@ -151,11 +148,16 @@ public class OperationArtifactPage extends ArtifactPage {
     }
 
     public void checkImplementationText(String expected) {
-        assertEquals(expected, implementation.getText());
+        assertEquals(expected, javadoc.getText());
+    }
+
+    /** @since 20.2.0 */
+    public void checkContributingComponentText(String expected) {
+        assertEquals(expected, contributingComponent.getText());
     }
 
     public void checkJavadocLink(String expected) {
-        checkLink(expected, javadocLink);
+        checkLink(expected, javadoc);
     }
 
     public void checkJsonText(String expected) {

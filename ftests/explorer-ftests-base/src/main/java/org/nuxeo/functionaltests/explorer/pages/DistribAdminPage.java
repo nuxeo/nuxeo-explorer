@@ -18,10 +18,13 @@
  */
 package org.nuxeo.functionaltests.explorer.pages;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.util.List;
 
 import org.nuxeo.apidoc.browse.Distribution;
 import org.nuxeo.functionaltests.Locator;
@@ -52,6 +55,8 @@ public class DistribAdminPage extends AbstractExplorerPage {
     /** @since 20.0.0 */
     public static final String DELETE_URL = String.format("%s%s/", ExplorerHomePage.URL, Distribution.DELETE_ACTION);
 
+    protected static final String DUPLICATE_KEY_CLASS = "duplicateKey";
+
     @Required
     @FindBy(xpath = "//h1")
     public WebElement distributionsTitle;
@@ -73,6 +78,8 @@ public class DistribAdminPage extends AbstractExplorerPage {
     public void check() {
         checkTitle("Nuxeo Platform Explorer");
         UploadFragment.checkCanSee();
+        assertTrue(driver.findElements(By.cssSelector("div." + DUPLICATE_KEY_CLASS)).isEmpty());
+        assertFalse(driver.getPageSource().contains("Duplicate key detected"));
     }
 
     /**
@@ -162,6 +169,14 @@ public class DistribAdminPage extends AbstractExplorerPage {
             driver.findElement(By.id("save"));
             fail("Should not be able to save");
         } catch (NoSuchElementException e) {
+        }
+    }
+
+    public void checkDuplicateKeyErrorMessages(String... messages) {
+        List<WebElement> elements = driver.findElements(By.cssSelector("div." + DUPLICATE_KEY_CLASS));
+        assertEquals(messages.length, elements.size());
+        for (int i = 0; i < messages.length; i++) {
+            assertEquals(messages[i], elements.get(i).getText());
         }
     }
 

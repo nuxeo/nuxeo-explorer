@@ -33,8 +33,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -84,13 +82,12 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
     protected final Date created;
 
     protected final Date released;
+
     protected final String name;
 
     protected final String version;
 
     protected final Map<String, BundleInfo> bundles = new LinkedHashMap<>();
-
-    protected final List<String> javaComponentsIds = new ArrayList<>();
 
     protected final Map<String, String> components2Bundles = new HashMap<>();
 
@@ -106,7 +103,9 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
 
     protected boolean opsInitialized = false;
 
-    protected final List<OperationInfo> operations = new ArrayList<>();
+    protected final Map<String, OperationInfo> operations = new LinkedHashMap<>();
+
+    protected final Map<String, String> operationAliases = new HashMap<>();
 
     protected final Map<String, PackageInfo> packages = new HashMap<>();
 
@@ -135,7 +134,7 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
         this.version = version;
         index(bundles, packages);
         if (operations != null) {
-            this.operations.addAll(operations);
+            operations.forEach(this::addOperation);
         }
         this.opsInitialized = true;
         if (pluginSnapshots != null) {
@@ -167,9 +166,6 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
             bundles.put(bInfo.getId(), bInfo);
             for (ComponentInfo cInfo : bInfo.getComponents()) {
                 components2Bundles.put(cInfo.getId(), bInfo.getId());
-                if (!cInfo.isXmlPureComponent()) {
-                    javaComponentsIds.add(cInfo.getId());
-                }
 
                 for (ServiceInfo sInfo : cInfo.getServices()) {
                     if (sInfo.isOverriden()) {
@@ -182,17 +178,8 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
                     extensionPoints.put(epi.getId(), epi);
                 }
 
-                Map<String, AtomicInteger> comps = new HashMap<>();
                 for (ExtensionInfo ei : cInfo.getExtensions()) {
-                    // handle multiple contributions to the same extension point
-                    String id = ei.getId();
-                    if (comps.containsKey(id)) {
-                        int num = comps.get(id).incrementAndGet();
-                        id += "-" + num;
-                    } else {
-                        comps.put(id, new AtomicInteger());
-                    }
-                    contributions.put(id, ei);
+                    contributions.put(ei.getId(), ei);
                 }
             }
         }
@@ -214,10 +201,7 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
 
     @Override
     public List<BundleGroup> getBundleGroups() {
-        return parentBundleGroups.stream()
-                                 .sorted(new NuxeoArtifactComparator())
-                                 .collect(Collectors.collectingAndThen(Collectors.toList(),
-                                         Collections::unmodifiableList));
+        return parentBundleGroups.stream().sorted(new NuxeoArtifactComparator()).collect(Collectors.toList());
     }
 
     @Override
@@ -256,6 +240,15 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
         componentsIds.addAll(components2Bundles.keySet());
         Collections.sort(componentsIds);
         return componentsIds;
+    }
+
+    @Override
+    public List<ComponentInfo> getComponents() {
+        return bundles.values()
+                      .stream()
+                      .flatMap(b -> b.getComponents().stream())
+                      .sorted(new NuxeoArtifactComparator())
+                      .collect(Collectors.toList());
     }
 
     @Override
@@ -346,23 +339,6 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
     }
 
     @Override
-    public List<String> getJavaComponentIds() {
-        return javaComponentsIds;
-    }
-
-    @Override
-    public List<String> getXmlComponentIds() {
-        List<String> result = new ArrayList<>();
-
-        for (String cId : getComponentIds()) {
-            if (!javaComponentsIds.contains(cId)) {
-                result.add(cId);
-            }
-        }
-        return result;
-    }
-
-    @Override
     public Date getCreationDate() {
         return created;
     }
@@ -394,7 +370,7 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
         // make sure operations are ordered, as service currently returns any order
         List<OperationType> oops = Arrays.asList(ops);
         oops.sort(Comparator.comparing(OperationType::getId));
-        Map<String, List<OperationInfo>> bundleToOperations = new HashMap<String, List<OperationInfo>>();
+        Map<String, List<OperationInfo>> bundleToOperations = new HashMap<>();
         for (OperationType op : oops) {
             OperationDocumentation documentation;
             try {
@@ -408,7 +384,7 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
             if (StringUtils.isNotBlank(cid) && !OperationInfo.BUILT_IN.equals(cid)) {
                 bundleToOperations.computeIfAbsent(opi.getContributingComponent(), c -> new ArrayList<>()).add(opi);
             }
-            this.operations.add(opi);
+            addOperation(opi);
         }
         opsInitialized = true;
 
@@ -426,29 +402,31 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
         }
     }
 
+    protected void addOperation(OperationInfo opi) {
+        this.operations.put(opi.getName(), opi);
+        String opName = opi.getName();
+        List<String> aliases = opi.getAliases();
+        if (aliases != null) {
+            aliases.forEach(a -> this.operationAliases.put(a, opName));
+        }
+    }
+
     @Override
     public OperationInfo getOperation(String id) {
+        String finalId = id;
         if (id.startsWith(OperationInfo.ARTIFACT_PREFIX)) {
-            id = id.substring(OperationInfo.ARTIFACT_PREFIX.length());
+            finalId = id.substring(OperationInfo.ARTIFACT_PREFIX.length());
         }
-        for (OperationInfo op : getOperations()) {
-            if (op.getName().equals(id)) {
-                return op;
-            }
-
-            String finalId = id;
-            Optional<String> first = op.getAliases().stream().filter(s -> s.equals(finalId)).findFirst();
-            if (first.isPresent()) {
-                return op;
-            }
+        if (!operations.containsKey(finalId) && operationAliases.containsKey(finalId)) {
+            finalId = operationAliases.get(finalId);
         }
-        return null;
+        return operations.get(finalId);
     }
 
     @Override
     public List<OperationInfo> getOperations() {
         initOperations();
-        return operations;
+        return new ArrayList<>(operations.values());
     }
 
     @Override
@@ -502,7 +480,7 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
         SnapshotFilter refFilter = null;
         if (filter != null && filter.getReferenceClass() != null) {
             // resolve bundle selection to get reference filter
-            List<NuxeoArtifact> selectedBundles = new ArrayList<NuxeoArtifact>();
+            List<NuxeoArtifact> selectedBundles = new ArrayList<>();
             getBundles().stream().filter(filter::accept).forEach(selectedBundles::add);
             try {
                 Constructor<? extends SnapshotFilter> constructor = filter.getReferenceClass()

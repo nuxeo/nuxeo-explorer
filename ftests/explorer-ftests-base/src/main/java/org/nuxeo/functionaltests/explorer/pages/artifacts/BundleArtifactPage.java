@@ -19,19 +19,16 @@
 package org.nuxeo.functionaltests.explorer.pages.artifacts;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.functionaltests.Required;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
 import org.nuxeo.functionaltests.explorer.testing.AbstractExplorerTest;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -42,8 +39,8 @@ import org.openqa.selenium.support.FindBy;
 public class BundleArtifactPage extends ArtifactPage {
 
     /** @since 20.0.0 */
-    @FindBy(xpath = "//div[@id='registrationOrder']")
-    public WebElement registrationOrder;
+    @FindBy(xpath = "//div[@id='resolutionOrder']")
+    public WebElement resolutionOrder;
 
     @Required
     @FindBy(xpath = "//table[@class='listTable']")
@@ -86,17 +83,16 @@ public class BundleArtifactPage extends ArtifactPage {
         }
         checkCommon("Bundle org.nuxeo.apidoc.core", "Bundle org.nuxeo.apidoc.core", groupTitle, toc);
         try {
-            String readme = AbstractExplorerTest.getReferenceContent(
-                    Paths.get(legacy ? "data/core_readme_legacy.txt" : "data/core_readme.txt"));
-            String parentReadme = AbstractExplorerTest.getReferenceContent(Paths.get("data/apidoc_readme.txt"));
-            checkDocumentationText("ReadMe.md\n" + readme + "\nParent Documentation: ReadMe.md\n" + parentReadme);
+            String readmes = AbstractExplorerTest.getReferenceContent(
+                    Paths.get(legacy ? "data/apidoc_core_readmes_legacy.html" : "data/apidoc_core_readmes.html"));
+            checkDocumentationHTML(readmes);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         checkGroupId("org.nuxeo.ecm.platform");
         checkArtifactId("nuxeo-apidoc-core");
         checkRequirements(null);
-        checkRegistrationOrder(false);
+        checkResolutionOrder(false);
         checkPackages(legacy ? null : "platform-explorer");
 
         WebElement jsonExport = exports.findElement(By.linkText("Json Export"));
@@ -118,14 +114,14 @@ public class BundleArtifactPage extends ArtifactPage {
         checkGroupId("org.nuxeo.ecm.platform");
         checkArtifactId("nuxeo-apidoc-webengine");
         checkRequirements(Arrays.asList("org.nuxeo.ecm.webengine.core", "org.nuxeo.apidoc.core"));
-        checkRegistrationOrder(false);
+        checkResolutionOrder(false);
         checkPackages("platform-explorer");
     }
 
     public void checkAlternative2() {
         checkCommon("Bundle org.nuxeo.apidoc.repo", "Bundle org.nuxeo.apidoc.repo", "In bundle group org.nuxeo.apidoc",
                 "Documentation\n" //
-                        + "Registration Order\n" //
+                        + "Resolution Order\n" //
                         + "Components\n" //
                         + "Packages\n" //
                         + "Maven Artifact\n" //
@@ -134,7 +130,7 @@ public class BundleArtifactPage extends ArtifactPage {
         checkGroupId("org.nuxeo.ecm.platform");
         checkArtifactId("nuxeo-apidoc-repo");
         checkRequirements(null);
-        checkRegistrationOrder(true);
+        checkResolutionOrder(true);
         checkPackages("platform-explorer");
     }
 
@@ -157,12 +153,8 @@ public class BundleArtifactPage extends ArtifactPage {
     }
 
     /** @since 20.0.0 */
-    public void checkRegistrationOrder(boolean set) {
-        try {
-            assertEquals(!set, StringUtils.isBlank(registrationOrder.getText()));
-        } catch (NoSuchElementException e) {
-            assertFalse(set);
-        }
+    public void checkResolutionOrder(boolean set) {
+        checkSetIfExists(set, resolutionOrder);
     }
 
     public void checkPackages(String expected) {

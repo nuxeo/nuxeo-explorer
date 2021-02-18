@@ -13,6 +13,7 @@
 
   <modules>
     <module>nuxeo-explorer-docker</module>
+    <module>nuxeo-explorer-export-docker</module>
   </modules>
 
 </project>

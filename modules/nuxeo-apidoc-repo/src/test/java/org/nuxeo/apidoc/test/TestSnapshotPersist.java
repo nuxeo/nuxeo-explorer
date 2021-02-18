@@ -55,6 +55,7 @@ import org.nuxeo.connect.update.PackageException;
 import org.nuxeo.ecm.automation.OperationDocumentation;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.ecm.core.api.validation.DocumentValidationException;
 import org.nuxeo.ecm.core.test.CoreFeature;
 
 public class TestSnapshotPersist extends AbstractApidocTest {
@@ -126,7 +127,7 @@ public class TestSnapshotPersist extends AbstractApidocTest {
         PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc");
         filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
 
-        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         assertNotNull(snapshot);
         checkDistributionSnapshot(snapshot, true, false);
 
@@ -141,7 +142,7 @@ public class TestSnapshotPersist extends AbstractApidocTest {
                 TargetExtensionPointSnapshotFilter.class);
         filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
 
-        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, filter);
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         assertNotNull(snapshot);
         checkDistributionSnapshot(snapshot, true, true);
 
@@ -150,12 +151,32 @@ public class TestSnapshotPersist extends AbstractApidocTest {
         checkDistributionSnapshot(persisted, true, true);
     }
 
+    @Test
+    public void testPersistDupeKey() throws IOException {
+        PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc", true,
+                TargetExtensionPointSnapshotFilter.class);
+        filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
+        String key = "apidoc-unknown";
+
+        assertTrue(snapshotManager.getPersistentSnapshots(session, key, false).isEmpty());
+
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
+        assertEquals(key, snapshot.getKey());
+        assertEquals(1, snapshotManager.getPersistentSnapshots(session, key, false).size());
+
+        // persist another time with same name
+        snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
+        assertEquals("apidoc-unknown", snapshot.getKey());
+        // check distrib has been duplicated
+        assertEquals(2, snapshotManager.getPersistentSnapshots(session, key, false).size());
+    }
+
     protected void checkDistributionSnapshot(DistributionSnapshot snapshot, boolean partial, boolean ref)
             throws IOException {
         checkBundleGroups(snapshot, partial, ref);
         checkBundles(snapshot, partial, ref);
         checkComponents(snapshot, partial, ref);
-        checkServices(snapshot, partial);
+        checkServices(snapshot, partial, ref);
         checkExtensionPoints(snapshot, partial, ref);
         checkContributions(snapshot, partial);
         checkOperations(snapshot, partial);
@@ -230,12 +251,15 @@ public class TestSnapshotPersist extends AbstractApidocTest {
         } else {
             checkContentEquals("apidoc_snapshot/components.txt", s);
         }
+        assertEquals(cids.size(), snapshot.getComponents().size());
     }
 
-    protected void checkServices(DistributionSnapshot snapshot, boolean partial) throws IOException {
+    protected void checkServices(DistributionSnapshot snapshot, boolean partial, boolean ref) throws IOException {
         List<String> sids = snapshot.getServiceIds();
         String s = sids.stream().map(snapshot::getService).map(this::represent).collect(Collectors.joining());
-        if (partial) {
+        if (ref) {
+            checkContentEquals("apidoc_snapshot/services_partial_ref.txt", s);
+        } else if (partial) {
             checkContentEquals("apidoc_snapshot/services_partial.txt", s);
         } else {
             checkContentEquals("apidoc_snapshot/services.txt", s);

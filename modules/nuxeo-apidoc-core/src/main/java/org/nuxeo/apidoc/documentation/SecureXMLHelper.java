@@ -199,7 +199,7 @@ public class SecureXMLHelper {
             writer.flush();
             writer.close();
 
-            return output.toString(StandardCharsets.UTF_8.name());
+            return output.toString("UTF-8");
         } catch (IOException e) {
             throw new XMLStreamException(e);
         }

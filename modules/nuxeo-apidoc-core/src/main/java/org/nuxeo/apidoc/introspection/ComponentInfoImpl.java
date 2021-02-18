@@ -59,8 +59,6 @@ public class ComponentInfoImpl extends BaseNuxeoArtifact implements ComponentInf
 
     protected final List<ExtensionPointInfo> extensionPoints = new ArrayList<>();
 
-    protected final List<String> serviceNames = new ArrayList<>();
-
     protected final List<ServiceInfo> services = new ArrayList<>();
 
     protected final List<ExtensionInfo> extensions = new ArrayList<>();
@@ -68,8 +66,14 @@ public class ComponentInfoImpl extends BaseNuxeoArtifact implements ComponentInf
     /** @since 11.1 */
     protected final List<String> requirements = new ArrayList<>();
 
-    /** @since 11.1 */
-    protected Long registrationOrder;
+    /** @since 20.0.0 */
+    protected Long resolutionOrder;
+
+    /** @since 20.0.0 */
+    protected Long startOrder;
+
+    /** @since 20.0.0 */
+    protected Long declaredStartOrder;
 
     protected URL xmlFileUrl;
 
@@ -135,14 +139,8 @@ public class ComponentInfoImpl extends BaseNuxeoArtifact implements ComponentInf
     }
 
     public void addService(String serviceName, boolean overriden) {
-        serviceNames.add(serviceName);
         ServiceInfo si = new ServiceInfoImpl(serviceName, overriden, this);
         services.add(si);
-    }
-
-    @Override
-    public List<String> getServiceNames() {
-        return Collections.unmodifiableList(serviceNames);
     }
 
     @Override
@@ -260,13 +258,13 @@ public class ComponentInfoImpl extends BaseNuxeoArtifact implements ComponentInf
     }
 
     @Override
-    public Long getRegistrationOrder() {
-        return registrationOrder;
+    public Long getResolutionOrder() {
+        return resolutionOrder;
     }
 
     @Override
-    public void setRegistrationOrder(Long registrationOrder) {
-        this.registrationOrder = registrationOrder;
+    public void setResolutionOrder(Long resolutionOrder) {
+        this.resolutionOrder = resolutionOrder;
     }
 
     @Override
@@ -279,6 +277,26 @@ public class ComponentInfoImpl extends BaseNuxeoArtifact implements ComponentInf
             this.operations.clear();
             this.operations.addAll(operations);
         }
+    }
+
+    @Override
+    public Long getStartOrder() {
+        return startOrder;
+    }
+
+    @Override
+    public void setStartOrder(Long order) {
+        this.startOrder = order;
+    }
+
+    @Override
+    public Long getDeclaredStartOrder() {
+        return declaredStartOrder;
+    }
+
+    @Override
+    public void setDeclaredStartOrder(Long order) {
+        this.declaredStartOrder = order;
     }
 
 }

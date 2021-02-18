@@ -32,26 +32,39 @@ public class ContributionArtifactPage extends ArtifactPage {
     @FindBy(xpath = "//ul[@class='block-list']")
     public WebElement contributionsList;
 
+    @FindBy(css = ".registrationOrder")
+    public WebElement regitrationOrder;
+
     public ContributionArtifactPage(WebDriver driver) {
         super(driver);
     }
 
     @Override
     public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
+        // no registration order on 10.10
+        String toc = "Documentation\n" + "Extension Point\n" //
+                + "Registration Order\n" //
+                + "Contributed Items\n" + "XML Source";
+        // if (legacy) {
+        toc = "Documentation\n" + "Extension Point\n" + "Contributed Items\n" + "XML Source";
+        // }
         checkCommon("Contribution org.nuxeo.apidoc.adapterContrib--adapters",
                 "Contribution org.nuxeo.apidoc.adapterContrib--adapters",
-                "In component org.nuxeo.apidoc.adapterContrib",
-                "Documentation\n" + "Extension Point\n" + "Contributed Items\n" + "XML Source");
+                "In component org.nuxeo.apidoc.adapterContrib", toc);
         checkDocumentationText("These contributions provide a mapping between live introspections "
                 + "and persisted representations of a distribution.");
+        // no registration order on 10.10
+        checkRegistrationOrder(false);
     }
 
     @Override
     public void checkAlternative() {
         checkCommon("Contribution org.nuxeo.apidoc.listener.contrib--listener",
                 "Contribution org.nuxeo.apidoc.listener.contrib--listener",
-                "In component org.nuxeo.apidoc.listener.contrib",
-                "Documentation\n" + "Extension Point\n" + "Contributed Items\n" + "XML Source");
+                "In component org.nuxeo.apidoc.listener.contrib", "Documentation\n" + "Extension Point\n" //
+                // no registration order on 10.10
+                // + "Registration Order\n" //
+                        + "Contributed Items\n" + "XML Source");
         checkDocumentationText("These contributions are used for latest distribution flag update "
                 + "and XML attributes extractions in extension points.");
         checkContributionItemText(1,
@@ -64,6 +77,8 @@ public class ContributionArtifactPage extends ArtifactPage {
                         + "    </listener>\n" //
                         + "listener latestDistributionsListener\n" //
                         + "Updates latest distribution flag.");
+        // no registration order on 10.10
+        checkRegistrationOrder(false);
     }
 
     @Override
@@ -75,6 +90,10 @@ public class ContributionArtifactPage extends ArtifactPage {
     public void checkContributionItemText(int index, String expected) {
         WebElement element = contributionsList.findElement(By.xpath(".//li[" + index + "]"));
         checkTextIfExists(expected, element);
+    }
+
+    public void checkRegistrationOrder(boolean set) {
+        checkSetIfExists(set, regitrationOrder);
     }
 
     public void toggleGenerateOverride() {

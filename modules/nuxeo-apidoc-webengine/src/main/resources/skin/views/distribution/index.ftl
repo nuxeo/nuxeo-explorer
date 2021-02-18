@@ -72,6 +72,7 @@
           <div><a class="operations" href="${Root.path}/${distrib.key}/listOperations">Search Operations</a></div>
           <div><a class="services" href="${Root.path}/${distrib.key}/listServices">Browse Services</a></div>
         </div>
+      </div>
     </li>
   </#list>
   </ul>

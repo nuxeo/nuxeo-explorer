@@ -74,8 +74,7 @@ public abstract class AbstractGraphExporter extends AbstractExporter {
         Map<String, Integer> nodeHits = new HashMap<>();
         Set<String> isolatedBundles = new HashSet<>();
 
-        for (String bid : distribution.getBundleIds()) {
-            BundleInfo bundle = distribution.getBundle(bid);
+        for (BundleInfo bundle : distribution.getBundles()) {
             if (filter != null && !filter.accept(bundle)) {
                 continue;
             }
@@ -120,21 +119,10 @@ public abstract class AbstractGraphExporter extends AbstractExporter {
                     hit(nodeHits, compNode.getId());
                 }
 
-                Map<String, Integer> comps = new HashMap<String, Integer>();
                 for (ExtensionInfo contribution : component.getExtensions()) {
                     if (filter != null && !filter.accept(contribution)) {
                         continue;
                     }
-                    // handle multiple contributions to the same extension point
-                    String cid = contribution.getId();
-                    if (comps.containsKey(cid)) {
-                        Integer num = comps.get(cid);
-                        comps.put(cid, num + 1);
-                        cid += "-" + String.valueOf(num + 1);
-                    } else {
-                        comps.put(cid, Integer.valueOf(0));
-                    }
-
                     Node<?> contNode = createContributionNode(contribution, category);
                     graph.addNode(contNode);
                     // add link to corresponding component

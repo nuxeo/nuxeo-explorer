@@ -26,23 +26,16 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.text.ParseException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.naming.NamingException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -51,6 +44,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -68,12 +62,15 @@ import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.apidoc.snapshot.SnapshotResolverHelper;
 import org.nuxeo.apidoc.snapshot.TargetExtensionPointSnapshotFilter;
+import org.nuxeo.apidoc.snapshot.VersionComparator;
 import org.nuxeo.apidoc.worker.ExtractXmlAttributesWorker;
 import org.nuxeo.common.Environment;
 import org.nuxeo.common.utils.URIUtils;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentNotFoundException;
+import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.IterableQueryResult;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.NuxeoPrincipal;
@@ -82,6 +79,8 @@ import org.nuxeo.ecm.core.query.QueryFilter;
 import org.nuxeo.ecm.core.query.sql.NXQL;
 import org.nuxeo.ecm.core.work.api.Work;
 import org.nuxeo.ecm.core.work.api.WorkManager;
+import org.nuxeo.ecm.platform.ui.web.auth.NXAuthConstants;
+import org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService;
 import org.nuxeo.ecm.platform.web.common.vh.VirtualHostHelper;
 import org.nuxeo.ecm.webengine.forms.FormData;
 import org.nuxeo.ecm.webengine.model.Resource;
@@ -141,6 +140,9 @@ public class Distribution extends ModuleRoot {
     /** @since 20.0.0 */
     public static final String REINDEX_ACTION = "_reindex";
 
+    /** @since 20.0.0 */
+    public static final String LOGIN_ACTION = "apidocLogin";
+
     /**
      * List of subviews, used for validation of distribution names and aliases.
      *
@@ -149,9 +151,6 @@ public class Distribution extends ModuleRoot {
     protected static final List<String> SUB_DISTRIBUTION_PATH_RESERVED = Arrays.asList(VIEW_ADMIN, SAVE_ACTION,
             SAVE_EXTENDED_ACTION, DOWNLOAD_ACTION, UPDATE_ACTION, DO_UPDATE_ACTION, DELETE_ACTION, UPLOAD_ACTION,
             UPLOAD_TMP_ACTION, UPLOAD_TMP_VALID_ACTION, REINDEX_ACTION);
-
-    protected static final Pattern VERSION_REGEX = Pattern.compile("^(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:-.*)?$",
-            Pattern.CASE_INSENSITIVE);
 
     /**
      * Customized error management.
@@ -179,21 +178,19 @@ public class Distribution extends ModuleRoot {
         pw.println("</body>");
         pw.println("</html>");
         pw.close();
-        return Response.status(404).type(MediaType.TEXT_HTML_TYPE).entity(sw.toString()).build();
+        return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_HTML_TYPE).entity(sw.toString()).build();
     }
 
     protected Object show404() {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        pw.println("<html>");
-        pw.println("<head><title>404 - Resource Not Found</title></head>");
-        pw.println("<body>");
-        pw.println("<h1>404 Resource Not Found</h1>");
-        pw.println("<p>The resource you're trying to access couldn't be found.</p>");
-        pw.println("</body>");
-        pw.println("</html>");
-        pw.close();
-        return Response.status(404).type(MediaType.TEXT_HTML_TYPE).entity(sw.toString()).build();
+        return Response.status(Status.NOT_FOUND)
+                       .type(MediaType.TEXT_HTML_TYPE)
+                       .entity(Resource404.getPageContent())
+                       .build();
+    }
+
+    protected void commitOrRollbackAndRestartTransaction() {
+        TransactionHelper.commitOrRollbackTransaction();
+        TransactionHelper.startTransaction();
     }
 
     protected static SnapshotManager getSnapshotManager() {
@@ -243,7 +240,7 @@ public class Distribution extends ModuleRoot {
     }
 
     @GET
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object doGet() {
         return getView("index");
     }
@@ -269,15 +266,17 @@ public class Distribution extends ModuleRoot {
             return ctx.newObject(Resource404.TYPE);
         }
 
+        // resolve version-like distribs based only on version names, taking only persistent distributions and not
+        // including aliases
         List<DistributionSnapshot> snaps = getSnapshotManager().listPersistentSnapshots((ctx.getCoreSession()));
-        if (distributionId.matches(VERSION_REGEX.toString())) {
+        if (VersionComparator.isVersion(distributionId)) {
             String finalDistributionId = distributionId;
-            return snaps.stream()
-                        .filter(s -> s.getVersion().equals(finalDistributionId))
-                        .findFirst()
-                        .map(distribution -> ctx.newObject(RedirectResource.TYPE, finalDistributionId,
-                                distribution.getKey()))
-                        .orElseGet(() -> ctx.newObject(Resource404.TYPE));
+            Optional<DistributionSnapshot> resolved = snaps.stream()
+                                                           .filter(s -> s.getVersion().equals(finalDistributionId))
+                                                           .findFirst();
+            if (resolved.isPresent()) {
+                return ctx.newObject(RedirectResource.TYPE, finalDistributionId, resolved.get().getKey());
+            }
         }
 
         boolean showRuntimeSnapshot = showRuntimeSnapshot();
@@ -302,9 +301,10 @@ public class Distribution extends ModuleRoot {
         }
 
         ctx.setProperty(ApiBrowserConstants.EMBEDDED_MODE_MARKER, embeddedMode);
-        ctx.setProperty(DIST, getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession()));
+        DistributionSnapshot snapshot = getSnapshotManager().getSnapshot(distributionId, ctx.getCoreSession());
+        ctx.setProperty(DIST, snapshot);
         ctx.setProperty(DIST_ID, distributionId);
-        return ctx.newObject(ApiBrowser.TYPE, distributionId, embeddedMode);
+        return ctx.newObject(ApiBrowser.TYPE, distributionId, embeddedMode, snapshot);
     }
 
     public List<DistributionSnapshotDesc> getAvailableDistributions() {
@@ -315,31 +315,17 @@ public class Distribution extends ModuleRoot {
         return getSnapshotManager().getRuntimeSnapshot();
     }
 
-    public List<DistributionSnapshot> listPersistedDistributions() {
-        SnapshotManager sm = getSnapshotManager();
-        return sm.listPersistentSnapshots(ctx.getCoreSession()).stream().sorted((o1, o2) -> {
-            Matcher m1 = VERSION_REGEX.matcher(o1.getVersion());
-            Matcher m2 = VERSION_REGEX.matcher(o2.getVersion());
-
-            if (m1.matches() && m2.matches()) {
-                for (int i = 0; i < 3; i++) {
-                    String s1 = m1.group(i + 1);
-                    int c1 = s1 != null ? Integer.parseInt(s1) : 0;
-                    String s2 = m2.group(i + 1);
-                    int c2 = s2 != null ? Integer.parseInt(s2) : 0;
-
-                    if (c1 != c2 || i == 2) {
-                        return Integer.compare(c2, c1);
-                    }
-                }
-            }
-            log.info(String.format("Comparing version using String between %s - %s", o1.getVersion(), o2.getVersion()));
-            return o2.getVersion().compareTo(o1.getVersion());
-        }).collect(Collectors.toList());
+    /**
+     * Returns true if given key is shared by several instances.
+     *
+     * @since 20.0.0
+     */
+    public boolean isKeyDuplicated(String key) {
+        return getSnapshotManager().getPersistentSnapshots(ctx.getCoreSession(), key, false).size() > 1;
     }
 
-    public Map<String, DistributionSnapshot> getPersistedDistributions() {
-        return getSnapshotManager().getPersistentSnapshots(ctx.getCoreSession());
+    public List<DistributionSnapshot> listPersistedDistributions() {
+        return getSnapshotManager().listPersistentSnapshots(ctx.getCoreSession());
     }
 
     public DistributionSnapshot getCurrentDistribution() {
@@ -348,23 +334,55 @@ public class Distribution extends ModuleRoot {
 
     @POST
     @Path(SAVE_ACTION)
-    @Produces("text/html")
-    public Object doSave() throws NamingException, NotSupportedException, SystemException, RollbackException,
-            HeuristicMixedException, HeuristicRollbackException, ParseException {
-        return performSave(null);
+    @Produces(MediaType.TEXT_HTML)
+    public Object doSave() {
+        return performSave(null, true);
+    }
+
+    /**
+     * Performs save without redirecting to success/error views.
+     *
+     * @since 20.3.0
+     */
+    @POST
+    @Path(SAVE_ACTION)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Object doSaveRequest() {
+        return performSave(null, false);
     }
 
     @POST
     @Path(SAVE_EXTENDED_ACTION)
-    @Produces("text/html")
-    public Object doSaveExtended() throws NamingException, NotSupportedException, SystemException, SecurityException,
-            RollbackException, HeuristicMixedException, HeuristicRollbackException {
+    @Produces(MediaType.TEXT_HTML)
+    public Object doSaveExtended() {
+        return performSave(getSaveFilter(), true);
+    }
+
+    /**
+     * Performs extended save without redirecting to success/error views.
+     *
+     * @since 20.3.0
+     */
+    @POST
+    @Path(SAVE_EXTENDED_ACTION)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Object doSaveExtendedRequest() {
+        return performSave(getSaveFilter(), false);
+    }
+
+    protected SnapshotFilter getSaveFilter() {
         FormData formData = getContext().getForm();
 
-        String distribLabel = formData.getString("name");
         String bundleList = formData.getString("bundles");
         String javaPkgList = formData.getString("javaPackages");
         String nxPkgList = formData.getString("nxPackages");
+
+        if (StringUtils.isBlank(bundleList) && StringUtils.isBlank(javaPkgList) && StringUtils.isBlank(nxPkgList)) {
+            // no actual filtering
+            return null;
+        }
+
+        String distribLabel = formData.getString("name");
         boolean checkAsPrefixes = "on".equals(formData.getString("checkAsPrefixes"));
         boolean includeReferences = "on".equals(formData.getString("includeReferences"));
 
@@ -385,7 +403,7 @@ public class Distribution extends ModuleRoot {
                   .forEach(pkg -> filter.addNuxeoPackage(pkg));
         }
 
-        return performSave(filter);
+        return filter;
     }
 
     protected Map<String, Serializable> readUploadFormData(FormData formData) {
@@ -396,40 +414,55 @@ public class Distribution extends ModuleRoot {
         if (StringUtils.isNotBlank(released)) {
             properties.put(DistributionSnapshot.PROP_RELEASED, RepositoryDistributionSnapshot.convertDate(released));
         }
+        // Version
+        String version = formData.getString("version");
+        if (StringUtils.isNotBlank(version)) {
+            properties.put(DistributionSnapshot.PROP_VERSION, version);
+        }
 
         return properties;
     }
 
-    protected Object performSave(SnapshotFilter filter) throws NamingException, NotSupportedException, SystemException,
-            SecurityException, RollbackException, HeuristicMixedException, HeuristicRollbackException {
+    protected Object performSave(SnapshotFilter filter, boolean redirect) {
         if (!canSave()) {
             return show404();
         }
 
-        boolean startedTx = false;
-        UserTransaction tx = TransactionHelper.lookupUserTransaction();
-        if (tx != null && !TransactionHelper.isTransactionActiveOrMarkedRollback()) {
-            tx.begin();
-            startedTx = true;
-        }
-
         FormData formData = getContext().getForm();
         String source = formData.getString("source");
+        Template view;
+        boolean hasError = false;
+        String errorMessage = null;
         try {
             getSnapshotManager().persistRuntimeSnapshot(getContext().getCoreSession(), formData.getString("name"),
-                    readUploadFormData(formData), filter);
+                    readUploadFormData(formData), SUB_DISTRIBUTION_PATH_RESERVED, filter);
+            hasError = false;
         } catch (NuxeoException e) {
             log.error("Error during storage", e);
-            if (tx != null) {
-                tx.rollback();
-            }
-            return getView("savedKO").arg("message", e.getMessage()).arg("source", source);
+            TransactionHelper.setTransactionRollbackOnly();
+            hasError = false;
+            errorMessage = e.getMessage();
         }
 
-        if (tx != null && startedTx) {
-            tx.commit();
+        commitOrRollbackAndRestartTransaction();
+        if (redirect) {
+            if (hasError) {
+                view = getView("savedKO").arg("message", errorMessage).arg("source", source);
+            } else {
+                view = getView("saved").arg("source", source);
+            }
+            return view;
+        } else {
+            if (hasError) {
+                return Response.status(Status.INTERNAL_SERVER_ERROR)
+                               .type(MediaType.TEXT_PLAIN)
+                               .entity("Save failed: " + errorMessage)
+                               .build();
+            } else {
+                return Response.status(Status.OK).type(MediaType.TEXT_PLAIN).entity("Save done.").build();
+            }
         }
-        return getView("saved").arg("source", source);
+
     }
 
     protected File getExportTmpFile() {
@@ -445,7 +478,7 @@ public class Distribution extends ModuleRoot {
     @Path(DOWNLOAD_ACTION + "/{distributionId}")
     public Response downloadDistrib(@PathParam("distributionId") String distribId) throws IOException {
         if (!canImportOrExportDistributions()) {
-            return Response.status(404).build();
+            return Response.status(Status.NOT_FOUND).build();
         }
 
         File tmp = getExportTmpFile();
@@ -482,28 +515,35 @@ public class Distribution extends ModuleRoot {
 
     @POST
     @Path(UPLOAD_ACTION)
-    @Produces("text/html")
-    public Object uploadDistrib() throws IOException {
+    @Produces(MediaType.TEXT_HTML)
+    public Object uploadDistrib() {
         if (!canImportOrExportDistributions()) {
             return show404();
         }
         FormData formData = getContext().getForm();
         Blob blob = formData.getFirstBlob();
-        String source = formData.getString("source");
+        Map<String, Serializable> updateProperties = RepositoryDistributionSnapshot.getUpdateProperties(
+                formData.getFormFields());
 
         try {
-            getSnapshotManager().importSnapshot(getContext().getCoreSession(), blob.getStream());
+            getSnapshotManager().importSnapshot(getContext().getCoreSession(), blob.getStream(), updateProperties,
+                    SUB_DISTRIBUTION_PATH_RESERVED);
         } catch (IOException | IllegalArgumentException | NuxeoException e) {
             log.error(e, e);
-            return getView("importKO").arg("message", e.getMessage()).arg("source", source);
+            TransactionHelper.setTransactionRollbackOnly();
+            return Response.status(Status.INTERNAL_SERVER_ERROR)
+                           .type(MediaType.TEXT_PLAIN)
+                           .entity("Upload not done: " + e.getMessage())
+                           .build();
         }
 
-        return getView(getRedirectViewPostUpload(source));
+        commitOrRollbackAndRestartTransaction();
+        return Response.status(Status.OK).type(MediaType.TEXT_PLAIN).entity("Upload done.").build();
     }
 
     @POST
     @Path(UPLOAD_TMP_ACTION)
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object uploadDistribTmp() {
         if (!canImportOrExportDistributions()) {
             return show404();
@@ -524,8 +564,11 @@ public class Distribution extends ModuleRoot {
                 view = getView("uploadEdit").arg("tmpSnap", snap).arg("snapObject", snapObject);
             }
         } catch (IOException | IllegalArgumentException | NuxeoException e) {
+            TransactionHelper.setTransactionRollbackOnly();
             view = getView("importKO").arg("message", e.getMessage());
         }
+
+        commitOrRollbackAndRestartTransaction();
 
         view.arg("source", formData.getString("source"));
         return view;
@@ -533,29 +576,49 @@ public class Distribution extends ModuleRoot {
 
     @POST
     @Path(UPLOAD_TMP_VALID_ACTION)
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object uploadDistribTmpValid() {
         if (!canImportOrExportDistributions()) {
             return show404();
         }
 
         FormData formData = getContext().getForm();
-        String name = formData.getString("name");
-        String version = formData.getString("version");
-        String pathSegment = formData.getString("pathSegment");
-        String title = formData.getString("title");
-
+        String distribDocId = formData.getFormProperty("distribDocId");
+        Map<String, Serializable> updateProperties = RepositoryDistributionSnapshot.getUpdateProperties(
+                formData.getFormFields());
         Template view;
         try {
-            getSnapshotManager().validateImportedSnapshot(getContext().getCoreSession(), name, version, pathSegment,
-                    title);
+            getSnapshotManager().validateImportedSnapshot(getContext().getCoreSession(), distribDocId, updateProperties,
+                    SUB_DISTRIBUTION_PATH_RESERVED);
             view = getView("importDone");
         } catch (IllegalArgumentException | NuxeoException e) {
             view = getView("importKO").arg("message", e.getMessage());
+            TransactionHelper.setTransactionRollbackOnly();
         }
+
+        commitOrRollbackAndRestartTransaction();
 
         view.arg("source", formData.getString("source"));
         return view;
+    }
+
+    protected DistributionSnapshot getPersistedDistrib(String distribId, String distribDocId) {
+        if (StringUtils.isNotBlank(distribDocId)) {
+            try {
+                return ctx.getCoreSession().getDocument(new IdRef(distribDocId)).getAdapter(DistributionSnapshot.class);
+            } catch (DocumentNotFoundException e) {
+                return null;
+            }
+        }
+        List<DistributionSnapshot> snapshots = getSnapshotManager().getPersistentSnapshots(ctx.getCoreSession(),
+                distribId, false);
+        if (snapshots.size() == 1) {
+            return snapshots.get(0);
+        }
+        if (snapshots.size() > 1) {
+            log.warn(String.format("Multiple distributions with key '%s': cannot retrieve one for sure", distribId));
+        }
+        return null;
     }
 
     /**
@@ -564,19 +627,20 @@ public class Distribution extends ModuleRoot {
      * @since 20.0.0
      */
     @GET
-    @Path(UPDATE_ACTION + "/{distributionId}")
-    @Produces("text/html")
-    public Object updateDistribForm(@PathParam("distributionId") String distribId) {
-        return updateDistribForm(distribId, null, null);
+    @Path(UPDATE_ACTION + "/{distribId}")
+    @Produces(MediaType.TEXT_HTML)
+    public Object updateDistribForm(@PathParam("distribId") String distribId,
+            @QueryParam("distribDocId") String distribDocId) {
+        return updateDistribForm(distribId, distribDocId, null, null);
     }
 
-    protected Object updateDistribForm(String distribId, Map<String, String> updateProperties,
-            String errorFeedbackMessage) {
+    protected Object updateDistribForm(String distribId, String distribDocId,
+            Map<String, Serializable> updateProperties, String errorFeedbackMessage) {
         if (!showManageDistributions()) {
             return show404();
         }
-        DistributionSnapshot snap = getSnapshotManager().getSnapshot(distribId, getContext().getCoreSession());
-        if (snap == null || snap.isLive() || !(snap instanceof RepositoryDistributionSnapshot)) {
+        DistributionSnapshot snap = getPersistedDistrib(distribId, distribDocId);
+        if (!(snap instanceof RepositoryDistributionSnapshot)) {
             return show404();
         }
         RepositoryDistributionSnapshot repoSnap = (RepositoryDistributionSnapshot) snap;
@@ -584,6 +648,7 @@ public class Distribution extends ModuleRoot {
             updateProperties = repoSnap.getUpdateProperties();
         }
         return getView("updateForm").arg("distribId", distribId)
+                                    .arg("distribDocId", repoSnap.getDoc().getId())
                                     .arg("properties", updateProperties)
                                     .arg(ApiBrowserConstants.ERROR_FEEBACK_MESSAGE_VARIABLE, errorFeedbackMessage);
     }
@@ -595,24 +660,26 @@ public class Distribution extends ModuleRoot {
      */
     @POST
     @Path(DO_UPDATE_ACTION)
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     public Object updateDistrib() {
         if (!showManageDistributions()) {
             return show404();
         }
         FormData formData = getContext().getForm();
         String distribId = formData.getFormProperty("distribId");
-        DistributionSnapshot snap = getSnapshotManager().getSnapshot(distribId, getContext().getCoreSession());
-        if (snap == null || snap.isLive() || !(snap instanceof RepositoryDistributionSnapshot)) {
+        String distribDocId = formData.getFormProperty("distribDocId");
+        DistributionSnapshot snap = getPersistedDistrib(distribId, distribDocId);
+        if (!(snap instanceof RepositoryDistributionSnapshot)) {
             return show404();
         }
         RepositoryDistributionSnapshot repoSnap = (RepositoryDistributionSnapshot) snap;
-        Map<String, String> updateProperties = repoSnap.getUpdateProperties(formData.getFormFields());
+        Map<String, Serializable> updateProperties = RepositoryDistributionSnapshot.getUpdateProperties(
+                formData.getFormFields());
         try {
             repoSnap.updateDocument(getContext().getCoreSession(), updateProperties, formData.getString("comment"),
                     SUB_DISTRIBUTION_PATH_RESERVED);
-        } catch (DocumentValidationException | IllegalArgumentException e) {
-            return updateDistribForm(distribId, updateProperties, e.getMessage());
+        } catch (IllegalArgumentException | DocumentValidationException e) {
+            return updateDistribForm(distribId, repoSnap.getDoc().getId(), updateProperties, e.getMessage());
         }
         // will trigger retrieval of distribution again
         return redirect(URIUtils.addParametersToURIQuery(String.format("%s/%s", getPath(), VIEW_ADMIN),
@@ -633,7 +700,7 @@ public class Distribution extends ModuleRoot {
 
     @GET
     @Path(REINDEX_ACTION)
-    @Produces("text/plain")
+    @Produces(MediaType.TEXT_PLAIN)
     public Object reindex() {
         NuxeoPrincipal nxPrincipal = getContext().getPrincipal();
         if (!nxPrincipal.isAdministrator()) {
@@ -727,22 +794,43 @@ public class Distribution extends ModuleRoot {
      * @since 20.0.0
      */
     @GET
-    @Path(DELETE_ACTION + "/{distributionId}")
-    @Produces("text/html")
-    public Object deleteDistrib(@PathParam("distributionId") String distribId) throws IOException {
+    @Path(DELETE_ACTION + "/{distribId}")
+    @Produces(MediaType.TEXT_HTML)
+    public Object deleteDistrib(@PathParam("distribId") String distribId,
+            @QueryParam("distribDocId") String distribDocId) throws IOException {
         if (!showManageDistributions()) {
             return show404();
         }
 
+        DistributionSnapshot snap = getPersistedDistrib(distribId, distribDocId);
+        if (!(snap instanceof RepositoryDistributionSnapshot)) {
+            return show404();
+        }
         CoreSession session = getContext().getCoreSession();
-        RepositoryDistributionSnapshot snapshot = (RepositoryDistributionSnapshot) getSnapshotManager().getSnapshot(
-                distribId, session);
-        session.removeDocument(snapshot.getDoc().getRef());
+        session.removeDocument(((RepositoryDistributionSnapshot) snap).getDoc().getRef());
         session.save();
 
         // will trigger retrieval of distributions again
         return redirect(URIUtils.addParametersToURIQuery(String.format("%s/%s", getPath(), VIEW_ADMIN),
                 Collections.singletonMap(ApiBrowserConstants.SUCCESS_FEEBACK_MESSAGE_VARIABLE, "Deletion Done.")));
+    }
+
+    /**
+     * Handles redirection to login page for anonymous user use case.
+     * <p>
+     * Invalidates current session, otherwise login prompt is not shown in some cases, see NXP-29634.
+     *
+     * @since 20.0.0
+     */
+    @GET
+    @Path(LOGIN_ACTION)
+    public Object handleLogin() throws URISyntaxException {
+        Framework.getService(PluggableAuthenticationService.class).invalidateSession(request);
+        Map<String, String> params = new HashMap<>();
+        params.put(NXAuthConstants.FORCE_ANONYMOUS_LOGIN, "true");
+        params.put(NXAuthConstants.REQUESTED_URL, getPath());
+        URI uri = new URI(URIUtils.addParametersToURIQuery(NXAuthConstants.LOGIN_PAGE, params));
+        return Response.seeOther(uri).build();
     }
 
 }

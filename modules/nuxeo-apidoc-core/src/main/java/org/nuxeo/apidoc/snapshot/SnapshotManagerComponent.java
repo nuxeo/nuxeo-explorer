@@ -19,11 +19,6 @@
  */
 package org.nuxeo.apidoc.snapshot;
 
-import static java.util.Collections.reverseOrder;
-import static java.util.Comparator.comparing;
-import static org.nuxeo.ecm.core.api.validation.DocumentValidationService.CTX_MAP_KEY;
-import static org.nuxeo.ecm.core.api.validation.DocumentValidationService.Forcing.TURN_OFF;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -41,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.nuxeo.apidoc.adapters.BaseNuxeoArtifactDocAdapter;
 import org.nuxeo.apidoc.api.BundleGroup;
 import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
@@ -63,8 +59,10 @@ import org.nuxeo.apidoc.security.SecurityHelper;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
+import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.PathRef;
+import org.nuxeo.ecm.core.api.validation.DocumentValidationException;
 import org.nuxeo.ecm.core.io.DocumentPipe;
 import org.nuxeo.ecm.core.io.DocumentReader;
 import org.nuxeo.ecm.core.io.DocumentWriter;
@@ -76,6 +74,7 @@ import org.nuxeo.ecm.core.io.impl.plugins.NuxeoArchiveWriter;
 import org.nuxeo.runtime.RuntimeServiceException;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.model.ComponentContext;
+import org.nuxeo.runtime.model.ComponentManager;
 import org.nuxeo.runtime.model.DefaultComponent;
 
 public class SnapshotManagerComponent extends DefaultComponent implements SnapshotManager {
@@ -107,11 +106,23 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
 
     protected static final String IMPORT_TMP = "tmpImport";
 
+    // save every 3000 documents
+    protected static final int UPLOAD_SAVE_INTERVAL = 3000;
+
     protected final SnapshotPersister persister = new SnapshotPersister();
+
+    protected SnapshotListener componentListener;
 
     protected final Map<String, Plugin<?>> plugins = new LinkedHashMap<>();
 
     protected final Map<String, Exporter> exporters = new LinkedHashMap<>();
+
+    public SnapshotManagerComponent() {
+        componentListener = new SnapshotListener();
+        ComponentManager compManager = Framework.getRuntime().getComponentManager();
+        compManager.addComponentListener(componentListener);
+        compManager.addListener(componentListener);
+    }
 
     @Override
     public DistributionSnapshot getRuntimeSnapshot() {
@@ -136,21 +147,23 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
             }
             return getRuntimeSnapshot();
         }
-        DistributionSnapshot snap = getPersistentSnapshots(session).get(key);
-        if (snap == null && canSeeRuntimeSnapshot(session)) {
+        List<DistributionSnapshot> snaps = getPersistentSnapshots(session, key, true);
+        if (snaps.isEmpty() && canSeeRuntimeSnapshot(session)) {
             DistributionSnapshot rtsnap = getRuntimeSnapshot();
             if (rtsnap.getKey().equals(key)) {
                 return rtsnap;
             }
         }
-        return snap;
+        if (snaps.isEmpty()) {
+            return null;
+        }
+        return snaps.get(0);
     }
 
     @Override
     public List<DistributionSnapshot> listPersistentSnapshots(CoreSession session) {
         List<DistributionSnapshot> distribs = RepositoryDistributionSnapshot.readPersistentSnapshots(session);
-        Collections.sort(distribs,
-                reverseOrder(comparing(DistributionSnapshot::getVersion)).thenComparing(DistributionSnapshot::getName));
+        distribs.sort(DISTRIBUTION_COMPARATOR);
         return distribs;
     }
 
@@ -166,6 +179,14 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
         return persistentSnapshots;
     }
 
+    @Override
+    public List<DistributionSnapshot> getPersistentSnapshots(CoreSession session, String key, boolean includeAliases) {
+        List<DistributionSnapshot> distribs = RepositoryDistributionSnapshot.readPersistentSnapshots(session, key,
+                includeAliases);
+        distribs.sort(DISTRIBUTION_COMPARATOR);
+        return distribs;
+    }
+
     protected boolean canSeeRuntimeSnapshot(CoreSession session) {
         if (!isSiteMode()) {
             return SecurityHelper.canSnapshotLiveDistribution(session.getPrincipal());
@@ -179,6 +200,7 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
                                                                                 .stream()
                                                                                 .filter(snap -> !snap.isHidden())
                                                                                 .collect(Collectors.toList());
+        distribs.sort(DISTRIBUTION_COMPARATOR);
         if (canSeeRuntimeSnapshot(session)) {
             distribs.add(0, getRuntimeSnapshot());
         }
@@ -187,23 +209,17 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
 
     @Override
     public DistributionSnapshot persistRuntimeSnapshot(CoreSession session) {
-        return persistRuntimeSnapshot(session, null, null);
+        return persistRuntimeSnapshot(session, null, null, null, null);
     }
 
     @Override
     public DistributionSnapshot persistRuntimeSnapshot(CoreSession session, String name,
-            Map<String, Serializable> properties) {
-        return persistRuntimeSnapshot(session, name, properties, null);
-    }
-
-    @Override
-    public DistributionSnapshot persistRuntimeSnapshot(CoreSession session, String name,
-            Map<String, Serializable> properties, SnapshotFilter filter) {
+            Map<String, Serializable> properties, List<String> reservedKeys, SnapshotFilter filter) {
         if (!canSeeRuntimeSnapshot(session)) {
             throw new RuntimeServiceException("Live runtime cannot be snapshotted.");
         }
         DistributionSnapshot liveSnapshot = getRuntimeSnapshot();
-        return persister.persist(liveSnapshot, session, name, filter, properties, getPlugins());
+        return persister.persist(liveSnapshot, session, name, filter, properties, reservedKeys, getPlugins());
     }
 
     @Override
@@ -290,41 +306,10 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
     }
 
     @Override
-    public void importSnapshot(CoreSession session, InputStream is) throws IOException {
-        String importPath = persister.getDistributionRoot(session).getPathAsString();
-        DocumentReader reader = new NuxeoArchiveReader(is);
-        DocumentWriter writer = new DocumentModelWriter(session, importPath);
-        DocumentPipe pipe = new DocumentPipeImpl(10);
-        pipe.setReader(reader);
-        pipe.setWriter(writer);
-        pipe.run();
-        reader.close();
-        writer.close();
-    }
-
-    @Override
-    public void validateImportedSnapshot(CoreSession session, String name, String version, String pathSegment,
-            String title) {
-
-        DocumentModel container = persister.getDistributionRoot(session);
-        DocumentRef tmpRef = new PathRef(container.getPathAsString(), IMPORT_TMP);
-
-        DocumentModel tmp;
-        if (session.exists(tmpRef)) {
-            tmp = session.getChild(container.getRef(), IMPORT_TMP);
-            DocumentModel snapDoc = session.getChildren(tmp.getRef()).get(0);
-            snapDoc.setPropertyValue("nxdistribution:name", name);
-            snapDoc.setPropertyValue("nxdistribution:version", version);
-            snapDoc.setPropertyValue("nxdistribution:key", name + "-" + version);
-            snapDoc.setPropertyValue(NuxeoArtifact.TITLE_PROPERTY_PATH, title);
-            snapDoc = session.saveDocument(snapDoc);
-
-            DocumentModel targetContainer = session.getParentDocument(tmp.getRef());
-
-            session.move(snapDoc.getRef(), targetContainer.getRef(), pathSegment);
-            session.removeDocument(tmp.getRef());
-        }
-
+    public void importSnapshot(CoreSession session, InputStream is, Map<String, Serializable> properties,
+            List<String> reservedKeys) throws IOException, DocumentValidationException {
+        DocumentModel snapDoc = importTmpSnapshot(session, is);
+        validateImportedSnapshot(session, snapDoc.getId(), properties, reservedKeys);
     }
 
     @Override
@@ -332,20 +317,27 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
         DocumentModel container = persister.getDistributionRoot(session);
         DocumentRef tmpRef = new PathRef(container.getPathAsString(), IMPORT_TMP);
 
+        // create tmp dir for import
         DocumentModel tmp;
         if (session.exists(tmpRef)) {
             tmp = session.getChild(container.getRef(), IMPORT_TMP);
             session.removeChildren(tmp.getRef());
         } else {
-            tmp = session.createDocumentModel(container.getPathAsString(), IMPORT_TMP, "Workspace");
+            tmp = session.createDocumentModel(container.getPathAsString(), IMPORT_TMP,
+                    DistributionSnapshot.CONTAINER_TYPE_NAME);
             tmp.setPropertyValue(NuxeoArtifact.TITLE_PROPERTY_PATH, "tmpImport");
             tmp = session.createDocument(tmp);
             session.save();
         }
 
+        // run import
         DocumentReader reader = new NuxeoArchiveReader(is);
-        DocumentWriter writer = new SnapshotWriter(session, tmp.getPathAsString());
-
+        DocumentWriter writer = new DocumentModelWriter(session, tmp.getPathAsString(), UPLOAD_SAVE_INTERVAL) {
+            @Override
+            protected void beforeCreateDocument(DocumentModel doc) {
+                BaseNuxeoArtifactDocAdapter.fillContextData(doc);
+            }
+        };
         DocumentPipe pipe = new DocumentPipeImpl(10);
         pipe.setReader(reader);
         pipe.setWriter(writer);
@@ -353,7 +345,34 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
         reader.close();
         writer.close();
 
-        return session.getChildren(tmp.getRef()).get(0);
+        // make sure it's hidden until validation, and move it
+        DocumentModel snapDoc = session.getChildren(tmp.getRef()).get(0);
+        snapDoc.setPropertyValue(DistributionSnapshot.PROP_HIDE, true);
+        BaseNuxeoArtifactDocAdapter.fillContextData(snapDoc);
+        snapDoc = session.saveDocument(snapDoc);
+        snapDoc = session.move(snapDoc.getRef(), session.getParentDocumentRef(tmp.getRef()), null);
+
+        // cleanup tmp dir
+        session.removeDocument(tmp.getRef());
+        session.save();
+
+        return snapDoc;
+    }
+
+    @Override
+    public void validateImportedSnapshot(CoreSession session, String distribDocId, Map<String, Serializable> properties,
+            List<String> reservedKeys) throws DocumentValidationException {
+        DocumentModel snapDoc = session.getDocument(new IdRef(distribDocId));
+        // update props
+        RepositoryDistributionSnapshot repoSnap = (RepositoryDistributionSnapshot) snapDoc.getAdapter(
+                DistributionSnapshot.class);
+        Map<String, Serializable> finalProps = new HashMap<>();
+        if (properties != null) {
+            finalProps.putAll(properties);
+        }
+        // unhide distrib
+        finalProps.put(DistributionSnapshot.PROP_HIDE, false);
+        repoSnap.updateDocument(session, finalProps, null, reservedKeys);
     }
 
     @Override
@@ -368,20 +387,6 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
             }
         } catch (RuntimeServiceException e) {
             log.warn("Illegal access to runtime snapshot", e);
-        }
-    }
-
-    /**
-     * Custom writer to disable Validation Service and thumbnail update.
-     */
-    protected static class SnapshotWriter extends DocumentModelWriter {
-        public SnapshotWriter(CoreSession session, String parentPath) {
-            super(session, parentPath);
-        }
-
-        @Override
-        protected void beforeCreateDocument(DocumentModel doc) {
-            doc.putContextData(CTX_MAP_KEY, TURN_OFF);
         }
     }
 
@@ -436,6 +441,8 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
             return (T) this;
         } else if (adapter.isAssignableFrom(ArtifactSearcher.class)) {
             return (T) searcher;
+        } else if (adapter.isAssignableFrom(SnapshotListener.class)) {
+            return (T) componentListener;
         }
         return null;
     }

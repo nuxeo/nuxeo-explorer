@@ -71,9 +71,7 @@ public class BundleGroupExtractor {
     }
 
     public List<BundleGroup> getRoots() {
-        return roots.stream()
-                    .sorted(new NuxeoArtifactComparator())
-                    .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+        return roots.stream().sorted(new NuxeoArtifactComparator()).collect(Collectors.toList());
     }
 
     public Map<String, BundleGroup> getGroups() {

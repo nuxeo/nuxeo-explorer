@@ -29,6 +29,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.lang3.StringUtils;
+import org.nuxeo.apidoc.adapters.BaseNuxeoArtifactDocAdapter;
 import org.nuxeo.apidoc.listener.AttributesExtractorStater;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -77,6 +78,7 @@ public class ExtractXmlAttributesWorker extends AbstractWork {
             BlobHolder adapter = doc.getAdapter(BlobHolder.class);
             String attributes = extractAttributes(adapter.getBlob());
             doc.setPropertyValue(AttributesExtractorStater.ATTRIBUTES_PROPERTY, attributes);
+            BaseNuxeoArtifactDocAdapter.fillContextData(doc);
             session.saveDocument(doc);
 
             setStatus("Done");

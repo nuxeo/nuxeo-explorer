@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.nuxeo.ecm.core.api.Blob;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 public interface BundleInfo extends NuxeoArtifact {
@@ -50,10 +51,10 @@ public interface BundleInfo extends NuxeoArtifact {
     String PROP_REQUIREMENTS = "nxbundle:requirements";
 
     /** @since 20.0.0 */
-    String PROP_MIN_REGISTRATION_ORDER = "nxbundle:minRegistrationOrder";
+    String PROP_MIN_REGISTRATION_ORDER = "nxbundle:minResolutionOrder";
 
     /** @since 20.0.0 */
-    String PROP_MAX_REGISTRATION_ORDER = "nxbundle:maxRegistrationOrder";
+    String PROP_MAX_REGISTRATION_ORDER = "nxbundle:maxResolutionOrder";
 
     /** @since 11.1 */
     String PROP_PACKAGES = "nxbundle:packages";
@@ -129,32 +130,32 @@ public interface BundleInfo extends NuxeoArtifact {
     Blob getParentReadme();
 
     /**
-     * Returns the minimal registration order among this bundle's components.
+     * Returns the minimal resolution order among this bundle's components.
      *
      * @since 20.0.0
      */
-    Long getMinRegistrationOrder();
+    Long getMinResolutionOrder();
 
     /**
-     * Sets the minimal registration order among this bundle's components.
+     * Sets the minimal resolution order among this bundle's components.
      *
      * @since 20.0.0
      */
-    void setMinRegistrationOrder(Long order);
+    void setMinResolutionOrder(Long order);
 
     /**
-     * Returns the maximal registration order among this bundle's components.
+     * Returns the maximal resolution order among this bundle's components.
      *
      * @since 20.0.0
      */
-    Long getMaxRegistrationOrder();
+    Long getMaxResolutionOrder();
 
     /**
-     * Sets the maximal registration order among this bundle's components.
+     * Sets the maximal resolution order among this bundle's components.
      *
      * @since 20.0.0
      */
-    void setMaxRegistrationOrder(Long order);
+    void setMaxResolutionOrder(Long order);
 
     /**
      * Returns the list of Nuxeo packages containing this bundle.
@@ -168,5 +169,29 @@ public interface BundleInfo extends NuxeoArtifact {
      * @since 11.1
      */
     List<String> getPackages();
+
+    /**
+     * Returns all services for this bundle.
+     *
+     * @since 20.1.0
+     */
+    @JsonIgnore
+    List<ServiceInfo> getServices();
+
+    /**
+     * Returns all extension points for this bundle.
+     *
+     * @since 20.1.0
+     */
+    @JsonIgnore
+    List<ExtensionPointInfo> getExtensionPoints();
+
+    /**
+     * Returns all extensions for this bundle.
+     *
+     * @since 20.1.0
+     */
+    @JsonIgnore
+    List<ExtensionInfo> getExtensions();
 
 }

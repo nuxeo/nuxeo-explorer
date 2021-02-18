@@ -133,6 +133,11 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         return String.format("nuxeo-distribution-%s.zip", distribId);
     }
 
+    protected String getArtifactURL(String type, String id, String distribId) {
+        return String.format("%s%s/%s/%s", ExplorerHomePage.URL, distribId, ApiBrowserConstants.getArtifactView(type),
+                id);
+    }
+
     protected ExplorerHomePage goHome() {
         open(ExplorerHomePage.URL);
         return asPage(ExplorerHomePage.class);
@@ -183,6 +188,20 @@ public abstract class AbstractExplorerTest extends AbstractTest {
 
     protected void checkDistrib(String distribId, boolean partial, String partialVirtualGroup,
             boolean includeReferences, boolean legacy) {
+        open(ExplorerHomePage.URL + distribId);
+        DistributionHomePage dhome = asPage(DistributionHomePage.class);
+        dhome.check();
+        if (partial) {
+            if (legacy) {
+                dhome.checkNumbers(1, 3, 6, 2, 1, 5, 0, 0);
+            } else {
+                if (includeReferences) {
+                    dhome.checkNumbers(2, 8, 11, 12, 8, 10, 0, 1);
+                } else {
+                    dhome.checkNumbers(1, 3, 6, 3, 2, 10, 0, 1);
+                }
+            }
+        }
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_BUNDLEGROUPS);
         checkBundleGroups(partial, partialVirtualGroup, includeReferences, legacy);
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_BUNDLES);
@@ -192,7 +211,7 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_EXTENSIONPOINTS);
         checkExtensionPoints(partial, includeReferences, legacy);
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_SERVICES);
-        checkServices(partial, legacy);
+        checkServices(partial, includeReferences, legacy);
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_CONTRIBUTIONS);
         checkContributions(partial, includeReferences, legacy);
         open(ExplorerHomePage.URL + distribId + "/" + ApiBrowserConstants.LIST_OPERATIONS);
@@ -251,7 +270,7 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         apage.checkReference(partial, includeReferences, legacy);
     }
 
-    protected void checkServices(boolean partial, boolean legacy) {
+    protected void checkServices(boolean partial, boolean includeReferences, boolean legacy) {
         ListingFragment listing = asPage(ListingFragment.class);
         if (!partial) {
             listing.checkListing(-1, "ActionManager", "/viewService/org.nuxeo.ecm.platform.actions.ejb.ActionManager",
@@ -260,8 +279,15 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         }
         // toggle sort to check the SnapshotManager service
         listing = listing.toggleSort();
-        listing.checkListing(2, "SnapshotManager", "/viewService/org.nuxeo.apidoc.snapshot.SnapshotManager",
-                "org.nuxeo.apidoc.snapshot.SnapshotManager");
+        if (includeReferences) {
+            listing.checkListing(12, "TypeProvider", "viewService/org.nuxeo.ecm.core.schema.TypeProvider",
+                    "org.nuxeo.ecm.core.schema.TypeProvider");
+            listing = listing.filterOn("org.nuxeo.apidoc");
+        } else {
+            listing.checkListing(legacy ? 2 : 3, "SnapshotManager",
+                    "/viewService/org.nuxeo.apidoc.snapshot.SnapshotManager",
+                    "org.nuxeo.apidoc.snapshot.SnapshotManager");
+        }
 
         listing.navigateToFirstItem();
         ServiceArtifactPage apage = asPage(ServiceArtifactPage.class);
@@ -306,9 +332,7 @@ public abstract class AbstractExplorerTest extends AbstractTest {
                     "JAVA org.nuxeo.ecm.core.schema.TypeService");
             listing = listing.filterOn("org.nuxeo.apidoc");
         } else {
-            // one more component with thumbnail disablement in ftests
-            int nb = partial ? 6 : 7;
-            listing.checkListing(nb, "apidoc.snapshot.SnapshotManagerComponent",
+            listing.checkListing(partial ? 6 : 7, "apidoc.snapshot.SnapshotManagerComponent",
                     "/viewComponent/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
                     "JAVA org.nuxeo.apidoc.snapshot.SnapshotManagerComponent");
         }
@@ -431,7 +455,11 @@ public abstract class AbstractExplorerTest extends AbstractTest {
      * @since 20.0.0
      */
     public static InputStream getReferenceStream(Path path) throws IOException {
-        return Thread.currentThread().getContextClassLoader().getResourceAsStream(path.toString());
+        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path.toString());
+        if (stream == null) {
+            throw new IOException("Reference file not found at " + path);
+        }
+        return stream;
     }
 
 }

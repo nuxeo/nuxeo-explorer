@@ -36,6 +36,7 @@ import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.OperationInfo;
+import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.browse.ApiBrowserConstants;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
@@ -150,9 +151,12 @@ public class ITExplorerTest extends AbstractExplorerTest {
         openAndCheck(String.format("%s%s/", ExplorerHomePage.URL, "foo-10.10"), true);
     }
 
+    protected String getArtifactURL(String type, String id) {
+        return getArtifactURL(type, id, getDistribId(LIVE_NAME, liveVersion));
+    }
+
     protected void goToArtifact(String type, String id) {
-        open(String.format("%s%s/%s/%s", ExplorerHomePage.URL, getDistribId(LIVE_NAME, liveVersion),
-                ApiBrowserConstants.getArtifactView(type), id));
+        open(getArtifactURL(type, id));
     }
 
     @Test
@@ -187,7 +191,7 @@ public class ITExplorerTest extends AbstractExplorerTest {
     public void testServices() {
         ExplorerHomePage home = goHome();
         home.clickOn(home.firstServices);
-        checkServices(false, false);
+        checkServices(false, false, false);
     }
 
     @Test
@@ -226,6 +230,34 @@ public class ITExplorerTest extends AbstractExplorerTest {
         goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.ecm.automation.server.marshallers");
         ComponentArtifactPage apage = asPage(ComponentArtifactPage.class);
         apage.checkAlternative();
+    }
+
+    protected void checkOverridePage(String url, String referenceFilePath) {
+        driver.get(NUXEO_URL + url);
+        try {
+            assertEquals(AbstractExplorerTest.getReferenceContent(Paths.get(referenceFilePath)),
+                    driver.getPageSource());
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        // perform home navigation after, to avoid LogTestWatchMan failing on taking a screenshot of this XML page...
+        driver.get(NUXEO_URL);
+    }
+
+    /**
+     * Non-regression test for NXP-29755
+     *
+     * @since 20.1.0
+     */
+    @Test
+    public void testComponentsOverride() {
+        String distribId = getDistribId(LIVE_NAME, liveVersion);
+        String componentId = "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent";
+        String url = String.format("%s%s/%s/%s/override", ExplorerHomePage.URL, distribId,
+                ApiBrowserConstants.VIEW_COMPONENT, componentId);
+        String filterUrl = String.format("%s?contributionId=%s--%s", url, componentId, "exporters");
+        checkOverridePage(url, "data/override_component_reference.xml");
+        checkOverridePage(filterUrl, "data/override_contribution_reference.xml");
     }
 
     @Test
@@ -292,6 +324,18 @@ public class ITExplorerTest extends AbstractExplorerTest {
     }
 
     /**
+     * Non-regression test for NXP-29820.
+     *
+     * @since 20.2.0
+     */
+    @Test
+    public void testOverrideContributionGetURL() throws IOException {
+        String contribUrl = getArtifactURL(ExtensionInfo.TYPE_NAME, "org.nuxeo.apidoc.listener.contrib--listener");
+        open(contribUrl + "/override");
+        checkOverridePage(contribUrl + "/override", "data/override_reference.xml");
+    }
+
+    /**
      * Non-regression test for NXP-19766.
      */
     @Test
@@ -328,12 +372,14 @@ public class ITExplorerTest extends AbstractExplorerTest {
         goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.runtime.started");
         ComponentArtifactPage apage = asPage(ComponentArtifactPage.class);
         apage.checkCommon("Component org.nuxeo.runtime.started", "Component org.nuxeo.runtime.started",
-                "In bundle org.nuxeo.runtime", "Registration Order");
+                "In bundle org.nuxeo.runtime", "Resolution Order");
         apage.checkRequirements(null);
         apage.checkDocumentationText(null);
         apage.checkImplementationText(null);
         apage.checkJavadocLink(null);
-        apage.checkRegistrationOrder(true);
+        apage.checkResolutionOrder(true);
+        apage.checkStartOrder(false);
+        apage.checkDeclaredStartOrder(null);
         apage.checkXMLSource(false);
     }
 
@@ -346,6 +392,18 @@ public class ITExplorerTest extends AbstractExplorerTest {
         } finally {
             driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
         }
+    }
+
+    @Test
+    public void testInvalidArtifactPages() {
+        openAndCheck(getArtifactURL(BundleGroup.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(BundleInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(ComponentInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(ExtensionInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(ExtensionPointInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(ServiceInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(PackageInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(OperationInfo.TYPE_NAME, "foo"), true);
     }
 
 }

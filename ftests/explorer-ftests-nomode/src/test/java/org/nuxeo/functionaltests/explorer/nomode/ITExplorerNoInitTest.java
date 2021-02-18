@@ -38,8 +38,7 @@ public class ITExplorerNoInitTest extends AbstractExplorerTest {
 
     @Before
     public void before() {
-        RestHelper.createGroup(SecurityHelper.DEFAULT_APIDOC_MANAGERS_GROUP, "Apidoc Managers", null,
-                null);
+        RestHelper.createGroup(SecurityHelper.DEFAULT_APIDOC_MANAGERS_GROUP, "Apidoc Managers", null, null);
         RestHelper.createUser(MANAGER_USERNAME, TEST_PASSWORD, null, null, null, null,
                 SecurityHelper.DEFAULT_APIDOC_MANAGERS_GROUP);
         RestHelper.createUser(READER_USERNAME, TEST_PASSWORD, null, null, null, null, null);

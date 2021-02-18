@@ -7,7 +7,7 @@
              from `org.nuxeo.apidoc.browse.ApiBrowser#filterExtensionPoints`
   -->
   </#if>
-  <form id="fulltext" method="POST" action="${Root.path}/${distId}/${action}">
+  <form id="fulltext" method="GET" action="${Root.path}/${distId}/${action}">
     <input name="fulltext" id="fulltext-box" type="search" class="searchFilter"
     placeholder="Find in ${name}"<#if searchFilter??> value="${searchFilter}"</#if> autofocus />
     <input id="filter-submit-button" type="submit" value="Search"/>
@@ -25,11 +25,18 @@
 </#macro>
 
 <#macro javadoc class addLabel url>
-  <#if addLabel>Javadoc: </#if>
-  <#if url??>
-    <a href="${url}" target="_blank" class="javadoc">${class}</a>
-  <#elseif Root.currentDistribution != null>
-    <a href="${Root.currentDistribution.javaDocHelper.getUrl(class)}" target="_blank" class="javadoc">${class}</a>
+  <#if class??>
+    <#if Root.currentDistribution.javaDocHelper.exists()>
+      <#if addLabel>Javadoc: </#if>
+      <#if url??>
+        <a href="${url}" target="_blank" class="javadoc">${class}</a>
+      <#elseif Root.currentDistribution??>
+        <a href="${Root.currentDistribution.javaDocHelper.getUrl(class)}" target="_blank" class="javadoc">${class}</a>
+      </#if>
+    <#else>
+      <#if addLabel>Class: </#if>
+      <span class="javadoc">${class}</span>
+    </#if>
   </#if>
 </#macro>
 

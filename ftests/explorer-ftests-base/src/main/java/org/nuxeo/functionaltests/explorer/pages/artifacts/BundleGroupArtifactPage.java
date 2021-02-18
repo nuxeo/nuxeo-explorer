@@ -52,7 +52,8 @@ public class BundleGroupArtifactPage extends ArtifactPage {
                 title = "Bundle Group apidoc";
             }
             checkCommon(title, title, null, "Bundles");
-            checkDocumentationText(null);
+            // for some reason suggestbox addon readme is visible on platform group on 10.10
+            // checkDocumentationText(null);
             checkSubGroup(null);
             checkBundle("org.nuxeo.apidoc.core");
             checkBundle("org.nuxeo.apidoc.repo");
@@ -63,7 +64,7 @@ public class BundleGroupArtifactPage extends ArtifactPage {
             // for some reason suggestbox addon readme is visible on platform group on 10.10
             // checkDocumentationText(null);
             checkSubGroup("org.nuxeo.ecm.platform.comment");
-            checkSubGroup("org.nuxeo.ecm.platform.filemanager");
+            checkSubGroup("org.nuxeo.ecm.directory");
             checkBundle("org.nuxeo.ecm.platform.api");
         }
     }

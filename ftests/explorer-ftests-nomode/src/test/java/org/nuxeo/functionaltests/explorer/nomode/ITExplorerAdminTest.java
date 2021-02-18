@@ -26,6 +26,14 @@ import java.util.Date;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.nuxeo.apidoc.api.BundleGroup;
+import org.nuxeo.apidoc.api.BundleInfo;
+import org.nuxeo.apidoc.api.ComponentInfo;
+import org.nuxeo.apidoc.api.ExtensionInfo;
+import org.nuxeo.apidoc.api.ExtensionPointInfo;
+import org.nuxeo.apidoc.api.OperationInfo;
+import org.nuxeo.apidoc.api.PackageInfo;
+import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.functionaltests.Locator;
 import org.nuxeo.functionaltests.explorer.pages.DistribAdminPage;
@@ -137,6 +145,7 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
     public void testLiveDistribExportAndImport() {
         String distribName = "my-server";
         String distribId = checkLiveDistribExport(distribName, true);
+        checkHomeFirstPersistedDistrib();
         checkLiveDistribImport(distribId);
     }
 
@@ -178,6 +187,9 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
 
     @Test
     public void testLivePartialRefDistribExport() {
+        if (!isAdminTest()) {
+            return;
+        }
         checkLivePartialDistribExport("my-partial-ref-server", true, true);
     }
 
@@ -237,11 +249,12 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         String newerDistribId = getDistribId(newerDistribName, newerVersion);
         String alias1 = "alias1";
         String alias2 = "alias2";
+        String alias3 = "10.2";
 
         upage.updateString(upage.name, newerDistribName);
         upage.updateString(upage.version, newerVersion);
         upage.updateString(upage.key, newerDistribId);
-        upage.updateString(upage.aliases, alias1 + "\n" + alias2);
+        upage.updateString(upage.aliases, String.format("%s\n%s\n%s", alias1, alias2, alias3));
         upage.submit();
 
         DistribAdminPage adminPage = asPage(DistribAdminPage.class);
@@ -255,6 +268,12 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
         open(String.format("%s%s/", ExplorerHomePage.URL, alias1));
         asPage(DistributionHomePage.class).checkHeader(newerDistribId);
         open(String.format("%s%s/", ExplorerHomePage.URL, alias2));
+        asPage(DistributionHomePage.class).checkHeader(newerDistribId);
+        // non-regression test for NXP-29717
+        open(String.format("%s%s/", ExplorerHomePage.URL, alias3));
+        asPage(DistributionHomePage.class).checkHeader(newerDistribId);
+        // check redirection to "simple" version identifier
+        open(String.format("%s%s/", ExplorerHomePage.URL, newerVersion));
         asPage(DistributionHomePage.class).checkHeader(newerDistribId);
 
         // check hiding distrib
@@ -288,6 +307,52 @@ public class ITExplorerAdminTest extends AbstractExplorerDownloadTest {
     @Test
     public void testJson() throws IOException {
         checkJson(SnapshotManager.DISTRIBUTION_ALIAS_CURRENT, !isAdminTest());
+    }
+
+    protected String getArtifactURL(String type, String id) {
+        return getArtifactURL(type, id, SnapshotManager.DISTRIBUTION_ALIAS_CURRENT);
+    }
+
+    @Test
+    public void testInvalidArtifactPages() {
+        openAndCheck(getArtifactURL(BundleGroup.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(BundleInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(ComponentInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(ExtensionInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(ExtensionPointInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(ServiceInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(PackageInfo.TYPE_NAME, "foo"), true);
+        openAndCheck(getArtifactURL(OperationInfo.TYPE_NAME, "foo"), true);
+    }
+
+    @Test
+    public void testDuplicateDistributionKey() {
+        if (!isAdminTest()) {
+            return;
+        }
+        open(DistribAdminPage.URL);
+        String distribName = "testDupe";
+        String version = asPage(DistribAdminPage.class).saveCurrentLiveDistrib(distribName, true, false);
+        String distribId = getDistribId(distribName, version);
+        asPage(DistribAdminPage.class).check();
+        // save again
+        asPage(DistribAdminPage.class).saveCurrentLiveDistrib(distribName, true, false);
+        String message = String.format("Duplicate key detected: '%s'", distribId);
+        asPage(DistribAdminPage.class).checkDuplicateKeyErrorMessages(message, message);
+
+        // try to delete via api
+        openAndCheck(DistribAdminPage.DELETE_URL + distribId, true);
+        // try to update via api
+        openAndCheck(DistribAdminPage.UPDATE_URL + distribId, true);
+
+        // update via admin UI: the link hold the necessary unique doc identifier to perform the update
+        open(DistribAdminPage.URL);
+        DistributionUpdatePage upage = asPage(DistribAdminPage.class).updateFirstPersistedDistrib();
+        upage.updateString(upage.key, getDistribId("foo", version));
+        upage.submit();
+
+        // no errors anymore
+        asPage(DistribAdminPage.class).check();
     }
 
 }

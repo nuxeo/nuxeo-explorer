@@ -20,7 +20,6 @@ package org.nuxeo.functionaltests.explorer.nomode;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nuxeo.apidoc.security.SecurityHelper;
 import org.nuxeo.functionaltests.RestHelper;
@@ -41,8 +40,7 @@ public class ITExplorerApidocManagerTest extends ITExplorerAdminTest {
     @Override
     @Before
     public void before() {
-        RestHelper.createGroup(SecurityHelper.DEFAULT_APIDOC_MANAGERS_GROUP, "Apidoc Managers", null,
-                null);
+        RestHelper.createGroup(SecurityHelper.DEFAULT_APIDOC_MANAGERS_GROUP, "Apidoc Managers", null, null);
         RestHelper.createUser(MANAGER_USERNAME, TEST_PASSWORD, null, null, null, null,
                 SecurityHelper.DEFAULT_APIDOC_MANAGERS_GROUP);
         super.before();
@@ -88,13 +86,6 @@ public class ITExplorerApidocManagerTest extends ITExplorerAdminTest {
         doLogout();
         doLogin();
         checkLivePartialDistribImport(distribName, distribId);
-    }
-
-    @Override
-    @Ignore("Overkill")
-    @Test
-    public void testLivePartialRefDistribExport() {
-        // NOOP
     }
 
     @Override

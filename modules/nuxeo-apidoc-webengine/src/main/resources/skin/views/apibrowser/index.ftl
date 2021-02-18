@@ -1,12 +1,10 @@
 <@extends src="base.ftl">
 
 <@block name="right">
-<#include "/docMacros.ftl">
 
 <h1> Browsing Distribution '${Root.currentDistribution.key}' </h1>
 
 <div class="tabscontent">
-  <@toc />
 
   <h2>Browse</h2>
   <ul>
@@ -68,8 +66,6 @@
     </li>
     </#list>
   </ul>
-
-  <@tocTrigger />
 
 </div>
 

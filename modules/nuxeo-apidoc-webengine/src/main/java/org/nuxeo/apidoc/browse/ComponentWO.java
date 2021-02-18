@@ -19,45 +19,70 @@
 package org.nuxeo.apidoc.browse;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
-import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.ServiceInfo;
+import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
+import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
 @WebObject(type = "component")
-public class ComponentWO extends NuxeoArtifactWebObject {
+public class ComponentWO extends NuxeoArtifactWebObject<ComponentInfo> {
+
+    @Produces(MediaType.TEXT_HTML)
+    @Override
+    public Object doViewDefault() {
+        Template t = (Template) super.doViewDefault();
+        t.arg("requirements", getRequirementsInfo(getSnapshot(), getNxArtifact().getRequirements()));
+        return t;
+    }
 
     @GET
     @Produces("text/xml")
     @Path("override")
     public Object override(@QueryParam("contributionId") String contribId) {
-        ComponentInfo component = getTargetComponentInfo();
-        ExtensionInfo contribution = getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession())
-                                                         .getContribution(contribId);
+        ComponentInfo component = getNxArtifact();
+        DistributionSnapshot snapshot = getSnapshot();
+        ExtensionInfo contribution = null;
+        if (StringUtils.isNotBlank(contribId)) {
+            contribution = snapshot.getContribution(contribId);
+        }
         return getView("override").arg("component", component).arg("contribution", contribution);
     }
 
     protected ComponentInfo getTargetComponentInfo() {
-        return getSnapshotManager().getSnapshot(getDistributionId(), ctx.getCoreSession()).getComponent(nxArtifactId);
+        return getSnapshot().getComponent(nxArtifactId);
     }
 
     @Override
-    public NuxeoArtifact getNxArtifact() {
-        return getTargetComponentInfo();
+    public ComponentInfo getNxArtifact() {
+        if (nxArtifact == null) {
+            nxArtifact = getTargetComponentInfo();
+        }
+        return nxArtifact;
+    }
+
+    protected Map<String, ComponentInfo> getRequirementsInfo(DistributionSnapshot snapshot, List<String> requirements) {
+        Map<String, ComponentInfo> res = new LinkedHashMap<String, ComponentInfo>();
+        requirements.forEach(req -> res.put(req, snapshot.getComponent(req)));
+        return res;
     }
 
     public List<ServiceWO> getServices() {
         List<ServiceWO> result = new ArrayList<>();
-        ComponentInfo ci = getTargetComponentInfo();
+        ComponentInfo ci = getNxArtifact();
         for (ServiceInfo si : ci.getServices()) {
             result.add((ServiceWO) ctx.newObject("service", si.getId()));
         }
@@ -66,7 +91,7 @@ public class ComponentWO extends NuxeoArtifactWebObject {
 
     public List<ExtensionPointWO> getExtensionPoints() {
         List<ExtensionPointWO> result = new ArrayList<>();
-        ComponentInfo ci = getTargetComponentInfo();
+        ComponentInfo ci = getNxArtifact();
         for (ExtensionPointInfo ei : ci.getExtensionPoints()) {
             result.add((ExtensionPointWO) ctx.newObject("extensionPoint", ei.getId()));
         }
@@ -75,7 +100,7 @@ public class ComponentWO extends NuxeoArtifactWebObject {
 
     public List<ContributionWO> getContributions() {
         List<ContributionWO> result = new ArrayList<>();
-        ComponentInfo ci = getTargetComponentInfo();
+        ComponentInfo ci = getNxArtifact();
         for (ExtensionInfo ei : ci.getExtensions()) {
             result.add((ContributionWO) ctx.newObject("contribution", ei.getId()));
         }

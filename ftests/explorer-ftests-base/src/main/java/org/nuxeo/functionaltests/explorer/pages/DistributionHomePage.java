@@ -69,10 +69,6 @@ public class DistributionHomePage extends AbstractExplorerPage {
     public WebElement packages;
 
     @Required
-    @FindBy(xpath = "//div[@id='tocDiv']")
-    public WebElement toc;
-
-    @Required
     @FindBy(xpath = "//ul[@class='exports']")
     public WebElement exports;
 
@@ -84,9 +80,6 @@ public class DistributionHomePage extends AbstractExplorerPage {
     public void check() {
         checkTitle("Nuxeo Platform Explorer");
         checkHeader(null);
-        assertEquals("Browse\n" //
-                + "Exports", //
-                toc.getText());
         // check export links presence but do not click (too costly)
         exports.findElement(By.linkText("Json Export"));
         exports.findElement(By.linkText("Json Graph"));
@@ -100,6 +93,28 @@ public class DistributionHomePage extends AbstractExplorerPage {
         } else {
             assertTrue(text, text.startsWith("Browsing Distribution"));
         }
+    }
+
+    protected int getChipNumber(WebElement elt) {
+        return Integer.valueOf(elt.findElement(By.xpath("following-sibling::*")).getText());
+    }
+
+    /** @since 20.1.0 */
+    public void checkNumber(int nb, WebElement elt) {
+        assertEquals(nb, getChipNumber(elt));
+    }
+
+    /** @since 20.1.0 */
+    public void checkNumbers(int nbBundleGroups, int nbBundles, int nbComponents, int nbServices, int nbExtensionPoints,
+            int nbContributions, int nbOperations, int nbPackages) {
+        checkNumber(nbBundleGroups, bundleGroups);
+        checkNumber(nbBundles, bundles);
+        checkNumber(nbComponents, components);
+        checkNumber(nbServices, services);
+        checkNumber(nbExtensionPoints, extensionPoints);
+        checkNumber(nbContributions, contributions);
+        checkNumber(nbOperations, operations);
+        checkNumber(nbPackages, packages);
     }
 
 }

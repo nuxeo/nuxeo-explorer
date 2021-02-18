@@ -26,12 +26,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
-import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.export.api.Exporter;
@@ -45,65 +45,69 @@ import org.nuxeo.ecm.webengine.model.WebObject;
  * @since 11.1
  */
 @WebObject(type = PackageWO.TYPE)
-public class PackageWO extends NuxeoArtifactWebObject {
+public class PackageWO extends NuxeoArtifactWebObject<PackageInfo> {
 
     public static final String TYPE = "package";
 
     @Override
-    public NuxeoArtifact getNxArtifact() {
-        return getTargetPackageInfo(getSnapshot());
+    public PackageInfo getNxArtifact() {
+        if (nxArtifact == null) {
+            nxArtifact = getTargetPackageInfo(getSnapshot());
+        }
+        return nxArtifact;
     }
 
     protected PackageInfo getTargetPackageInfo(DistributionSnapshot snapshot) {
         return snapshot.getPackage(nxArtifactId);
     }
 
-    protected Map<String, BundleInfo> getBundleInfo(DistributionSnapshot snapshot, List<String> bundles) {
-        Map<String, BundleInfo> res = new LinkedHashMap<String, BundleInfo>();
-        bundles.forEach(bid -> res.put(bid, snapshot.getBundle(bid)));
+    protected String getPackageNameWithoutVersion(String dependency) {
+        int index = dependency.indexOf(":");
+        if (index > 0) {
+            return dependency.substring(0, index);
+        }
+        return dependency;
+    }
+
+    protected Map<String, PackageInfo> getDependenciesInfo(DistributionSnapshot snapshot, List<String> packages) {
+        Map<String, PackageInfo> res = new LinkedHashMap<String, PackageInfo>();
+        packages.forEach(pkg -> res.put(pkg, snapshot.getPackage(getPackageNameWithoutVersion(pkg))));
         return res;
     }
 
-    protected List<ComponentInfo> getComponentInfo(List<BundleInfo> bundles) {
-        List<ComponentInfo> res = new ArrayList<ComponentInfo>();
-        bundles.forEach(b -> res.addAll(b.getComponents()));
-        return res;
-    }
-
-    protected List<ServiceInfo> getServiceInfo(List<ComponentInfo> components) {
-        List<ServiceInfo> res = new ArrayList<ServiceInfo>();
-        components.forEach(c -> res.addAll(c.getServices()));
-        return res;
-    }
-
-    protected List<ExtensionPointInfo> getExtensionPointInfo(List<ComponentInfo> components) {
-        List<ExtensionPointInfo> res = new ArrayList<ExtensionPointInfo>();
-        components.forEach(c -> res.addAll(c.getExtensionPoints()));
-        return res;
-    }
-
-    protected List<ExtensionInfo> getContributionInfo(List<ComponentInfo> components) {
-        List<ExtensionInfo> res = new ArrayList<ExtensionInfo>();
-        components.forEach(c -> res.addAll(c.getExtensions()));
-        return res;
-    }
-
-    @Produces("text/html")
+    @Produces(MediaType.TEXT_HTML)
     @Override
     public Object doViewDefault() {
         Template t = (Template) super.doViewDefault();
         DistributionSnapshot snapshot = getSnapshot();
-        PackageInfo pkg = getTargetPackageInfo(snapshot);
+        PackageInfo pkg = getNxArtifact();
         String marketplaceURL = PackageInfo.getMarketplaceURL(pkg, true);
         t.arg("marketplaceURL", marketplaceURL);
-        Map<String, BundleInfo> binfo = getBundleInfo(snapshot, pkg.getBundles());
+        Map<String, BundleInfo> binfo = pkg.getBundleInfo();
         t.arg("bundles", binfo);
-        List<ComponentInfo> components = getComponentInfo(
-                binfo.values().stream().filter(Objects::nonNull).collect(Collectors.toList()));
+
+        List<ComponentInfo> components = new ArrayList<ComponentInfo>();
+        List<ArtifactLabel> sLabels = new ArrayList<ArtifactLabel>();
+        List<ExtensionPointInfo> xps = new ArrayList<ExtensionPointInfo>();
+        List<ExtensionInfo> conts = new ArrayList<ExtensionInfo>();
+        binfo.values().stream().filter(Objects::nonNull).forEach(bi -> {
+            components.addAll(bi.getComponents());
+            bi.getServices()
+              .stream()
+              .map(ServiceInfo::getId)
+              .map(ArtifactLabel::createLabelFromService)
+              .forEach(sLabels::add);
+            xps.addAll(bi.getExtensionPoints());
+            conts.addAll(bi.getExtensions());
+        });
         t.arg("components", components);
-        t.arg("services", getServiceInfo(components));
-        t.arg("extensionpoints", getExtensionPointInfo(components));
-        t.arg("contributions", getContributionInfo(components));
+        t.arg("services", sLabels);
+        t.arg("extensionpoints", xps);
+        t.arg("contributions", conts);
+
+        t.arg("dependencies", getDependenciesInfo(snapshot, pkg.getDependencies()));
+        t.arg("optionalDependencies", getDependenciesInfo(snapshot, pkg.getOptionalDependencies()));
+        t.arg("conflicts", getDependenciesInfo(snapshot, pkg.getConflicts()));
 
         List<Exporter> exporters = getSnapshotManager().getExporters()
                                                        .stream()

@@ -22,10 +22,8 @@ package org.nuxeo.apidoc.repository;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,6 +59,7 @@ import org.nuxeo.ecm.core.api.security.ACL;
 import org.nuxeo.ecm.core.api.security.ACP;
 import org.nuxeo.ecm.core.api.security.SecurityConstants;
 import org.nuxeo.ecm.core.api.security.impl.ACLImpl;
+import org.nuxeo.ecm.core.api.validation.DocumentValidationException;
 
 public class SnapshotPersister {
 
@@ -76,9 +75,6 @@ public class SnapshotPersister {
 
     /** @since 11.1 */
     public static final String PACKAGE_ROOT_NAME = "Packages";
-
-    /** @since 20.0.0 */
-    public static final String ROOT_TYPE_NAME = "Workspace";
 
     public DocumentModel getSubRoot(CoreSession session, DocumentModel root, String name) {
         DocumentRef rootRef = new PathRef(root.getPathAsString() + name);
@@ -104,7 +100,7 @@ public class SnapshotPersister {
      * @since 20.0.0
      */
     public static DocumentModel createRoot(CoreSession session, String parentPath, String name, boolean setAcl) {
-        DocumentModel root = session.createDocumentModel(parentPath, name, ROOT_TYPE_NAME);
+        DocumentModel root = session.createDocumentModel(parentPath, name, DistributionSnapshot.CONTAINER_TYPE_NAME);
         root.setPropertyValue(NuxeoArtifact.TITLE_PROPERTY_PATH, name);
         root = session.createDocument(root);
 
@@ -123,10 +119,11 @@ public class SnapshotPersister {
     }
 
     public DistributionSnapshot persist(DistributionSnapshot snapshot, CoreSession session, String label,
-            SnapshotFilter filter, Map<String, Serializable> properties, List<Plugin<?>> plugins) {
+            SnapshotFilter filter, Map<String, Serializable> properties, List<String> reservedKeys,
+            List<Plugin<?>> plugins) throws DocumentValidationException {
 
         RepositoryDistributionSnapshot distribContainer = RepositoryDistributionSnapshot.create(snapshot, session,
-                getDistributionRoot(session).getPathAsString(), label, properties);
+                getDistributionRoot(session).getPathAsString(), label, properties, reservedKeys);
 
         distribContainer.cleanPreviousArtifacts();
 
@@ -136,7 +133,7 @@ public class SnapshotPersister {
             // create VGroup that contains only the target bundles
             BundleGroupImpl vGroup = new BundleGroupImpl(filter.getName());
             vGroup.setVersion(snapshot.getVersion());
-            List<NuxeoArtifact> selectedBundles = new ArrayList<NuxeoArtifact>();
+            List<NuxeoArtifact> selectedBundles = new ArrayList<>();
             for (BundleInfo bundle : snapshot.getBundles()) {
                 if (filter.accept(bundle)) {
                     selectedBundles.add(bundle);
@@ -240,13 +237,9 @@ public class SnapshotPersister {
             }
         }
 
-        Map<String, AtomicInteger> comps = new HashMap<>();
         for (ExtensionInfo ei : ci.getExtensions()) {
             if (filter == null || filter.accept(ei)) {
-                // handle multiple contributions to the same extension point
-                String id = ei.getId();
-                int index = comps.computeIfAbsent(id, k -> new AtomicInteger(-1)).incrementAndGet();
-                ExtensionInfoDocAdapter.create(ei, index, session, componentDocPath);
+                ExtensionInfoDocAdapter.create(ei, 0, session, componentDocPath);
             }
         }
     }
