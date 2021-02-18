@@ -29,7 +29,7 @@ import org.nuxeo.ecm.webengine.model.WebObject;
 import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
 
 @WebObject(type = RedirectResource.TYPE)
-@Produces(MediaType.TEXT_HTML)
+@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 public class RedirectResource extends DefaultObject {
 
     /** @since 20.0.0 */
@@ -47,13 +47,13 @@ public class RedirectResource extends DefaultObject {
     }
 
     @GET
-    @Produces(MediaType.TEXT_HTML)
+    @Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
     public Object get() {
         return newLocation(targetDistributionId, null);
     }
 
     @GET
-    @Produces(MediaType.TEXT_HTML)
+    @Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
     @Path("/{subPath:.*}")
     public Object catchAll(@PathParam("subPath") String subPath) {
         return newLocation(targetDistributionId, subPath);
