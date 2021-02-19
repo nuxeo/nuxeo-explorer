@@ -9,7 +9,7 @@
 
   <groupId>org.nuxeo.ecm.platform</groupId>
   <artifactId>nuxeo-explorer-parent</artifactId>
-  <version>18.0.0-RC1</version>
+  <version>18.0.0-SNAPSHOT</version>
   <name>Nuxeo Explorer Parent</name>
   <packaging>pom</packaging>
 
