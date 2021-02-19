@@ -68,7 +68,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 public abstract class AbstractApidocTest {
 
     // helper for quicker update when running tests locally
-    public static final boolean UPDATE_REFERENCE_FILES_ON_FAILURE = true;
+    public static final boolean UPDATE_REFERENCE_FILES_ON_FAILURE = false;
 
     @RuntimeService
     @Mock
