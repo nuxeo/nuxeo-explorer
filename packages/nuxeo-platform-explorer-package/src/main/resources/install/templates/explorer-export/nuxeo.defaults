@@ -1,0 +1,3 @@
+default.target=.
+
+org.nuxeo.apidoc.apidocAdmin.password=apidocAdmin
