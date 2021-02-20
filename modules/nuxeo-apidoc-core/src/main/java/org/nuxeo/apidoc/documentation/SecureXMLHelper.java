@@ -102,11 +102,11 @@ public class SecureXMLHelper {
     }
 
     protected static List<String> getKeywordList(String property, List<String> defaultValue) {
-        return Framework.getService(ConfigurationService.class)
-                        .getString(property)
-                        .map(v -> v.split("\\s*,[,\\s]*"))
-                        .map(Arrays::asList)
-                        .orElse(defaultValue);
+        String prop = Framework.getService(ConfigurationService.class).getProperty(property);
+        if (prop == null) {
+            return defaultValue;
+        }
+        return Arrays.asList(prop.split("\\s*,[,\\s]*"));
     }
 
     public static String secureStAX(String xml, List<String> keywords, List<String> whitelist)

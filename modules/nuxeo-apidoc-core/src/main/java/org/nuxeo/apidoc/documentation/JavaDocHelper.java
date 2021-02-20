@@ -61,7 +61,7 @@ public class JavaDocHelper {
     }
 
     protected String getUrl() {
-        String baseUrl = Framework.getService(ConfigurationService.class).getString(BASE_URL_PROP_NAME, BASE_URL);
+        String baseUrl = Framework.getService(ConfigurationService.class).getProperty(BASE_URL_PROP_NAME, BASE_URL);
         return String.format("%s%s/%s/javadoc", baseUrl, defaultPrefix, docVersion);
     }
 

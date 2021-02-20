@@ -40,12 +40,12 @@ public class SecurityHelper {
 
     public static String getApidocReadersGroup() {
         return Framework.getService(ConfigurationService.class)
-                        .getString(PROPERTY_READERS_GROUP, DEFAULT_READERS_GROUP);
+                        .getProperty(PROPERTY_READERS_GROUP, DEFAULT_READERS_GROUP);
     }
 
     public static String getApidocManagersGroup() {
         return Framework.getService(ConfigurationService.class)
-                        .getString(PROPERTY_APIDOC_MANAGERS_GROUP, DEFAULT_APIDOC_MANAGERS_GROUP);
+                        .getProperty(PROPERTY_APIDOC_MANAGERS_GROUP, DEFAULT_APIDOC_MANAGERS_GROUP);
     }
 
     /**

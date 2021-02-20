@@ -130,7 +130,7 @@ public interface PackageInfo extends NuxeoArtifact {
             return null;
         }
         String baseUrl = Framework.getService(ConfigurationService.class)
-                                  .getString(CONNECT_URL_PROP_NAME, DEFAULT_CONNECT_URL);
+                                  .getProperty(CONNECT_URL_PROP_NAME, DEFAULT_CONNECT_URL);
         String url = String.format("%smarketplace/package/%s?version=%s", baseUrl, pkg.getName(), pkg.getVersion());
         if (checkValidity) {
             if (!URLHelper.isValid(url)) {
