@@ -325,7 +325,7 @@ pipeline {
             script {
               boolean isReferenceBranch = BRANCH_NAME == REFERENCE_BRANCH
               // first substitute docker image names and versions
-              withCredentials([usernamePassword(credentialsId: 'explorer-preview', passwordVariable: 'EXPLORER_PASSWORD', usernameVariable: 'UNUSED_USERNAME')]) {
+              withCredentials([usernamePassword(credentialsId: 'explorer-preview-maintenance', passwordVariable: 'EXPLORER_PASSWORD', usernameVariable: 'UNUSED_USERNAME')]) {
                 def explorerPasswordProp = "org.nuxeo.apidoc.apidocAdmin.password=${EXPLORER_PASSWORD}"
                 sh """
                   mv values.yaml values.yaml.tosubst
