@@ -75,8 +75,8 @@ void dockerDeploy(String imageName) {
 
 String getPreviewTemplatesOverride(isReferenceBranch) {
   if (isReferenceBranch) {
-    // activate dedicated profiles on master preview
-    return 'nuxeo.templates=default,mongodb,explorer-sitemode,explorer-virtualadmin'
+    // activate dedicated profiles on 21.0_11.3 preview
+    return 'nuxeo.templates=default,mongodb,explorer-virtualadmin'
   }
   // NXP-29494: override templates to avoid activating s3 in PR preview
   return 'nuxeo.templates=default'
@@ -96,7 +96,7 @@ pipeline {
     CONNECT_PROD_URL = "https://connect.nuxeo.com/nuxeo"
     MAVEN_OPTS = "$MAVEN_OPTS -Xms512m -Xmx3072m"
     MAVEN_ARGS = '-B -nsu'
-    REFERENCE_BRANCH = 'master'
+    REFERENCE_BRANCH = '21.0_11.3'
     SCM_REF = "${getCommitSha1()}"
     VERSION = "${getVersion(REFERENCE_BRANCH)}"
     PERSISTENCE = "${BRANCH_NAME == REFERENCE_BRANCH}"
@@ -202,7 +202,11 @@ pipeline {
     }
     stage('Deploy Nuxeo packages') {
       when {
-        branch "${REFERENCE_BRANCH}"
+        // do not deploy packages on 21.0_11.3 maintenance branch
+        // branch "${REFERENCE_BRANCH}"
+        expression {
+          return false
+        }
       }
       steps {
         setGitHubBuildStatus('explorer/package/deploy', 'Deploy Nuxeo Packages', 'PENDING')
@@ -250,9 +254,11 @@ pipeline {
           script {
             def moduleDir = 'docker/nuxeo-explorer-docker'
             // push images to the Jenkins X internal Docker registry
+            sh "envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen"
+            retry(2) {
+              sh "skaffold build -f ${moduleDir}/skaffold.yaml~gen"
+            }
             sh """
-              envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen
-              skaffold build -f ${moduleDir}/skaffold.yaml~gen
               # waiting skaffold + kaniko + container-stucture-tests issue
               #  see https://github.com/GoogleContainerTools/skaffold/issues/3907
               docker pull ${DOCKER_REGISTRY}/nuxeo/nuxeo-explorer:${VERSION}
@@ -354,6 +360,8 @@ pipeline {
                 // third build and deploy the chart
                 // waiting for https://github.com/jenkins-x/jx/issues/5797 to be fixed in order to remove --source-url
                 sh """
+                  helm init --client-only --stable-repo-url=https://charts.helm.sh/stable
+                  helm repo add local-jenkins-x http://jenkins-x-chartmuseum:8080
                   jx step helm build --verbose
                   mkdir target && helm template . --output-dir target
                   ${previewCommand}
