@@ -86,12 +86,6 @@ pipeline {
   agent {
     label 'jenkins-nuxeo-package-11'
   }
-  triggers {
-    upstream(
-      threshold: hudson.model.Result.SUCCESS,
-      upstreamProjects: "/nuxeo/nuxeo/${BRANCH_NAME}",
-    )
-  }
   environment {
     CONNECT_PROD_URL = "https://connect.nuxeo.com/nuxeo"
     MAVEN_OPTS = "$MAVEN_OPTS -Xms512m -Xmx3072m"
@@ -103,7 +97,7 @@ pipeline {
     NUXEO_TEMPLATE_OVERRIDE = "${getPreviewTemplatesOverride(BRANCH_NAME == REFERENCE_BRANCH)}"
     NUXEO_IMAGE_VERSION = getNuxeoVersion()
     NUXEO_DOCKER_REGISTRY = 'docker-private.packages.nuxeo.com'
-    PREVIEW_NAMESPACE = "nuxeo-explorer-${BRANCH_NAME.toLowerCase()}"
+    PREVIEW_NAMESPACE = "nuxeo-explorer-maintenance"
     // APP_NAME and ORG needed for PR preview
     APP_NAME = 'nuxeo-explorer'
     ORG = 'nuxeo'
