@@ -95,7 +95,7 @@ public class SnapshotPersister {
     }
 
     /**
-     * Creates a workspace folder and returns it.
+     * Creates an explorer folder and returns it.
      *
      * @since 20.0.0
      */

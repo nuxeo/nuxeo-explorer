@@ -6,7 +6,14 @@
       These contributions provide document types that handle persistence of introspected distributions.
     </documentation>
 
-    <doctype name="NXDistribution" extends="Folder">
+    <doctype name="NXExplorerFolder" extends="Document">
+      <schema name="common"/>
+      <schema name="dublincore"/>
+      <facet name="Folderish"/>
+      <facet name="Orderable"/>
+    </doctype>
+
+    <doctype name="NXDistribution" extends="NXExplorerFolder">
       <schema name="common" />
       <schema name="dublincore" />
       <schema name="file" />
@@ -17,16 +24,16 @@
       <facet name="Folderish" />
 
       <subtypes>
+        <type>NXExplorerFolder</type>
         <type>NXBundleGroup</type>
         <type>NXBundle</type>
         <type>NXOperation</type>
         <type>NXPackage</type>
-        <type>Workspace</type>
       </subtypes>
       <prefetch>dublincore</prefetch>
     </doctype>
 
-    <doctype name="NXBundleGroup" extends="OrderedFolder">
+    <doctype name="NXBundleGroup" extends="NXExplorerFolder">
       <schema name="common" />
       <schema name="dublincore" />
       <schema name="file" />
@@ -44,7 +51,7 @@
     </doctype>
 
 
-    <doctype name="NXBundle" extends="OrderedFolder">
+    <doctype name="NXBundle" extends="NXExplorerFolder">
       <schema name="common" />
       <schema name="dublincore" />
       <schema name="file" />
@@ -62,7 +69,7 @@
       <prefetch></prefetch>
     </doctype>
 
-    <doctype name="NXComponent" extends="OrderedFolder">
+    <doctype name="NXComponent" extends="NXExplorerFolder">
       <schema name="common" />
       <schema name="dublincore" />
       <schema name="file" />
@@ -79,7 +86,7 @@
       <prefetch></prefetch>
     </doctype>
 
-    <doctype name="NXExtensionPoint" extends="OrderedFolder">
+    <doctype name="NXExtensionPoint" extends="NXExplorerFolder">
       <schema name="common" />
       <schema name="dublincore" />
       <schema name="file" />
