@@ -313,8 +313,7 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         listing.checkListing(-1, "acceptComment", "/viewOperation/acceptComment", "CHAIN acceptComment");
 
         listing = listing.filterOn("Document.AddFacet");
-        listing.checkListing(1, "Add Facet", "/viewOperation/Document.AddFacet",
-                "DOCUMENT Document.AddFacet\n" + "Alias Document.AddFacet");
+        listing.checkListing(1, "Add Facet", "/viewOperation/Document.AddFacet", "DOCUMENT Document.AddFacet");
 
         listing.navigateToFirstItem();
         OperationArtifactPage apage = asPage(OperationArtifactPage.class);
