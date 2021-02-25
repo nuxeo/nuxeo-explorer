@@ -11,6 +11,7 @@ NXComponent: org.nuxeo.automation.scripting.internals.AutomationScriptingCompone
 NXComponent: org.nuxeo.core.LocalConfigurationService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.api/org.nuxeo.core.LocalConfigurationService
 NXComponent: org.nuxeo.directory.mongodb.MongoDBDirectoryFactory *** /grp:org.nuxeo.ecm.platform/org.nuxeo.directory.mongodb/org.nuxeo.directory.mongodb.MongoDBDirectoryFactory *** [org.nuxeo.runtime.mongodb.MongoDBComponent, org.nuxeo.ecm.directory.DirectoryServiceImpl, org.nuxeo.ecm.directory.sql.SQLDirectoryFactory]
 NXComponent: org.nuxeo.directory.test.sql *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.directory.test.sql
+NXComponent: org.nuxeo.ecm.automation.core.AutomationComponent *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.core/org.nuxeo.ecm.automation.core.AutomationComponent *** [org.nuxeo.runtime.management.ServerLocator]
 NXComponent: org.nuxeo.ecm.automation.core.impl.ReloadListener *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.core/org.nuxeo.ecm.automation.core.impl.ReloadListener
 NXComponent: org.nuxeo.ecm.automation.core.impl.workmanager *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.core/org.nuxeo.ecm.automation.core.impl.workmanager
 NXComponent: org.nuxeo.ecm.automation.io.services.IOComponent *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.io/org.nuxeo.ecm.automation.io.services.IOComponent *** [org.nuxeo.ecm.webengine.core.service.json]
@@ -77,7 +78,6 @@ NXComponent: org.nuxeo.ecm.core.management.es.tests *** /grp:org.nuxeo.runtime/o
 NXComponent: org.nuxeo.ecm.core.management.runtime.management.contribs *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.management.runtime.management.contribs
 NXComponent: org.nuxeo.ecm.core.management.typesContrib *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.management.typesContrib
 NXComponent: org.nuxeo.ecm.core.managemment.standby *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.managemment.standby *** [org.nuxeo.runtime.management.ResourcePublisher, org.nuxeo.runtime.metrics.MetricsService, org.nuxeo.runtime.EventService]
-NXComponent: org.nuxeo.ecm.core.operation.OperationServiceComponent *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.core/org.nuxeo.ecm.core.operation.OperationServiceComponent *** [org.nuxeo.runtime.management.ServerLocator]
 NXComponent: org.nuxeo.ecm.core.orphanVersionsCleanup *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.orphanVersionsCleanup
 NXComponent: org.nuxeo.ecm.core.query.properties *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.query/org.nuxeo.ecm.core.query.properties
 NXComponent: org.nuxeo.ecm.core.repository.RepositoryServiceComponent *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.repository.RepositoryServiceComponent *** [org.nuxeo.runtime.cluster.ClusterService, org.nuxeo.ecm.core.api.repository.RepositoryManager]
@@ -120,6 +120,7 @@ NXComponent: org.nuxeo.ecm.directory.actions.core *** /grp:org.nuxeo.ecm.automat
 NXComponent: org.nuxeo.ecm.directory.core.CoreDirectoryFactory *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.directory/org.nuxeo.ecm.directory/org.nuxeo.ecm.directory.core.CoreDirectoryFactory *** [org.nuxeo.ecm.directory.DirectoryServiceImpl]
 NXComponent: org.nuxeo.ecm.directory.local.configuration *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.directory/org.nuxeo.ecm.directory/org.nuxeo.ecm.directory.local.configuration
 NXComponent: org.nuxeo.ecm.directory.marshallers *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.directory/org.nuxeo.ecm.directory/org.nuxeo.ecm.directory.marshallers
+NXComponent: org.nuxeo.ecm.directory.memory.MemDirectoryFactory *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.directory/org.nuxeo.ecm.directory/org.nuxeo.ecm.directory.memory.MemDirectoryFactory *** [org.nuxeo.ecm.directory.DirectoryServiceImpl]
 NXComponent: org.nuxeo.ecm.directory.resolver *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.directory/org.nuxeo.ecm.directory/org.nuxeo.ecm.directory.resolver
 NXComponent: org.nuxeo.ecm.directory.sql.SQLDirectoryFactory *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.directory/org.nuxeo.ecm.directory.sql/org.nuxeo.ecm.directory.sql.SQLDirectoryFactory *** [org.nuxeo.ecm.directory.DirectoryServiceImpl]
 NXComponent: org.nuxeo.ecm.directory.types *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.directory/org.nuxeo.ecm.directory.types.contrib/org.nuxeo.ecm.directory.types *** [org.nuxeo.ecm.core.CoreExtensions]
