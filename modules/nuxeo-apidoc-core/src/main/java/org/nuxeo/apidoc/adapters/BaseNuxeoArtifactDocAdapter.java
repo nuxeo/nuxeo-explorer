@@ -96,7 +96,7 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
             if (session.exists(rootRef)) {
                 return path.toString();
             } else {
-                DocumentModel root = session.createDocumentModel("Folder");
+                DocumentModel root = session.createDocumentModel(DistributionSnapshot.CONTAINER_TYPE_NAME);
                 root.setPathInfo(basePath, suffix);
                 root = session.createDocument(root);
                 return root.getPathAsString();
@@ -176,10 +176,12 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
 
         String path = "";
         for (DocumentModel doc : parents) {
-            if (doc.getType().equals(DistributionSnapshot.TYPE_NAME)) {
+            String type = doc.getType();
+            if (DistributionSnapshot.TYPE_NAME.equals(type)) {
                 break;
             }
-            if (doc.getType().equals(DistributionSnapshot.CONTAINER_TYPE_NAME)) {
+            if (DistributionSnapshot.CONTAINER_TYPE_NAME.equals(type)
+                    || DistributionSnapshot.OLD_CONTAINER_TYPE_NAME.equals(type)) {
                 // skip containers
                 continue;
             }

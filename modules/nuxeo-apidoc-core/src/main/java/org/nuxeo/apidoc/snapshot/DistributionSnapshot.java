@@ -41,7 +41,10 @@ public interface DistributionSnapshot extends DistributionSnapshotDesc {
 
     String TYPE_NAME = "NXDistribution";
 
-    String CONTAINER_TYPE_NAME = "Workspace";
+    String CONTAINER_TYPE_NAME = "NXExplorerFolder";
+
+    /** @since 22.0.0 */
+    String OLD_CONTAINER_TYPE_NAME = "Workspace";
 
     String PROP_NAME = "nxdistribution:name";
 
