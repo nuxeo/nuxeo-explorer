@@ -262,8 +262,8 @@ public class TestJson extends AbstractApidocTest {
 
         assertEquals(
                 List.of("org.nuxeo.apidoc.adapterContrib--adapters", "org.nuxeo.apidoc.doctypeContrib--doctype",
-                        "org.nuxeo.apidoc.lifecycle.contrib--types", "org.nuxeo.apidoc.listener.contrib--listener",
-                        "org.nuxeo.apidoc.schemaContrib--schema",
+                        "org.nuxeo.apidoc.lifecycle.contrib--lifecycle", "org.nuxeo.apidoc.lifecycle.contrib--types",
+                        "org.nuxeo.apidoc.listener.contrib--listener", "org.nuxeo.apidoc.schemaContrib--schema",
                         "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration",
                         "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
                         "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
@@ -478,15 +478,15 @@ public class TestJson extends AbstractApidocTest {
         ExtensionInfo ext = smcont.getExtensions().get(0);
         assertEquals(ExtensionInfo.TYPE_NAME, ext.getArtifactType());
         assertNotNull(ext.getContributionItems());
-        assertEquals(9, ext.getContributionItems().size());
+        assertEquals(10, ext.getContributionItems().size());
         assertEquals("\n" //
                 + "      These contributions provide document types that handle persistence of introspected distributions.\n" //
                 + "    \n", ext.getDocumentation());
         assertEquals("<p/>\n" //
                 + "These contributions provide document types that handle persistence of introspected distributions.\n" //
                 + "<p/>", ext.getDocumentationHtml());
-        assertEquals("NXDistribution", ext.getContributionItems().get(0).getId());
-        assertEquals("doctype NXDistribution", ext.getContributionItems().get(0).getLabel());
+        assertEquals("NXExplorerFolder", ext.getContributionItems().get(0).getId());
+        assertEquals("doctype NXExplorerFolder", ext.getContributionItems().get(0).getLabel());
         assertNotNull(ext.getContributionItems().get(0).getXml());
         assertNotNull(ext.getContributionItems().get(0).getRawXml());
         assertEquals("", ext.getContributionItems().get(0).getDocumentation());

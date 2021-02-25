@@ -1,16 +1,67 @@
 <?xml version="1.0"?>
 <component name="org.nuxeo.apidoc.lifecycle.contrib">
 
+  <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService"
+    point="lifecycle">
+
+    <lifecycle name="explorer_default" defaultInitial="project">
+      <transitions>
+        <transition name="approve" destinationState="approved">
+          <description>Approve the content</description>
+        </transition>
+        <transition name="obsolete" destinationState="obsolete">
+          <description>Content becomes obsolete</description>
+        </transition>
+        <transition name="delete" destinationState="deleted">
+          <description>Move document to trash (temporary delete)</description>
+        </transition>
+        <transition name="undelete" destinationState="project">
+          <description>Recover the document from trash</description>
+        </transition>
+        <transition name="backToProject" destinationState="project">
+          <description>Recover the document from trash</description>
+        </transition>
+      </transitions>
+      <states>
+        <state name="project" description="Default state" initial="true">
+          <transitions>
+            <transition>approve</transition>
+            <transition>obsolete</transition>
+            <transition>delete</transition>
+          </transitions>
+        </state>
+        <state name="approved" description="Content has been validated">
+          <transitions>
+            <transition>delete</transition>
+            <transition>backToProject</transition>
+          </transitions>
+        </state>
+        <state name="obsolete" description="Content is obsolete">
+          <transitions>
+            <transition>delete</transition>
+            <transition>backToProject</transition>
+          </transitions>
+        </state>
+        <state name="deleted" description="Document is deleted">
+          <transitions>
+            <transition>undelete</transition>
+          </transitions>
+        </state>
+      </states>
+    </lifecycle>
+  </extension>
+
   <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
     <types>
-      <type name="NXDistribution">default</type>
-      <type name="NXBundleGroup">default</type>
-      <type name="NXBundle">default</type>
-      <type name="NXComponent">default</type>
-      <type name="NXService">default</type>
-      <type name="NXExtensionPoint">default</type>
-      <type name="NXContribution">default</type>
-      <type name="NXOperation">default</type>
+      <type name="NXExplorerFolder">explorer_default</type>
+      <type name="NXDistribution">explorer_default</type>
+      <type name="NXBundleGroup">explorer_default</type>
+      <type name="NXBundle">explorer_default</type>
+      <type name="NXComponent">explorer_default</type>
+      <type name="NXService">explorer_default</type>
+      <type name="NXExtensionPoint">explorer_default</type>
+      <type name="NXContribution">explorer_default</type>
+      <type name="NXOperation">explorer_default</type>
     </types>
   </extension>
 
