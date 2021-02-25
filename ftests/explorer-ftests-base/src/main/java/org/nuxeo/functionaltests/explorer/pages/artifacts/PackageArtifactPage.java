@@ -122,6 +122,7 @@ public class PackageArtifactPage extends ArtifactPage {
                 + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins");
         checkContributions("org.nuxeo.apidoc.adapterContrib--adapters\n" //
                 + "org.nuxeo.apidoc.doctypeContrib--doctype\n" //
+                + "org.nuxeo.apidoc.lifecycle.contrib--lifecycle\n" //
                 + "org.nuxeo.apidoc.lifecycle.contrib--types\n" //
                 + "org.nuxeo.apidoc.listener.contrib--listener\n" //
                 + "org.nuxeo.apidoc.schemaContrib--schema\n" //

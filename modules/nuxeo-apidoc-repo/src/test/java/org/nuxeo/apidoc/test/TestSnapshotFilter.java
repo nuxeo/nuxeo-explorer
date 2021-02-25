@@ -138,6 +138,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                     "org.nuxeo.automation.scripting.internals.AutomationScriptingComponent--operation",
                     "org.nuxeo.ecm.core.api.DocumentAdapterService--adapters",
                     "org.nuxeo.ecm.core.event.EventServiceComponent--listener",
+                    "org.nuxeo.ecm.core.lifecycle.LifeCycleService--lifecycle",
                     "org.nuxeo.ecm.core.lifecycle.LifeCycleService--types",
                     "org.nuxeo.ecm.core.operation.OperationServiceComponent--chains",
                     "org.nuxeo.ecm.core.operation.OperationServiceComponent--operations",
@@ -150,17 +151,19 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                             "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins"),
                     snapshot.getExtensionPointIds());
         }
-        assertEquals(Arrays.asList("org.nuxeo.apidoc.adapterContrib--adapters",
-                "org.nuxeo.apidoc.doctypeContrib--doctype", "org.nuxeo.apidoc.lifecycle.contrib--types",
-                "org.nuxeo.apidoc.listener.contrib--listener", "org.nuxeo.apidoc.schemaContrib--schema",
-                "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration",
-                "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
-                "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
-                "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3",
-                "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
-                "org.nuxeo.apidoc.test.automation--chains", "org.nuxeo.apidoc.test.automation--operation",
-                "org.nuxeo.apidoc.test.automation--operations", "org.nuxeo.apidoc.test.works--queues",
-                "org.nuxeo.apidoc.test.works--queues1"), snapshot.getContributionIds());
+        assertEquals(
+                Arrays.asList("org.nuxeo.apidoc.adapterContrib--adapters", "org.nuxeo.apidoc.doctypeContrib--doctype",
+                        "org.nuxeo.apidoc.lifecycle.contrib--lifecycle", "org.nuxeo.apidoc.lifecycle.contrib--types",
+                        "org.nuxeo.apidoc.listener.contrib--listener", "org.nuxeo.apidoc.schemaContrib--schema",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3",
+                        "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+                        "org.nuxeo.apidoc.test.automation--chains", "org.nuxeo.apidoc.test.automation--operation",
+                        "org.nuxeo.apidoc.test.automation--operations", "org.nuxeo.apidoc.test.works--queues",
+                        "org.nuxeo.apidoc.test.works--queues1"),
+                snapshot.getContributionIds());
         // BuiltIn contributing component on 10.10...
         // List<String> expectedOps = Arrays.asList("Document.Create", "Scripting.HelloWorld", "createDoc");
         List<String> expectedOps = Arrays.asList("Document.Create");

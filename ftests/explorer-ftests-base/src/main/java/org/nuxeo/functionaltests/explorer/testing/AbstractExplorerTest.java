@@ -205,9 +205,9 @@ public abstract class AbstractExplorerTest extends AbstractTest {
                 dhome.checkNumbers(1, 3, 6, 2, 1, 5, 0, 0);
             } else {
                 if (includeReferences) {
-                    dhome.checkNumbers(2, 8, 11, 12, 8, 10, 0, 1);
+                    dhome.checkNumbers(2, 8, 11, 12, 9, 11, 0, 1);
                 } else {
-                    dhome.checkNumbers(1, 3, 6, 3, 2, 10, 0, 1);
+                    dhome.checkNumbers(1, 3, 6, 3, 2, 11, 0, 1);
                 }
             }
         }
@@ -239,7 +239,7 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         }
         listing.toggleSort();
         if (includeReferences) {
-            listing.checkListing(8, "types", "/viewExtensionPoint/org.nuxeo.ecm.core.lifecycle.LifeCycleService--types",
+            listing.checkListing(9, "types", "/viewExtensionPoint/org.nuxeo.ecm.core.lifecycle.LifeCycleService--types",
                     "LifeCycleService - org.nuxeo.ecm.core.lifecycle.LifeCycleService");
             listing = listing.filterOn("org.nuxeo.apidoc");
         } else {
@@ -266,7 +266,7 @@ public abstract class AbstractExplorerTest extends AbstractTest {
         }
         // one more contribution with thumbnail disablement in ftests + org.nuxeo.connect.tools.report.apidoc--reports
         // matching on runtime distribs search
-        int nb = legacy ? 5 : (partial ? 10 : 12);
+        int nb = legacy ? 5 : (partial ? 11 : 13);
         listing.checkListing(nb, "org.nuxeo.apidoc.adapterContrib--adapters",
                 "/viewContribution/org.nuxeo.apidoc.adapterContrib--adapters",
                 "adapters - org.nuxeo.ecm.core.api.DocumentAdapterService");
