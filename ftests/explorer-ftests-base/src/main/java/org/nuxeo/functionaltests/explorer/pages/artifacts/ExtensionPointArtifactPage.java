@@ -21,6 +21,8 @@ package org.nuxeo.functionaltests.explorer.pages.artifacts;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.nuxeo.functionaltests.Required;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
 import org.openqa.selenium.By;
@@ -68,6 +70,7 @@ public class ExtensionPointArtifactPage extends ArtifactPage {
                         + "UI elements are used for rendering on webengine pages. The view type should match a webengine resource type, and the module holding this resource should be contributed to the main webengine module as a fragment using:\n" //
                         + "          Fragment-Host: org.nuxeo.apidoc.webengine");
         checkDescriptorsText("org.nuxeo.apidoc.plugin.PluginDescriptor");
+        checkAliases(null);
     }
 
     @Override
@@ -78,6 +81,15 @@ public class ExtensionPointArtifactPage extends ArtifactPage {
         checkDescriptorsText("org.nuxeo.ecm.core.schema.DocumentTypeDescriptor");
         checkDescriptorsText("org.nuxeo.ecm.core.schema.FacetDescriptor");
         checkDescriptorsText("org.nuxeo.ecm.core.schema.ProxiesDescriptor");
+        checkAliases(null);
+    }
+
+    public void checkAutomationOperations() {
+        checkCommon("Extension point org.nuxeo.ecm.automation.core.AutomationComponent--operations",
+                "Extension point operations", "In component org.nuxeo.ecm.automation.core.AutomationComponent",
+                "Documentation\n" + "Aliases\n" + "Contribution Descriptors\n" + "Existing Contributions");
+        checkDescriptorsText("org.nuxeo.ecm.automation.core.OperationContribution");
+        checkAliases(List.of("org.nuxeo.ecm.core.operation.OperationServiceComponent--operations"));
     }
 
     @Override
