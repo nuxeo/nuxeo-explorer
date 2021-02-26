@@ -133,4 +133,19 @@ public abstract class ArtifactPage extends AbstractExplorerPage {
         }
     }
 
+    /** @since 22.0.0 */
+    public void checkAliases(List<String> ids) {
+        WebElement aliases = null;
+        try {
+            aliases = driver.findElement(By.xpath("//ul[@class='aliases']"));
+        } catch (NoSuchElementException e) {
+            assertNull(ids);
+            return;
+        }
+        assertNotNull(ids);
+        List<WebElement> aliasElements = aliases.findElements(By.xpath(".//li"));
+        assertEquals(ids.size(), aliasElements.size());
+        IntStream.range(0, aliasElements.size()).forEach(i -> assertEquals(ids.get(i), aliasElements.get(i).getText()));
+    }
+
 }

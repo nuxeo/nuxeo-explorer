@@ -69,16 +69,17 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                 snapshot.getBundleGroup(filterName).getBundleIds());
         if (isRef) {
             assertEquals(
-                    // FIXME NXP-30203: fix alias component retrieval
-                    List.of("org.nuxeo.ecm.automation.scripting", "org.nuxeo.ecm.core", "org.nuxeo.ecm.core.api",
-                            "org.nuxeo.ecm.core.event", "org.nuxeo.ecm.core.schema", "org.nuxeo.runtime"),
+                    List.of("org.nuxeo.ecm.automation.core", "org.nuxeo.ecm.automation.scripting", "org.nuxeo.ecm.core",
+                            "org.nuxeo.ecm.core.api", "org.nuxeo.ecm.core.event", "org.nuxeo.ecm.core.schema",
+                            "org.nuxeo.runtime"),
                     snapshot.getBundleGroup(filterName + SnapshotFilter.REFERENCE_FILTER_NAME_SUFFIX).getBundleIds());
         }
         if (isRef) {
-            // FIXME NXP-30203: fix alias component retrieval
-            assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo", "org.nuxeo.ecm.automation.scripting",
-                    "org.nuxeo.ecm.core", "org.nuxeo.ecm.core.api", "org.nuxeo.ecm.core.event",
-                    "org.nuxeo.ecm.core.schema", "org.nuxeo.runtime"), snapshot.getBundleIds());
+            assertEquals(
+                    List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo", "org.nuxeo.ecm.automation.core",
+                            "org.nuxeo.ecm.automation.scripting", "org.nuxeo.ecm.core", "org.nuxeo.ecm.core.api",
+                            "org.nuxeo.ecm.core.event", "org.nuxeo.ecm.core.schema", "org.nuxeo.runtime"),
+                    snapshot.getBundleIds());
         } else {
             assertEquals(List.of("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo"), snapshot.getBundleIds());
         }
@@ -90,8 +91,8 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                     "org.nuxeo.apidoc.schemaContrib", "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
                     "org.nuxeo.apidoc.test.automation", "org.nuxeo.apidoc.test.works",
                     // referenced components
-                    // FIXME NXP-30203: fix alias component retrieval
                     "org.nuxeo.automation.scripting.internals.AutomationScriptingComponent",
+                    "org.nuxeo.ecm.automation.core.AutomationComponent",
                     "org.nuxeo.ecm.core.api.DocumentAdapterService", "org.nuxeo.ecm.core.event.EventServiceComponent",
                     "org.nuxeo.ecm.core.lifecycle.LifeCycleService", "org.nuxeo.ecm.core.schema.TypeService",
                     "org.nuxeo.ecm.core.work.service", "org.nuxeo.runtime.ConfigurationService"),

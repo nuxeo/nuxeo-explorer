@@ -18,10 +18,12 @@
  */
 package org.nuxeo.apidoc.adapters;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.nuxeo.apidoc.api.BundleInfo;
@@ -62,6 +64,7 @@ public class ExtensionPointInfoDocAdapter extends BaseNuxeoArtifactDocAdapter im
 
         doc.setPropertyValue(PROP_NAME, xpi.getName());
         doc.setPropertyValue(PROP_EP_ID, xpi.getId());
+        doc.setPropertyValue(PROP_EP_ALIASES, (Serializable) xpi.getAliases());
         doc.setPropertyValue(PROP_DOC, xpi.getDocumentation());
         // TODO incoherent naming here, also schema has no types
         doc.setPropertyValue(PROP_DESCRIPTORS, xpi.getDescriptors());
@@ -106,8 +109,19 @@ public class ExtensionPointInfoDocAdapter extends BaseNuxeoArtifactDocAdapter im
         while (!DistributionSnapshot.TYPE_NAME.equals(dist.getType())) {
             dist = getCoreSession().getParentDocument(dist.getRef());
         }
-        String query = QueryHelper.select(ExtensionInfo.TYPE_NAME, dist, ExtensionInfo.PROP_EXTENSION_POINT, getId(),
-                NXQL.ECM_POS);
+
+        String query;
+        if (getAliases().isEmpty()) {
+            query = QueryHelper.select(ExtensionInfo.TYPE_NAME, dist, ExtensionInfo.PROP_EXTENSION_POINT, getId(),
+                    NXQL.ECM_POS);
+        } else {
+            query = String.format("%s AND (%s = %s OR %s IN %s) ORDER BY %s",
+                    QueryHelper.select(ExtensionInfo.TYPE_NAME, dist), ExtensionInfo.PROP_EXTENSION_POINT,
+                    NXQL.escapeString(getId()), ExtensionInfo.PROP_EXTENSION_POINT,
+                    String.format("(%s)", StringUtils.join(
+                            getAliases().stream().map(NXQL::escapeString).collect(Collectors.toList()), ", ")),
+                    NXQL.ECM_POS);
+        }
         DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream()
                    .map(doc -> doc.getAdapter(ExtensionInfo.class))
@@ -164,6 +178,11 @@ public class ExtensionPointInfoDocAdapter extends BaseNuxeoArtifactDocAdapter im
         String path = super.getHierarchyPath() + "###";
         String toReplace = "/" + getId() + "###";
         return path.replace(toReplace, "/" + VirtualNodesConsts.ExtensionPoints_VNODE_NAME + "/" + getId());
+    }
+
+    @Override
+    public List<String> getAliases() {
+        return safeGet(PROP_EP_ALIASES);
     }
 
 }

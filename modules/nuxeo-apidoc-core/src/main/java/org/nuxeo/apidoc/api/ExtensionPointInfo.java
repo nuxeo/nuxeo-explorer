@@ -23,6 +23,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 public interface ExtensionPointInfo extends NuxeoArtifact {
 
@@ -37,12 +38,18 @@ public interface ExtensionPointInfo extends NuxeoArtifact {
     /** misnamed in schema */
     String PROP_DESCRIPTORS = "nxextensionpoint:extensionPoint";
 
+    /** @since 22.0.0 */
+    String PROP_EP_ALIASES = "nxextensionpoint:epAliases";
+
     @JsonBackReference("extensionpoint")
     ComponentInfo getComponent();
 
     String getComponentId();
 
     String getName();
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    List<String> getAliases();
 
     String[] getDescriptors();
 

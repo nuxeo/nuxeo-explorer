@@ -174,6 +174,16 @@ public class ITExplorerTest extends AbstractExplorerTest {
     }
 
     @Test
+    public void testExtensionPointAliases() {
+        openAndCheck(getArtifactURL(ExtensionPointInfo.TYPE_NAME, "foo"), true);
+        goToArtifact(ExtensionPointInfo.TYPE_NAME, "org.nuxeo.ecm.automation.core.AutomationComponent--operations");
+        asPage(ExtensionPointArtifactPage.class).checkAutomationOperations();
+        goToArtifact(ExtensionPointInfo.TYPE_NAME,
+                "org.nuxeo.ecm.core.operation.OperationServiceComponent--operations");
+        asPage(ExtensionPointArtifactPage.class).checkAutomationOperations();
+    }
+
+    @Test
     public void testContributions() {
         ExplorerHomePage home = goHome();
         home.clickOn(home.firstContributions);
@@ -258,6 +268,15 @@ public class ITExplorerTest extends AbstractExplorerTest {
         String filterUrl = String.format("%s?contributionId=%s--%s", url, componentId, "exporters");
         checkOverridePage(url, "data/override_component_reference.xml");
         checkOverridePage(filterUrl, "data/override_contribution_reference.xml");
+    }
+
+    @Test
+    public void testComponentAliases() {
+        openAndCheck(getArtifactURL(ComponentInfo.TYPE_NAME, "foo"), true);
+        goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.ecm.automation.core.AutomationComponent");
+        asPage(ComponentArtifactPage.class).checkAutomationComponent();
+        goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.ecm.core.operation.OperationServiceComponent");
+        asPage(ComponentArtifactPage.class).checkAutomationComponent();
     }
 
     @Test

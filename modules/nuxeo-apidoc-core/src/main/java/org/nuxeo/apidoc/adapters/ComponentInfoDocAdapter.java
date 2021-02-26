@@ -76,6 +76,7 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
         doc.setPropertyValue(PROP_RESOLUTION_ORDER, componentInfo.getResolutionOrder());
         doc.setPropertyValue(PROP_DECLARED_START_ORDER, componentInfo.getDeclaredStartOrder());
         doc.setPropertyValue(PROP_START_ORDER, componentInfo.getStartOrder());
+        doc.setPropertyValue(PROP_ALIASES, (Serializable) componentInfo.getAliases());
 
         Blob xmlBlob = Blobs.createBlob(componentInfo.getXmlFileContent(), "text/xml", null,
                 componentInfo.getXmlFileName());
@@ -232,6 +233,11 @@ public class ComponentInfoDocAdapter extends BaseNuxeoArtifactDocAdapter impleme
                 getName());
         DocumentModelList docs = query(getCoreSession(), query);
         return docs.stream().map(doc -> doc.getAdapter(OperationInfo.class)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> getAliases() {
+        return safeGet(PROP_ALIASES);
     }
 
 }
