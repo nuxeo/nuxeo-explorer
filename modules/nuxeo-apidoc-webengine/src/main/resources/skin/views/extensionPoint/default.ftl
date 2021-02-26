@@ -18,6 +18,15 @@
     </div>
   </#if>
 
+  <#if nxItem.aliases?size gt 0>
+    <h2 class="toc">Aliases</h2>
+    <ul class="aliases">
+      <#list nxItem.aliases as alias>
+      <li>${alias}</li>
+      </#list>
+    </ul>
+  </#if>
+
   <h2 class="toc">Contribution Descriptors</h2>
   <ul class="descriptors">
     <#list nxItem.descriptors as descriptor>

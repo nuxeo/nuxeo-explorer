@@ -231,7 +231,12 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
 
     @Override
     public ComponentInfo getComponent(String id) {
-        return getChild(ComponentInfo.class, ComponentInfo.TYPE_NAME, ComponentInfo.PROP_COMPONENT_ID, id);
+        ComponentInfo c = getChild(ComponentInfo.class, ComponentInfo.TYPE_NAME, ComponentInfo.PROP_COMPONENT_ID, id);
+        if (c == null) {
+            // try with an alias
+            c = getChild(ComponentInfo.class, ComponentInfo.TYPE_NAME, ComponentInfo.PROP_ALIASES, id);
+        }
+        return c;
     }
 
     @Override
@@ -263,7 +268,14 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
 
     @Override
     public ExtensionPointInfo getExtensionPoint(String id) {
-        return getChild(ExtensionPointInfo.class, ExtensionPointInfo.TYPE_NAME, ExtensionPointInfo.PROP_EP_ID, id);
+        ExtensionPointInfo xp = getChild(ExtensionPointInfo.class, ExtensionPointInfo.TYPE_NAME,
+                ExtensionPointInfo.PROP_EP_ID, id);
+        if (xp == null) {
+            // try with an alias
+            xp = getChild(ExtensionPointInfo.class, ExtensionPointInfo.TYPE_NAME, ExtensionPointInfo.PROP_EP_ALIASES,
+                    id);
+        }
+        return xp;
     }
 
     @Override

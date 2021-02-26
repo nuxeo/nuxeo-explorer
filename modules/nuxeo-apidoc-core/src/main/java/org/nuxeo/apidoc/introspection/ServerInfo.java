@@ -59,6 +59,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.nuxeo.apidoc.api.BundleInfo;
 import org.nuxeo.apidoc.api.ComponentInfo;
+import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.documentation.SecureXMLHelper;
 import org.nuxeo.apidoc.snapshot.SnapshotListener;
@@ -473,6 +474,7 @@ public class ServerInfo {
             // set additional orders from snapshot listener
             component.setDeclaredStartOrder(snapshotListener.getDeclaredStartOrder(cname.getName()));
             component.setStartOrder(snapshotListener.getStartOrder(cname.getName()));
+            component.setAliases(ri.getAliases().stream().map(ComponentName::getName).collect(Collectors.toList()));
 
             if (ri.getExtensionPoints() != null) {
                 for (ExtensionPoint xp : ri.getExtensionPoints()) {
@@ -488,7 +490,13 @@ public class ServerInfo {
                     }
                     xpinfo.setDescriptors(descriptors);
                     xpinfo.setDocumentation(xp.getDocumentation());
+                    xpinfo.setAliases(ri.getAliases()
+                                        .stream()
+                                        .map(ComponentName::getName)
+                                        .map(a -> ExtensionPointInfo.computeId(a, xp.getName()))
+                                        .collect(Collectors.toList()));
                     xpRegistry.put(xpinfo.getId(), xpinfo);
+                    xpinfo.getAliases().forEach(a -> xpRegistry.put(a, xpinfo));
                     component.addExtensionPoint(xpinfo);
                 }
             }

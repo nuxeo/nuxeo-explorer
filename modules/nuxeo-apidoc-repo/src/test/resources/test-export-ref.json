@@ -417,6 +417,9 @@
         },
         {
           "@type": "NXComponent",
+          "aliases": [
+            "org.nuxeo.apidoc.test.works.alias"
+          ],
           "documentationHtml": "",
           "extensionPoints": [],
           "extensions": [
@@ -458,7 +461,7 @@
           "services": [],
           "startOrder": 16,
           "version": "mockTestVersion",
-          "xmlFileContent": "<?xml version=\"1.0\"?>\n<component name=\"org.nuxeo.apidoc.test.works\" version=\"1.0\">\n\n  <extension target=\"org.nuxeo.ecm.core.work.service\" point=\"queues\">\n    <queue id=\"apidoc-xml-extractor\">\n      <maxThreads>1</maxThreads>\n      <category>apidoc-xml-extractor</category>\n    </queue>\n  </extension>\n\n  <!-- additional contrib to the same extension point as non-regression test for NXP-19849 -->\n  <extension target=\"org.nuxeo.ecm.core.work.service\" point=\"queues\">\n    <queue id=\"apidoc-xml-extractor-2\">\n      <maxThreads>1</maxThreads>\n      <category>apidoc-xml-extractor-2</category>\n    </queue>\n  </extension>\n\n</component>\n",
+          "xmlFileContent": "<?xml version=\"1.0\"?>\n<component name=\"org.nuxeo.apidoc.test.works\" version=\"1.0\">\n  <!-- test alias resolution -->\n  <alias>org.nuxeo.apidoc.test.works.alias</alias>\n\n  <extension target=\"org.nuxeo.ecm.core.work.service\" point=\"queues\">\n    <queue id=\"apidoc-xml-extractor\">\n      <maxThreads>1</maxThreads>\n      <category>apidoc-xml-extractor</category>\n    </queue>\n  </extension>\n\n  <!-- additional contrib to the same extension point as non-regression test for NXP-19849 -->\n  <extension target=\"org.nuxeo.ecm.core.work.service\" point=\"queues\">\n    <queue id=\"apidoc-xml-extractor-2\">\n      <maxThreads>1</maxThreads>\n      <category>apidoc-xml-extractor-2</category>\n    </queue>\n  </extension>\n\n</component>\n",
           "xmlFileName": "mockTestXmlFileName",
           "xmlPureComponent": true
         }

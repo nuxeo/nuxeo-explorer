@@ -63,8 +63,10 @@ public class TargetExtensionPointSnapshotFilter implements SnapshotFilter {
                                                              .flatMap(b -> b.getComponents().stream())
                                                              .flatMap(c -> c.getExtensions().stream())
                                                              .collect(Collectors.toList());
-        allExtensions.forEach(e -> targetExtensionPoints.add(e.getExtensionPoint()));
-        allExtensions.forEach(e -> targetComponentNames.add(e.getTargetComponentName().getName()));
+        allExtensions.forEach(e -> {
+            targetExtensionPoints.add(e.getExtensionPoint());
+            targetComponentNames.add(e.getTargetComponentName().getName());
+        });
     }
 
     @Override
@@ -78,13 +80,21 @@ public class TargetExtensionPointSnapshotFilter implements SnapshotFilter {
             return false;
         }
         if (artifact instanceof BundleInfo) {
-            return (((BundleInfo) artifact).getComponents()
-                                           .stream()
-                                           .map(ComponentInfo::getId)
-                                           .anyMatch(targetComponentNames::contains));
+            BundleInfo b = (BundleInfo) artifact;
+            if (b.getComponents().stream().map(ComponentInfo::getId).anyMatch(targetComponentNames::contains)) {
+                return true;
+            }
+            return b.getComponents()
+                    .stream()
+                    .flatMap(c -> c.getAliases().stream())
+                    .anyMatch(targetComponentNames::contains);
         }
         if (artifact instanceof ComponentInfo) {
-            return targetComponentNames.contains(((ComponentInfo) artifact).getId());
+            ComponentInfo c = (ComponentInfo) artifact;
+            if (targetComponentNames.contains(c.getId())) {
+                return true;
+            }
+            return c.getAliases().stream().anyMatch(targetComponentNames::contains);
         }
         if (artifact instanceof ExtensionPointInfo) {
             return targetExtensionPoints.contains(((ExtensionPointInfo) artifact).getId());

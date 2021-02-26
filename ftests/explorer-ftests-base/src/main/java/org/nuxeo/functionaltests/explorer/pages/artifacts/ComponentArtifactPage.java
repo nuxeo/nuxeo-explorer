@@ -72,6 +72,7 @@ public class ComponentArtifactPage extends ArtifactPage {
         checkStartOrder(!legacy);
         checkDeclaredStartOrder(null);
         checkXMLSource(true);
+        checkAliases(null);
     }
 
     @Override
@@ -87,6 +88,22 @@ public class ComponentArtifactPage extends ArtifactPage {
         checkStartOrder(false);
         checkDeclaredStartOrder(null);
         checkXMLSource(true);
+        checkAliases(null);
+    }
+
+    public void checkAutomationComponent() {
+        checkCommon("Component org.nuxeo.ecm.automation.core.AutomationComponent",
+                "Component org.nuxeo.ecm.automation.core.AutomationComponent",
+                "In bundle org.nuxeo.ecm.automation.core",
+                "Documentation\n" + "Requirements\n" + "Aliases\n" + "Resolution Order\n" + "Start Order\n"
+                        + "Implementation\n" + "Services\n" + "Extension Points\n" + "Contributions\n" + "XML Source");
+        checkRequirements(List.of("org.nuxeo.runtime.management.ServerLocator"));
+        checkImplementationText("org.nuxeo.ecm.automation.core.AutomationComponent");
+        checkResolutionOrder(true);
+        checkStartOrder(true);
+        checkDeclaredStartOrder(null);
+        checkXMLSource(true);
+        checkAliases(List.of("org.nuxeo.ecm.core.operation.OperationServiceComponent"));
     }
 
     @Override

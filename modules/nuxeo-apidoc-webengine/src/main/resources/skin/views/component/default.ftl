@@ -30,6 +30,15 @@
     </ul>
   </#if>
 
+  <#if nxItem.aliases?size gt 0>
+    <h2 class="toc">Aliases</h2>
+    <ul class="aliases">
+      <#list nxItem.aliases as alias>
+      <li>${alias}</li>
+      </#list>
+    </ul>
+  </#if>
+
   <#if nxItem.resolutionOrder??>
     <h2 class="toc">Resolution Order</h2>
     <div id="resolutionOrder" class="resolutionOrder">
