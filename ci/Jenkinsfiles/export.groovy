@@ -183,11 +183,11 @@ pipeline {
             script {
               def moduleDir = 'docker/nuxeo-explorer-export-docker'
               def oneLineClid = getClid("${INSTANCE_CLID}")
-              sh """#!/bin/bash +x
-                CONNECT_EXPLORER_CLID="${oneLineClid}" \
-                CONNECT_EXPORT_CLID="${oneLineClid}" \
+              sh '''#!/bin/bash +x
+                CONNECT_EXPLORER_CLID=$oneLineClid \
+                CONNECT_EXPORT_CLID=$oneLineClid \
                 envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen
-              """
+              '''
               retry(2) {
                 sh "skaffold build -f ${moduleDir}/skaffold.yaml~gen"
               }
@@ -300,7 +300,7 @@ pipeline {
             Upload Export to ${UPLOAD_URL}
             ----------------------------------------"""
             withCredentials([usernameColonPassword(credentialsId: UPLOAD_CREDS_ID, variable: 'EXPLORER_PASS')]) {
-              String curlCommand = "curl --user ${EXPLORER_PASS} ${CURL_OPTIONS}"
+              String curlCommand = 'curl --user $EXPLORER_PASS $CURL_OPTIONS'
               def aliases = 'latest'
               if (!params.UPLOAD_AS_PROMOTED) {
                 def xVersion = sh(returnStdout: true, script: "perl -pe 's/\\b(\\d+)(?=\\D*\$)/x/e' <<< ${NUXEO_IMAGE_VERSION}").trim()
