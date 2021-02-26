@@ -91,9 +91,13 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
 
     protected final Map<String, String> components2Bundles = new HashMap<>();
 
+    protected final Map<String, String> componentAliases2Bundles = new HashMap<>();
+
     protected final Map<String, String> services2Components = new HashMap<>();
 
     protected final Map<String, ExtensionPointInfo> extensionPoints = new LinkedHashMap<>();
+
+    protected final Map<String, ExtensionPointInfo> extensionPointAliases = new LinkedHashMap<>();
 
     protected final Map<String, ExtensionInfo> contributions = new LinkedHashMap<>();
 
@@ -163,19 +167,23 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
             return;
         }
         for (BundleInfo bInfo : distributionBundles) {
-            bundles.put(bInfo.getId(), bInfo);
+            String bid = bInfo.getId();
+            bundles.put(bid, bInfo);
             for (ComponentInfo cInfo : bInfo.getComponents()) {
-                components2Bundles.put(cInfo.getId(), bInfo.getId());
+                String cid = cInfo.getId();
+                components2Bundles.put(cid, bid);
+                cInfo.getAliases().forEach(a -> componentAliases2Bundles.put(a, bid));
 
                 for (ServiceInfo sInfo : cInfo.getServices()) {
                     if (sInfo.isOverriden()) {
                         continue;
                     }
-                    services2Components.put(sInfo.getId(), cInfo.getId());
+                    services2Components.put(sInfo.getId(), cid);
                 }
 
                 for (ExtensionPointInfo epi : cInfo.getExtensionPoints()) {
                     extensionPoints.put(epi.getId(), epi);
+                    epi.getAliases().forEach(a -> extensionPointAliases.put(a, epi));
                 }
 
                 for (ExtensionInfo ei : cInfo.getExtensions()) {
@@ -255,14 +263,14 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
 
     @Override
     public ComponentInfo getComponent(String id) {
-        String bundleId = components2Bundles.get(id);
+        String bundleId = components2Bundles.getOrDefault(id, componentAliases2Bundles.get(id));
         if (bundleId == null) {
             return null;
         }
         BundleInfo bi = getBundle(bundleId);
 
         for (ComponentInfo ci : bi.getComponents()) {
-            if (ci.getId().equals(id)) {
+            if (ci.getId().equals(id) || ci.getAliases().contains(id)) {
                 return ci;
             }
         }
@@ -287,7 +295,7 @@ public class RuntimeSnapshot extends BaseNuxeoArtifact implements DistributionSn
 
     @Override
     public ExtensionPointInfo getExtensionPoint(String id) {
-        return extensionPoints.get(id);
+        return extensionPoints.getOrDefault(id, extensionPointAliases.get(id));
     }
 
     @Override

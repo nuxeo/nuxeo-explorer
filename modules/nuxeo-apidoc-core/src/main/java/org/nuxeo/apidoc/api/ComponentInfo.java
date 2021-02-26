@@ -29,6 +29,7 @@ import org.nuxeo.runtime.model.ComponentStartOrders;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 public interface ComponentInfo extends NuxeoArtifact {
@@ -56,6 +57,9 @@ public interface ComponentInfo extends NuxeoArtifact {
     String PROP_START_ORDER = "nxcomponent:startOrder";
 
     String PROP_IS_XML = "nxcomponent:isXML";
+
+    /** @since 22.0.0 */
+    String PROP_ALIASES = "nxcomponent:aliases";
 
     @Override
     @JsonIgnore
@@ -145,5 +149,9 @@ public interface ComponentInfo extends NuxeoArtifact {
     /** @since 20.0.0 */
     @JsonIgnore
     List<OperationInfo> getOperations();
+
+    /** @since 22.0.0 */
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    List<String> getAliases();
 
 }
