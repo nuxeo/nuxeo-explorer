@@ -21,6 +21,7 @@
 package org.nuxeo.apidoc.introspection;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
@@ -39,6 +40,8 @@ public class ExtensionPointInfoImpl extends BaseNuxeoArtifact implements Extensi
     protected String componentId;
 
     protected String name;
+
+    protected final List<String> aliases = new ArrayList<>();
 
     protected final List<ExtensionInfo> extensions = new ArrayList<>();
 
@@ -135,6 +138,18 @@ public class ExtensionPointInfoImpl extends BaseNuxeoArtifact implements Extensi
     @Override
     public String getHierarchyPath() {
         return component.getHierarchyPath() + "/" + VirtualNodesConsts.ExtensionPoints_VNODE_NAME + "/" + getId();
+    }
+
+    @Override
+    public List<String> getAliases() {
+        return Collections.unmodifiableList(aliases);
+    }
+
+    public void setAliases(List<String> aliases) {
+        if (aliases != null) {
+            this.aliases.clear();
+            this.aliases.addAll(aliases);
+        }
     }
 
 }

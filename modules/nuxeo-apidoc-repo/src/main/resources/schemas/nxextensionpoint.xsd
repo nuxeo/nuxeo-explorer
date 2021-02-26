@@ -20,4 +20,7 @@
   <xs:element name="extensionPoint" type="nxextensionpoint:stringList"/>
   <xs:element name="epId" type="xs:string"/>
 
+  <!-- since 22.0.0 -->
+  <xs:element name="epAliases" type="nxextensionpoint:stringList" />
+
 </xs:schema>

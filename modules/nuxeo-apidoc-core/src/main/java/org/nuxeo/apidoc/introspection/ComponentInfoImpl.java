@@ -75,6 +75,9 @@ public class ComponentInfoImpl extends BaseNuxeoArtifact implements ComponentInf
     /** @since 20.0.0 */
     protected Long declaredStartOrder;
 
+    /** @since 22.0.0 */
+    protected final List<String> aliases = new ArrayList<>();
+
     protected URL xmlFileUrl;
 
     protected String xmlFileContent;
@@ -297,6 +300,17 @@ public class ComponentInfoImpl extends BaseNuxeoArtifact implements ComponentInf
     @Override
     public void setDeclaredStartOrder(Long order) {
         this.declaredStartOrder = order;
+    }
+
+    public List<String> getAliases() {
+        return Collections.unmodifiableList(aliases);
+    }
+
+    public void setAliases(List<String> aliases) {
+        if (aliases != null) {
+            this.aliases.clear();
+            this.aliases.addAll(aliases);
+        }
     }
 
 }
