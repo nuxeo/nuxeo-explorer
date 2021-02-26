@@ -297,12 +297,12 @@ pipeline {
           Upload Nuxeo Packages to ${CONNECT_PROD_URL}
           ----------------------------------------"""
           withCredentials([usernameColonPassword(credentialsId: 'connect-prod', variable: 'CONNECT_PASS')]) {
-            sh """
+            sh '''
               PACKAGES_TO_UPLOAD="packages/nuxeo-*-package/target/nuxeo-*-package*.zip"
               for file in \$PACKAGES_TO_UPLOAD ; do
-                curl --fail -i -u "$CONNECT_PASS" -F package=@\$(ls \$file) "$CONNECT_PROD_URL"/site/marketplace/upload?batch=true ;
+                curl --fail -i -u $CONNECT_PASS -F package=@\$(ls \$file) $CONNECT_PROD_URL/site/marketplace/upload?batch=true ;
               done
-            """
+            '''
           }
         }
       }

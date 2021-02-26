@@ -210,12 +210,12 @@ pipeline {
           Upload Nuxeo Packages to ${CONNECT_PROD_URL}
           ----------------------------------------"""
           withCredentials([usernameColonPassword(credentialsId: 'connect-prod', variable: 'CONNECT_PASS')]) {
-            sh """
+            sh '''
               PACKAGES_TO_UPLOAD="packages/nuxeo-*-package/target/nuxeo-*-package*.zip"
               for file in \$PACKAGES_TO_UPLOAD ; do
-                curl --fail -i -u "$CONNECT_PASS" -F package=@\$(ls \$file) "$CONNECT_PROD_URL"/site/marketplace/upload?batch=true ;
+                curl --fail -i -u $CONNECT_PASS -F package=@\$(ls \$file) $CONNECT_PROD_URL/site/marketplace/upload?batch=true ;
               done
-            """
+            '''
           }
         }
       }
@@ -319,13 +319,16 @@ pipeline {
             script {
               boolean isReferenceBranch = BRANCH_NAME == REFERENCE_BRANCH
               // first substitute docker image names and versions
-              withCredentials([usernamePassword(credentialsId: 'explorer-preview-maintenance', passwordVariable: 'EXPLORER_PASSWORD', usernameVariable: 'UNUSED_USERNAME')]) {
-                def explorerPasswordProp = "org.nuxeo.apidoc.apidocAdmin.password=${EXPLORER_PASSWORD}"
-                sh """
-                  mv values.yaml values.yaml.tosubst
-                  NUXEO_EXPLORER_CUSTOM_PARAMS=${isReferenceBranch ? explorerPasswordProp : ''} \
-                  envsubst < values.yaml.tosubst > values.yaml
-                """
+              sh 'mv values.yaml values.yaml.tosubst'
+              if (isReferenceBranch) {
+                withCredentials([usernamePassword(credentialsId: 'explorer-preview-maintenance', passwordVariable: 'EXPLORER_PASSWORD', usernameVariable: 'UNUSED_USERNAME')]) {
+                  sh '''
+                    NUXEO_EXPLORER_CUSTOM_PARAMS=org.nuxeo.apidoc.apidocAdmin.password=$EXPLORER_PASSWORD \
+                      envsubst < values.yaml.tosubst > values.yaml
+                  '''
+                }
+              } else {
+                sh 'envsubst < values.yaml.tosubst > values.yaml'
               }
               // second create target namespace (if doesn't exist) and copy secrets to target namespace
               String currentNs = sh(returnStdout: true, script: 'jx -b ns | sed -r "s/^Using namespace \'([^\']+)\'.+\\$/\\1/"').trim()
