@@ -255,14 +255,21 @@ pipeline {
                       --namespace=${PREVIEW_NAMESPACE}
 
                     ${curlCommand} ${explorerUrl} --output home.html
+                  """
+                }
+                retry (2) {
+                  sh """
                     ${curlCommand} -d 'name=${params.SNAPSHOT_NAME}' -d 'version=${NUXEO_IMAGE_VERSION}' -H 'Accept: text/plain' ${explorerUrl}/save
                     ${curlCommand} ${explorerUrl} --output home_after_save.html
-                    ${curlCommand} ${explorerUrl}/download/${distribId} --output export.zip
+                    ${curlCommand} ${nuxeoUrl}/site/automation/Elasticsearch.WaitForIndexing -H 'Content-Type:application/json' -X POST -d '{"params":{"timeoutSecond": "3600", "refresh": "true", "waitForAudit": "true"},"context":{}}'
                   """
-                  if (params.PERFORM_JSON_EXPORT) {
-                    sh """
-                      ${curlCommand} ${explorerUrl}/${distribId}/json --output export.json
-                    """
+                }
+                retry (2) {
+                  sh "${curlCommand} ${explorerUrl}/download/${distribId} --output export.zip"
+                }
+                if (params.PERFORM_JSON_EXPORT) {
+                  retry (2) {
+                    sh "${curlCommand} ${explorerUrl}/${distribId}/json --output export.json"
                   }
                 }
               } finally {
