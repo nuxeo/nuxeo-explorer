@@ -84,12 +84,24 @@
                 <td><textarea rows="4" cols="30" name="bundles"></textarea></td>
               </tr>
               <tr>
+                <td class="nowrap">Excluded Bundles</td>
+                <td><textarea rows="4" cols="30" name="excludedBundles"></textarea></td>
+              </tr>
+              <tr>
                 <td class="nowrap">Nuxeo Packages</td>
-                <td><textarea rows="4" cols="30" name="nxPackages"></textarea></td>
+                <td><textarea rows="4" cols="30" name="nuxeoPackages"></textarea></td>
+              </tr>
+              <tr>
+                <td class="nowrap">Excluded Nuxeo Packages</td>
+                <td><textarea rows="4" cols="30" name="excludedNuxeoPackages"></textarea></td>
               </tr>
               <tr>
                 <td class="nowrap">JAVA Packages Prefixes</td>
-                <td><textarea rows="4" cols="30" name="javaPackages"></textarea></td>
+                <td><textarea rows="4" cols="30" name="javaPackagePrefixes"></textarea></td>
+              </tr>
+              <tr>
+                <td class="nowrap">Excluded JAVA Packages Prefixes</td>
+                <td><textarea rows="4" cols="30" name="excludedJavaPackagePrefixes"></textarea></td>
               </tr>
               <tr>
                 <td class="nowrap"><label for="checkAsPrefixes">Check Bundles and Packages as Prefixes</label></td>
