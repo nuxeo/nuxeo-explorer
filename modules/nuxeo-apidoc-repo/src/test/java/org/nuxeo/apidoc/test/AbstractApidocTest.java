@@ -33,11 +33,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.ComparisonFailure;
 import org.junit.runner.RunWith;
@@ -78,11 +79,11 @@ public abstract class AbstractApidocTest {
     @Mock
     protected PackageUpdateService packageUpdateService;
 
-    protected final String MOCK_PACKAGE_NAME = "platform-explorer-mock";
+    protected static final String MOCK_PACKAGE_NAME = "platform-explorer-mock";
 
-    protected final String MOCK_PACKAGE_VERSION = "1.0.1";
+    protected static final String MOCK_PACKAGE_VERSION = "1.0.1";
 
-    protected final String MOCK_PACKAGE_ID = MOCK_PACKAGE_NAME + "-" + MOCK_PACKAGE_VERSION;
+    protected static final String MOCK_PACKAGE_ID = MOCK_PACKAGE_NAME + "-" + MOCK_PACKAGE_VERSION;
 
     public void mockPackageServices() throws PackageException, IOException {
         DownloadablePackage mockPackage = mock(DownloadablePackage.class);
@@ -128,7 +129,7 @@ public abstract class AbstractApidocTest {
         checkContentEquals(path, actualContent, UPDATE_REFERENCE_FILES_ON_FAILURE, false, getJsonTestUpdater());
     }
 
-    protected void checkJsonAssertEquals(String path, String actualContent) throws Exception {
+    protected void checkJsonAssertEquals(String path, String actualContent) throws IOException, JSONException {
         String expectedPath = getReferencePath(path);
         String expectedContent = getReferenceContent(expectedPath);
         if (actualContent != null) {
@@ -142,8 +143,8 @@ public abstract class AbstractApidocTest {
      *
      * @since 20.0.0
      */
-    protected static Function<String, String> getJsonTestUpdater() {
-        Function<String, String> function = (String s) -> {
+    protected static UnaryOperator<String> getJsonTestUpdater() {
+        return (String s) -> {
             String res = "";
             // deal with manifests (...)
             String[] lines = s.split("\n");
@@ -169,11 +170,10 @@ public abstract class AbstractApidocTest {
             res = res.trim();
             return res;
         };
-        return function;
     }
 
     protected void checkContentEquals(String path, String actualContent, boolean updateOnFailure, boolean isReference,
-            Function<String, String> transformer) throws IOException {
+            UnaryOperator<String> transformer) throws IOException {
         String message = String.format("File '%s' content differs: ", path);
         String expectedPath = getReferencePath(path);
         String expectedContent = getReferenceContent(expectedPath);
@@ -210,7 +210,7 @@ public abstract class AbstractApidocTest {
         }
     }
 
-    public static String getReferencePath(String path) throws IOException {
+    public static String getReferencePath(String path) {
         URL fileUrl = Thread.currentThread().getContextClassLoader().getResource(path);
         if (fileUrl == null) {
             throw new IllegalStateException("File not found: " + path);

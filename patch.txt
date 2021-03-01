@@ -1,0 +1,78 @@
+diff --git a/modules/nuxeo-apidoc-repo/src/test/java/org/nuxeo/apidoc/test/TestSnapshotFilter.java b/modules/nuxeo-apidoc-repo/src/test/java/org/nuxeo/apidoc/test/TestSnapshotFilter.java
+index c9741fd05dd..f0825f15d5d 100644
+--- a/modules/nuxeo-apidoc-repo/src/test/java/org/nuxeo/apidoc/test/TestSnapshotFilter.java
++++ b/modules/nuxeo-apidoc-repo/src/test/java/org/nuxeo/apidoc/test/TestSnapshotFilter.java
+@@ -168,7 +168,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
+     }
+ 
+     @Test
+-    public void testFilterBundle() throws IOException {
++    public void testFilterBundle() {
+         String filterName = "apidoc-bundle";
+         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, false, null);
+         filter.addBundle("org.nuxeo.apidoc");
+@@ -187,7 +187,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
+     }
+ 
+     @Test
+-    public void testFilterBundlePrefix() throws IOException {
++    public void testFilterBundlePrefix() {
+         String filterName = "apidoc-bundle";
+         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName);
+         filter.addBundle("org.nuxeo.apidoc");
+@@ -199,7 +199,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
+     }
+ 
+     @Test
+-    public void testFilterBundlePrefixReference() throws IOException {
++    public void testFilterBundlePrefixReference() {
+         String filterName = "apidoc-bundle";
+         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, true,
+                 TargetExtensionPointSnapshotFilter.class);
+@@ -210,7 +210,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
+     }
+ 
+     @Test
+-    public void testFilterNuxeoPackage() throws IOException {
++    public void testFilterNuxeoPackage() {
+         String filterName = "apidoc-pack";
+         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, false, null);
+         filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
+@@ -220,7 +220,18 @@ public class TestSnapshotFilter extends AbstractApidocTest {
+     }
+ 
+     @Test
+-    public void testFilterNuxeoPackagePrefix() throws IOException {
++    public void testFilterNuxeoPackageExcludeBundle() {
++        String filterName = "apidoc-pack-filter-bundle";
++        PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, false, null);
++        filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
++        filter.add
++
++        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
++        checkApiDoc(filterName, snapshot, false);
++    }
++
++    @Test
++    public void testFilterNuxeoPackagePrefix() {
+         String filterName = "apidoc-pack";
+         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, true, null);
+         filter.addNuxeoPackage("platform-");
+@@ -230,7 +241,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
+     }
+ 
+     @Test
+-    public void testFilterNuxeoPackageReference() throws IOException {
++    public void testFilterNuxeoPackageReference() {
+         String filterName = "apidoc-pack";
+         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, false,
+                 TargetExtensionPointSnapshotFilter.class);
+@@ -241,7 +252,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
+     }
+ 
+     @Test
+-    public void testFilterJavaPackagePrefix() throws IOException {
++    public void testFilterJavaPackagePrefix() {
+         PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc-java");
+         filter.addPackagesPrefix("org.nuxeo.ecm.automation.core.operations.services.query");
+         filter.addPackagesPrefix("org.nuxeo.ecm.automation.core.operations.services.workmanager");

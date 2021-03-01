@@ -428,13 +428,16 @@ public class ApiBrowser extends DefaultObject {
     @Produces(MediaType.APPLICATION_JSON)
     @Path(ApiBrowserConstants.JSON_ACTION)
     public Object getJson(@QueryParam("bundles") List<String> bundles,
+            @QueryParam("excludedBundles") List<String> excludedBundles,
             @QueryParam("nuxeoPackages") List<String> nuxeoPackages,
+            @QueryParam("excludedNuxeoPackages") List<String> excludedNuxeoPackages,
             @QueryParam("javaPackagePrefixes") List<String> javaPackagePrefixes,
+            @QueryParam("excludedJavaPackagePrefixes") List<String> excludedJavaPackagePrefixes,
             @QueryParam("checkAsPrefixes") Boolean checkAsPrefixes,
             @QueryParam("includeReferences") Boolean includeReferences, @QueryParam("pretty") Boolean pretty)
             throws IOException {
-        SnapshotFilter filter = getSnapshotFilter(bundles, nuxeoPackages, javaPackagePrefixes, checkAsPrefixes,
-                includeReferences);
+        SnapshotFilter filter = getSnapshotFilter(bundles, excludedBundles, nuxeoPackages, excludedNuxeoPackages,
+                javaPackagePrefixes, excludedJavaPackagePrefixes, checkAsPrefixes, includeReferences);
         File tmp = getExportTmpFile();
         try (OutputStream out = new FileOutputStream(tmp)) {
             getDistribution().writeJson(out, filter, getPrinter(pretty));
@@ -452,14 +455,17 @@ public class ApiBrowser extends DefaultObject {
     @GET
     @Path(ApiBrowserConstants.EXPORT_ACTION + "/{exporter}")
     public Response getExporters(@PathParam("exporter") String exporterName,
-            @QueryParam("bundles") List<String> bundles, @QueryParam("nuxeoPackages") List<String> nuxeoPackages,
+            @QueryParam("bundles") List<String> bundles, @QueryParam("excludedBundles") List<String> excludedBundles,
+            @QueryParam("nuxeoPackages") List<String> nuxeoPackages,
+            @QueryParam("excludedNuxeoPackages") List<String> excludedNuxeoPackages,
             @QueryParam("javaPackagePrefixes") List<String> javaPackagePrefixes,
+            @QueryParam("excludedJavaPackagePrefixes") List<String> excludedJavaPackagePrefixes,
             @QueryParam("checkAsPrefixes") Boolean checkAsPrefixes,
             @QueryParam("includeReferences") Boolean includeReferences, @QueryParam("pretty") Boolean pretty)
             throws IOException {
         Map<String, String> props = Boolean.TRUE.equals(pretty) ? Collections.singletonMap("pretty", "true") : null;
-        SnapshotFilter filter = getSnapshotFilter(bundles, nuxeoPackages, javaPackagePrefixes, checkAsPrefixes,
-                includeReferences);
+        SnapshotFilter filter = getSnapshotFilter(bundles, excludedBundles, nuxeoPackages, excludedNuxeoPackages,
+                javaPackagePrefixes, excludedJavaPackagePrefixes, checkAsPrefixes, includeReferences);
         Exporter exporter = getSnapshotManager().getExporter(exporterName);
         if (exporter == null) {
             return Response.status(Status.NOT_FOUND).build();
@@ -480,18 +486,26 @@ public class ApiBrowser extends DefaultObject {
         }
     }
 
-    protected SnapshotFilter getSnapshotFilter(List<String> bundlePrefixes, List<String> nuxeoPackagePrefixes,
-            List<String> javaPackagePrefixes, Boolean checkAsPrefixes, Boolean includeReferences) {
+    protected SnapshotFilter getSnapshotFilter(List<String> bundlePrefixes, List<String> excludedBundlePrefixes,
+            List<String> nuxeoPackagePrefixes, List<String> excludedNuxeoPackagePrefixes,
+            List<String> javaPackagePrefixes, List<String> excludedJavaPackagePrefixes, Boolean checkAsPrefixes,
+            Boolean includeReferences) {
         List<String> bp = getSnapshotFilterCriterion(bundlePrefixes);
+        List<String> ebp = getSnapshotFilterCriterion(excludedBundlePrefixes);
         List<String> np = getSnapshotFilterCriterion(nuxeoPackagePrefixes);
+        List<String> enp = getSnapshotFilterCriterion(excludedNuxeoPackagePrefixes);
         List<String> jp = getSnapshotFilterCriterion(javaPackagePrefixes);
-        if (!bp.isEmpty() || !np.isEmpty() || !jp.isEmpty()) {
+        List<String> ejp = getSnapshotFilterCriterion(excludedJavaPackagePrefixes);
+        if (!bp.isEmpty() || !ebp.isEmpty() || !np.isEmpty() || !enp.isEmpty() || !jp.isEmpty() || !ejp.isEmpty()) {
             PersistSnapshotFilter filter = new PersistSnapshotFilter("Json Rest Filter",
                     Boolean.TRUE.equals(checkAsPrefixes),
                     Boolean.TRUE.equals(includeReferences) ? TargetExtensionPointSnapshotFilter.class : null);
-            bp.forEach(bid -> filter.addBundle(bid));
-            np.forEach(pkg -> filter.addNuxeoPackage(pkg));
-            jp.forEach(pkg -> filter.addPackagesPrefix(pkg));
+            bp.forEach(filter::addBundle);
+            ebp.forEach(filter::addExcludedBundle);
+            np.forEach(filter::addNuxeoPackage);
+            enp.forEach(filter::addExcludedNuxeoPackage);
+            jp.forEach(filter::addPackagesPrefix);
+            ejp.forEach(filter::addExcludedPackagesPrefix);
             return filter;
         }
         return null;
