@@ -21,9 +21,11 @@ package org.nuxeo.apidoc.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -56,7 +58,8 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         mockPackageServices();
     }
 
-    protected void checkApiDoc(String filterName, DistributionSnapshot snapshot, boolean isRef) {
+    protected void checkApiDoc(String filterName, DistributionSnapshot snapshot, boolean isRef,
+            boolean excludeOperation) {
         assertNotNull(snapshot);
         if (isRef) {
             assertEquals(Arrays.asList(filterName, filterName + SnapshotFilter.REFERENCE_FILTER_NAME_SUFFIX),
@@ -159,16 +162,20 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                 "org.nuxeo.apidoc.test.automation--operations", "org.nuxeo.apidoc.test.works--queues",
                 "org.nuxeo.apidoc.test.works--queues1"), snapshot.getContributionIds());
         // BuiltIn contributing component on 10.10...
-        // assertEquals(Arrays.asList("Document.Create", "Scripting.HelloWorld", "createDoc"),
-        // snapshot.getOperations().stream().map(OperationInfo::getName).collect(Collectors.toList()));
-        assertEquals(Arrays.asList("Document.Create"),
+        // List<String> expectedOps = Arrays.asList("Document.Create", "Scripting.HelloWorld", "createDoc");
+        List<String> expectedOps = Arrays.asList("Document.Create");
+        if (excludeOperation) {
+            // expectedOps = Arrays.asList("Scripting.HelloWorld", "createDoc");
+            expectedOps = Arrays.asList();
+        }
+        assertEquals(expectedOps,
                 snapshot.getOperations().stream().map(OperationInfo::getName).collect(Collectors.toList()));
         assertEquals(Arrays.asList(MOCK_PACKAGE_ID),
                 snapshot.getPackages().stream().map(PackageInfo::getId).collect(Collectors.toList()));
     }
 
     @Test
-    public void testFilterBundle() throws IOException {
+    public void testFilterBundle() {
         String filterName = "apidoc-bundle";
         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, false, null);
         filter.addBundle("org.nuxeo.apidoc");
@@ -183,11 +190,11 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         filter.addBundle("org.nuxeo.apidoc.repo");
         snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
 
-        checkApiDoc(filterName, snapshot, false);
+        checkApiDoc(filterName, snapshot, false, false);
     }
 
     @Test
-    public void testFilterBundlePrefix() throws IOException {
+    public void testFilterBundlePrefix() {
         String filterName = "apidoc-bundle";
         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName);
         filter.addBundle("org.nuxeo.apidoc");
@@ -195,53 +202,109 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
         assertNotNull(snapshot);
 
-        checkApiDoc(filterName, snapshot, false);
+        checkApiDoc(filterName, snapshot, false, false);
     }
 
     @Test
-    public void testFilterBundlePrefixReference() throws IOException {
+    public void testFilterBundlePrefixReference() {
         String filterName = "apidoc-bundle";
         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, true,
                 TargetExtensionPointSnapshotFilter.class);
         filter.addBundle("org.nuxeo.apidoc");
 
         DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
-        checkApiDoc(filterName, snapshot, true);
+        checkApiDoc(filterName, snapshot, true, false);
     }
 
     @Test
-    public void testFilterNuxeoPackage() throws IOException {
+    public void testFilterNuxeoPackage() {
         String filterName = "apidoc-pack";
         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, false, null);
         filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
 
         DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
-        checkApiDoc(filterName, snapshot, false);
+        checkApiDoc(filterName, snapshot, false, false);
     }
 
     @Test
-    public void testFilterNuxeoPackagePrefix() throws IOException {
+    public void testFilterNuxeoPackageExcludeBundle() {
+        String filterName = "apidoc-pack-filter-bundle";
+        PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, false, null);
+        filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
+        filter.addExcludedBundle("org.nuxeo.apidoc.repo");
+
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
+
+        assertNotNull(snapshot);
+        assertEquals(Arrays.asList(filterName),
+                snapshot.getBundleGroups().stream().map(BundleGroup::getId).collect(Collectors.toList()));
+        assertEquals(Arrays.asList("org.nuxeo.apidoc.core"), snapshot.getBundleGroup(filterName).getBundleIds());
+        assertEquals(Arrays.asList("org.nuxeo.apidoc.core"), snapshot.getBundleIds());
+        assertTrue(snapshot.getComponentIds().isEmpty());
+        assertTrue(snapshot.getServiceIds().isEmpty());
+        assertTrue(snapshot.getExtensionPointIds().isEmpty());
+        assertTrue(snapshot.getContributionIds().isEmpty());
+        assertTrue(snapshot.getOperations().isEmpty());
+        assertEquals(Arrays.asList(MOCK_PACKAGE_ID),
+                snapshot.getPackages().stream().map(PackageInfo::getId).collect(Collectors.toList()));
+    }
+
+    @Test
+    public void testFilterNuxeoPackageExcludeJavaPackageBundle() {
+        String filterName = "apidoc-pack-filter-java-pack";
+        PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, false, null);
+        filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
+        filter.addExcludedPackagesPrefix("org.nuxeo.ecm.automation.core.operations");
+
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
+
+        checkApiDoc(filterName, snapshot, false, true);
+    }
+
+    @Test
+    public void testFilterExcludePackage() {
+        String filterName = "apidoc-pack-filter-bundle";
+        PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, false, null);
+        filter.addExcludedNuxeoPackage(MOCK_PACKAGE_NAME);
+
+        DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
+
+        assertNotNull(snapshot);
+        assertEquals(Arrays.asList(filterName),
+                snapshot.getBundleGroups().stream().map(BundleGroup::getId).collect(Collectors.toList()));
+        assertTrue(snapshot.getBundleGroup(filterName).getBundleIds().isEmpty());
+        assertTrue(snapshot.getBundleIds().isEmpty());
+        assertTrue(snapshot.getComponentIds().isEmpty());
+        assertTrue(snapshot.getServiceIds().isEmpty());
+        assertTrue(snapshot.getExtensionPointIds().isEmpty());
+        assertTrue(snapshot.getContributionIds().isEmpty());
+        assertTrue(snapshot.getOperations().isEmpty());
+        assertTrue(snapshot.getPackages().isEmpty());
+    }
+
+    @Test
+    public void testFilterNuxeoPackagePrefix() {
         String filterName = "apidoc-pack";
         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, true, null);
         filter.addNuxeoPackage("platform-");
 
         DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
-        checkApiDoc(filterName, snapshot, false);
+        checkApiDoc(filterName, snapshot, false, false);
     }
 
     @Test
-    public void testFilterNuxeoPackageReference() throws IOException {
+    public void testFilterNuxeoPackageReference() {
         String filterName = "apidoc-pack";
         PersistSnapshotFilter filter = new PersistSnapshotFilter(filterName, false,
                 TargetExtensionPointSnapshotFilter.class);
         filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
 
         DistributionSnapshot snapshot = snapshotManager.persistRuntimeSnapshot(session, "apidoc", null, null, filter);
-        checkApiDoc(filterName, snapshot, true);
+        checkApiDoc(filterName, snapshot, true, false);
     }
 
     @Test
-    public void testFilterJavaPackagePrefix() throws IOException {
+    public void testFilterJavaPackagePrefix() {
         PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc-java");
         filter.addPackagesPrefix("org.nuxeo.ecm.automation.core.operations.services.query");
         filter.addPackagesPrefix("org.nuxeo.ecm.automation.core.operations.services.workmanager");
