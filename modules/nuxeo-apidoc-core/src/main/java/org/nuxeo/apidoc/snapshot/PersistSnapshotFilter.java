@@ -46,9 +46,15 @@ public class PersistSnapshotFilter implements SnapshotFilter {
 
     protected final List<String> bundles = new ArrayList<>();
 
+    protected final List<String> excludedBundles = new ArrayList<>();
+
     protected final List<String> nxpackages = new ArrayList<>();
 
+    protected final List<String> excludedNxPackages = new ArrayList<>();
+
     protected final List<String> javaPackagePrefixes = new ArrayList<>();
+
+    protected final List<String> excludedJavaPackagePrefixes = new ArrayList<>();
 
     public PersistSnapshotFilter(String bundleGroupName) {
         this(bundleGroupName, true);
@@ -105,12 +111,25 @@ public class PersistSnapshotFilter implements SnapshotFilter {
         bundles.add(bundlePrefix);
     }
 
+    /** since 22.0.0 */
+    public void addExcludedBundle(String bundlePrefix) {
+        excludedBundles.add(bundlePrefix);
+    }
+
     public void addNuxeoPackage(String nuxeoPackage) {
         nxpackages.add(nuxeoPackage);
     }
 
+    public void addExcludedNuxeoPackage(String nuxeoPackage) {
+        excludedNxPackages.add(nuxeoPackage);
+    }
+
     public void addPackagesPrefix(String packagesPrefix) {
         javaPackagePrefixes.add(packagesPrefix);
+    }
+
+    public void addExcludedPackagesPrefix(String packagesPrefix) {
+        excludedJavaPackagePrefixes.add(packagesPrefix);
     }
 
     protected boolean check(String candidate, String selection) {
@@ -125,9 +144,19 @@ public class PersistSnapshotFilter implements SnapshotFilter {
                 return true;
             }
         }
+        for (String sb : excludedBundles) {
+            if (check(bundleId, sb)) {
+                return false;
+            }
+        }
         for (String sp : nxpackages) {
             if (bundle.getPackages().stream().anyMatch(s -> check(s, sp))) {
                 return true;
+            }
+        }
+        for (String sp : excludedBundles) {
+            if (bundle.getPackages().stream().anyMatch(s -> check(s, sp))) {
+                return false;
             }
         }
         if (checkOps) {
@@ -160,6 +189,11 @@ public class PersistSnapshotFilter implements SnapshotFilter {
                 return true;
             }
         }
+        for (String pprefix : excludedJavaPackagePrefixes) {
+            if (op.getOperationClass().startsWith(pprefix)) {
+                return false;
+            }
+        }
         if (checkComponents) {
             ComponentInfo comp = op.getComponent();
             if (comp != null) {
@@ -181,10 +215,20 @@ public class PersistSnapshotFilter implements SnapshotFilter {
                 return true;
             }
         }
+        for (String sp : excludedNxPackages) {
+            if (check(pkg.getName(), sp)) {
+                return false;
+            }
+        }
         for (String bundle : pkg.getBundles()) {
             for (String sb : bundles) {
                 if (check(bundle, sb)) {
                     return true;
+                }
+            }
+            for (String sb : excludedBundles) {
+                if (check(bundle, sb)) {
+                    return false;
                 }
             }
         }
