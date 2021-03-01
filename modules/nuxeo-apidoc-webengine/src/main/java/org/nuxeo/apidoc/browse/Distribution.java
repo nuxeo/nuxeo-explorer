@@ -373,10 +373,13 @@ public class Distribution extends ModuleRoot {
         FormData formData = getContext().getForm();
 
         String bundleList = formData.getString("bundles");
+        String ebundleList = formData.getString("excludedBundles");
         String javaPkgList = formData.getString("javaPackages");
-        String nxPkgList = formData.getString("nxPackages");
+        String ejavaPkgList = formData.getString("excludedJavaPackages");
+        String nxPkgList = formData.getString("nuxeoPackages");
+        String enxPkgList = formData.getString("excludedNuxeoPackages");
 
-        if (StringUtils.isBlank(bundleList) && StringUtils.isBlank(javaPkgList) && StringUtils.isBlank(nxPkgList)) {
+        if (StringUtils.isAllBlank(bundleList, javaPkgList, nxPkgList, ebundleList, ejavaPkgList, enxPkgList)) {
             // no actual filtering
             return null;
         }
@@ -389,17 +392,26 @@ public class Distribution extends ModuleRoot {
                 includeReferences ? TargetExtensionPointSnapshotFilter.class : null);
 
         if (bundleList != null) {
-            Arrays.stream(bundleList.split("\n")).filter(StringUtils::isNotBlank).forEach(bid -> filter.addBundle(bid));
+            Arrays.stream(bundleList.split("\n")).filter(StringUtils::isNotBlank).forEach(filter::addBundle);
+        }
+        if (ebundleList != null) {
+            Arrays.stream(ebundleList.split("\n")).filter(StringUtils::isNotBlank).forEach(filter::addExcludedBundle);
         }
         if (javaPkgList != null) {
-            Arrays.stream(javaPkgList.split("\n"))
+            Arrays.stream(javaPkgList.split("\n")).filter(StringUtils::isNotBlank).forEach(filter::addPackagesPrefix);
+        }
+        if (ejavaPkgList != null) {
+            Arrays.stream(ejavaPkgList.split("\n"))
                   .filter(StringUtils::isNotBlank)
-                  .forEach(pkg -> filter.addPackagesPrefix(pkg));
+                  .forEach(filter::addExcludedPackagesPrefix);
         }
         if (nxPkgList != null) {
-            Arrays.stream(nxPkgList.split("\n"))
+            Arrays.stream(nxPkgList.split("\n")).filter(StringUtils::isNotBlank).forEach(filter::addNuxeoPackage);
+        }
+        if (enxPkgList != null) {
+            Arrays.stream(enxPkgList.split("\n"))
                   .filter(StringUtils::isNotBlank)
-                  .forEach(pkg -> filter.addNuxeoPackage(pkg));
+                  .forEach(filter::addExcludedNuxeoPackage);
         }
 
         return filter;
