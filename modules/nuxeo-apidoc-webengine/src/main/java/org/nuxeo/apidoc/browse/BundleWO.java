@@ -59,11 +59,12 @@ public class BundleWO extends NuxeoArtifactWebObject<BundleInfo> {
         BundleInfo bundle = getNxArtifact();
         t.arg("readme", EmbeddedDocExtractor.getHtmlFromMarkdown(bundle.getReadme()));
         t.arg("parentReadme", EmbeddedDocExtractor.getHtmlFromMarkdown(bundle.getParentReadme()));
-        List<Exporter> exporters = getSnapshotManager().getExporters()
-                                                       .stream()
-                                                       .filter(e -> e.displayOn("bundle"))
-                                                       .collect(Collectors.toList());
+        List<Exporter> allExporters = getSnapshotManager().getExporters();
+        List<Exporter> exporters = allExporters.stream()
+                                               .filter(e -> e.displayOn("bundle"))
+                                               .collect(Collectors.toList());
         t.arg("exporters", exporters);
+        t.arg("exporterCharts", exporters.stream().filter(e -> e.displayOn("chart")).collect(Collectors.toList()));
         t.arg("requirements", getRequirementsInfo(getSnapshot(), getNxArtifact().getRequirements()));
         return t;
     }

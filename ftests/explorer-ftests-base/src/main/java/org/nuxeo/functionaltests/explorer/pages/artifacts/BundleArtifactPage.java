@@ -65,7 +65,8 @@ public class BundleArtifactPage extends ArtifactPage {
                 + "Packages\n" //
                 + "Maven Artifact\n"//
                 + "Manifest\n" //
-                + "Exports";
+                + "Exports\n" //
+                + "Charts";
         if (partial) {
             groupTitle = "In bundle group my-partial-server";
         }
@@ -79,7 +80,8 @@ public class BundleArtifactPage extends ArtifactPage {
                     + "Components\n" //
                     + "Maven Artifact\n" //
                     + "Manifest\n" //
-                    + "Exports";
+                    + "Exports\n" //
+                    + "Charts";
         }
         checkCommon("Bundle org.nuxeo.apidoc.core", "Bundle org.nuxeo.apidoc.core", groupTitle, toc);
         try {
@@ -110,7 +112,8 @@ public class BundleArtifactPage extends ArtifactPage {
                         + "Packages\n" //
                         + "Maven Artifact\n" //
                         + "Manifest\n" //
-                        + "Exports");
+                        + "Exports\n" //
+                        + "Charts");
         checkGroupId("org.nuxeo.ecm.platform");
         checkArtifactId("nuxeo-apidoc-webengine");
         checkRequirements(Arrays.asList("org.nuxeo.ecm.webengine.core", "org.nuxeo.apidoc.core"));
@@ -126,7 +129,8 @@ public class BundleArtifactPage extends ArtifactPage {
                         + "Packages\n" //
                         + "Maven Artifact\n" //
                         + "Manifest\n" //
-                        + "Exports");
+                        + "Exports\n" //
+                        + "Charts");
         checkGroupId("org.nuxeo.ecm.platform");
         checkArtifactId("nuxeo-apidoc-repo");
         checkRequirements(null);

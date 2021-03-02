@@ -109,11 +109,12 @@ public class PackageWO extends NuxeoArtifactWebObject<PackageInfo> {
         t.arg("optionalDependencies", getDependenciesInfo(snapshot, pkg.getOptionalDependencies()));
         t.arg("conflicts", getDependenciesInfo(snapshot, pkg.getConflicts()));
 
-        List<Exporter> exporters = getSnapshotManager().getExporters()
-                                                       .stream()
-                                                       .filter(e -> e.displayOn("package"))
-                                                       .collect(Collectors.toList());
+        List<Exporter> allExporters = getSnapshotManager().getExporters();
+        List<Exporter> exporters = allExporters.stream()
+                                               .filter(e -> e.displayOn("package"))
+                                               .collect(Collectors.toList());
         t.arg("exporters", exporters);
+        t.arg("exporterCharts", exporters.stream().filter(e -> e.displayOn("chart")).collect(Collectors.toList()));
         return t;
     }
 

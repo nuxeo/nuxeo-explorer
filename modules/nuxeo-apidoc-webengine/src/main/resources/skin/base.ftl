@@ -25,6 +25,10 @@
   <script src="${skinPath}/script/jquery.highlight-3.js"></script>
   <script src="${skinPath}/script/jquery.toc.js"></script>
   <script src="${skinPath}/script/jquery.utils.js"></script>
+  <script src="${skinPath}/script/jquery.tablesorter.js"></script>
+  <script src="${skinPath}/script/jquery.tablesorter_filter.js"></script>
+  <script src="${skinPath}/script/plotly-1.58.4.min.js"></script>
+  <script src="${skinPath}/script/plotly.chart.js"></script>
   <@block name="header_scripts" />
 
 </head>

@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2021 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@
 package org.nuxeo.apidoc.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -38,15 +38,17 @@ import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.connect.update.PackageException;
 import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 
 /**
- * @since 20.0.0
+ * @since 22.0.0
  */
 @RunWith(FeaturesRunner.class)
 @Features(RuntimeSnaphotFeature.class)
-public class TestGraphExport extends AbstractApidocTest {
+@Deploy("org.nuxeo.apidoc.repo:apidoc-automation-test-contrib.xml")
+public class TestStatExport extends AbstractApidocTest {
 
     @Inject
     protected CoreSession session;
@@ -61,54 +63,37 @@ public class TestGraphExport extends AbstractApidocTest {
 
     @Test
     public void testGetExporter() {
-        assertNull(snapshotManager.getExporter("foo"));
-
-        Exporter exporter = snapshotManager.getExporter("jsonGraph");
+        Exporter exporter = snapshotManager.getExporter("jsonContributionStats");
         assertNotNull(exporter);
-        assertEquals("jsonGraph", exporter.getName());
-        assertEquals("Json Graph", exporter.getTitle());
-        assertEquals("Json dependency graph", exporter.getDescription());
-        assertEquals("graph.json", exporter.getFilename());
+        assertEquals("jsonContributionStats", exporter.getName());
+        assertEquals("Json Contribution Stats", exporter.getTitle());
+        assertEquals("Json statistics for contributions", exporter.getDescription());
+        assertEquals("contribution_stats.json", exporter.getFilename());
         assertEquals("application/json", exporter.getMimetype());
-        assertTrue(exporter.getProperties().isEmpty());
-
-        exporter = snapshotManager.getExporter("dotGraph");
-        assertNotNull(exporter);
-        assertEquals("dotGraph", exporter.getName());
-        assertEquals("DOT Graph", exporter.getTitle());
-        assertEquals("Dependency graph exported in DOT format", exporter.getDescription());
-        assertEquals("graph.dot", exporter.getFilename());
-        assertEquals("application/octet-stream", exporter.getMimetype());
-        assertTrue(exporter.getProperties().isEmpty());
+        assertFalse(exporter.getProperties().isEmpty());
     }
 
-    protected void checkDefaultExports(DistributionSnapshot snapshot) throws IOException {
+    protected void checkExport(DistributionSnapshot snapshot) throws IOException {
         assertNotNull(snapshot);
 
         PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc");
         filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
 
-        Exporter exporter = snapshotManager.getExporter("jsonGraph");
+        Exporter exporter = snapshotManager.getExporter("jsonContributionStats");
         try (ByteArrayOutputStream sinkJson = new ByteArrayOutputStream()) {
             exporter.export(sinkJson, snapshot, filter, Collections.singletonMap("pretty", "true"));
-            checkJsonContentEquals("export/graphs/basic_graph.json", sinkJson.toString());
-        }
-
-        exporter = snapshotManager.getExporter("dotGraph");
-        try (ByteArrayOutputStream sinkDot = new ByteArrayOutputStream()) {
-            exporter.export(sinkDot, snapshot, filter, null);
-            checkJsonContentEquals("export/graphs/jgrapht.dot", sinkDot.toString());
+            checkJsonContentEquals("export/contribution_stats.json", sinkJson.toString());
         }
     }
 
     @Test
     public void testExportLive() throws IOException {
-        checkDefaultExports(snapshotManager.getRuntimeSnapshot());
+        checkExport(snapshotManager.getRuntimeSnapshot());
     }
 
     @Test
     public void testExportPersisted() throws IOException {
-        checkDefaultExports(snapshotManager.persistRuntimeSnapshot(session));
+        checkExport(snapshotManager.persistRuntimeSnapshot(session));
     }
 
 }

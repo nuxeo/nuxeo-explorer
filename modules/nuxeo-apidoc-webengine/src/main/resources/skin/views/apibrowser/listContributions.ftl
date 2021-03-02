@@ -1,9 +1,5 @@
 <@extends src="base.ftl">
 <@block name="title">All Contributions</@block>
-<@block name="header_scripts">
-  <script type="text/javascript" src="${skinPath}/script/jquery.tablesorter.js"></script>
-  <script type="text/javascript" src="${skinPath}/script/jquery.tablesorter_filter.js"></script>
-</@block>
 
 <@block name="right">
 <#include "/docMacros.ftl">

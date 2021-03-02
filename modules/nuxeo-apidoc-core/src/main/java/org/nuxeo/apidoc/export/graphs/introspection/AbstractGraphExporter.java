@@ -51,7 +51,7 @@ import org.nuxeo.apidoc.snapshot.SnapshotFilter;
  */
 public abstract class AbstractGraphExporter extends AbstractExporter {
 
-    public AbstractGraphExporter(ExporterDescriptor descriptor) {
+    protected AbstractGraphExporter(ExporterDescriptor descriptor) {
         super(descriptor);
     }
 
