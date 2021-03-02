@@ -67,6 +67,15 @@
     </#list>
   </ul>
 
+  <#if exporterCharts?size gt 0>
+    <h2 class="toc">Charts</h2>
+    <ul class="charts">
+    <#list exporterCharts as exporter>
+      <#include "/views/chart/chart.ftl">
+    </#list>
+    </ul>
+  </#if>
+
 </div>
 
 </@block>
