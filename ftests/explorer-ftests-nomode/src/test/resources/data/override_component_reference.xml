@@ -24,6 +24,27 @@
         <on>package</on>
       </display>
     </exporter>
+    <exporter class="org.nuxeo.apidoc.export.stats.JsonContributionStatsExporter" id="jsonContributionStats">
+      <title>Json Contribution Stats</title>
+      <description>Json statistics for contributions</description>
+      <filename>contribution_stats.json</filename>
+      <mimetype>application/json</mimetype>
+      <display>
+        <on>home</on>
+        <on>bundle</on>
+        <on>package</on>
+        <on>chart</on>
+      </display>
+      <properties>
+        <property name="scriptingCodeType">
+          org.nuxeo.automation.scripting.internals.AutomationScriptingComponent--operation
+        </property>
+        <property name="javaCodeType">
+          org.nuxeo.ecm.core.operation.OperationServiceComponent--operations,
+          org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters
+        </property>
+      </properties>
+    </exporter>
     <exporter class="org.nuxeo.apidoc.export.graphs.plugins.DOTGraphExporter" id="dotGraph">
       <title>DOT Graph</title>
       <description>Dependency graph exported in DOT format</description>

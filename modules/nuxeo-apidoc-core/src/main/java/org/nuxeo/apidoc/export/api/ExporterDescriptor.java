@@ -19,6 +19,7 @@
 package org.nuxeo.apidoc.export.api;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,11 +56,11 @@ public class ExporterDescriptor implements Descriptor {
     @XNode("mimetype")
     String mimetype;
 
-    @XNodeList(value = "display/on", type = ArrayList.class, componentType = String.class)
-    List<String> displays = new ArrayList<>();
+    @XNodeList(value = "display/on", type = ArrayList.class, componentType = String.class, nullByDefault = true)
+    List<String> displays;
 
-    @XNodeMap(value = "properties/property", key = "@name", type = HashMap.class, componentType = String.class)
-    Map<String, String> properties = new HashMap<>();
+    @XNodeMap(value = "properties/property", key = "@name", type = HashMap.class, componentType = String.class, nullByDefault = true)
+    Map<String, String> properties;
 
     @Override
     public String getId() {
@@ -88,11 +89,29 @@ public class ExporterDescriptor implements Descriptor {
     }
 
     public Map<String, String> getProperties() {
-        return properties;
+        if (properties == null) {
+            return Collections.emptyMap();
+        }
+        return Collections.unmodifiableMap(properties);
     }
 
     public boolean displayOn(String page) {
         return displays != null && displays.contains(page);
+    }
+
+    @Override
+    public org.nuxeo.runtime.model.Descriptor merge(org.nuxeo.runtime.model.Descriptor o) {
+        ExporterDescriptor other = (ExporterDescriptor) o;
+        ExporterDescriptor merged = new ExporterDescriptor();
+        merged.id = id;
+        merged.klass = other.klass != null ? other.klass : klass;
+        merged.title = other.title != null ? other.title : title;
+        merged.description = other.description != null ? other.description : description;
+        merged.filename = other.filename != null ? other.filename : filename;
+        merged.mimetype = other.mimetype != null ? other.mimetype : mimetype;
+        merged.displays = other.displays != null ? other.displays : displays;
+        merged.properties = other.properties != null ? other.properties : properties;
+        return merged;
     }
 
 }

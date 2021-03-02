@@ -1,0 +1,132 @@
+{
+  "stats": [
+    {
+      "codeType": "XML",
+      "extensionId": "org.nuxeo.apidoc.adapterContrib--adapters",
+      "fromStudio": false,
+      "numberOfContributions": 17,
+      "targetExtensionPointId": "org.nuxeo.ecm.core.api.DocumentAdapterService--adapters",
+      "targetExtensionPointPresent": true
+    },
+    {
+      "codeType": "XML",
+      "extensionId": "org.nuxeo.apidoc.doctypeContrib--doctype",
+      "fromStudio": false,
+      "numberOfContributions": 10,
+      "targetExtensionPointId": "org.nuxeo.ecm.core.schema.TypeService--doctype",
+      "targetExtensionPointPresent": true
+    },
+    {
+      "codeType": "XML",
+      "extensionId": "org.nuxeo.apidoc.lifecycle.contrib--lifecycle",
+      "fromStudio": false,
+      "numberOfContributions": 1,
+      "targetExtensionPointId": "org.nuxeo.ecm.core.lifecycle.LifeCycleService--lifecycle",
+      "targetExtensionPointPresent": true
+    },
+    {
+      "codeType": "XML",
+      "extensionId": "org.nuxeo.apidoc.lifecycle.contrib--types",
+      "fromStudio": false,
+      "numberOfContributions": 1,
+      "targetExtensionPointId": "org.nuxeo.ecm.core.lifecycle.LifeCycleService--types",
+      "targetExtensionPointPresent": true
+    },
+    {
+      "codeType": "XML",
+      "extensionId": "org.nuxeo.apidoc.listener.contrib--listener",
+      "fromStudio": false,
+      "numberOfContributions": 3,
+      "targetExtensionPointId": "org.nuxeo.ecm.core.event.EventServiceComponent--listener",
+      "targetExtensionPointPresent": true
+    },
+    {
+      "codeType": "XML",
+      "extensionId": "org.nuxeo.apidoc.schemaContrib--schema",
+      "fromStudio": false,
+      "numberOfContributions": 10,
+      "targetExtensionPointId": "org.nuxeo.ecm.core.schema.TypeService--schema",
+      "targetExtensionPointPresent": true
+    },
+    {
+      "codeType": "XML",
+      "extensionId": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration",
+      "fromStudio": false,
+      "numberOfContributions": 1,
+      "targetExtensionPointId": "org.nuxeo.runtime.ConfigurationService--configuration",
+      "targetExtensionPointPresent": true
+    },
+    {
+      "codeType": "XML",
+      "extensionId": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1",
+      "fromStudio": false,
+      "numberOfContributions": 1,
+      "targetExtensionPointId": "org.nuxeo.runtime.ConfigurationService--configuration",
+      "targetExtensionPointPresent": true
+    },
+    {
+      "codeType": "XML",
+      "extensionId": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2",
+      "fromStudio": false,
+      "numberOfContributions": 2,
+      "targetExtensionPointId": "org.nuxeo.runtime.ConfigurationService--configuration",
+      "targetExtensionPointPresent": true
+    },
+    {
+      "codeType": "XML",
+      "extensionId": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3",
+      "fromStudio": false,
+      "numberOfContributions": 2,
+      "targetExtensionPointId": "org.nuxeo.runtime.ConfigurationService--configuration",
+      "targetExtensionPointPresent": true
+    },
+    {
+      "codeType": "JAVA",
+      "extensionId": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+      "fromStudio": false,
+      "numberOfContributions": 3,
+      "targetExtensionPointId": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
+      "targetExtensionPointPresent": true
+    },
+    {
+      "codeType": "XML",
+      "extensionId": "org.nuxeo.apidoc.test.automation--chains",
+      "fromStudio": false,
+      "numberOfContributions": 1,
+      "targetExtensionPointId": "org.nuxeo.ecm.core.operation.OperationServiceComponent--chains",
+      "targetExtensionPointPresent": true
+    },
+    {
+      "codeType": "SCRIPTING",
+      "extensionId": "org.nuxeo.apidoc.test.automation--operation",
+      "fromStudio": false,
+      "numberOfContributions": 1,
+      "targetExtensionPointId": "org.nuxeo.automation.scripting.internals.AutomationScriptingComponent--operation",
+      "targetExtensionPointPresent": true
+    },
+    {
+      "codeType": "JAVA",
+      "extensionId": "org.nuxeo.apidoc.test.automation--operations",
+      "fromStudio": false,
+      "numberOfContributions": 1,
+      "targetExtensionPointId": "org.nuxeo.ecm.core.operation.OperationServiceComponent--operations",
+      "targetExtensionPointPresent": true
+    },
+    {
+      "codeType": "XML",
+      "extensionId": "org.nuxeo.apidoc.test.works--queues",
+      "fromStudio": false,
+      "numberOfContributions": 1,
+      "targetExtensionPointId": "org.nuxeo.ecm.core.work.service--queues",
+      "targetExtensionPointPresent": true
+    },
+    {
+      "codeType": "XML",
+      "extensionId": "org.nuxeo.apidoc.test.works--queues1",
+      "fromStudio": false,
+      "numberOfContributions": 1,
+      "targetExtensionPointId": "org.nuxeo.ecm.core.work.service--queues",
+      "targetExtensionPointPresent": true
+    }
+  ]
+}
