@@ -128,6 +128,16 @@
     </#list>
   </ul>
 
+  <#if exporterCharts?size gt 0>
+    <h2 class="toc">Charts</h2>
+    <ul class="charts">
+    <#assign filter="bundles=${nxItem.id}" />
+    <#list exporterCharts as exporter>
+      <#include "/views/chart/chart.ftl">
+    </#list>
+    </ul>
+  </#if>
+
   <@tocTrigger />
 
 </div>

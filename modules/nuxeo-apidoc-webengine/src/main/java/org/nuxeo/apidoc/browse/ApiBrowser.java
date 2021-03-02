@@ -135,11 +135,13 @@ public class ApiBrowser extends DefaultObject {
         if (embeddedMode) {
             view.arg("bundleIds", bundleIds);
         } else {
-            List<Exporter> exporters = getSnapshotManager().getExporters()
-                                                           .stream()
-                                                           .filter(e -> e.displayOn("home"))
-                                                           .collect(Collectors.toList());
+            List<Exporter> allExporters = getSnapshotManager().getExporters();
+            List<Exporter> exporters = allExporters.stream()
+                                                   .filter(e -> e.displayOn("home"))
+                                                   .collect(Collectors.toList());
             view.arg("exporters", exporters);
+            view.arg("exporterCharts",
+                    exporters.stream().filter(e -> e.displayOn("chart")).collect(Collectors.toList()));
         }
         return view;
     }
@@ -462,7 +464,7 @@ public class ApiBrowser extends DefaultObject {
             @QueryParam("checkAsPrefixes") Boolean checkAsPrefixes,
             @QueryParam("includeReferences") Boolean includeReferences, @QueryParam("pretty") Boolean pretty)
             throws IOException {
-        Map<String, String> props = Boolean.TRUE.equals(pretty) ? Map.of("pretty", "true") : null;
+        Map<String, String> props = Boolean.TRUE.equals(pretty) ? Map.of("pretty", "true") : Collections.emptyMap();
         SnapshotFilter filter = getSnapshotFilter(bundles, excludedBundles, nuxeoPackages, excludedNuxeoPackages,
                 javaPackagePrefixes, excludedJavaPackagePrefixes, checkAsPrefixes, includeReferences);
         Exporter exporter = getSnapshotManager().getExporter(exporterName);

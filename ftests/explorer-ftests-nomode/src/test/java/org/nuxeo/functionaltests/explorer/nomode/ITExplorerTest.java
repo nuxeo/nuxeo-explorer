@@ -62,7 +62,7 @@ import org.nuxeo.functionaltests.explorer.testing.AbstractExplorerTest;
  */
 public class ITExplorerTest extends AbstractExplorerTest {
 
-    protected static String LIVE_NAME = "Nuxeo Platform";
+    protected static final String LIVE_NAME = "Nuxeo Platform";
 
     protected static String liveVersion;
 

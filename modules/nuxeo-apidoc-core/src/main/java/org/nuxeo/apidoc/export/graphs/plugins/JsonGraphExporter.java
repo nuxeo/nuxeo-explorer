@@ -85,9 +85,4 @@ public class JsonGraphExporter extends AbstractGraphExporter {
         }
     }
 
-    protected boolean isPrettyPrint(Map<String, String> properties, String defaultValue) {
-        return Boolean.valueOf(getProperties().getOrDefault("pretty", defaultValue))
-                || (properties != null && Boolean.valueOf(properties.getOrDefault("pretty", defaultValue)));
-    }
-
 }
