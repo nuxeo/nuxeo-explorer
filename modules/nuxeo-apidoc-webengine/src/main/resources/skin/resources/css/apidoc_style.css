@@ -1311,3 +1311,36 @@ table.gsc-table-result td {
 .declaredStartOrder {
   font-weight: bold;
 }
+
+.charts {
+  width: 100%;
+}
+
+.chart {
+  width: 50%;
+}
+
+.chartError {
+  color:red;
+  font-weight:bold;
+}
+
+.chart.main {
+  float: left;
+  padding-right: 1em;
+}
+
+.chart.details {
+  float: right;
+  padding-left: 1em;
+}
+
+table.chart {
+  border-spacing: 0;
+  width: 100%;
+}
+
+.chartHeader {
+  font-size: large;
+  padding: 1em;
+}

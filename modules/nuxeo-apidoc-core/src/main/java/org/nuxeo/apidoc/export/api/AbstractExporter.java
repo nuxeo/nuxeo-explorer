@@ -28,7 +28,9 @@ public abstract class AbstractExporter implements Exporter {
 
     protected final ExporterDescriptor descriptor;
 
-    public AbstractExporter(ExporterDescriptor descriptor) {
+    protected static final String PRETTY_PROPERTY = "pretty";
+
+    protected AbstractExporter(ExporterDescriptor descriptor) {
         this.descriptor = descriptor;
     }
 
@@ -65,6 +67,11 @@ public abstract class AbstractExporter implements Exporter {
     @Override
     public boolean displayOn(String page) {
         return descriptor.displayOn(page);
+    }
+
+    protected boolean isPrettyPrint(Map<String, String> properties, String defaultValue) {
+        return Boolean.parseBoolean(getProperties().getOrDefault(PRETTY_PROPERTY, defaultValue))
+                || (properties != null && Boolean.parseBoolean(properties.getOrDefault(PRETTY_PROPERTY, defaultValue)));
     }
 
 }

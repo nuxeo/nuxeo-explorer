@@ -95,7 +95,8 @@ public class PackageArtifactPage extends ArtifactPage {
                         + "Services\n" //
                         + "Extension Points\n" //
                         + "Contributions\n" //
-                        + "Exports");
+                        + "Exports\n" //
+                        + "Charts");
         String version = packageVersion.getText();
         assertFalse(StringUtils.isBlank(version));
         checkPackageId("platform-explorer-" + version);
