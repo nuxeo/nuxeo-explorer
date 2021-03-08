@@ -366,7 +366,7 @@ public class TestJson extends AbstractApidocTest {
         assertTrue(smcomp.getAliases().isEmpty());
         ComponentInfo testcomp = snapshot.getComponent("org.nuxeo.apidoc.test.works");
         assertNotNull(testcomp);
-        assertEquals(List.of("org.nuxeo.apidoc.test.works.alias"), testcomp.getAliases());
+        assertEquals(Arrays.asList("org.nuxeo.apidoc.test.works.alias"), testcomp.getAliases());
         assertNotNull(snapshot.getComponent("org.nuxeo.apidoc.test.works.alias"));
         ComponentInfo opComp = snapshot.getComponent("org.nuxeo.ecm.core.operation.OperationServiceComponent");
         ExtensionPointInfo opXP = snapshot.getExtensionPoint(

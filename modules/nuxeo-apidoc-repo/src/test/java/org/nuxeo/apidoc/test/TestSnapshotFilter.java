@@ -95,7 +95,6 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                     "org.nuxeo.apidoc.test.automation", "org.nuxeo.apidoc.test.works",
                     // referenced components
                     "org.nuxeo.automation.scripting.internals.AutomationScriptingComponent",
-                    "org.nuxeo.ecm.automation.core.AutomationComponent",
                     "org.nuxeo.ecm.core.api.DocumentAdapterService", "org.nuxeo.ecm.core.event.EventServiceComponent",
                     "org.nuxeo.ecm.core.lifecycle.LifeCycleService",
                     "org.nuxeo.ecm.core.operation.OperationServiceComponent", "org.nuxeo.ecm.core.schema.TypeService",
