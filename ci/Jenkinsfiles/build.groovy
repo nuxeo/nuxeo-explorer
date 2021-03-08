@@ -83,10 +83,10 @@ String getPreviewNamespace(isReferenceBranch, branchName) {
 String getPreviewTemplatesOverride(isReferenceBranch) {
   if (isReferenceBranch) {
     // activate dedicated profiles on 21.0_11.3 preview
-    return 'nuxeo.templates=default,mongodb,explorer-virtualadmin'
+    return 'nuxeo.templates=default,mongodb,explorer-virtualadmin,explorer-stats'
   }
-  // NXP-29494: override templates to avoid activating s3 in PR preview
-  return 'nuxeo.templates=default'
+  // NXP-29494: override templates to avoid activating s3 in PR preview + add stats
+  return 'nuxeo.templates=default,explorer-stats'
 }
 
 pipeline {
