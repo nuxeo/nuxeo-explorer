@@ -38,6 +38,7 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.ComparisonFailure;
 import org.junit.runner.RunWith;
@@ -128,7 +129,7 @@ public abstract class AbstractApidocTest {
         checkContentEquals(path, actualContent, UPDATE_REFERENCE_FILES_ON_FAILURE, false, getJsonTestUpdater());
     }
 
-    protected void checkJsonAssertEquals(String path, String actualContent) throws IOException {
+    protected void checkJsonAssertEquals(String path, String actualContent) throws IOException, JSONException {
         String expectedPath = getReferencePath(path);
         String expectedContent = getReferenceContent(expectedPath);
         if (actualContent != null) {
