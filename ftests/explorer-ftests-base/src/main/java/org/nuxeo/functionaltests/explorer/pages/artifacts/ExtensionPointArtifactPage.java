@@ -84,12 +84,12 @@ public class ExtensionPointArtifactPage extends ArtifactPage {
         checkAliases(null);
     }
 
-    public void checkAutomationOperations() {
-        checkCommon("Extension point org.nuxeo.ecm.automation.core.AutomationComponent--operations",
-                "Extension point operations", "In component org.nuxeo.ecm.automation.core.AutomationComponent",
+    public void checkScheduler() {
+        checkCommon("Extension point org.nuxeo.ecm.core.scheduler.SchedulerService--schedule",
+                "Extension point schedule", "In component org.nuxeo.ecm.core.scheduler.SchedulerService",
                 "Documentation\n" + "Aliases\n" + "Contribution Descriptors\n" + "Existing Contributions");
-        checkDescriptorsText("org.nuxeo.ecm.automation.core.OperationContribution");
-        checkAliases(List.of("org.nuxeo.ecm.core.operation.OperationServiceComponent--operations"));
+        checkDescriptorsText("org.nuxeo.ecm.core.scheduler.ScheduleImpl");
+        checkAliases(List.of("org.nuxeo.ecm.platform.scheduler.core.service.SchedulerRegistryService--schedule"));
     }
 
     @Override

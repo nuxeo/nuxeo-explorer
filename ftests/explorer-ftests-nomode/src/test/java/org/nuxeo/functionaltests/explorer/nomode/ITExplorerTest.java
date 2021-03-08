@@ -176,11 +176,11 @@ public class ITExplorerTest extends AbstractExplorerTest {
     @Test
     public void testExtensionPointAliases() {
         openAndCheck(getArtifactURL(ExtensionPointInfo.TYPE_NAME, "foo"), true);
-        goToArtifact(ExtensionPointInfo.TYPE_NAME, "org.nuxeo.ecm.automation.core.AutomationComponent--operations");
-        asPage(ExtensionPointArtifactPage.class).checkAutomationOperations();
+        goToArtifact(ExtensionPointInfo.TYPE_NAME, "org.nuxeo.ecm.core.scheduler.SchedulerService--schedule");
+        asPage(ExtensionPointArtifactPage.class).checkScheduler();
         goToArtifact(ExtensionPointInfo.TYPE_NAME,
-                "org.nuxeo.ecm.core.operation.OperationServiceComponent--operations");
-        asPage(ExtensionPointArtifactPage.class).checkAutomationOperations();
+                "org.nuxeo.ecm.platform.scheduler.core.service.SchedulerRegistryService--schedule");
+        asPage(ExtensionPointArtifactPage.class).checkScheduler();
     }
 
     @Test
@@ -273,10 +273,10 @@ public class ITExplorerTest extends AbstractExplorerTest {
     @Test
     public void testComponentAliases() {
         openAndCheck(getArtifactURL(ComponentInfo.TYPE_NAME, "foo"), true);
-        goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.ecm.automation.core.AutomationComponent");
-        asPage(ComponentArtifactPage.class).checkAutomationComponent();
-        goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.ecm.core.operation.OperationServiceComponent");
-        asPage(ComponentArtifactPage.class).checkAutomationComponent();
+        goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.ecm.core.scheduler.SchedulerService");
+        asPage(ComponentArtifactPage.class).checkSchedulerComponent();
+        goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.ecm.platform.scheduler.core.service.SchedulerRegistryService");
+        asPage(ComponentArtifactPage.class).checkSchedulerComponent();
     }
 
     @Test
