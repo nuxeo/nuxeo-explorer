@@ -95,6 +95,7 @@ public class JsonContributionStatsExporter extends AbstractExporter {
         List<String> javaLikeTypes = addAliases(distribution, CodeType.JAVALIKE.getValues(properties, getProperties()));
         List<String> scriptingTypes = addAliases(distribution,
                 CodeType.SCRIPTING.getValues(properties, getProperties()));
+        List<String> xpIds = distribution.getExtensionPointIds();
         return distribution.getContributions()
                            .stream()
                            .sorted(Comparator.comparing(ExtensionInfo::getId))
@@ -104,7 +105,7 @@ public class JsonContributionStatsExporter extends AbstractExporter {
                                stat.setExtensionId(contrib.getId());
                                String xp = contrib.getExtensionPoint();
                                stat.setTargetExtensionPointId(xp);
-                               stat.setTargetExtensionPointPresent(distribution.getExtensionPoint(xp) != null);
+                               stat.setTargetExtensionPointPresent(xpIds.contains(xp));
                                stat.setNumberOfContributions(Long.valueOf(contrib.getContributionItems().size()));
                                stat.setCodeType(computeCodeType(contrib, javaTypes, javaLikeTypes, scriptingTypes));
                                stat.setFromStudio(contrib.getId().startsWith(STUDIO_COMPONENT_PREFIX));
