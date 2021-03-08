@@ -76,10 +76,10 @@ void dockerDeploy(String imageName) {
 String getPreviewTemplatesOverride(isReferenceBranch) {
   if (isReferenceBranch) {
     // activate dedicated profiles on master preview
-    return 'nuxeo.templates=default,mongodb,explorer-sitemode,explorer-virtualadmin'
+    return 'nuxeo.templates=default,mongodb,explorer-sitemode,explorer-virtualadmin,explorer-stats'
   }
-  // NXP-29494: override templates to avoid activating s3 in PR preview
-  return 'nuxeo.templates=default'
+  // NXP-29494: override templates to avoid activating s3 in PR preview + add stats
+  return 'nuxeo.templates=default,explorer-stats'
 }
 
 pipeline {
