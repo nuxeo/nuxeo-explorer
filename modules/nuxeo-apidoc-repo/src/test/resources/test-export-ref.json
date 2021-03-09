@@ -164,7 +164,6 @@
               "extensionPoint": "org.nuxeo.ecm.core.lifecycle.LifeCycleService--lifecycle",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.lifecycle.contrib/Contributions/org.nuxeo.apidoc.lifecycle.contrib--lifecycle",
               "id": "org.nuxeo.apidoc.lifecycle.contrib--lifecycle",
-              "registrationOrder": 1,
               "targetComponentName": {
                 "rawName": "service:org.nuxeo.ecm.core.lifecycle.LifeCycleService",
                 "name": "org.nuxeo.ecm.core.lifecycle.LifeCycleService",
