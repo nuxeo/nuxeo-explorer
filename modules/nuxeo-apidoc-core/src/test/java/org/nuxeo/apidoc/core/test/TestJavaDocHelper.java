@@ -61,16 +61,16 @@ public class TestJavaDocHelper {
     public void testGetUrl() throws IOException {
         JavaDocHelper helper = JavaDocHelper.getHelper(DISTRIB_NAME, "10.10");
         // service
-        check("https://community.nuxeo.com/api/nuxeo/release-10.10/javadoc/org/nuxeo/ecm/core/api/repository/RepositoryManager.html",
+        check("https://community.nuxeo.com/api/nuxeo/10.10/javadoc/org/nuxeo/ecm/core/api/repository/RepositoryManager.html",
                 helper.getUrl("org.nuxeo.ecm.core.api.repository.RepositoryManager"));
         // operation
-        check("https://community.nuxeo.com/api/nuxeo/release-10.10/javadoc/org/nuxeo/ecm/automation/core/operations/document/UpdateDocument.html",
+        check("https://community.nuxeo.com/api/nuxeo/10.10/javadoc/org/nuxeo/ecm/automation/core/operations/document/UpdateDocument.html",
                 helper.getUrl("org.nuxeo.ecm.automation.core.operations.document.UpdateDocument"));
         // check chain special use case
-        check("https://community.nuxeo.com/api/nuxeo/release-10.10/javadoc/org/nuxeo/ecm/automation/core/impl/OperationChainCompiler.CompiledChainImpl.html",
+        check("https://community.nuxeo.com/api/nuxeo/10.10/javadoc/org/nuxeo/ecm/automation/core/impl/OperationChainCompiler.CompiledChainImpl.html",
                 helper.getUrl(OperationChainCompiler.class.getCanonicalName(), "CompiledChainImpl"));
         // Seam component
-        check("https://community.nuxeo.com/api/nuxeo/release-10.10/javadoc/org/nuxeo/ecm/webapp/action/ActionContextProvider.html",
+        check("https://community.nuxeo.com/api/nuxeo/10.10/javadoc/org/nuxeo/ecm/webapp/action/ActionContextProvider.html",
                 helper.getUrl("org.nuxeo.ecm.webapp.action.ActionContextProvider"));
     }
 
@@ -92,16 +92,16 @@ public class TestJavaDocHelper {
     public void testGetUrlLegacy() throws IOException {
         JavaDocHelper helper = JavaDocHelper.getHelper(DISTRIB_NAME, "5.8");
         // service
-        check("https://community.nuxeo.com/api/nuxeo/release-5.8/javadoc/org/nuxeo/ecm/core/api/repository/RepositoryManager.html",
+        check("https://community.nuxeo.com/api/nuxeo/5.8/javadoc/org/nuxeo/ecm/core/api/repository/RepositoryManager.html",
                 helper.getUrl("org.nuxeo.ecm.core.api.repository.RepositoryManager"));
         // operation
-        check("https://community.nuxeo.com/api/nuxeo/release-5.8/javadoc/org/nuxeo/ecm/automation/core/operations/document/UpdateDocument.html",
+        check("https://community.nuxeo.com/api/nuxeo/5.8/javadoc/org/nuxeo/ecm/automation/core/operations/document/UpdateDocument.html",
                 helper.getUrl("org.nuxeo.ecm.automation.core.operations.document.UpdateDocument"));
         // Seam component
-        check("https://community.nuxeo.com/api/nuxeo/release-5.8/javadoc/org/nuxeo/ecm/webapp/action/ActionContextProvider.html",
+        check("https://community.nuxeo.com/api/nuxeo/5.8/javadoc/org/nuxeo/ecm/webapp/action/ActionContextProvider.html",
                 helper.getUrl("org.nuxeo.ecm.webapp.action.ActionContextProvider"));
         // old use case (service removed in versions >= 10.10)
-        check("https://community.nuxeo.com/api/nuxeo/release-5.8/javadoc/org/nuxeo/dam/DamService.html",
+        check("https://community.nuxeo.com/api/nuxeo/5.8/javadoc/org/nuxeo/dam/DamService.html",
                 helper.getUrl("org.nuxeo.dam.DamService"));
     }
 
