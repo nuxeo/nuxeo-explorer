@@ -172,9 +172,9 @@ pipeline {
           Image tag: ${VERSION}
           Registry: ${DOCKER_REGISTRY}
           """
-          def moduleDir = 'docker/nuxeo-explorer-export-docker'
-          withCredentials([string(credentialsId: 'instance-clid', variable: 'INSTANCE_CLID')]) {
-            script {
+          script {
+            def moduleDir = 'docker/nuxeo-explorer-export-docker'
+            withCredentials([string(credentialsId: 'instance-clid', variable: 'INSTANCE_CLID')]) {
               // replace lines by "--"
               def oneLineClid = sh(
                 returnStdout: true,
@@ -186,9 +186,9 @@ pipeline {
                 sh "envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen"
               }
             }
-          }
-          retry(2) {
-            sh "skaffold build -f ${moduleDir}/skaffold.yaml~gen"
+            retry(2) {
+              sh "skaffold build -f ${moduleDir}/skaffold.yaml~gen"
+            }
           }
         }
       }
