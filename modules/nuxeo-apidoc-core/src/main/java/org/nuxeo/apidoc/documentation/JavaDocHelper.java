@@ -19,6 +19,7 @@
  */
 package org.nuxeo.apidoc.documentation;
 
+import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.services.config.ConfigurationService;
@@ -37,6 +38,8 @@ public class JavaDocHelper {
      */
     public static final String DEFAULT_DIST = "nuxeo";
 
+    protected static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
+
     protected final String defaultPrefix;
 
     protected final String docVersion;
@@ -46,18 +49,17 @@ public class JavaDocHelper {
 
     public JavaDocHelper(String prefix, String version) {
         defaultPrefix = prefix;
+        String finalVersion = version;
 
         if (SnapshotManager.DISTRIBUTION_ALIAS_CURRENT.equals(version)) {
             SnapshotManager sm = Framework.getService(SnapshotManager.class);
-            version = sm.getRuntimeSnapshot().getVersion();
+            finalVersion = sm.getRuntimeSnapshot().getVersion();
         }
 
-        if (version.endsWith("-SNAPSHOT")) {
-            version = version.replace("-SNAPSHOT", "");
-        } else {
-            version = "release-" + version;
+        if (finalVersion.endsWith(SNAPSHOT_SUFFIX)) {
+            finalVersion = StringUtils.removeEnd(finalVersion, SNAPSHOT_SUFFIX);
         }
-        docVersion = version;
+        docVersion = finalVersion;
     }
 
     protected String getUrl() {
