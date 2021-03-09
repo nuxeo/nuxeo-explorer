@@ -94,7 +94,7 @@
       "fromStudio": false,
       "numberOfContributions": 1,
       "targetExtensionPointId": "org.nuxeo.ecm.core.operation.OperationServiceComponent--chains",
-      "targetExtensionPointPresent": false
+      "targetExtensionPointPresent": true
     },
     {
       "codeType": "SCRIPTING",
@@ -110,7 +110,7 @@
       "fromStudio": false,
       "numberOfContributions": 1,
       "targetExtensionPointId": "org.nuxeo.ecm.core.operation.OperationServiceComponent--operations",
-      "targetExtensionPointPresent": false
+      "targetExtensionPointPresent": true
     },
     {
       "codeType": "XML",
