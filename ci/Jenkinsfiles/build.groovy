@@ -73,6 +73,13 @@ void dockerDeploy(String imageName) {
   dockerPush(explorerImage)
 }
 
+String getPreviewNamespace(isReferenceBranch, branchName) {
+  if (isReferenceBranch) {
+    return 'nuxeo-explorer-maintenance'
+  }
+  return "nuxeo-explorer-${branchName.toLowerCase()}"
+}
+
 String getPreviewTemplatesOverride(isReferenceBranch) {
   if (isReferenceBranch) {
     // activate dedicated profiles on 21.0_11.3 preview
@@ -97,7 +104,7 @@ pipeline {
     NUXEO_TEMPLATE_OVERRIDE = "${getPreviewTemplatesOverride(BRANCH_NAME == REFERENCE_BRANCH)}"
     NUXEO_IMAGE_VERSION = getNuxeoVersion()
     NUXEO_DOCKER_REGISTRY = 'docker-private.packages.nuxeo.com'
-    PREVIEW_NAMESPACE = "nuxeo-explorer-maintenance"
+    PREVIEW_NAMESPACE = "${getPreviewNamespace(BRANCH_NAME == REFERENCE_BRANCH, BRANCH_NAME)}"
     // APP_NAME and ORG needed for PR preview
     APP_NAME = 'nuxeo-explorer'
     ORG = 'nuxeo'
