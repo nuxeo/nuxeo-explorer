@@ -205,10 +205,14 @@
     var tr = tbody.insertRow();
 
     var id = stat.extensionId;
-    insertCellLink(tr, `${rootURL}/viewContribution/${id}`, getLabel(id));
+    var statRootURL = rootURL;
+    if (stat.distribKey) {
+      statRootURL = `${rootURL}/${stat.distribKey}`;
+    }
+    insertCellLink(tr, `${statRootURL}/viewContribution/${id}`, getLabel(id));
     var xpid = stat.targetExtensionPointId;
     if (stat.targetExtensionPointPresent) {
-      insertCellLink(tr, `${rootURL}/viewExtensionPoint/${xpid}`, getLabel(xpid));
+      insertCellLink(tr, `${statRootURL}/viewExtensionPoint/${xpid}`, getLabel(xpid));
     } else {
       insertCellText(tr, xpid);
     }

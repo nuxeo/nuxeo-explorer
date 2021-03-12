@@ -39,12 +39,14 @@ import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.api.PackageInfo;
 import org.nuxeo.apidoc.api.ServiceInfo;
 import org.nuxeo.apidoc.browse.ApiBrowserConstants;
+import org.nuxeo.apidoc.browse.Distribution;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.functionaltests.RestHelper;
 import org.nuxeo.functionaltests.explorer.pages.DistribAdminPage;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHomePage;
 import org.nuxeo.functionaltests.explorer.pages.ExplorerHomePage;
+import org.nuxeo.functionaltests.explorer.pages.StatsPage;
 import org.nuxeo.functionaltests.explorer.pages.UploadFragment;
 import org.nuxeo.functionaltests.explorer.pages.artifacts.BundleArtifactPage;
 import org.nuxeo.functionaltests.explorer.pages.artifacts.BundleGroupArtifactPage;
@@ -432,6 +434,13 @@ public class ITExplorerTest extends AbstractExplorerTest {
         openAndCheck(getArtifactURL(ServiceInfo.TYPE_NAME, "foo"), true);
         openAndCheck(getArtifactURL(PackageInfo.TYPE_NAME, "foo"), true);
         openAndCheck(getArtifactURL(OperationInfo.TYPE_NAME, "foo"), true);
+    }
+
+    /** @since 22 */
+    @Test
+    public void testStatsPage() throws IOException {
+        open(String.format("%s%s", ExplorerHomePage.URL, Distribution.VIEW_STATS));
+        asPage(StatsPage.class).check();
     }
 
 }
