@@ -107,6 +107,12 @@ public class Distribution extends ModuleRoot {
 
     protected static final String DIST = "distribution";
 
+    /** @since 22.0.0 */
+    public static final String VIEW_PREFIX = "_view";
+
+    /** @since 22.0.0 */
+    public static final String VIEW_STATS = VIEW_PREFIX + "stats";
+
     /** @since 20.0.0 */
     public static final String VIEW_ADMIN = "_admin";
 
@@ -148,9 +154,9 @@ public class Distribution extends ModuleRoot {
      *
      * @since 20.0.0
      */
-    protected static final List<String> SUB_DISTRIBUTION_PATH_RESERVED = Arrays.asList(VIEW_ADMIN, SAVE_ACTION,
-            SAVE_EXTENDED_ACTION, DOWNLOAD_ACTION, UPDATE_ACTION, DO_UPDATE_ACTION, DELETE_ACTION, UPLOAD_ACTION,
-            UPLOAD_TMP_ACTION, UPLOAD_TMP_VALID_ACTION, REINDEX_ACTION);
+    protected static final List<String> SUB_DISTRIBUTION_PATH_RESERVED = Arrays.asList(VIEW_STATS, VIEW_ADMIN,
+            SAVE_ACTION, SAVE_EXTENDED_ACTION, DOWNLOAD_ACTION, UPDATE_ACTION, DO_UPDATE_ACTION, DELETE_ACTION,
+            UPLOAD_ACTION, UPLOAD_TMP_ACTION, UPLOAD_TMP_VALID_ACTION, REINDEX_ACTION);
 
     /**
      * Customized error management.
@@ -508,7 +514,7 @@ public class Distribution extends ModuleRoot {
     }
 
     /**
-     * Use to allow authorized users to upload distribution even in site mode
+     * Use to allow authorized users to upload distribution even in site mode.
      *
      * @since 8.3
      */
@@ -523,6 +529,17 @@ public class Distribution extends ModuleRoot {
                                    .arg(ApiBrowserConstants.ERROR_FEEBACK_MESSAGE_VARIABLE, errorFeedbackMessage);
         }
         return show404();
+    }
+
+    /**
+     * Returns the global stats view.
+     *
+     * @since 22.0.0
+     */
+    @GET
+    @Path(VIEW_STATS)
+    public Object getStats() {
+        return getView("stats");
     }
 
     @POST

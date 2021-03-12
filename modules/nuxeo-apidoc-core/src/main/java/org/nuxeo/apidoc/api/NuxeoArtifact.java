@@ -35,7 +35,6 @@ import org.nuxeo.apidoc.introspection.ExtensionPointInfoImpl;
 import org.nuxeo.apidoc.introspection.OperationInfoImpl;
 import org.nuxeo.apidoc.introspection.PackageInfoImpl;
 import org.nuxeo.apidoc.introspection.ServiceInfoImpl;
-import org.nuxeo.ecm.platform.dublincore.constants.DublinCoreConstants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;

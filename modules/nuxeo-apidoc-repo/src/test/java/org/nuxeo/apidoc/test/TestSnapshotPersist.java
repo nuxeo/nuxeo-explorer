@@ -55,7 +55,6 @@ import org.nuxeo.connect.update.PackageException;
 import org.nuxeo.ecm.automation.OperationDocumentation;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
-import org.nuxeo.ecm.core.api.validation.DocumentValidationException;
 import org.nuxeo.ecm.core.test.CoreFeature;
 
 public class TestSnapshotPersist extends AbstractApidocTest {
