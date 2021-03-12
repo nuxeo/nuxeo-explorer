@@ -84,7 +84,7 @@
       "codeType": "JAVA",
       "extensionId": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
       "fromStudio": false,
-      "numberOfContributions": 3,
+      "numberOfContributions": 4,
       "targetExtensionPointId": "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
       "targetExtensionPointPresent": true
     },
