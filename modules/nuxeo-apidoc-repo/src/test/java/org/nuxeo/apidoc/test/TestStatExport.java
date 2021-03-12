@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -61,7 +62,7 @@ public class TestStatExport extends AbstractApidocTest {
     }
 
     @Test
-    public void testGetExporter() {
+    public void testGetJsonExporter() {
         Exporter exporter = snapshotManager.getExporter("jsonContributionStats");
         assertNotNull(exporter);
         assertEquals("jsonContributionStats", exporter.getName());
@@ -72,16 +73,34 @@ public class TestStatExport extends AbstractApidocTest {
         assertFalse(exporter.getProperties().isEmpty());
     }
 
+    @Test
+    public void testGetCSVExporter() {
+        Exporter exporter = snapshotManager.getExporter("csvContributionStats");
+        assertNotNull(exporter);
+        assertEquals("csvContributionStats", exporter.getName());
+        assertEquals("CSV Contribution Stats", exporter.getTitle());
+        assertEquals("CSV statistics for contributions", exporter.getDescription());
+        assertEquals("contribution_stats.csv", exporter.getFilename());
+        assertEquals("text/csv", exporter.getMimetype());
+        assertFalse(exporter.getProperties().isEmpty());
+    }
+
     protected void checkExport(DistributionSnapshot snapshot) throws IOException {
         assertNotNull(snapshot);
 
         PersistSnapshotFilter filter = new PersistSnapshotFilter("apidoc");
         filter.addNuxeoPackage(MOCK_PACKAGE_NAME);
 
-        Exporter exporter = snapshotManager.getExporter("jsonContributionStats");
+        Exporter jsonExporter = snapshotManager.getExporter("jsonContributionStats");
         try (ByteArrayOutputStream sinkJson = new ByteArrayOutputStream()) {
-            exporter.export(sinkJson, snapshot, filter, Map.of("pretty", "true"));
+            jsonExporter.export(sinkJson, snapshot, filter, Map.of("pretty", "true"));
             checkJsonContentEquals("export/contribution_stats.json", sinkJson.toString());
+        }
+
+        Exporter csvExporter = snapshotManager.getExporter("csvContributionStats");
+        try (ByteArrayOutputStream sinkCSV = new ByteArrayOutputStream()) {
+            csvExporter.export(sinkCSV, snapshot, filter, Collections.emptyMap());
+            checkContentEquals("export/contribution_stats.csv", sinkCSV.toString());
         }
     }
 
