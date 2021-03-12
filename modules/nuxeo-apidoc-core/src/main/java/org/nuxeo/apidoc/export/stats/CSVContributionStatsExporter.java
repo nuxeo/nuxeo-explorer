@@ -18,53 +18,48 @@
  */
 package org.nuxeo.apidoc.export.stats;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
+import java.io.OutputStreamWriter;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.nuxeo.apidoc.export.api.ExporterDescriptor;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
-import org.nuxeo.apidoc.snapshot.JsonPrettyPrinter;
 import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.ecm.core.api.NuxeoException;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
  * Json exporter for contribution stats.
  *
  * @since 22.0.0
  */
-public class JsonContributionStatsExporter extends AbstractJsonContributionStatsExporter {
+public class CSVContributionStatsExporter extends AbstractJsonContributionStatsExporter {
 
-    protected static final ObjectWriter WRITER = //
-            new ObjectMapper().configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
-                              .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
-                              .writerFor(HashMap.class)
-                              .with(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM)
-                              .without(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
-
-    public JsonContributionStatsExporter(ExporterDescriptor descriptor) {
+    public CSVContributionStatsExporter(ExporterDescriptor descriptor) {
         super(descriptor);
     }
 
     @Override
     public void export(OutputStream out, DistributionSnapshot distribution, SnapshotFilter filter,
             Map<String, String> properties) {
-        Map<String, Object> values = new HashMap<>();
-        values.put("stats", computeStats(distribution, filter, properties));
-
-        ObjectWriter writer = WRITER;
-        if (isPrettyPrint(properties, "false")) {
-            writer = writer.with(new JsonPrettyPrinter());
-        }
-        try {
-            writer.writeValue(out, values);
+        try (OutputStreamWriter writer = new OutputStreamWriter(out, UTF_8);
+                CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.RFC4180.withHeader('\ufeff' + "Extension Id",
+                        "Target Extension Point Id", "Number Of Contributions", "Code Type", "From Studio"))) {
+            List<ContributionStat> stats = computeStats(distribution, filter, properties);
+            stats.forEach(s -> {
+                try {
+                    csvPrinter.printRecord(s.getExtensionId(), s.getTargetExtensionPointId(),
+                            s.getNumberOfContributions(), s.getCodeType(), s.isFromStudio());
+                } catch (IOException e) {
+                    throw new NuxeoException(e);
+                }
+            });
+            csvPrinter.flush();
         } catch (IOException e) {
             throw new NuxeoException(e);
         }

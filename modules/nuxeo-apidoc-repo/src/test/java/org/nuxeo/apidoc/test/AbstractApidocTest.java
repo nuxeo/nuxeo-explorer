@@ -177,10 +177,7 @@ public abstract class AbstractApidocTest {
         String expectedContent = getReferenceContent(expectedPath);
         if (actualContent != null) {
             actualContent = actualContent.trim();
-            if (SystemUtils.IS_OS_WINDOWS) {
-                // replace end of lines while testing on windows
-                actualContent = actualContent.replaceAll("\r?\n", "\n");
-            }
+            actualContent = actualContent.replaceAll("\r?\n", "\n");
         }
         if (transformer != null) {
             actualContent = transformer.apply(actualContent);
