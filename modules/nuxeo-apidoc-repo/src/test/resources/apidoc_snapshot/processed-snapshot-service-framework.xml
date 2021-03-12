@@ -93,6 +93,26 @@
         </property>
       </properties>
     </exporter>
+    <exporter id="csvContributionStats" class="org.nuxeo.apidoc.export.stats.CSVContributionStatsExporter">
+      <title>CSV Contribution Stats</title>
+      <description>CSV statistics for contributions</description>
+      <filename>contribution_stats.csv</filename>
+      <mimetype>text/csv</mimetype>
+      <display>
+        <on>home</on>
+        <on>bundle</on>
+        <on>package</on>
+      </display>
+      <properties>
+        <property name="scriptingCodeType">
+          org.nuxeo.automation.scripting.internals.AutomationScriptingComponent--operation
+        </property>
+        <property name="javaCodeType">
+          org.nuxeo.ecm.core.operation.OperationServiceComponent--operations,
+          org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters
+        </property>
+      </properties>
+    </exporter>
     <exporter id="dotGraph" class="org.nuxeo.apidoc.export.graphs.plugins.DOTGraphExporter">
       <title>DOT Graph</title>
       <description>Dependency graph exported in DOT format</description>
