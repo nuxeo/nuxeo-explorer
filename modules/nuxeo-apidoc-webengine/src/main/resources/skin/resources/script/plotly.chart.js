@@ -21,7 +21,7 @@
 
     var data = [{
       values,
-      labels: ['XML', 'Java Code', 'Java Like', 'Scripting'],
+      labels: ['XML', 'Java', 'Java Like', 'Scripting'],
       customdata: pieData,
       type: 'pie'
     }];
@@ -155,43 +155,48 @@
   function showDetails(clickData, total, rootURL, chartDetailsDivId) {
     var point = clickData.points[0];
     var tableStats = point.fullData.customdata[point.i];
+    var label = point.label;
 
     var div = document.getElementById(chartDetailsDivId);
     div.textContent = '';
 
     var table = document.createElement('table');
-    table.classList.add("tablesorter");
-    table.classList.add("chart");
+    table.classList.add('tablesorter');
+    table.classList.add('chart');
 
     var thead = table.createTHead();
     var theadRow = thead.insertRow();
-    insertHeadCell(theadRow, "Extension");
-    insertHeadCell(theadRow, "Target Extension Point");
-    insertHeadCell(theadRow, "Number of Contributions");
+    insertHeadCell(theadRow, 'Extension');
+    insertHeadCell(theadRow, 'Target Extension Point');
+    insertHeadCell(theadRow, 'Number of Contributions');
     var totalPercent = getPerCent(point.value, total).toFixed(2);
     insertHeadCell(theadRow, `${totalPercent}%`);
 
     var tbody = table.createTBody();
     tableStats.forEach(stat => insertRow(tbody, stat, total, rootURL));
 
-    var clearDiv = document.createElement("div");
-    clearDiv.classList.add("chartHeader");
-    var clearButton = document.createElement("a");
-    clearButton.appendChild(document.createTextNode('Clear Selection'));
-    clearButton.addEventListener("click", () => {document.getElementById(chartDetailsDivId).textContent = '';});
-    clearDiv.appendChild(clearButton);
+    var headerDiv = document.createElement('div');
+    headerDiv.classList.add('chartHeader');
+    var headerLabel = document.createElement('span');
+    headerLabel.appendChild(document.createTextNode('Selection: '+ label));
+    headerDiv.appendChild(headerLabel);
+    var clearButton = document.createElement('input');
+    clearButton.setAttribute('type', 'button');
+    clearButton.setAttribute('value', 'Clear');
+    clearButton.addEventListener('click', () => {document.getElementById(chartDetailsDivId).textContent = '';});
+    headerDiv.appendChild(clearButton);
 
-    div.appendChild(clearDiv);
+    div.appendChild(headerDiv);
     div.appendChild(table);
 
-    $(table).tablesorter({widgets: ['zebra'], cancelSelection: false});
+    $(table).tablesorter({sortList: [[0,0]], widgets: ['zebra'], cancelSelection: false});
   }
 
   function insertHeadCell(tr, text) {
-    var el = document.createElement("b");
+    var el = document.createElement('b');
     el.appendChild(document.createTextNode(text));
-    var th = document.createElement("th");
-    th.classList.add("header");
+    var th = document.createElement('th');
+    th.classList.add('header');
     th.appendChild(el);
     tr.appendChild(th);
   }
@@ -212,9 +217,9 @@
   }
 
   function insertCellLink(tr, href, text) {
-    var el = document.createElement("a");
-    el.setAttribute("href", href);
-    el.setAttribute("target", "_blank");
+    var el = document.createElement('a');
+    el.setAttribute('href', href);
+    el.setAttribute('target', '_blank');
     el.appendChild(document.createTextNode(text));
     tr.insertCell().appendChild(el);
   }
@@ -224,7 +229,7 @@
   }
 
   function getLabel(id) {
-    return id.replace(/^.*\.(.*)$/, "$1");
+    return id.replace(/^.*\.(.*)$/, '$1');
   }
 
   function getPerCent(value, total) {

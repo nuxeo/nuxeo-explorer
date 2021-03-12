@@ -2,21 +2,21 @@
 
   <#assign dataURL="${Root.path}/${distId}/export/${exporter.name}?${filter}" />
   <#assign loadingDataText="Loading data" />
-  <a href="${dataURL}" target="_blank">Raw Data</a>
+  <a href="${dataURL}" target="_blank">Raw Data: ${exporter.title}</a>
   <div class="charts">
-    <h3>${exporter.title} - Code Type</h3>
+    <h3>Contributions by Code Type</h3>
     <div class="chart main" id='codeTypeStats'>${loadingDataText}</div>
     <div class="chart details" id='codeTypeStatsDetails'></div>
     <div style="clear:both;"></div>
   </div>
   <div class="charts">
-    <h3>${exporter.title} - Target Extension Points</h3>
+    <h3>Contributions by Target Extension Point</h3>
     <div class="chart main" id='xpStats'>${loadingDataText}</div>
     <div class="chart details" id='xpStatsDetails'></div>
     <div style="clear:both;"></div>
   </div>
   <div class="charts">
-    <h3>${exporter.title} - Studio Source</h3>
+    <h3>Contributions by Studio Source</h3>
     <div class="chart main" id='studioStats'>${loadingDataText}</div>
     <div class="chart details" id='studioStatsDetails'></div>
     <div style="clear:both;"></div>
