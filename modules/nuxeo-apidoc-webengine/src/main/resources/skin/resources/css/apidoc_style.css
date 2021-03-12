@@ -249,6 +249,10 @@ th {
   text-align: left;
 }
 
+td.select, th.select {
+  text-align: center;
+}
+
 /*
  * Messages
  *
@@ -1342,4 +1346,20 @@ table.chart {
 
 .chartHeader {
   font-size: large;
+}
+
+.stats {
+  width: 100%;
+}
+
+.stats.distributions {
+  width: 25%;
+  float: left;
+  padding-right: 1em;
+}
+
+.stats.statcharts {
+  width: 75%;
+  float: right;
+  padding-left: 1em;
 }
