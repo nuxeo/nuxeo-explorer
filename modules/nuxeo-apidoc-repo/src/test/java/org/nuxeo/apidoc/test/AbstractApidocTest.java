@@ -37,7 +37,6 @@ import java.util.function.UnaryOperator;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.json.JSONObject;
 import org.junit.ComparisonFailure;
 import org.junit.runner.RunWith;
