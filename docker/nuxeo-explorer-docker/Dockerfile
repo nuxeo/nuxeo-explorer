@@ -11,14 +11,14 @@ LABEL org.nuxeo.explorer.version=${VERSION}
 LABEL org.nuxeo.explorer.scm-ref=${SCM_REF}
 LABEL org.nuxeo.explorer.build-tag=${BUILD_TAG}
 
-# Workaround missing support for --chown flag with COPY instruction in Kaniko
-# TODO: remove and use COPY --chown when fixed in Kaniko, or find a proper way
-COPY --chown=900:0 target/nuxeo-platform-explorer-package-*.zip /packages/nuxeo-platform-explorer-package.zip
-COPY --chown=900:0 target/nuxeo-amazon-s3-package-*.zip /packages/nuxeo-amazon-s3-package.zip
-# Workaround of above permission issues, otherwise we can't clean the package once installed
-USER root
-RUN /install-packages.sh --offline /packages/nuxeo-platform-explorer-package.zip /packages/nuxeo-amazon-s3-package.zip
+ENV NUXEO_INSTALL_HOTFIX=false
 
-RUN chown -R 900:0 $NUXEO_HOME \
-  && chmod -R g+rwX $NUXEO_HOME
-USER 900
+RUN cp /etc/nuxeo/nuxeo.conf.template $NUXEO_HOME/bin/nuxeo.conf
+
+COPY install-packages.sh /
+
+COPY target/nuxeo-platform-explorer-package-*.zip /tmp/nuxeo-platform-explorer-package.zip
+RUN /install-packages.sh --offline /tmp/nuxeo-platform-explorer-package.zip >&1;
+
+# Set appropriate permissions on distribution directory (moved from install-packages.sh as it takes ages)
+RUN chmod -R g+rwX $NUXEO_HOME

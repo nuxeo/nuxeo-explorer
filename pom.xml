@@ -25,10 +25,7 @@
     <module>modules</module>
     <module>packages</module>
     <module>ftests</module>
-    <!-- disabled on 10.10 -->
-    <!--
     <module>docker</module>
-    -->
   </modules>
 
   <dependencyManagement>

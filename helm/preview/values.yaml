@@ -44,14 +44,15 @@ nuxeo:
       tag: ${VERSION}
       pullPolicy: Always
       pullSecrets: kubernetes-docker-cfg
-    customEnvs:
+    custom_envs:
     - name: NUXEO_CLID
       valueFrom:
         secretKeyRef:
-          name: instance-clid
+          name: explorer-clid
           key: instance.clid
-    customParams: |-
+    custom_params: |-
       ${NUXEO_TEMPLATE_OVERRIDE}
+      ${NUXEO_EXPLORER_CUSTOM_PARAMS}
     persistence:
       enabled: ${PERSISTENCE}
   mongodb:
@@ -69,15 +70,6 @@ nuxeo:
       resource: pod
       team: platform
       usage: preview
-  elasticsearch:
-    deploy: ${PERSISTENCE}
-    master:
-      persistence:
-        enabled: ${PERSISTENCE}
-    data:
-      persistence:
-        enabled: ${PERSISTENCE}
-
 
 # needed for instance-clid replicator and local usage
 local:
