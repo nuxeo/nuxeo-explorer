@@ -133,6 +133,12 @@ pipeline {
       }
     }
     stage('Run Unit Tests') {
+      when {
+        // skip for now: NXBT-3481 + NXBT-3484
+        expression {
+          return false
+        }
+      }
       steps {
         setGitHubBuildStatus('explorer/utests', 'Run Unit Tests', 'PENDING')
         container('maven') {
