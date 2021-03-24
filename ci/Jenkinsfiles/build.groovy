@@ -306,7 +306,8 @@ pipeline {
     stage('Deploy Preview') {
       when {
         anyOf {
-          branch "${REFERENCE_BRANCH}"
+          // NXP-30285: disable reference preview after all
+          // branch "${REFERENCE_BRANCH}"
           allOf {
             branch 'PR-*'
             expression {
