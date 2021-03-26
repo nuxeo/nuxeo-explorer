@@ -99,5 +99,103 @@
         </property>
       </properties>
     </exporter>
+    <exporter id="csvContributionStats">
+      <properties>
+        <property name="scriptingCodeType">
+          org.nuxeo.ecm.platform.actions.ActionService--filters,
+          org.nuxeo.ecm.automation.core.AutomationComponent--chains,
+          org.nuxeo.ecm.core.operation.OperationServiceComponent--chains,
+          org.nuxeo.automation.scripting.internals.AutomationScriptingComponent--operation,
+          org.nuxeo.ecm.platform.commandline.executor.service.CommandLineExecutorComponent--command,
+          org.nuxeo.ecm.platform.ec.notification.service.NotificationService--templates,
+          org.nuxeo.ecm.platform.audit.service.NXAuditEventsService--event,
+          org.nuxeo.ecm.platform.rendition.service.RenditionService--defaultRendition,
+        </property>
+        <property name="javalikeCodeType">
+          org.nuxeo.ecm.core.bulk--actions,
+          org.nuxeo.ecm.core.api.versioning.VersioningService--filters,
+          <!-- JSF -->
+          org.nuxeo.ecm.platform.ui.web.rest.URLService--urlpatterns,
+          <!-- Addons -->
+        </property>
+        <property name="javaCodeType">
+          org.nuxeo.ecm.automation.core.AutomationComponent--operations,
+          org.nuxeo.ecm.core.operation.OperationServiceComponent--operations,
+          org.nuxeo.ecm.automation.server.AutomationServer--marshallers,
+          org.nuxeo.runtime.avro--factory,
+          org.nuxeo.runtime.avro--mapper,
+          org.nuxeo.ecm.automation.server.BatchManager--handlers,
+          org.nuxeo.ecm.core.api.blobholder.BlobHolderAdapterComponent--BlobHolderFactory,
+          org.nuxeo.ecm.core.blob.BlobManager--configuration,
+          org.nuxeo.ecm.platform.computedgroups.ComputedGroupsServiceImpl--computer,
+          org.nuxeo.ecm.platform.content.template.service.ContentTemplateService--factory,
+          org.nuxeo.ecm.core.management.CoreManagementComponent--probes,
+          org.nuxeo.ecm.core.convert.service.ConversionServiceImpl--converter,
+          org.nuxeo.ecm.core.api.DocumentAdapterService--adapters,
+          org.nuxeo.ecm.platform.url.service.DocumentViewCodecService--codecs,
+          org.nuxeo.elasticsearch.ElasticSearchComponent--elasticSearchClient,
+          org.nuxeo.elasticsearch.ElasticSearchComponent--elasticSearchDocWriter,
+          org.nuxeo.elasticsearch.ElasticSearchComponent--elasticSearchHints,
+          org.nuxeo.runtime.EventService--listeners,
+          org.nuxeo.ecm.core.event.EventServiceComponent--listener,
+          org.nuxeo.ecm.platform.web.common.exceptionhandling.service.ExceptionHandlingService--exceptionhandler,
+          org.nuxeo.ecm.platform.web.common.exceptionhandling.service.ExceptionHandlingService--listener,
+          org.nuxeo.ecm.platform.web.common.exceptionhandling.service.ExceptionHandlingService--requestdump,
+          org.nuxeo.ecm.platform.filemanager.service.FileManagerService--plugins,
+          org.nuxeo.ecm.automation.io.services.IOComponent--codecs,
+          org.nuxeo.ecm.platform.io.IOManager--adapters,
+          org.nuxeo.runtime.kv.KeyValueService--configuration,
+          org.nuxeo.ecm.platform.picture.core.libraryselector.LibrarySelectorService--LibrarySelector,
+          org.nuxeo.ecm.platform.web.common.locale--providers,
+          org.nuxeo.runtime.LoginAsComponent--implementation,
+          org.nuxeo.ecm.core.io.MarshallerRegistry--marshallers,
+          org.nuxeo.binary.metadata--metadataProcessors,
+          org.nuxeo.runtime.migration.MigrationService--configuration,
+          org.nuxeo.ecm.platform.ec.notification.service.NotificationService--notificationListenerHook,
+          org.nuxeo.ecm.platform.ec.notification.service.NotificationService--notificationListenerVeto,
+          org.nuxeo.ecm.core.opencmis.bindings.NuxeoCmisServiceFactoryManager--factory,
+          org.nuxeo.ecm.platform.audit.service.NXAuditEventsService--backend,
+          org.nuxeo.ecm.core.schema.ObjectResolverService--resolvers,
+          org.nuxeo.ecm.core.operation.OperationServiceComponent--adapters,
+          org.nuxeo.ecm.core.operation.OperationServiceComponent--contextHelpers,
+          org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService--authenticators,
+          org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService--sessionManager,
+          org.nuxeo.ecm.platform.preview.adapter.PreviewAdapterManagerComponent--MimeTypePreviewer,
+          org.nuxeo.ecm.platform.publisher.impl.service.PublisherServiceImpl--factory,
+          org.nuxeo.ecm.platform.publisher.impl.service.PublisherServiceImpl--tree,
+          org.nuxeo.ecm.platform.publisher.impl.service.PublisherServiceImpl--validatorsRule,
+          org.nuxeo.ecm.core.storage.sql.jdbc.QueryMakerService--queryMaker,
+          org.nuxeo.ecm.platform.relations.services.RelationService--graphtypes,
+          org.nuxeo.ecm.platform.relations.services.RelationService--resourceadapters,
+          org.nuxeo.ecm.platform.rendition.service.RenditionService--renditionDefinitionProviders,
+          org.nuxeo.elasticsearch.http.readonly.RequestFilterService--filters,
+          org.nuxeo.runtime.management.ResourcePublisher--factories,
+          org.nuxeo.ecm.core.security.SecurityService--policies,
+          org.nuxeo.runtime.codec.service--codec,
+          org.nuxeo.ecm.platform.el.service--elContextFactory,
+          org.nuxeo.ecm.core.work.service--implementation,
+          org.nuxeo.ecm.platform.routing.service--persister,
+          org.nuxeo.ecm.core.scroll.service--scroll,
+          org.nuxeo.runtime.stream.service--streamProcessor,
+          org.nuxeo.ecm.platform.suggestbox.service.SuggestionService--suggesters,
+          org.nuxeo.ecm.platform.task.core.TaskService--taskProvider,
+          org.nuxeo.template.service.TemplateProcessorComponent--contextExtension,
+          org.nuxeo.ecm.core.api.thumbnail.ThumbnailService--thumbnailFactory,
+          org.nuxeo.ecm.core.uidgen.UIDGeneratorService--sequencers,
+          org.nuxeo.ecm.platform.userworkspace.UserWorkspaceService--userWorkspace,
+          org.nuxeo.ecm.webengine.WebEngineComponent--rendering-extension,
+          org.nuxeo.ecm.platform.WebResources--processors,
+          <!-- JSF -->
+          org.nuxeo.ecm.platform.forms.layout.LayoutStore--widgetConverters,
+          org.nuxeo.ecm.platform.ui.web.component.file.JSFBlobUploaderService--uploader,
+          org.nuxeo.ecm.platform.ui.web.restAPI.service.PluggableRestletService--restlets,
+          org.nuxeo.theme.styling.service--negotiations,
+          org.nuxeo.ecm.platform.treeManager--plugin,
+          <!-- Addons -->
+          org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters,
+          org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins,
+        </property>
+      </properties>
+    </exporter>
   </extension>
 </component>
