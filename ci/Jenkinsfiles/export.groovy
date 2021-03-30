@@ -35,7 +35,7 @@ properties([
 def defaultPackages = 'cas2-authentication easyshare nuxeo-csv nuxeo-drive nuxeo-imap-connector nuxeo-multi-tenant nuxeo-platform-importer nuxeo-quota nuxeo-signature nuxeo-template-rendering shibboleth-authentication nuxeo-liveconnect nuxeo-platform-3d'
 // additional packades released independently, usually after a platform release promotion
 // excluding nuxeo-spreadsheet, not released with JSF-related packages
-def additionalPackages = 'nuxeo-diff nuxeo-platform-user-registration nuxeo-virtualnavigation nuxeo-web-ui nuxeo-jsf-ui nuxeo-showcase-content'
+def additionalPackages = 'nuxeo-diff nuxeo-platform-user-registration nuxeo-virtualnavigation nuxeo-web-ui nuxeo-jsf-ui nuxeo-arender'
 
 String getExportImageVersion(String explorerVersion, String nuxeoVersion) {
   def ev = explorerVersion.trim()
