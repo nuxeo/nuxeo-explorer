@@ -446,7 +446,7 @@ public class ApiBrowser extends DefaultObject {
         }
 
         ArchiveFile aFile = new ArchiveFile(tmp.getAbsolutePath());
-        return Response.ok(aFile).type("application/json").build();
+        return Response.ok(aFile).type(MediaType.APPLICATION_JSON).build();
     }
 
     /**

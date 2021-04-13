@@ -49,14 +49,20 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.nuxeo.apidoc.api.BundleInfo;
+import org.nuxeo.apidoc.api.OperationInfo;
+import org.nuxeo.apidoc.api.PackageInfo;
+import org.nuxeo.apidoc.documentation.JavaDocHelper;
 import org.nuxeo.apidoc.export.ArchiveFile;
 import org.nuxeo.apidoc.introspection.RuntimeSnapshot;
 import org.nuxeo.apidoc.listener.AttributesExtractorStater;
 import org.nuxeo.apidoc.plugin.Plugin;
+import org.nuxeo.apidoc.plugin.PluginSnapshot;
 import org.nuxeo.apidoc.repository.RepositoryDistributionSnapshot;
 import org.nuxeo.apidoc.security.SecurityHelper;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshotDesc;
+import org.nuxeo.apidoc.snapshot.JsonPrettyPrinter;
 import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
@@ -91,11 +97,18 @@ import org.nuxeo.ecm.webengine.model.impl.ModuleRoot;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.sun.jersey.api.NotFoundException;
 
 @Path("/distribution")
 // needed for 5.4.1
 @WebObject(type = Distribution.TYPE)
+@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 public class Distribution extends ModuleRoot {
 
     private static final Logger log = LogManager.getLogger(Distribution.class);
@@ -249,6 +262,78 @@ public class Distribution extends ModuleRoot {
     @Produces(MediaType.TEXT_HTML)
     public Object doGet() {
         return getView("index");
+    }
+
+    protected static final ObjectWriter DISTRIBUTIONS_WRITER = //
+            new ObjectMapper().configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
+                              .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
+                              .addMixIn(DistributionSnapshot.class, DistributionSnapshotMixin.class)
+                              .writerFor(HashMap.class)
+                              .with(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM)
+                              .without(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+
+    public static abstract class DistributionSnapshotMixin {
+
+        @JsonIgnore(false)
+        abstract boolean isLive();
+
+        @JsonIgnore
+        abstract String getKey();
+
+        @JsonIgnore
+        abstract public String getHierarchyPath();
+
+        @JsonIgnore
+        abstract Map<String, Serializable> getUpdateProperties();
+
+        @JsonIgnore
+        abstract JavaDocHelper getJavaDocHelper();
+
+        @JsonIgnore
+        abstract List<BundleInfo> getBundles();
+
+        @JsonIgnore
+        abstract List<String> getBundleGroupIds();
+
+        @JsonIgnore
+        abstract List<OperationInfo> getOperations();
+
+        @JsonIgnore
+        abstract List<PackageInfo> getPackages();
+
+        @JsonIgnore
+        abstract Map<String, PluginSnapshot<?>> getPluginSnapshots();
+    }
+
+    /**
+     * Returns a json export of distributions keys/names.
+     *
+     * @since 22.0.0
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Object getJson(@QueryParam("includeLive") Boolean includeLive, @QueryParam("pretty") Boolean pretty)
+            throws IOException {
+        File tmp = getExportTmpFile();
+        try (OutputStream out = new FileOutputStream(tmp)) {
+            ObjectWriter writer = DISTRIBUTIONS_WRITER;
+            if (Boolean.TRUE.equals(pretty)) {
+                writer = writer.with(new JsonPrettyPrinter());
+            }
+            Map<String, List<DistributionSnapshotDesc>> value = new HashMap<>();
+            List<DistributionSnapshotDesc> distribs;
+            if (Boolean.TRUE.equals(includeLive)) {
+                distribs = getAvailableDistributions();
+            } else {
+                distribs = getAvailableDistributions().stream()
+                                                      .filter(s -> !(s instanceof RuntimeSnapshot))
+                                                      .collect(Collectors.toList());
+            }
+            value.put("distributions", distribs);
+            writer.writeValue(out, value);
+        }
+        ArchiveFile aFile = new ArchiveFile(tmp.getAbsolutePath());
+        return Response.ok(aFile).type(MediaType.APPLICATION_JSON).build();
     }
 
     @Path(SnapshotManager.DISTRIBUTION_ALIAS_LATEST)
