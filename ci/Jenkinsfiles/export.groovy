@@ -95,9 +95,11 @@ pipeline {
     CONNECT_PREPROD_URL = 'https://nos-preprod-connect.nuxeocloud.com/nuxeo/site/'
 
     CONNECT_EXPLORER_URL = "${CONNECT_PROD_URL}"
+    CONNECT_EXLORER_CLID = 'instance-clid'
     NUXEO_EXPLORER_PACKAGE = getExplorerPackageId(params.NUXEO_EXPLORER_VERSION)
 
     CONNECT_EXPORT_URL = "${params.DOWNLOAD_PACKAGES_FROM_PROD ? CONNECT_PROD_URL : CONNECT_PREPROD_URL}"
+    CONNECT_EXPORT_CLID = "${params.DOWNLOAD_PACKAGES_FROM_PROD ? 'instance-clid': 'instance-clid-preprod'}"
     EXPORT_PACKAGE_LIST = getPackageList(params.DOWNLOAD_PACKAGES_FROM_PROD, params.DEFAULT_PACKAGE_LIST, params.ADDITIONAL_PACKAGE_LIST)
 
     VERSION = getExportImageVersion(params.NUXEO_EXPLORER_VERSION, NUXEO_IMAGE_VERSION)
@@ -174,15 +176,22 @@ pipeline {
           """
           script {
             def moduleDir = 'docker/nuxeo-explorer-export-docker'
-            withCredentials([string(credentialsId: 'instance-clid', variable: 'INSTANCE_CLID')]) {
+            withCredentials([string(credentialsId: CONNECT_EXLORER_CLID, variable: 'CONNECT_EXPLORER_CLID_VALUE'),
+                             string(credentialsId: CONNECT_EXPORT_CLID, variable: 'CONNECT_EXPORT_CLID_VALUE')]) {
               // replace lines by "--"
-              def oneLineClid = sh(
+              def oneLineExplorerClid = sh(
                 returnStdout: true,
                 script: '''#!/bin/bash +x
-                  echo -e "$INSTANCE_CLID" | sed ':a;N;\$!ba;s/\\n/--/g'
+                  echo -e "$CONNECT_EXPLORER_CLID_VALUE" | sed ':a;N;\$!ba;s/\\n/--/g'
                 '''
               )
-              withEnv(["CONNECT_EXPLORER_CLID=${oneLineClid}", "CONNECT_EXPORT_CLID=${oneLineClid}"]) {
+              def oneLineExportClid = sh(
+                returnStdout: true,
+                script: '''#!/bin/bash +x
+                  echo -e "$CONNECT_EXPORT_CLID_VALUE" | sed ':a;N;\$!ba;s/\\n/--/g'
+                '''
+              )
+              withEnv(["CONNECT_EXPLORER_CLID=${oneLineExplorerClid}", "CONNECT_EXPORT_CLID=${oneLineExportClid}"]) {
                 sh "envsubst < ${moduleDir}/skaffold.yaml > ${moduleDir}/skaffold.yaml~gen"
               }
             }
