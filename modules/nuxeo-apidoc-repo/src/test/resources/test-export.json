@@ -362,6 +362,7 @@
               "extensionPoint": "org.nuxeo.ecm.core.api.DocumentAdapterService--adapters",
               "hierarchyPath": "/grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.adapterContrib/Contributions/org.nuxeo.apidoc.adapterContrib--adapters",
               "id": "org.nuxeo.apidoc.adapterContrib--adapters",
+              "registrationOrder": 1,
               "targetComponentName": {
                 "rawName": "service:org.nuxeo.ecm.core.api.DocumentAdapterService",
                 "name": "org.nuxeo.ecm.core.api.DocumentAdapterService",
