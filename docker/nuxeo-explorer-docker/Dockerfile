@@ -20,5 +20,7 @@ COPY install-packages.sh /
 COPY target/nuxeo-platform-explorer-package-*.zip /tmp/nuxeo-platform-explorer-package.zip
 RUN /install-packages.sh --offline /tmp/nuxeo-platform-explorer-package.zip >&1;
 
+# NXP-30350: remove useless files to limit docker image size
+RUN rm -rf $NUXEO_HOME/packages/backup && find $NUXEO_HOME/packages/store/* ! -name 'package.xml' -type f -exec rm -f {} +
 # Set appropriate permissions on distribution directory (moved from install-packages.sh as it takes ages)
 RUN chmod -R g+rwX $NUXEO_HOME

@@ -39,6 +39,8 @@ RUN if [ ! -z "${CONNECT_EXPORT_CLID}" ] && [ ! -z "${EXPORT_PACKAGE_LIST// }" ]
 
 RUN NUXEO_CONF=$NUXEO_HOME/bin/nuxeo.conf $NUXEO_HOME/bin/nuxeoctl mp-list
 
+# NXP-30350: remove useless files to limit docker image size
+RUN rm -rf $NUXEO_HOME/packages/backup
 RUN chown -R 900:0 $NUXEO_HOME \
   && chmod -R g+rwX $NUXEO_HOME
 USER 900
