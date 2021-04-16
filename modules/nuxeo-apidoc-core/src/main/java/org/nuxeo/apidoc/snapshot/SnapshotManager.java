@@ -72,6 +72,9 @@ public interface SnapshotManager {
     /** @since 20.0.0 */
     public static String DISTRIBUTION_ALIAS_LATEST_FT = "latestFT";
 
+    /** @since 22.0.0 */
+    public static String CUSTOM_VIEW_PREFIX = "_view";
+
     public static String PROPERTY_SITE_MODE = "org.nuxeo.apidoc.site.mode";
 
     public static String PROPERTY_USE_ES = "org.nuxeo.apidoc.use.elasticsearch";
@@ -152,8 +155,7 @@ public interface SnapshotManager {
      * Imports given snapshot as a nuxeo tree.
      * <p>
      * Corresponding distribution will be hidden until
-     * #{@link #validateImportedSnapshot(CoreSession, String, Map, List)} is called (or until distribution is
-     * unhidden).
+     * #{@link #validateImportedSnapshot(CoreSession, String, Map, List)} is called (or until distribution is unhidden).
      */
     DocumentModel importTmpSnapshot(CoreSession session, InputStream is)
             throws IOException, DocumentValidationException;

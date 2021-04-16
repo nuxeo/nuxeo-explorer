@@ -53,7 +53,7 @@ public interface Plugin<T extends NuxeoArtifact> {
      * The corresponding class should be annotated with @WebObject and given type.
      * <p>
      * It should extend DefaultObject and implement an #initialize method taking the distribution id as first parameter,
-     * and an optional boolean specifiying if the distribution is embedded as an options second parameter.
+     * and an optional boolean specifying if the distribution is embedded as an options second parameter.
      */
     String getViewType();
 

@@ -610,7 +610,8 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
         if (reservedKeys != null) {
             forbidden.addAll(reservedKeys);
         }
-        if (forbidden.contains(keyOrAlias)) {
+        if (forbidden.contains(keyOrAlias)
+                || (keyOrAlias != null && keyOrAlias.startsWith(SnapshotManager.CUSTOM_VIEW_PREFIX))) {
             throw new DocumentValidationException(
                     String.format("Distribution key or alias is reserved: '%s'", keyOrAlias));
         }

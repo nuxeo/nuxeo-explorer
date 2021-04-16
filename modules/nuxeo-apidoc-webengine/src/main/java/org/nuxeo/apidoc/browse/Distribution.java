@@ -107,10 +107,7 @@ public class Distribution extends ModuleRoot {
     protected static final String DIST = "distribution";
 
     /** @since 22.0.0 */
-    public static final String VIEW_PREFIX = "_view";
-
-    /** @since 22.0.0 */
-    public static final String VIEW_STATS = VIEW_PREFIX + "stats";
+    public static final String VIEW_STATS = SnapshotManager.CUSTOM_VIEW_PREFIX + "stats";
 
     /** @since 20.0.0 */
     public static final String VIEW_ADMIN = "_admin";
@@ -153,7 +150,7 @@ public class Distribution extends ModuleRoot {
      *
      * @since 20.0.0
      */
-    protected static final List<String> SUB_DISTRIBUTION_PATH_RESERVED = List.of(VIEW_STATS, VIEW_ADMIN, SAVE_ACTION,
+    protected static final List<String> SUB_DISTRIBUTION_PATH_RESERVED = List.of(VIEW_ADMIN, SAVE_ACTION,
             SAVE_EXTENDED_ACTION, DOWNLOAD_ACTION, UPDATE_ACTION, DO_UPDATE_ACTION, DELETE_ACTION, UPLOAD_ACTION,
             UPLOAD_TMP_ACTION, UPLOAD_TMP_VALID_ACTION, REINDEX_ACTION);
 
@@ -266,6 +263,10 @@ public class Distribution extends ModuleRoot {
     public Resource viewDistribution(@PathParam("distributionId") String distributionId) {
         if (StringUtils.isBlank(distributionId)) {
             return this;
+        }
+        // handle navigation to a custom view (webengine plugin)
+        if (distributionId.startsWith(SnapshotManager.CUSTOM_VIEW_PREFIX)) {
+            return ctx.newObject(distributionId);
         }
         if (isSiteMode() && RuntimeSnapshot.LIVE_ALIASES.contains(distributionId)) {
             return ctx.newObject(Resource404.TYPE);
