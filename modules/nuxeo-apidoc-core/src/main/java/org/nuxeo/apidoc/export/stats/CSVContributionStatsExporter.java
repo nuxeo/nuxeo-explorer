@@ -48,13 +48,16 @@ public class CSVContributionStatsExporter extends AbstractJsonContributionStatsE
     public void export(OutputStream out, DistributionSnapshot distribution, SnapshotFilter filter,
             Map<String, String> properties) {
         try (OutputStreamWriter writer = new OutputStreamWriter(out, UTF_8);
-                CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.RFC4180.withHeader('\ufeff' + "Extension Id",
-                        "Target Extension Point Id", "Number Of Contributions", "Code Type", "From Studio"))) {
+                CSVPrinter csvPrinter = new CSVPrinter(writer,
+                        CSVFormat.RFC4180.withHeader('\ufeff' + "Extension Id", "Target Extension Point Id",
+                                "Target Extension Point Present", "Number Of Contributions", "Code Type",
+                                "From Studio"))) {
             List<ContributionStat> stats = computeStats(distribution, filter, properties);
             stats.forEach(s -> {
                 try {
                     csvPrinter.printRecord(s.getExtensionId(), s.getTargetExtensionPointId(),
-                            s.getNumberOfContributions(), s.getCodeType(), s.isFromStudio());
+                            s.isTargetExtensionPointPresent(), s.getNumberOfContributions(), s.getCodeType(),
+                            s.isFromStudio());
                 } catch (IOException e) {
                     throw new NuxeoException(e);
                 }
