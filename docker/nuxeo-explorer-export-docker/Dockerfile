@@ -25,7 +25,7 @@ USER root
 COPY --chown=900:0 README.md target/nuxeo-platform-explorer-package-*.zip /packages/
 
 RUN if [ "${USE_LOCAL_EXPLORER}" = "true" ]; then \
-    mv /packages/nuxeo-platform-explorer-package-*.zip /packages/nuxeo-platform-explorer-package.zip \
+    mv /packages/nuxeo-platform-explorer-package-*.zip /packages/nuxeo-platform-explorer-package.zip && \
     /install-packages.sh --offline /packages/nuxeo-platform-explorer-package.zip >&1; \
   elif [ ! -z "${CONNECT_EXPLORER_CLID}" ]; then \
     /install-packages.sh --clid "${CONNECT_EXPLORER_CLID}" --connect-url "${CONNECT_EXPLORER_URL}" ${NUXEO_EXPLORER_PACKAGE} >&1; \
@@ -38,6 +38,9 @@ RUN if [ ! -z "${CONNECT_EXPORT_CLID}" ] && [ ! -z "${EXPORT_PACKAGE_LIST// }" ]
   fi
 
 RUN NUXEO_CONF=$NUXEO_HOME/bin/nuxeo.conf $NUXEO_HOME/bin/nuxeoctl mp-list
+
+# NXP-30350: remove useless files to limit docker image size
+RUN rm -rf $NUXEO_HOME/packages/backup
 
 RUN chown -R 900:0 $NUXEO_HOME \
   && chmod -R g+rwX $NUXEO_HOME

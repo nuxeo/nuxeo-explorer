@@ -17,7 +17,10 @@ COPY --chown=900:0 target/nuxeo-platform-explorer-package-*.zip /packages/nuxeo-
 COPY --chown=900:0 target/nuxeo-amazon-s3-package-*.zip /packages/nuxeo-amazon-s3-package.zip
 # Workaround of above permission issues, otherwise we can't clean the package once installed
 USER root
-RUN /install-packages.sh --offline /packages/nuxeo-platform-explorer-package.zip /packages/nuxeo-amazon-s3-package.zip
+RUN /install-packages.sh --offline /packages/nuxeo-platform-explorer-package.zip /packages/nuxeo-amazon-s3-package.zip >&1;
+
+# NXP-30350: remove useless files to limit docker image size
+RUN rm -rf $NUXEO_HOME/packages/backup && find $NUXEO_HOME/packages/store/* ! -name 'package.xml' -type f -exec rm -f {} +
 
 RUN chown -R 900:0 $NUXEO_HOME \
   && chmod -R g+rwX $NUXEO_HOME
