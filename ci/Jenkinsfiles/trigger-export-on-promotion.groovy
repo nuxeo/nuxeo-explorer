@@ -43,7 +43,7 @@ pipeline {
   triggers {
     upstream(
       threshold: hudson.model.Result.SUCCESS,
-      upstreamProjects: "/nuxeo/release-nuxeo-jsf-ui",
+      upstreamProjects: "/nuxeo/11.x/release-nuxeo-jsf-ui",
     )
   }
 
