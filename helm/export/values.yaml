@@ -1,42 +1,44 @@
 
 nuxeo:
   fullnameOverride: export
-  nuxeo:
-    podLabels:
+  podLabels:
+    team: platform
+    resource: pod
+    usage: export
+  resources:
+    requests:
+      cpu: 2
+      memory: 4Gi
+    limits:
+      cpu: 4
+      memory: 6Gi
+  service:
+    labels:
       team: platform
-      resource: pod
+      resource: service
       usage: export
-    resources:
-      requests:
-        cpu: 2
-        memory: 4Gi
-      limits:
-        cpu: 4
-        memory: 6Gi
-    service:
-      annotations:
-        # clear expose annotations
-        fabric8.io/ingress.annotations: ""
-        fabric8.io/expose: ""
-      labels:
-        team: platform
-        resource: service
-        usage: export
-    image:
-      repository: ${DOCKER_REGISTRY}/nuxeo/nuxeo-explorer-export
-      tag: ${VERSION}
-      pullPolicy: Always
-      pullSecrets: kubernetes-docker-cfg
-    customEnvs:
-    - name: NUXEO_CLID
-      valueFrom:
-        secretKeyRef:
-          name: instance-clid
-          key: instance.clid
-    customParams: |-
+  image:
+    repository: ${DOCKER_REGISTRY}/nuxeo/nuxeo-explorer-export
+    tag: ${VERSION}
+    pullPolicy: Always
+    pullSecrets:
+    - name: kubernetes-docker-cfg
+  customEnvs:
+  - name: NUXEO_CLID
+    valueFrom:
+      secretKeyRef:
+        name: instance-clid
+        key: instance.clid
+  customProperties:
+    nuxeotemplates: |
       ${NUXEO_TEMPLATE_OVERRIDE}
-    persistence:
-      enabled: false
+  nodeSelector:
+    team: platform
+  tolerations:
+  - effect: NoSchedule
+    key: team
+    operator: Equal
+    value: platform
 
 # needed for instance-clid replicator and local usage
 local:
