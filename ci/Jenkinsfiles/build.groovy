@@ -354,13 +354,27 @@ pipeline {
                   // To avoid jx gc cron job, reference branch previews are deployed by calling jx step helm install instead of jx preview
                   "jx step helm install --namespace ${PREVIEW_NAMESPACE} --name ${PREVIEW_NAMESPACE} --verbose ."
                   // When deploying a pr preview, we use jx preview which gc the merged pull requests
+                  // waiting for https://github.com/jenkins-x/jx/issues/5797 to be fixed in order to remove --source-url
                   : "jx preview --namespace ${PREVIEW_NAMESPACE} --verbose --source-url=https://github.com/nuxeo/nuxeo-explorer --preview-health-timeout 15m ${noCommentOpt}"
 
-                // third build and deploy the chart
-                // waiting for https://github.com/jenkins-x/jx/issues/5797 to be fixed in order to remove --source-url
+                // third build and deploy the chart and external services if on reference branch
                 sh """
                   helm init --client-only --stable-repo-url=https://charts.helm.sh/stable
                   helm repo add local-jenkins-x http://jenkins-x-chartmuseum:8080
+                """
+                if (isReferenceBranch) {
+                  sh """
+                    helm repo add bitnami https://charts.bitnami.com/bitnami
+                    helm repo add elastic https://helm.elastic.co/
+
+                    envsubst < values/mongodb.yaml > values/mongodb.yaml~gen
+                    envsubst < values/elasticsearch.yaml > values/elasticsearch.yaml~gen
+
+                    helm upgrade --install mongodb bitnami/mongodb --version=7.14.2 --values=values/mongodb.yaml~gen
+                    helm upgrade --install elasticsearch elastic/elasticsearch --version=7.9.2 --values=values/elasticsearch.yaml~gen
+                  """
+                }
+                sh """
                   jx step helm build --verbose
                   mkdir target && helm template . --output-dir target
                   ${previewCommand}
