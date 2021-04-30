@@ -363,6 +363,7 @@ pipeline {
                   helm repo add local-jenkins-x http://jenkins-x-chartmuseum:8080
                 """
                 if (isReferenceBranch) {
+                  String helmInstallCommand = "helm upgrade --namespace=${PREVIEW_NAMESPACE} --install"
                   sh """
                     helm repo add bitnami https://charts.bitnami.com/bitnami
                     helm repo add elastic https://helm.elastic.co/
@@ -370,8 +371,8 @@ pipeline {
                     envsubst < values/mongodb.yaml > values/mongodb.yaml~gen
                     envsubst < values/elasticsearch.yaml > values/elasticsearch.yaml~gen
 
-                    helm upgrade --install mongodb bitnami/mongodb --version=7.14.2 --values=values/mongodb.yaml~gen
-                    helm upgrade --install elasticsearch elastic/elasticsearch --version=7.9.2 --values=values/elasticsearch.yaml~gen
+                    ${helmInstallCommand} mongodb bitnami/mongodb --version=7.14.2 --values=values/mongodb.yaml~gen
+                    ${helmInstallCommand} elasticsearch elastic/elasticsearch --version=7.9.2 --values=values/elasticsearch.yaml~gen
                   """
                 }
                 sh """
@@ -381,7 +382,7 @@ pipeline {
                 """
                 if (isReferenceBranch) {
                   // When not using jx preview, we need to expose the nuxeo url by hand
-                  url = sh(returnStdout: true, script: "kubectl get svc --namespace ${PREVIEW_NAMESPACE} preview -o go-template='{{index .metadata.annotations \"fabric8.io/exposeUrl\"}}'")
+                  url = sh(returnStdout: true, script: "kubectl get ingress preview --namespace=${PREVIEW_NAMESPACE} -ojsonpath='{.spec.rules[*].host}'")
                   echo """
                     ----------------------------------------
                     Preview available at: ${url}
