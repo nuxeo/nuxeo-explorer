@@ -360,13 +360,13 @@ pipeline {
                 // third build and deploy the chart and external services if on reference branch
                 sh """
                   helm init --client-only --stable-repo-url=https://charts.helm.sh/stable
-                  helm repo add local-jenkins-x http://jenkins-x-chartmuseum:8080
+                  helm3 repo add local-jenkins-x http://jenkins-x-chartmuseum:8080
                 """
                 if (isReferenceBranch) {
-                  String helmInstallCommand = "helm upgrade --namespace=${PREVIEW_NAMESPACE} --install"
+                  String helmInstallCommand = "helm3 upgrade --namespace=${PREVIEW_NAMESPACE} --install"
                   sh """
-                    helm repo add bitnami https://charts.bitnami.com/bitnami
-                    helm repo add elastic https://helm.elastic.co/
+                    helm3 repo add bitnami https://charts.bitnami.com/bitnami
+                    helm3 repo add elastic https://helm.elastic.co/
 
                     envsubst < values/mongodb.yaml > values/mongodb.yaml~gen
                     envsubst < values/elasticsearch.yaml > values/elasticsearch.yaml~gen
@@ -377,7 +377,7 @@ pipeline {
                 }
                 sh """
                   jx step helm build --verbose
-                  mkdir target && helm template . --output-dir target
+                  mkdir target && helm3 template . --output-dir target
                   ${previewCommand}
                 """
                 if (isReferenceBranch) {
