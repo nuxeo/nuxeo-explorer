@@ -85,7 +85,7 @@ pipeline {
           def hasUpstream = false
           def wasTriggered = false
           for (RunWrapper b: currentBuild.upstreamBuilds) {
-            if (b.projectName != 'test-trigger' && b.fullProjectName != 'nuxeo/nuxeo/master') {
+            if (b.projectName != 'test-trigger' && !b.fullProjectName != 'nuxeo/11.x/nuxeo/master') {
               continue
             }
             hasUpstream = true
