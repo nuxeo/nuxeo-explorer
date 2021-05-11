@@ -73,7 +73,7 @@ pipeline {
             echo "Aborting with message: ${message}"
             error(currentBuild.description)
           }
-          currentBuild.description = "${params.BUILD_DESCRIPTION}"
+          currentBuild.description = "Build ${params.BUILD_DESCRIPTION}"
           if (params.IS_PROMOTION) {
             build job: 'trigger-export-on-promotion', wait: false
           } else {
