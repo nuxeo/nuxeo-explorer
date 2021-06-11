@@ -481,61 +481,39 @@ header {
   width: 100%;
 }
 
-.main-menu--logo {
-  display: inline-flex;
-  font-size: 22px;
-  max-width: 120px;
-}
-
-.svg svg {
-  height: 1em;
-  width: auto;
-}
-
 .top-banner {
   background-color: #0a0a0a;;
-  box-shadow: 0 0 4px rgba(0,0,0,0.3);
   padding: 0 .3rem 0 .5em;
-  line-height: 60px;
   height: 60px;
 }
 
-.top-banner img {
-  border-radius: 0;
-  display: inline-block;
-  margin: 0 .6rem -0.2em 0;
-  vertical-align: baseline;
-  width: 5rem;
+.top-banner .logo {
+  margin: 0;
+  padding: 0;
+}
+
+.top-banner .logo > svg {
+  height: calc(10rem / 3);
+}
+
+.top-banner .home {
+  color: #fff;
 }
 
 .top-banner span, .top-banner a {
   color: #fff;
-  display: inline-block;
+  line-height: 4rem;
   font-weight: 300;
   padding: 0 .3rem 0 1rem;
+  display: inline-block;
+  vertical-align: top;
 }
 
 .top-banner a {
   color: #73d2cf;
 }
 
-@media (min-width: 48em) {
-  .top-banner {
-    padding: 0 .3rem 0 1rem;
-  }
-}
-
-@media (min-width: 64em) {
-  .top-banner {
-    padding: 0 1rem 0 2rem;
-  }
-
-  .top-banner img {
-    width: 6.5rem;
-  }
-}
-
-.login {
+.top-banner .login {
   float: right;
 }
 
