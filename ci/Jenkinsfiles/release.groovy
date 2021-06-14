@@ -88,7 +88,7 @@ pipeline {
   }
 
   parameters {
-    string(name: 'BRANCH_NAME', defaultValue: 'master', description: 'The branch to release')
+    string(name: 'BRANCH_NAME', defaultValue: '21.0_11.3', description: 'The branch to release')
     string(name: 'RELEASE_VERSION', defaultValue: '', description: 'Release Explorer version (optional)')
     string(name: 'NEXT_VERSION', defaultValue: '', description: 'Next Explorer version (next minor version if unset)')
     string(name: 'NUXEO_VERSION', defaultValue: '', description: 'Version of the Nuxeo Server dependency (unchanged if unset)')
