@@ -92,12 +92,12 @@ pipeline {
           script {
             echo """
             ----------------------------------------
-            Cleanup Exports on ${TARGET_URL}
+            Cleanup Exports on ${params.TARGET_URL}
             ----------------------------------------"""
-            withCredentials([usernameColonPassword(credentialsId: TARGET_CREDS_ID, variable: 'EXPLORER_PASS')]) {
+            withCredentials([usernameColonPassword(credentialsId: params.TARGET_CREDS_ID, variable: 'EXPLORER_PASS')]) {
               def curlCommand = "curl --user ${EXPLORER_PASS} ${CURL_OPTIONS}"
               def query = "SELECT * FROM NXDistribution WHERE nxdistribution:aliases='next' ORDER BY dc:created ASC"
-              def curlGet = "${curlCommand} -G --data-urlencode \"query=${query}\" ${TARGET_URL}/api/v1/search/lang/NXQL/execute"
+              def curlGet = "${curlCommand} -G --data-urlencode \"query=${query}\" ${params.TARGET_URL}/api/v1/search/lang/NXQL/execute"
               def responseGet = sh(script: curlGet, returnStdout: true).trim()
               def json = readJSON text: responseGet
 
@@ -108,7 +108,7 @@ pipeline {
                 for (def entry: json.entries) {
                   echo "Deleting ${entry.uid}"
                   // perform delete
-                  sh(script: "${curlCommand} -X DELETE ${TARGET_URL}/api/v1/id/${entry.uid}")
+                  sh(script: "${curlCommand} -X DELETE ${params.TARGET_URL}/api/v1/id/${entry.uid}")
                   numDeleted++
                   if (numDeleted >= numToDelete) {
                     break
