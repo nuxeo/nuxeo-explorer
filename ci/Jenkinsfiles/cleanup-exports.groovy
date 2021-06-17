@@ -95,7 +95,7 @@ pipeline {
             Cleanup Exports on ${params.TARGET_URL}
             ----------------------------------------"""
             withCredentials([usernameColonPassword(credentialsId: params.TARGET_CREDS_ID, variable: 'EXPLORER_PASS')]) {
-              def curlCommand = "curl --user ${EXPLORER_PASS} ${CURL_OPTIONS}"
+              def curlCommand = 'curl --user $EXPLORER_PASS $CURL_OPTIONS'
               def query = "SELECT * FROM NXDistribution WHERE nxdistribution:aliases='next' ORDER BY dc:created ASC"
               def curlGet = "${curlCommand} -G --data-urlencode \"query=${query}\" ${params.TARGET_URL}/api/v1/search/lang/NXQL/execute"
               def responseGet = sh(script: curlGet, returnStdout: true).trim()
