@@ -32,6 +32,12 @@ void setGitHubBuildStatus(String context, String message, String state) {
   ])
 }
 
+String getCurrentNamespace() {
+  container('maven') {
+    return sh(returnStdout: true, script: "kubectl get pod ${NODE_NAME} -ojsonpath='{..namespace}'")
+  }
+}
+
 String getVersion(referenceBranch) {
   String version = readMavenPom().getVersion()
   return BRANCH_NAME == referenceBranch ? version : version + "-${BRANCH_NAME}"
@@ -78,6 +84,7 @@ pipeline {
     )
   }
   environment {
+    CURRENT_NAMESPACE = getCurrentNamespace()
     MAVEN_OPTS = "$MAVEN_OPTS -Xms512m -Xmx3072m"
     MAVEN_ARGS = '-B -nsu'
     REFERENCE_BRANCH = "18.0_10.10"

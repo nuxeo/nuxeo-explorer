@@ -28,7 +28,7 @@ build:
         cache:
           repo: ${DOCKER_REGISTRY}/nuxeo/nuxeo-explorer/cache
   cluster:
-    namespace: platform
+    namespace: $CURRENT_NAMESPACE
     dockerConfig:
       secretName: jenkins-docker-cfg
     resources:
