@@ -32,6 +32,12 @@ void setGitHubBuildStatus(String context, String message, String state) {
   ])
 }
 
+String getCurrentNamespace() {
+  container('maven') {
+    return sh(returnStdout: true, script: "kubectl get pod ${NODE_NAME} -ojsonpath='{..namespace}'")
+  }
+}
+
 def isPullRequest() {
   return BRANCH_NAME =~ /PR-.*/
 }
@@ -94,6 +100,7 @@ pipeline {
     label 'jenkins-nuxeo-package-11'
   }
   environment {
+    CURRENT_NAMESPACE = getCurrentNamespace()
     CONNECT_PROD_URL = "https://connect.nuxeo.com/nuxeo"
     MAVEN_OPTS = "$MAVEN_OPTS -Xms512m -Xmx3072m"
     MAVEN_ARGS = '-B -nsu'

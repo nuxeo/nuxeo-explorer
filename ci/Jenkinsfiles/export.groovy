@@ -37,6 +37,12 @@ def defaultPackages = 'cas2-authentication easyshare nuxeo-csv nuxeo-drive nuxeo
 // excluding nuxeo-spreadsheet, not released with JSF-related packages
 def additionalPackages = 'nuxeo-diff nuxeo-platform-user-registration nuxeo-virtualnavigation nuxeo-web-ui nuxeo-jsf-ui nuxeo-showcase-content'
 
+String getCurrentNamespace() {
+  container('maven') {
+    return sh(returnStdout: true, script: "kubectl get pod ${NODE_NAME} -ojsonpath='{..namespace}'")
+  }
+}
+
 String getExportImageVersion(String explorerVersion, String nuxeoVersion) {
   def ev = explorerVersion.trim()
   def nv = nuxeoVersion.trim()
@@ -87,6 +93,8 @@ pipeline {
   }
 
   environment {
+    CURRENT_NAMESPACE = getCurrentNamespace()
+
     NUXEO_DOCKER_REGISTRY = 'docker-private.packages.nuxeo.com'
     NUXEO_IMAGE_VERSION = "${params.NUXEO_VERSION}"
     PREVIEW_NAMESPACE = "explorer-export"

@@ -30,7 +30,7 @@ build:
           EXPORT_PACKAGE_LIST: "${EXPORT_PACKAGE_LIST}"
         # disable cache to retrieve packages again
   cluster:
-    namespace: platform
+    namespace: $CURRENT_NAMESPACE
     dockerConfig:
       secretName: jenkins-docker-cfg
     resources:
