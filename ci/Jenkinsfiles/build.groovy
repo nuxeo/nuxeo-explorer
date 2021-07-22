@@ -38,6 +38,10 @@ String getCurrentNamespace() {
   }
 }
 
+def isPullRequest() {
+  return BRANCH_NAME =~ /PR-.*/
+}
+
 String getVersion(referenceBranch) {
   String version = readMavenPom().getVersion()
   return BRANCH_NAME == referenceBranch ? version : version + "-${BRANCH_NAME}"
@@ -98,6 +102,7 @@ pipeline {
     // APP_NAME and ORG needed for PR preview
     APP_NAME = 'nuxeo-explorer-test'
     ORG = 'nuxeo'
+    SLACK_CHANNEL = 'explorer-notifs'
   }
   stages {
     stage('Set labels') {
@@ -311,6 +316,23 @@ pipeline {
         if (BRANCH_NAME == REFERENCE_BRANCH) {
           // update JIRA issue
           step([$class: 'JiraIssueUpdater', issueSelector: [$class: 'DefaultIssueSelector'], scm: scm])
+        }
+      }
+    }
+    success {
+      script {
+        if (!isPullRequest()) {
+          def prevStatus = currentBuild.getPreviousBuild()?.getResult()
+          if (!hudson.model.Result.SUCCESS.toString().equals(prevStatus) && !hudson.model.Result.UNSTABLE.toString().equals(prevStatus)) {
+            slackSend(channel: "${SLACK_CHANNEL}", color: "good", message: "Successfully built <${BUILD_URL}|nuxeo-explorer ${BRANCH_NAME} #${BUILD_NUMBER}>")
+          }
+        }
+      }
+    }
+    failure { // use failure instead of "unsuccessful" because of frequent UNSTABLE status on ftests
+      script {
+        if (!isPullRequest()) {
+          slackSend(channel: "${SLACK_CHANNEL}", color: "danger", message: "Failed to build <${BUILD_URL}|nuxeo-explorer ${BRANCH_NAME} #${BUILD_NUMBER}>")
         }
       }
     }
