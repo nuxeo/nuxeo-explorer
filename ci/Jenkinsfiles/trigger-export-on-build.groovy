@@ -37,13 +37,13 @@ properties([
 pipeline {
 
   agent {
-    label 'jenkins-nuxeo-package-11'
+    label 'jenkins-nuxeo-package-lts-2021'
   }
 
   triggers {
     upstream(
       threshold: hudson.model.Result.SUCCESS,
-      upstreamProjects: "/nuxeo/11.x/nuxeo/master",
+      upstreamProjects: "/nuxeo/lts/nuxeo/2021",
     )
   }
 

@@ -90,12 +90,12 @@ String getPreviewTemplatesOverride(isReferenceBranch) {
 
 pipeline {
   agent {
-    label 'jenkins-nuxeo-package-11'
+    label 'jenkins-nuxeo-package-lts-2021'
   }
   triggers {
     upstream(
       threshold: hudson.model.Result.SUCCESS,
-      upstreamProjects: "/nuxeo/11.x/nuxeo/${BRANCH_NAME}",
+      upstreamProjects: "/nuxeo/lts/nuxeo/2021",
     )
   }
   environment {
