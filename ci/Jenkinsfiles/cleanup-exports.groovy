@@ -33,7 +33,7 @@ properties([
 pipeline {
 
   agent {
-    label 'jenkins-nuxeo-package-11'
+    label 'jenkins-nuxeo-package-lts-2021'
   }
 
   triggers {
