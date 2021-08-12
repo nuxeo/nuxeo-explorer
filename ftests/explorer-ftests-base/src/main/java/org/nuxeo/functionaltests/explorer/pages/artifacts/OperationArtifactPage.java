@@ -72,6 +72,7 @@ public class OperationArtifactPage extends ArtifactPage {
                 + "in the context of an event that will fail if the document is saved (empty document created, "
                 + "about to create, before modification, ...).");
         checkInfoText("Operation id Document.AddFacet\n" //
+                + "Aliases Document.AddFacet\n" //
                 + "Category Document\n" //
                 + "Label Add Facet\n" //
                 + "Requires\n" //
@@ -85,6 +86,7 @@ public class OperationArtifactPage extends ArtifactPage {
         checkContributingComponentText("Contributing Component org.nuxeo.ecm.core.automation.coreContrib");
         checkJsonText("{\n" //
                 + "  \"id\" : \"Document.AddFacet\",\n" //
+                + "  \"aliases\" : [ \"Document.AddFacet\" ],\n" //
                 + "  \"label\" : \"Add Facet\",\n" //
                 + "  \"category\" : \"Document\",\n" //
                 + "  \"requires\" : null,\n" //
