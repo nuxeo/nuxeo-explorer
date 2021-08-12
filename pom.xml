@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.nuxeo</groupId>
     <artifactId>nuxeo-parent</artifactId>
-    <version>11.5-SNAPSHOT</version>
+    <version>2021.7-SNAPSHOT</version>
   </parent>
 
   <groupId>org.nuxeo.ecm.platform</groupId>
@@ -14,7 +14,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <nuxeo.target.version>[11.3,11.6)</nuxeo.target.version>
+    <nuxeo.target.version>[2021.0,2022)</nuxeo.target.version>
     <nuxeo.image.version>${nuxeo.platform.version}</nuxeo.image.version>
     <dockerfile.maven.version>1.4.12</dockerfile.maven.version>
     <jgrapht.version>1.5.0</jgrapht.version>

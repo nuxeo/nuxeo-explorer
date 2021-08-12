@@ -178,11 +178,10 @@ public class ITExplorerTest extends AbstractExplorerTest {
     @Test
     public void testExtensionPointAliases() {
         openAndCheck(getArtifactURL(ExtensionPointInfo.TYPE_NAME, "foo"), true);
-        goToArtifact(ExtensionPointInfo.TYPE_NAME, "org.nuxeo.ecm.automation.core.AutomationComponent--operations");
-        asPage(ExtensionPointArtifactPage.class).checkAutomationOperations();
-        goToArtifact(ExtensionPointInfo.TYPE_NAME,
-                "org.nuxeo.ecm.core.operation.OperationServiceComponent--operations");
-        asPage(ExtensionPointArtifactPage.class).checkAutomationOperations();
+        goToArtifact(ExtensionPointInfo.TYPE_NAME, "org.nuxeo.ecm.core.api.versioning.VersioningService--policies");
+        asPage(ExtensionPointArtifactPage.class).checkVersioningPolicies();
+        goToArtifact(ExtensionPointInfo.TYPE_NAME, "org.nuxeo.ecm.core.versioning.VersioningService--policies");
+        asPage(ExtensionPointArtifactPage.class).checkVersioningPolicies();
     }
 
     @Test
@@ -275,10 +274,10 @@ public class ITExplorerTest extends AbstractExplorerTest {
     @Test
     public void testComponentAliases() {
         openAndCheck(getArtifactURL(ComponentInfo.TYPE_NAME, "foo"), true);
-        goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.ecm.automation.core.AutomationComponent");
-        asPage(ComponentArtifactPage.class).checkAutomationComponent();
-        goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.ecm.core.operation.OperationServiceComponent");
-        asPage(ComponentArtifactPage.class).checkAutomationComponent();
+        goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.ecm.core.api.versioning.VersioningService");
+        asPage(ComponentArtifactPage.class).checkVersioningComponent();
+        goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.ecm.core.versioning.VersioningService");
+        asPage(ComponentArtifactPage.class).checkVersioningComponent();
     }
 
     @Test

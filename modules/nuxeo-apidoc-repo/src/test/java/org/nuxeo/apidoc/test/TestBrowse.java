@@ -72,8 +72,8 @@ public class TestBrowse {
     public void testAliasXPIntrospection() {
         DistributionSnapshot runtimeSnapshot = manager.getRuntimeSnapshot();
 
-        String xpid = "org.nuxeo.ecm.automation.core.AutomationComponent--operations";
-        String xpaliasid = "org.nuxeo.ecm.core.operation.OperationServiceComponent--operations";
+        String xpid = "org.nuxeo.ecm.core.api.versioning.VersioningService--policies";
+        String xpaliasid = "org.nuxeo.ecm.core.versioning.VersioningService--policies";
         ExtensionPointInfo xp = runtimeSnapshot.getExtensionPoint(xpid);
         ExtensionPointInfo xpalias = runtimeSnapshot.getExtensionPoint(xpaliasid);
         assertNotNull(xp);

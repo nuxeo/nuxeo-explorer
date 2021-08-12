@@ -10,8 +10,8 @@ org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1,org.nuxeo.run
 org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2,org.nuxeo.runtime.ConfigurationService--configuration,true,2,XML,false
 org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3,org.nuxeo.runtime.ConfigurationService--configuration,true,2,XML,false
 org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters,org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters,true,4,JAVA,false
-org.nuxeo.apidoc.test.automation--chains,org.nuxeo.ecm.core.operation.OperationServiceComponent--chains,false,1,XML,false
+org.nuxeo.apidoc.test.automation--chains,org.nuxeo.ecm.core.operation.OperationServiceComponent--chains,true,1,XML,false
 org.nuxeo.apidoc.test.automation--operation,org.nuxeo.automation.scripting.internals.AutomationScriptingComponent--operation,true,1,SCRIPTING,false
-org.nuxeo.apidoc.test.automation--operations,org.nuxeo.ecm.core.operation.OperationServiceComponent--operations,false,1,JAVA,false
+org.nuxeo.apidoc.test.automation--operations,org.nuxeo.ecm.core.operation.OperationServiceComponent--operations,true,1,JAVA,false
 org.nuxeo.apidoc.test.works--queues,org.nuxeo.ecm.core.work.service--queues,true,1,XML,false
 org.nuxeo.apidoc.test.works--queues1,org.nuxeo.ecm.core.work.service--queues,true,1,XML,false
