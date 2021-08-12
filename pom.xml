@@ -17,7 +17,7 @@
     <nuxeo.target.version>[2021.0,2022)</nuxeo.target.version>
     <nuxeo.image.version>${nuxeo.platform.version}</nuxeo.image.version>
     <dockerfile.maven.version>1.4.12</dockerfile.maven.version>
-    <jgrapht.version>1.5.0</jgrapht.version>
+    <jgrapht.version>1.0.1</jgrapht.version>
     <commonmark.version>0.15.2</commonmark.version>
   </properties>
 
@@ -33,7 +33,7 @@
       <!-- libs -->
       <dependency>
         <groupId>org.jgrapht</groupId>
-        <artifactId>jgrapht-io</artifactId>
+        <artifactId>jgrapht-ext</artifactId>
         <version>${jgrapht.version}</version>
       </dependency>
       <dependency>
