@@ -84,12 +84,12 @@ public class ExtensionPointArtifactPage extends ArtifactPage {
         checkAliases(null);
     }
 
-    public void checkAutomationOperations() {
-        checkCommon("Extension point org.nuxeo.ecm.automation.core.AutomationComponent--operations",
-                "Extension point operations", "In component org.nuxeo.ecm.automation.core.AutomationComponent",
+    public void checkVersioningPolicies() {
+        checkCommon("Extension point org.nuxeo.ecm.core.api.versioning.VersioningService--policies",
+                "Extension point policies", "In component org.nuxeo.ecm.core.api.versioning.VersioningService",
                 "Documentation\n" + "Aliases\n" + "Contribution Descriptors\n" + "Existing Contributions");
-        checkDescriptorsText("org.nuxeo.ecm.automation.core.OperationContribution");
-        checkAliases(List.of("org.nuxeo.ecm.core.operation.OperationServiceComponent--operations"));
+        checkDescriptorsText("org.nuxeo.ecm.core.versioning.VersioningPolicyDescriptor");
+        checkAliases(List.of("org.nuxeo.ecm.core.versioning.VersioningService--policies"));
     }
 
     @Override

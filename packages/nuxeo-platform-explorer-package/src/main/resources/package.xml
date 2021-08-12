@@ -8,7 +8,7 @@
   </description>
   <home-page>http://doc.nuxeo.com/x/VoVH</home-page>
   <target-platform>
-    <name>server</name>
+    <name>lts</name>
     <version>@NUXEO_TARGET_VERSION@</version>
   </target-platform>
   <hotreload-support>false</hotreload-support>

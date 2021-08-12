@@ -359,7 +359,7 @@ public class TestJson extends AbstractApidocTest {
         assertEquals(List.of(), smcomp.getRequirements());
         assertEquals(Long.valueOf(70), smcomp.getResolutionOrder());
         assertNull(smcomp.getDeclaredStartOrder());
-        assertEquals(Long.valueOf(142), smcomp.getStartOrder());
+        assertEquals(Long.valueOf(137), smcomp.getStartOrder());
 
         // check component alias
         assertTrue(smcomp.getAliases().isEmpty());

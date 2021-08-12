@@ -95,9 +95,9 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                     "org.nuxeo.apidoc.test.automation", "org.nuxeo.apidoc.test.works",
                     // referenced components
                     "org.nuxeo.automation.scripting.internals.AutomationScriptingComponent",
-                    "org.nuxeo.ecm.automation.core.AutomationComponent",
                     "org.nuxeo.ecm.core.api.DocumentAdapterService", "org.nuxeo.ecm.core.event.EventServiceComponent",
-                    "org.nuxeo.ecm.core.lifecycle.LifeCycleService", "org.nuxeo.ecm.core.schema.TypeService",
+                    "org.nuxeo.ecm.core.lifecycle.LifeCycleService",
+                    "org.nuxeo.ecm.core.operation.OperationServiceComponent", "org.nuxeo.ecm.core.schema.TypeService",
                     "org.nuxeo.ecm.core.work.service", "org.nuxeo.runtime.ConfigurationService"),
                     snapshot.getComponentIds());
         } else {
@@ -109,10 +109,13 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                     snapshot.getComponentIds());
         }
         if (isRef) {
-            // FIXME NXP-30203: fix alias component retrieval
             assertEquals(List.of("org.nuxeo.apidoc.search.ArtifactSearcher",
                     "org.nuxeo.apidoc.snapshot.SnapshotListener", "org.nuxeo.apidoc.snapshot.SnapshotManager",
                     "org.nuxeo.automation.scripting.api.AutomationScriptingService",
+                    "org.nuxeo.ecm.automation.AutomationAdmin", "org.nuxeo.ecm.automation.AutomationService",
+                    "org.nuxeo.ecm.automation.context.ContextService",
+                    "org.nuxeo.ecm.automation.core.events.EventHandlerRegistry",
+                    "org.nuxeo.ecm.automation.core.trace.TracerFactory",
                     "org.nuxeo.ecm.core.api.adapter.DocumentAdapterService", "org.nuxeo.ecm.core.event.EventProducer",
                     "org.nuxeo.ecm.core.event.EventService", "org.nuxeo.ecm.core.event.EventServiceAdmin",
                     "org.nuxeo.ecm.core.lifecycle.LifeCycleService",
@@ -131,12 +134,13 @@ public class TestSnapshotFilter extends AbstractApidocTest {
                     "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters",
                     "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins",
                     // referenced extension points
-                    // FIXME NXP-30203: fix alias component retrieval
                     "org.nuxeo.automation.scripting.internals.AutomationScriptingComponent--operation",
                     "org.nuxeo.ecm.core.api.DocumentAdapterService--adapters",
                     "org.nuxeo.ecm.core.event.EventServiceComponent--listener",
                     "org.nuxeo.ecm.core.lifecycle.LifeCycleService--lifecycle",
                     "org.nuxeo.ecm.core.lifecycle.LifeCycleService--types",
+                    "org.nuxeo.ecm.core.operation.OperationServiceComponent--chains",
+                    "org.nuxeo.ecm.core.operation.OperationServiceComponent--operations",
                     "org.nuxeo.ecm.core.schema.TypeService--doctype", "org.nuxeo.ecm.core.schema.TypeService--schema",
                     "org.nuxeo.ecm.core.work.service--queues", "org.nuxeo.runtime.ConfigurationService--configuration"),
                     snapshot.getExtensionPointIds());
