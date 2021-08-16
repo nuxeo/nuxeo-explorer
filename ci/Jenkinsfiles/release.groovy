@@ -24,6 +24,12 @@ properties([
   disableConcurrentBuilds(),
 ])
 
+String getCurrentNamespace() {
+  container('maven') {
+    return sh(returnStdout: true, script: "kubectl get pod ${NODE_NAME} -ojsonpath='{..namespace}'")
+  }
+}
+
 void getCurrentVersion() {
   return readMavenPom().getVersion()
 }
@@ -101,6 +107,7 @@ pipeline {
   }
 
   environment {
+    CURRENT_NAMESPACE = getCurrentNamespace()
     CURRENT_VERSION = getCurrentVersion()
     RELEASE_VERSION = getReleaseVersion(params.RELEASE_VERSION, CURRENT_VERSION)
     NUXEO_IMAGE_VERSION = getNuxeoVersion(params.NUXEO_VERSION)
