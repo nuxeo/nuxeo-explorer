@@ -381,7 +381,9 @@ pipeline {
                   """
                 }
                 sh """
-                  jx step helm build --verbose
+                  helm repo add jenkins-x https://jenkins-x-charts.github.io/v2/
+                  helm repo add nuxeo-platform https://chartmuseum.platform.dev.nuxeo.com
+                  helm dependency update .
                   mkdir target && helm3 template . --output-dir target
                   ${previewCommand}
                 """
