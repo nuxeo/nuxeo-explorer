@@ -181,7 +181,7 @@ deploy() {
 
   log_debug "Init Helm and update chart dependencies"
   helm init --wait >&5
-  helm repo add jenkins-x http://chartmuseum.jenkins-x.io >&5
+  helm repo add jenkins-x https://jenkins-x-charts.github.io/v2/ >&5
   helm repo add nuxeo-platform https://chartmuseum.platform.dev.nuxeo.com >&5
   helm dep update "${helm_dir}/preview" >&5
   log_debug "Deploy Helm chart"
