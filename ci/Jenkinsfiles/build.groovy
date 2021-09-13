@@ -371,8 +371,9 @@ pipeline {
                 // waiting for https://github.com/jenkins-x/jx/issues/5797 to be fixed in order to remove --source-url
                 sh """
                   helm init --client-only --stable-repo-url=https://charts.helm.sh/stable
-                  helm repo add local-jenkins-x http://jenkins-x-chartmuseum:8080
-                  jx step helm build --verbose
+                  helm repo add jenkins-x https://jenkins-x-charts.github.io/v2/
+                  helm repo add nuxeo-platform https://chartmuseum.platform.dev.nuxeo.com
+                  helm dependency update .
                   mkdir target && helm template . --output-dir target
                   ${previewCommand}
                 """
