@@ -40,13 +40,6 @@ pipeline {
     label 'jenkins-nuxeo-package-lts-2021'
   }
 
-  triggers {
-    upstream(
-      threshold: hudson.model.Result.SUCCESS,
-      upstreamProjects: "/nuxeo/lts/nuxeo/2021",
-    )
-  }
-
   parameters {
     string(name: 'NUXEO_VERSION', defaultValue: '', description: 'Version of the target Nuxeo Server Image.\nSample: \'11.3.48\'.\nWill be ignored if jobs is triggered from upstream build.')
     text(name: 'DEFAULT_PACKAGE_LIST', defaultValue: '', description: 'The list of packages to install for snapshot.\nSample: \'nuxeo-csv nuxeo-quota-1.0.0\'.\nWill override the default job triggered job value if not empty.')
