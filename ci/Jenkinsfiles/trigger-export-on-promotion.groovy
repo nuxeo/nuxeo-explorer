@@ -40,13 +40,6 @@ pipeline {
     label 'jenkins-nuxeo-package-lts-2021'
   }
 
-  triggers {
-    upstream(
-      threshold: hudson.model.Result.SUCCESS,
-      upstreamProjects: "/nuxeo/lts/release-nuxeo-jsf-ui-2021",
-    )
-  }
-
   parameters {
     string(name: 'PROMOTED_NUXEO_VERSION', defaultValue: '', description: 'Promoted version of the target Nuxeo Server Image.\nSample: \'11.3\'.\nWill be ignored if job is triggered from upstream build.')
     string(name: 'ORIGINAL_NUXEO_VERSION', defaultValue: '', description: 'Original version of the target Nuxeo Server Image.\nSample: \'11.3.48\'.\nWill be ignored if job is triggered from upstream build.')
