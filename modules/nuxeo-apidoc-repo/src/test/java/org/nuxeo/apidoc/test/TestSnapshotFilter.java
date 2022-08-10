@@ -317,6 +317,7 @@ public class TestSnapshotFilter extends AbstractApidocTest {
         assertEquals(0, snapshot.getExtensionPointIds().size());
         assertEquals(
                 List.of("org.nuxeo.ecm.core.automation.features.operations--chains",
+                        "org.nuxeo.ecm.core.automation.features.operations--configuration",
                         "org.nuxeo.ecm.core.automation.features.operations--operations"),
                 snapshot.getContributionIds());
         assertEquals(List.of("Repository.Query", "Repository.ResultSetQuery", "WorkManager.RunWorkInFailure"),
