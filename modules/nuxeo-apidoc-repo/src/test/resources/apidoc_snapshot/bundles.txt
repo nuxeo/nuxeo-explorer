@@ -16,7 +16,6 @@ NXBundle: org.nuxeo.ecm.core.cache *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.cor
 NXBundle: org.nuxeo.ecm.core.convert *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.convert/org.nuxeo.ecm.core.convert
 NXBundle: org.nuxeo.ecm.core.convert.plugins *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.convert/org.nuxeo.ecm.core.convert.plugins
 NXBundle: org.nuxeo.ecm.core.event *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.event
-NXBundle: org.nuxeo.ecm.core.event.test *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.event.test
 NXBundle: org.nuxeo.ecm.core.io *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.io
 NXBundle: org.nuxeo.ecm.core.management *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management *** [org.nuxeo.ecm.core]
 NXBundle: org.nuxeo.ecm.core.mimetype *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.mimetype

@@ -9,6 +9,7 @@ NXComponent: org.nuxeo.apidoc.test.works *** /grp:org.nuxeo.ecm.platform/grp:org
 NXComponent: org.nuxeo.automation.scripting.classfilter *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.scripting/org.nuxeo.automation.scripting.classfilter
 NXComponent: org.nuxeo.automation.scripting.internals.AutomationScriptingComponent *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.scripting/org.nuxeo.automation.scripting.internals.AutomationScriptingComponent *** [org.nuxeo.ecm.core.operation.OperationServiceComponent]
 NXComponent: org.nuxeo.core.LocalConfigurationService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.api/org.nuxeo.core.LocalConfigurationService
+NXComponent: org.nuxeo.core.io.archive.exporter *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.io/org.nuxeo.core.io.archive.exporter
 NXComponent: org.nuxeo.directory.mongodb.MongoDBDirectoryFactory *** /grp:org.nuxeo.ecm.platform/org.nuxeo.directory.mongodb/org.nuxeo.directory.mongodb.MongoDBDirectoryFactory *** [org.nuxeo.runtime.mongodb.MongoDBComponent, org.nuxeo.ecm.directory.DirectoryServiceImpl, org.nuxeo.ecm.directory.sql.SQLDirectoryFactory]
 NXComponent: org.nuxeo.directory.test.sql *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.directory.test.sql
 NXComponent: org.nuxeo.ecm.automation.core.impl.ReloadListener *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.core/org.nuxeo.ecm.automation.core.impl.ReloadListener
@@ -79,11 +80,13 @@ NXComponent: org.nuxeo.ecm.core.management.typesContrib *** /grp:org.nuxeo.ecm.c
 NXComponent: org.nuxeo.ecm.core.managemment.standby *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.managemment.standby *** [org.nuxeo.runtime.management.ResourcePublisher, org.nuxeo.runtime.metrics.MetricsService, org.nuxeo.runtime.EventService]
 NXComponent: org.nuxeo.ecm.core.operation.OperationServiceComponent *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.core/org.nuxeo.ecm.core.operation.OperationServiceComponent *** [org.nuxeo.runtime.management.ServerLocator]
 NXComponent: org.nuxeo.ecm.core.orphanVersionsCleanup *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.orphanVersionsCleanup
+NXComponent: org.nuxeo.ecm.core.proxy.creation.restricted.configuration *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.proxy.creation.restricted.configuration
 NXComponent: org.nuxeo.ecm.core.query.properties *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.query/org.nuxeo.ecm.core.query.properties
 NXComponent: org.nuxeo.ecm.core.repository.RepositoryService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.sql/org.nuxeo.ecm.core.repository.RepositoryService *** [org.nuxeo.ecm.core.storage.sql.RepositoryService]
 NXComponent: org.nuxeo.ecm.core.repository.RepositoryServiceComponent *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.repository.RepositoryServiceComponent *** [org.nuxeo.runtime.cluster.ClusterService, org.nuxeo.ecm.core.api.repository.RepositoryManager]
 NXComponent: org.nuxeo.ecm.core.retention.contrib *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.retention.contrib
 NXComponent: org.nuxeo.ecm.core.scheduler.SchedulerService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.event/org.nuxeo.ecm.core.scheduler.SchedulerService *** [org.nuxeo.runtime.cluster.ClusterService]
+NXComponent: org.nuxeo.ecm.core.scheduler.test.start.delay *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.ecm.core.scheduler.test.start.delay *** [org.nuxeo.ecm.core.scheduler.SchedulerService]
 NXComponent: org.nuxeo.ecm.core.schedulers *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.schedulers
 NXComponent: org.nuxeo.ecm.core.schema.ObjectResolverService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.schema/org.nuxeo.ecm.core.schema.ObjectResolverService
 NXComponent: org.nuxeo.ecm.core.schema.TypeService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.schema/org.nuxeo.ecm.core.schema.TypeService *** [org.nuxeo.ecm.core.schema.ObjectResolverService]
@@ -94,6 +97,7 @@ NXComponent: org.nuxeo.ecm.core.security.acl.properties *** /grp:org.nuxeo.ecm.c
 NXComponent: org.nuxeo.ecm.core.security.defaultPermissions *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.security.defaultPermissions
 NXComponent: org.nuxeo.ecm.core.security.defaultPolicies *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.security.defaultPolicies
 NXComponent: org.nuxeo.ecm.core.storage.dbs.DBSRepositoryService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.dbs/org.nuxeo.ecm.core.storage.dbs.DBSRepositoryService *** [org.nuxeo.ecm.core.repository.RepositoryServiceComponent]
+NXComponent: org.nuxeo.ecm.core.storage.dbs.bulk.config *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.dbs/org.nuxeo.ecm.core.storage.dbs.bulk.config *** [org.nuxeo.runtime.stream.service]
 NXComponent: org.nuxeo.ecm.core.storage.lock.LockManagerService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.lock.LockManagerService
 NXComponent: org.nuxeo.ecm.core.storage.mem.MemRepositoryService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.mem/org.nuxeo.ecm.core.storage.mem.MemRepositoryService *** [org.nuxeo.ecm.core.storage.dbs.DBSRepositoryService]
 NXComponent: org.nuxeo.ecm.core.storage.mongodb.MongoDBRepositoryService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.mongodb/org.nuxeo.ecm.core.storage.mongodb.MongoDBRepositoryService *** [org.nuxeo.ecm.core.storage.dbs.DBSRepositoryService]
@@ -114,7 +118,7 @@ NXComponent: org.nuxeo.ecm.core.versioning.config *** /grp:org.nuxeo.ecm.core/or
 NXComponent: org.nuxeo.ecm.core.versioning.default-policies *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.versioning.default-policies *** [org.nuxeo.ecm.platform.el.service]
 NXComponent: org.nuxeo.ecm.core.work.config *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.event/org.nuxeo.ecm.core.work.config
 NXComponent: org.nuxeo.ecm.core.work.service *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.event/org.nuxeo.ecm.core.work.service
-NXComponent: org.nuxeo.ecm.core.work.test.default.queuing *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.event.test/org.nuxeo.ecm.core.work.test.default.queuing
+NXComponent: org.nuxeo.ecm.core.work.test.default.queuing *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.ecm.core.work.test.default.queuing
 NXComponent: org.nuxeo.ecm.directory.DirectoryServiceImpl *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.directory/org.nuxeo.ecm.directory/org.nuxeo.ecm.directory.DirectoryServiceImpl *** [org.nuxeo.runtime.cluster.ClusterService, org.nuxeo.ecm.core.cache.CacheService]
 NXComponent: org.nuxeo.ecm.directory.GenericDirectory *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.directory/org.nuxeo.ecm.directory/org.nuxeo.ecm.directory.GenericDirectory *** [org.nuxeo.ecm.directory.DirectoryServiceImpl]
 NXComponent: org.nuxeo.ecm.directory.actions.core *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.features/org.nuxeo.ecm.directory.actions.core
