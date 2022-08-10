@@ -87,7 +87,7 @@ pipeline {
     booleanParam(name: 'PERFORM_JSON_EXPORT', defaultValue: false, description: 'Perform download of json export on top of zip export (content will be archived).')
     // upload params
     booleanParam(name: 'UPLOAD_EXPORT', defaultValue: true, description: 'Upload export to target Explorer site (snapshot will be archived anyway).')
-    booleanParam(name: 'UPLOAD_TO_PROD', defaultValue: false, description: 'Upload export to production Explorer site (otherwise, preview will be used).')
+    booleanParam(name: 'UPLOAD_TO_PROD', defaultValue: false, description: 'Upload export to production Explorer site (otherwise, beta instance will be used).')
     booleanParam(name: 'UPLOAD_AS_PROMOTED', defaultValue: false, description: 'Upload export as a promoted version (this will impact aliases used for uploaded snapshot).')
     string(name: 'UPLOAD_ALIASES', defaultValue: '', description: 'Additional aliases to setup on the uploaded snapshot.\nSample: \'firstAlias\nsecondAlias\'.')
   }
@@ -115,8 +115,8 @@ pipeline {
     NUXEO_TEMPLATE_OVERRIDE = 'nuxeo.templates=default'
 
     UPLOAD_EXPORT = "${params.UPLOAD_EXPORT}"
-    UPLOAD_URL = "${params.UPLOAD_TO_PROD ? 'https://explorer.nuxeo.com/nuxeo' : 'https://preview-nuxeo-explorer-master.platform.dev.nuxeo.com/nuxeo'}"
-    UPLOAD_CREDS_ID = "${params.UPLOAD_TO_PROD ? 'explorer-prod' : 'explorer-preview'}"
+    UPLOAD_URL = "${params.UPLOAD_TO_PROD ? 'https://explorer.nuxeo.com/nuxeo' : 'https://explorer.beta.nuxeocloud.com/nuxeo'}"
+    UPLOAD_CREDS_ID = "${params.UPLOAD_TO_PROD ? 'explorer-prod' : 'explorer-beta-nco'}"
 
     CURL_OPTIONS = "--fail --location --connect-timeout 180 --max-time 300 --retry 2"
     SLACK_CHANNEL = 'explorer-notifs'

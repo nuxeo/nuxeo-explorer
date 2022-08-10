@@ -43,8 +43,8 @@ pipeline {
 
   parameters {
     string(name: 'NUMBER_KEEP', defaultValue: '15', description: 'Number of exports to keep.')
-    string(name: 'TARGET_URL', defaultValue: 'https://preview-nuxeo-explorer-master.platform.dev.nuxeo.com/nuxeo', description: 'Target Explorer instance to cleanup.')
-    string(name: 'TARGET_CREDS_ID', defaultValue: 'explorer-preview', description: 'Target Explorer instance credentials id.')
+    string(name: 'TARGET_URL', defaultValue: 'https://explorer.beta.nuxeocloud.com/nuxeo', description: 'Target Explorer instance to cleanup.')
+    string(name: 'TARGET_CREDS_ID', defaultValue: 'explorer-beta-nco', description: 'Target Explorer instance credentials id.')
   }
 
   environment {
