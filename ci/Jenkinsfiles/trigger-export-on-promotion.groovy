@@ -92,16 +92,24 @@ pipeline {
             }
             hasUpstream = true
             // parse description which should look like "Release 11.2 from build 11.2.13"
-            def matcher = (b.description =~ /Release\s(\d+\.\d+)(\sfrom\sbuild\s(\d+\.\d+\.\d+))?.*/)
-            if (matcher.matches()) {
-              def promotedVersion = matcher[0][1]
+            def matcher1 = (b.description =~ /Release\s(\d+\.\d+)\sfrom\sbuild\s(\d+\.\d+\.\d+).*/)
+            // parse description which should look like "Release 11.2.13"
+            def matcher2 = (b.description =~ /Release\s((\d+\.\d+)\.\d+).*/)
+            if (matcher1.matches() || matcher2.matches()) {
+              def promotedVersion;
+              def originalVersion;
+              if (matcher1.matches()) {
+                promotedVersion = matcher[0][1]
+                originalVersion = matcher[0][2]
+              } else if (matcher2.matches()) {
+                promotedVersion = matcher[0][2]
+                originalVersion = matcher[0][1]
+              }
               echo "Parsed promoted version: ${promotedVersion}"
               jobParams.add(string(name: 'NUXEO_VERSION', value: promotedVersion))
-              def originalVersion = matcher[0][3]
-              if (originalVersion) {
-                echo "Parsed original version: ${originalVersion}"
-                jobParams.add(string(name: 'UPLOAD_ALIASES', value: originalVersion))
-              }
+
+              echo "Parsed original version: ${originalVersion}"
+              jobParams.add(string(name: 'UPLOAD_ALIASES', value: originalVersion))
 
               echo "Triggering job with parameters: ${jobParams} for ${b.absoluteUrl}"
               build job: 'export-platform-explorer-reference', parameters: jobParams, wait: false
