@@ -31,7 +31,7 @@
               Parent Documentation: ReadMe.md
             </div>
             <div class="block-content">
-              <h2>About Explorer</h2>
+              <h1>About Explorer</h1>
 <p>These modules provide an API to browse the Nuxeo distribution tree:</p>
 <pre><code>- BundleGroup (maven group or artificial grouping)
   - Bundle
@@ -56,6 +56,9 @@ The property <code>org.nuxeo.apidoc.site.mode</code> comes with a more user frie
 <p>The template <code>explorer-virtualadmin</code> disables the usual <code>Administrator</code> user creation at database
 initialization and adds a virtual admin user with name <code>apidocAdmin</code>, whose password can be changed using
 nuxeo.conf property <code>org.nuxeo.apidoc.apidocAdmin.password</code>.</p>
+<p>The template <code>explorer-disable-validation</code> disables validation on documents: it is used as an optimization
+to speed up distributions imports, but should not be used on a Nuxeo instance not dedicated to the explorer
+package usage.</p>
 <h2>Modules</h2>
 <p>This plugin is composed of 3 bundles:</p>
 <ul><li>nuxeo-apidoc-core: for the low level API on the live runtime</li><li>nuxeo-apidoc-repo: for the persistence of exported content on the Nuxeo repository</li><li>nuxeo-apidoc-webengine: for JAX-RS API and Webview</li></ul>
