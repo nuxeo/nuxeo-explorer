@@ -87,6 +87,7 @@ pipeline {
           def hasUpstream = false
           def wasTriggered = false;
           for (RunWrapper b: currentBuild.upstreamBuilds) {
+            echo "Checking upstream: ${b.projectName}"
             if (b.projectName != 'test-trigger' && b.projectName != 'release-nuxeo' && b.projectName != 'release-nuxeo-jsf-ui') {
               continue
             }
@@ -99,11 +100,11 @@ pipeline {
               def promotedVersion;
               def originalVersion;
               if (matcher1.matches()) {
-                promotedVersion = matcher[0][1]
-                originalVersion = matcher[0][2]
+                promotedVersion = matcher1[0][1]
+                originalVersion = matcher1[0][2]
               } else if (matcher2.matches()) {
-                promotedVersion = matcher[0][2]
-                originalVersion = matcher[0][1]
+                promotedVersion = matcher2[0][2]
+                originalVersion = matcher2[0][1]
               }
               echo "Parsed promoted version: ${promotedVersion}"
               jobParams.add(string(name: 'NUXEO_VERSION', value: promotedVersion))
