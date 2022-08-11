@@ -77,7 +77,7 @@ pipeline {
 
   parameters {
     // build params
-    string(name: 'NUXEO_VERSION', defaultValue: '', description: 'Mandatory Version of the target Nuxeo Server Image.\nSample: \'11.3.48\' or \'11.3\'.')
+    string(name: 'NUXEO_VERSION', defaultValue: '', description: 'Mandatory Version of the target Nuxeo Server Image.\nSample: \'2021.22.4\' or \'2021.22\'.')
     string(name: 'NUXEO_EXPLORER_VERSION', defaultValue: '', description: 'Optional Version of the Explorer package to be used (should be compatible with Nuxeo version).\nSample: \'20.0.0-RC2\' or \'20.0.0\'.')
     booleanParam(name: 'DOWNLOAD_PACKAGES_FROM_PROD', defaultValue: false, description: 'Download packages from production (otherwise, preprod will be used)')
     text(name: 'DEFAULT_PACKAGE_LIST', defaultValue: defaultPackages, description: 'The list of packages to install for snapshot.\nSample: \'nuxeo-csv nuxeo-quota-1.0.0\'.')
