@@ -42,7 +42,7 @@ pipeline {
 
   parameters {
     booleanParam(name: 'IS_PROMOTION', defaultValue: false, description: 'Check if mimicking a promotion instead of a build')
-    string(name: 'BUILD_DESCRIPTION', defaultValue: '', description: 'The description to mimick.\nSample for build: \'Build 11.3.49\'.\nSample for promotion: \'Release 11.3 from build 11.3.49\' or \'Release 11.3.49\'.')
+    string(name: 'BUILD_DESCRIPTION', defaultValue: '', description: 'The description to mimick.\nSample for build: \'Build 2021.22.4\'.\nSample for promotion: \'Release 2021.22 from build 2021.22.4\' or \'Release 2021.22.4\'.')
   }
 
   stages {

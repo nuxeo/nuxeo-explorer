@@ -41,7 +41,7 @@ pipeline {
   }
 
   parameters {
-    string(name: 'NUXEO_VERSION', defaultValue: '', description: 'Version of the target Nuxeo Server Image.\nSample: \'11.3.48\'.\nWill be ignored if jobs is triggered from upstream build.')
+    string(name: 'NUXEO_VERSION', defaultValue: '', description: 'Version of the target Nuxeo Server Image.\nSample: \'2021.22.4\'.\nWill be ignored if jobs is triggered from upstream build.')
     text(name: 'DEFAULT_PACKAGE_LIST', defaultValue: '', description: 'The list of packages to install for snapshot.\nSample: \'nuxeo-csv nuxeo-quota-1.0.0\'.\nWill override the default job triggered job value if not empty.')
   }
 
@@ -82,7 +82,7 @@ pipeline {
               continue
             }
             hasUpstream = true
-            // parse description which should look like "Build 11.3.49" or "Build 11.3.49: comment"
+            // parse description which should look like "Build 2021.22.4" or "Build 2021.22.4: comment"
             def matcher = (b.description =~ /Build\s(\d+\.\d+\.\d+).*/)
             if (matcher.matches()) {
               def version = matcher[0][1]

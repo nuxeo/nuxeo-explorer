@@ -41,8 +41,8 @@ pipeline {
   }
 
   parameters {
-    string(name: 'PROMOTED_NUXEO_VERSION', defaultValue: '', description: 'Promoted version of the target Nuxeo Server Image.\nSample: \'11.3\'.\nWill be ignored if job is triggered from upstream build.')
-    string(name: 'ORIGINAL_NUXEO_VERSION', defaultValue: '', description: 'Original version of the target Nuxeo Server Image.\nSample: \'11.3.48\'.\nWill be ignored if job is triggered from upstream build.')
+    string(name: 'PROMOTED_NUXEO_VERSION', defaultValue: '', description: 'Promoted version of the target Nuxeo Server Image.\nSample: \'2021.22\'.\nWill be ignored if job is triggered from upstream build.')
+    string(name: 'ORIGINAL_NUXEO_VERSION', defaultValue: '', description: 'Original version of the target Nuxeo Server Image.\nSample: \'2021.22.4\'.\nWill be ignored if job is triggered from upstream build.')
     text(name: 'DEFAULT_PACKAGE_LIST', defaultValue: '', description: 'The list of packages to install for snapshot.\nSample: \'nuxeo-csv nuxeo-quota-1.0.0\'.\nWill override the default job triggered job value if not empty.')
     text(name: 'ADDITIONAL_PACKAGE_LIST', defaultValue: '', description: 'The additional list of packages to install for snapshot.\nWill override the default job triggered job value if not empty.')
   }
@@ -91,9 +91,9 @@ pipeline {
               continue
             }
             hasUpstream = true
-            // parse description which should look like "Release 11.2 from build 11.2.13"
+            // parse description which should look like "Release 2021.22 from build 2021.22.4"
             def matcher1 = (b.description =~ /Release\s(\d+\.\d+)\sfrom\sbuild\s(\d+\.\d+\.\d+).*/)
-            // parse description which should look like "Release 11.2.13"
+            // parse description which should look like "Release 2021.22.4"
             def matcher2 = (b.description =~ /Release\s((\d+\.\d+)\.\d+).*/)
             if (matcher1.matches() || matcher2.matches()) {
               def promotedVersion;
