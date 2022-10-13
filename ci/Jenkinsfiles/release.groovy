@@ -18,11 +18,6 @@
  *     Kevin Leturc <kleturc@nuxeo.com>
  *     Anahide Tchertchian
  */
-properties([
-  [$class: 'GithubProjectProperty', projectUrlStr: 'https://github.com/nuxeo/nuxeo-explorer'],
-  [$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '60', numToKeepStr: '60', artifactNumToKeepStr: '5']],
-  disableConcurrentBuilds(),
-])
 
 String getCurrentNamespace() {
   container('maven') {
@@ -91,19 +86,6 @@ pipeline {
 
   options {
     skipStagesAfterUnstable()
-  }
-
-  parameters {
-    string(name: 'BRANCH_NAME', defaultValue: 'master', description: 'The branch to release')
-    string(name: 'RELEASE_VERSION', defaultValue: '', description: 'Release Explorer version (optional)')
-    string(name: 'NEXT_VERSION', defaultValue: '', description: 'Next Explorer version (next minor version if unset)')
-    string(name: 'NUXEO_VERSION', defaultValue: '', description: 'Version of the Nuxeo Server dependency (unchanged if unset)')
-    booleanParam(name: 'NUXEO_VERSION_IS_PROMOTED', defaultValue: true, description: 'Uncheck if releasing a RC version, against a non-promoted Nuxeo build')
-    string(name: 'NEXT_NUXEO_VERSION', defaultValue: '', description: 'Next Version of the Nuxeo Server dependency (unchanged if unset)')
-    string(name: 'JIRA_ISSUE', defaultValue: '', description: 'Id of the Jira issue for this release')
-    booleanParam(name: 'SKIP_TESTS', defaultValue: false, description: 'Skip all tests')
-    booleanParam(name: 'SKIP_FUNCTIONAL_TESTS', defaultValue: false, description: 'Skip functional tests')
-    booleanParam(name: 'DRY_RUN', defaultValue: true, description: 'Dry run')
   }
 
   environment {

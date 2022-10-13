@@ -25,11 +25,6 @@
 * This script will build a docker image with target packages to be snapshotted.
 * The snashot will then be exported and uploaded to a target explorer instance.
 */
-properties([
-  [$class: 'GithubProjectProperty', projectUrlStr: 'https://github.com/nuxeo/nuxeo-explorer/'],
-  [$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '60', numToKeepStr: '10', artifactNumToKeepStr: '5']],
-  disableConcurrentBuilds(),
-])
 
 // all packages released with the platform
 def defaultPackages = 'easyshare nuxeo-csv nuxeo-drive nuxeo-imap-connector nuxeo-multi-tenant nuxeo-platform-importer nuxeo-quota nuxeo-signature nuxeo-template-rendering shibboleth-authentication nuxeo-liveconnect nuxeo-platform-3d'
@@ -73,23 +68,6 @@ pipeline {
 
   agent {
     label 'jenkins-nuxeo-package-lts-2021'
-  }
-
-  parameters {
-    // build params
-    string(name: 'NUXEO_VERSION', defaultValue: '', description: 'Mandatory Version of the target Nuxeo Server Image.\nSample: \'2021.22.4\' or \'2021.22\'.')
-    string(name: 'NUXEO_EXPLORER_VERSION', defaultValue: '', description: 'Optional Version of the Explorer package to be used (should be compatible with Nuxeo version).\nSample: \'20.0.0-RC2\' or \'20.0.0\'.')
-    booleanParam(name: 'DOWNLOAD_PACKAGES_FROM_PROD', defaultValue: false, description: 'Download packages from production (otherwise, preprod will be used)')
-    text(name: 'DEFAULT_PACKAGE_LIST', defaultValue: defaultPackages, description: 'The list of packages to install for snapshot.\nSample: \'nuxeo-csv nuxeo-quota-1.0.0\'.')
-    text(name: 'ADDITIONAL_PACKAGE_LIST', defaultValue: additionalPackages, description: 'The additional list of packages to install for snapshot.\nThis list will only be taken into account when DOWNLOAD_PACKAGES_FROM_PROD option is checked (promoted Nuxeo version use case).')
-    // export params
-    string(name: 'SNAPSHOT_NAME', defaultValue: 'Nuxeo Platform', description: 'Name of the distribution that will be exported.')
-    booleanParam(name: 'PERFORM_JSON_EXPORT', defaultValue: false, description: 'Perform download of json export on top of zip export (content will be archived).')
-    // upload params
-    booleanParam(name: 'UPLOAD_EXPORT', defaultValue: true, description: 'Upload export to target Explorer site (snapshot will be archived anyway).')
-    booleanParam(name: 'UPLOAD_TO_PROD', defaultValue: false, description: 'Upload export to production Explorer site (otherwise, beta instance will be used).')
-    booleanParam(name: 'UPLOAD_AS_PROMOTED', defaultValue: false, description: 'Upload export as a promoted version (this will impact aliases used for uploaded snapshot).')
-    string(name: 'UPLOAD_ALIASES', defaultValue: '', description: 'Additional aliases to setup on the uploaded snapshot.\nSample: \'firstAlias\nsecondAlias\'.')
   }
 
   environment {
