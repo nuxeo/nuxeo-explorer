@@ -28,21 +28,10 @@
 * - trigger-export-on-promotion for downstream promotion export trigger
 */
 
-properties([
-  [$class: 'GithubProjectProperty', projectUrlStr: 'https://github.com/nuxeo/nuxeo-explorer/'],
-  [$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '60', numToKeepStr: '10', artifactNumToKeepStr: '5']],
-  disableConcurrentBuilds(),
-])
-
 pipeline {
 
   agent {
     label 'jenkins-nuxeo-package-lts-2021'
-  }
-
-  parameters {
-    booleanParam(name: 'IS_PROMOTION', defaultValue: false, description: 'Check if mimicking a promotion instead of a build')
-    string(name: 'BUILD_DESCRIPTION', defaultValue: '', description: 'The description to mimick.\nSample for build: \'Build 2021.22.4\'.\nSample for promotion: \'Release 2021.22 from build 2021.22.4\' or \'Release 2021.22.4\'.')
   }
 
   stages {

@@ -28,23 +28,10 @@
 
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
 
-properties([
-  [$class: 'GithubProjectProperty', projectUrlStr: 'https://github.com/nuxeo/nuxeo-explorer/'],
-  [$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '60', numToKeepStr: '10', artifactNumToKeepStr: '5']],
-  disableConcurrentBuilds(),
-])
-
 pipeline {
 
   agent {
     label 'jenkins-nuxeo-package-lts-2021'
-  }
-
-  parameters {
-    string(name: 'PROMOTED_NUXEO_VERSION', defaultValue: '', description: 'Promoted version of the target Nuxeo Server Image.\nSample: \'2021.22\'.\nWill be ignored if job is triggered from upstream build.')
-    string(name: 'ORIGINAL_NUXEO_VERSION', defaultValue: '', description: 'Original version of the target Nuxeo Server Image.\nSample: \'2021.22.4\'.\nWill be ignored if job is triggered from upstream build.')
-    text(name: 'DEFAULT_PACKAGE_LIST', defaultValue: '', description: 'The list of packages to install for snapshot.\nSample: \'nuxeo-csv nuxeo-quota-1.0.0\'.\nWill override the default job triggered job value if not empty.')
-    text(name: 'ADDITIONAL_PACKAGE_LIST', defaultValue: '', description: 'The additional list of packages to install for snapshot.\nWill override the default job triggered job value if not empty.')
   }
 
   environment {

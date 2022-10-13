@@ -24,27 +24,11 @@
 * Allows avoiding piling up exports from nuxeo builds on preview.
 * Triggered daily by a cron.
 */
-properties([
-  [$class: 'GithubProjectProperty', projectUrlStr: 'https://github.com/nuxeo/nuxeo-explorer/'],
-  [$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '60', numToKeepStr: '10', artifactNumToKeepStr: '5']],
-  disableConcurrentBuilds(),
-])
 
 pipeline {
 
   agent {
     label 'jenkins-nuxeo-package-lts-2021'
-  }
-
-  triggers {
-    // every day between 8AM and 10AM
-    cron('H H(8-10) * * *')
-  }
-
-  parameters {
-    string(name: 'NUMBER_KEEP', defaultValue: '15', description: 'Number of exports to keep.')
-    string(name: 'TARGET_URL', defaultValue: 'https://explorer.beta.nuxeocloud.com/nuxeo', description: 'Target Explorer instance to cleanup.')
-    string(name: 'TARGET_CREDS_ID', defaultValue: 'explorer-beta-nco', description: 'Target Explorer instance credentials id.')
   }
 
   environment {
