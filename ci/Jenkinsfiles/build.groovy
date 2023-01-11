@@ -90,7 +90,7 @@ String getPreviewTemplatesOverride(isReferenceBranch) {
 
 pipeline {
   agent {
-    label 'jenkins-nuxeo-package-lts-2021'
+    label 'jenkins-nuxeo-jsf-lts-2021'
   }
   triggers {
     upstream(

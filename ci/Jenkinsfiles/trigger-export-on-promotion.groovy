@@ -31,7 +31,7 @@ import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
 pipeline {
 
   agent {
-    label 'jenkins-nuxeo-package-lts-2021'
+    label 'jenkins-nuxeo-jsf-lts-2021'
   }
 
   environment {
