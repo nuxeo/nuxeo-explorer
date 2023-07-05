@@ -1,0 +1,14 @@
+repositories:
+- name: nuxeo
+  url: https://chartmuseum.platform.dev.nuxeo.com/
+
+helmDefaults:
+  timeout: 300
+  wait: true
+
+releases:
+- name: nuxeo
+  chart: nuxeo/nuxeo
+  version: 3.0.14
+  values:
+  - values/values-nuxeo.yaml.gotmpl

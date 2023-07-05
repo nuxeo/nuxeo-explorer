@@ -1,0 +1,43 @@
+image:
+  repository: {{ printf "%s/nuxeo/nuxeo-explorer-export" (requiredEnv "DOCKER_REGISTRY") }}
+  tag: {{ requiredEnv "VERSION" | quote }}
+  pullSecrets:
+  - name: kubernetes-docker-cfg
+podLabels:
+  {{- if (env "BRANCH_NAME") }}
+  branch: {{ env "BRANCH_NAME" | quote }}
+  {{- end }}
+  team: platform
+  usage: explorer-export
+  resource: pod
+service:
+  labels:
+    {{- if (env "BRANCH_NAME") }}
+    branch: {{ env "BRANCH_NAME" | quote }}
+    {{- end }}
+    team: platform
+    usage: explorer-export
+    resource: service
+resources:
+  requests:
+    cpu: 2
+    memory: 6Gi
+  limits:
+    cpu: 4
+    memory: 6Gi
+customEnvs:
+- name: NUXEO_CLID
+  valueFrom:
+    secretKeyRef:
+      name: instance-clid
+      key: instance.clid
+customProperties:
+  nuxeotemplates: |
+    (requiredEnv "NUXEO_TEMPLATE_OVERRIDE")
+tolerations:
+- effect: NoSchedule
+  key: team
+  operator: Equal
+  value: platform
+nodeSelector:
+  team: platform

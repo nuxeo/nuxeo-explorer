@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2023 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@
 * This script will build a docker image with target packages to be snapshotted.
 * The snashot will then be exported and uploaded to a target explorer instance.
 */
+library identifier: "platform-ci-shared-library@v0.0.22"
 
 // all packages released with the platform
 def defaultPackages = 'easyshare nuxeo-csv nuxeo-drive nuxeo-imap-connector nuxeo-multi-tenant nuxeo-platform-importer nuxeo-quota nuxeo-signature nuxeo-template-rendering shibboleth-authentication nuxeo-liveconnect nuxeo-platform-3d'
@@ -75,7 +76,7 @@ pipeline {
 
     NUXEO_DOCKER_REGISTRY = 'docker-private.packages.nuxeo.com'
     NUXEO_IMAGE_VERSION = "${params.NUXEO_VERSION}"
-    PREVIEW_NAMESPACE = "explorer-export"
+    EXPLORER_EXPORT_NAMESPACE = "explorer-export"
 
     CONNECT_PROD_URL = 'https://connect.nuxeo.com/nuxeo/site/'
     CONNECT_PREPROD_URL = 'https://nos-preprod-connect.nuxeocloud.com/nuxeo/site/'
@@ -187,91 +188,38 @@ pipeline {
       }
     }
 
-    stage('Deploy Export Preview and Perform Export') {
+    stage('Perform Export') {
       steps {
         container('maven') {
-          dir('helm/export') {
-            echo """
-            ----------------------------------------
-            Deploy Preview environment
-            ----------------------------------------"""
-            // first substitute docker image names and versions
-            sh """
-              echo ${CONNECT_EXPLORER_URL}
-              echo ${NUXEO_EXPLORER_PACKAGE}
-              mv values.yaml values.yaml.tosubst
-              envsubst < values.yaml.tosubst > values.yaml
-            """
-            // second create target namespace (if doesn't exist) and copy secrets to target namespace
+          echo """
+          ----------------------------------------
+          Deploy Explorer export environment
+          ----------------------------------------"""
+          nxWithHelmfileDeployment(namespace: EXPLORER_EXPORT_NAMESPACE, secrets: [[name: 'instance-clid', namespace: 'platform']]) {
             script {
-              try {
-                boolean nsExists = sh(returnStatus: true, script: "kubectl get namespace ${PREVIEW_NAMESPACE}") == 0
-                if (nsExists) {
-                  // Previous preview deployment needs to be scaled to 0 to be replaced correctly
-                  sh "kubectl --namespace ${PREVIEW_NAMESPACE} scale deployment export --replicas=0"
-                } else {
-                  sh "kubectl create namespace ${PREVIEW_NAMESPACE}"
-                }
-                sh "kubectl --namespace platform get secret kubernetes-docker-cfg -ojsonpath='{.data.\\.dockerconfigjson}' | base64 --decode > /tmp/config.json"
-                sh """kubectl create secret generic kubernetes-docker-cfg \
-                    --namespace=${PREVIEW_NAMESPACE} \
-                    --from-file=.dockerconfigjson=/tmp/config.json \
-                    --type=kubernetes.io/dockerconfigjson --dry-run -o yaml | kubectl apply -f -"""
-                String previewCommand = "jx step helm install --namespace ${PREVIEW_NAMESPACE} --name ${PREVIEW_NAMESPACE} --verbose ."
-
-                // third build and deploy the chart
-                // waiting for https://github.com/jenkins-x/jx/issues/5797 to be fixed in order to remove --source-url
+              String nuxeoUrl = "nuxeo.${EXPLORER_EXPORT_NAMESPACE}.svc.cluster.local/nuxeo"
+              String explorerUrl = "${nuxeoUrl}/site/distribution"
+              echo """
+              ----------------------------------------
+              Perform export on ${explorerUrl}
+              ----------------------------------------
+              """
+              String distribId = "${params.SNAPSHOT_NAME}-${NUXEO_IMAGE_VERSION}".replaceAll(" ", "%20")
+              String curlCommand = "curl --user Administrator:Administrator ${CURL_OPTIONS}"
+              retry (2) {
                 sh """
-                  helm init --client-only --stable-repo-url=https://charts.helm.sh/stable
-                  helm repo add jenkins-x https://jenkins-x-charts.github.io/v2/
-                  helm repo add nuxeo-platform https://chartmuseum.platform.dev.nuxeo.com
-                  helm dependency update .
-                  mkdir target && helm template . --output-dir target
-                  ${previewCommand}
+                  ${curlCommand} -d 'name=${params.SNAPSHOT_NAME}' -d 'version=${NUXEO_IMAGE_VERSION}' -H 'Accept: text/plain' ${explorerUrl}/save
+                  ${curlCommand} ${explorerUrl} --output home_after_save.html
+                  ${curlCommand} ${nuxeoUrl}/site/automation/Elasticsearch.WaitForIndexing -H 'Content-Type:application/json' -X POST -d '{"params":{"timeoutSecond": "3600", "refresh": "true", "waitForAudit": "true"},"context":{}}'
                 """
-
-                String nuxeoUrl = "export.${PREVIEW_NAMESPACE}.svc.cluster.local/nuxeo"
-                String explorerUrl = "${nuxeoUrl}/site/distribution"
-                echo """
-                ----------------------------------------
-                Perform export on ${explorerUrl}
-                ----------------------------------------
-                """
-                String distribId = "${params.SNAPSHOT_NAME}-${NUXEO_IMAGE_VERSION}".replaceAll(" ", "%20")
-                String curlCommand = "curl --user Administrator:Administrator ${CURL_OPTIONS}"
+              }
+              retry (2) {
+                sh "${curlCommand} ${explorerUrl}/download/${distribId} --output export.zip"
+              }
+              if (params.PERFORM_JSON_EXPORT) {
                 retry (2) {
-                  sh """
-                    kubectl rollout status deployment export \
-                      --timeout=15m \
-                      --namespace=${PREVIEW_NAMESPACE}
-
-                    ${curlCommand} ${explorerUrl} --output home.html
-                  """
+                  sh "${curlCommand} ${explorerUrl}/${distribId}/json --output export.json"
                 }
-                retry (2) {
-                  sh """
-                    ${curlCommand} -d 'name=${params.SNAPSHOT_NAME}' -d 'version=${NUXEO_IMAGE_VERSION}' -H 'Accept: text/plain' ${explorerUrl}/save
-                    ${curlCommand} ${explorerUrl} --output home_after_save.html
-                    ${curlCommand} ${nuxeoUrl}/site/automation/Elasticsearch.WaitForIndexing -H 'Content-Type:application/json' -X POST -d '{"params":{"timeoutSecond": "3600", "refresh": "true", "waitForAudit": "true"},"context":{}}'
-                  """
-                }
-                retry (2) {
-                  sh "${curlCommand} ${explorerUrl}/download/${distribId} --output export.zip"
-                }
-                if (params.PERFORM_JSON_EXPORT) {
-                  retry (2) {
-                    sh "${curlCommand} ${explorerUrl}/${distribId}/json --output export.json"
-                  }
-                }
-              } finally {
-                // cleanup jx namespace
-                sh """
-                  jx step helm delete export \
-                    --namespace=${PREVIEW_NAMESPACE} \
-                    --purge
-                  kubectl delete ns ${PREVIEW_NAMESPACE} \
-                    --ignore-not-found=true
-                """
               }
             }
           }
@@ -308,7 +256,7 @@ pipeline {
                 aliases += "\n${params.UPLOAD_ALIASES}"
               }
               sh """
-                ${curlCommand} -Fsnap=@\$(find "\$(pwd)"/helm/export/export.zip -type f) -F \$'nxdistribution:aliases=${aliases}' ${UPLOAD_URL}/site/distribution/uploadDistrib
+                ${curlCommand} -Fsnap=@\$(find "\$(pwd)"/export.zip -type f) -F \$'nxdistribution:aliases=${aliases}' ${UPLOAD_URL}/site/distribution/uploadDistrib
               """
               currentBuild.description = "Uploaded reference export for ${NUXEO_IMAGE_VERSION}"
             }
