@@ -33,7 +33,5 @@ chromedriver.log
 *.pyc
 
 # helm
-helm/preview/charts
-helm/preview/requirements.lock
 helm/export/charts
 helm/export/requirements.lock

@@ -79,15 +79,6 @@ void dockerDeploy(String imageName) {
   dockerPush(explorerImage)
 }
 
-String getPreviewTemplatesOverride(isReferenceBranch) {
-  if (isReferenceBranch) {
-    // activate dedicated profiles on master preview
-    return 'nuxeo.templates=default,mongodb,explorer-sitemode,explorer-virtualadmin,explorer-stats'
-  }
-  // NXP-29494: override templates to avoid activating s3 in PR preview + add stats
-  return 'nuxeo.templates=default,explorer-stats'
-}
-
 pipeline {
   agent {
     label 'jenkins-nuxeo-jsf-lts-2021'
@@ -107,13 +98,8 @@ pipeline {
     SCM_REF = "${getCommitSha1()}"
     VERSION = "${getVersion(REFERENCE_BRANCH)}"
     PERSISTENCE = "${BRANCH_NAME == REFERENCE_BRANCH}"
-    NUXEO_TEMPLATE_OVERRIDE = "${getPreviewTemplatesOverride(BRANCH_NAME == REFERENCE_BRANCH)}"
     NUXEO_IMAGE_VERSION = getNuxeoVersion()
     NUXEO_DOCKER_REGISTRY = 'docker-private.packages.nuxeo.com'
-    PREVIEW_NAMESPACE = "nuxeo-explorer-${BRANCH_NAME.toLowerCase()}"
-    // APP_NAME and ORG needed for PR preview
-    APP_NAME = 'nuxeo-explorer'
-    ORG = 'nuxeo'
     SLACK_CHANNEL = 'explorer-notifs'
   }
   stages {
