@@ -76,7 +76,7 @@ pipeline {
           def wasTriggered = false;
           for (RunWrapper b: currentBuild.upstreamBuilds) {
             echo "Checking upstream: ${b.projectName} with description '${b.description}'"
-            if (b.projectName != 'test-trigger' && b.projectName != 'release-nuxeo-2021' && b.projectName != 'release-nuxeo-jsf-ui-2021') {
+            if (b.projectName != 'test-trigger' && b.projectName != 'release-nuxeo-2021' && b.projectName != 'release-nuxeo-jsf-ui') {
               continue
             }
             hasUpstream = true
