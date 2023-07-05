@@ -1,5 +1,0 @@
-dependencies:
-  - alias: nuxeo
-    name: nuxeo
-    version: ~3.0.3
-    repository: https://chartmuseum.platform.dev.nuxeo.com
