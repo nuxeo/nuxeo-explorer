@@ -9,14 +9,11 @@
 
   <groupId>org.nuxeo.ecm.platform</groupId>
   <artifactId>nuxeo-explorer-parent</artifactId>
-  <version>22.0.0-SNAPSHOT</version>
+  <version>2021.2-SNAPSHOT</version>
   <name>Nuxeo Explorer Parent</name>
   <packaging>pom</packaging>
 
   <properties>
-    <nuxeo.target.version>[2021.0,2022)</nuxeo.target.version>
-    <nuxeo.image.version>${nuxeo.platform.version}</nuxeo.image.version>
-    <dockerfile.maven.version>1.4.12</dockerfile.maven.version>
     <jgrapht.version>1.0.1</jgrapht.version>
     <commonmark.version>0.15.2</commonmark.version>
   </properties>
@@ -25,7 +22,6 @@
     <module>modules</module>
     <module>packages</module>
     <module>ftests</module>
-    <module>docker</module>
   </modules>
 
   <dependencyManagement>
@@ -81,6 +77,7 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
@@ -108,25 +105,6 @@
         </executions>
       </plugin>
     </plugins>
-
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>com.spotify</groupId>
-          <artifactId>dockerfile-maven-plugin</artifactId>
-          <version>${dockerfile.maven.version}</version>
-          <executions>
-            <execution>
-              <id>default</id>
-              <goals>
-                <goal>build</goal>
-                <goal>tag</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
   </build>
 
   <repositories>
