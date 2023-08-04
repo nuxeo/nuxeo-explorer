@@ -65,7 +65,6 @@ NXService: org.nuxeo.ecm.core.trash.TrashService *** /grp:org.nuxeo.ecm.core/org
 NXService: org.nuxeo.ecm.core.trash.TrashServiceImpl *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.trash.TrashService/Services/org.nuxeo.ecm.core.trash.TrashServiceImpl
 NXService: org.nuxeo.ecm.core.uidgen.UIDGeneratorService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.uidgen.UIDGeneratorService/Services/org.nuxeo.ecm.core.uidgen.UIDGeneratorService
 NXService: org.nuxeo.ecm.core.uidgen.UIDSequencer *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.uidgen.UIDGeneratorService/Services/org.nuxeo.ecm.core.uidgen.UIDSequencer
-NXService: org.nuxeo.ecm.core.versioning.VersioningService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.api.versioning.VersioningService/Services/org.nuxeo.ecm.core.versioning.VersioningService
 NXService: org.nuxeo.ecm.core.work.api.WorkManager *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.event/org.nuxeo.ecm.core.work.service/Services/org.nuxeo.ecm.core.work.api.WorkManager
 NXService: org.nuxeo.ecm.directory.api.DirectoryService *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.directory/org.nuxeo.ecm.directory/org.nuxeo.ecm.directory.DirectoryServiceImpl/Services/org.nuxeo.ecm.directory.api.DirectoryService
 NXService: org.nuxeo.ecm.platform.actions.ejb.ActionManager *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.actions/org.nuxeo.ecm.platform.actions.ActionService/Services/org.nuxeo.ecm.platform.actions.ejb.ActionManager
@@ -103,6 +102,7 @@ NXService: org.nuxeo.runtime.metrics.MetricsService *** /grp:org.nuxeo.runtime/o
 NXService: org.nuxeo.runtime.migration.MigrationService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.migration/org.nuxeo.runtime.migration.MigrationService/Services/org.nuxeo.runtime.migration.MigrationService
 NXService: org.nuxeo.runtime.model.persistence.ContributionPersistenceManager *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.model.persistence/Services/org.nuxeo.runtime.model.persistence.ContributionPersistenceManager
 NXService: org.nuxeo.runtime.mongodb.MongoDBConnectionService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.mongodb/org.nuxeo.runtime.mongodb.MongoDBComponent/Services/org.nuxeo.runtime.mongodb.MongoDBConnectionService
+NXService: org.nuxeo.runtime.pubsub.ClusterActionService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.pubsub/org.nuxeo.runtime.pubsub.ClusterActionService/Services/org.nuxeo.runtime.pubsub.ClusterActionService
 NXService: org.nuxeo.runtime.pubsub.PubSubService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.pubsub/org.nuxeo.runtime.pubsub.PubSubService/Services/org.nuxeo.runtime.pubsub.PubSubService
 NXService: org.nuxeo.runtime.reload.ReloadService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.reload/org.nuxeo.runtime.reload/Services/org.nuxeo.runtime.reload.ReloadService
 NXService: org.nuxeo.runtime.services.config.ConfigurationService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.ConfigurationService/Services/org.nuxeo.runtime.services.config.ConfigurationService

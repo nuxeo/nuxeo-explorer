@@ -91,18 +91,18 @@ public class ComponentArtifactPage extends ArtifactPage {
         checkAliases(null);
     }
 
-    public void checkVersioningComponent() {
-        checkCommon("Component org.nuxeo.ecm.core.api.versioning.VersioningService",
-                "Component org.nuxeo.ecm.core.api.versioning.VersioningService", "In bundle org.nuxeo.ecm.core",
-                "Documentation\n" + "Aliases\n" + "Resolution Order\n" + "Start Order\n" + "Implementation\n"
-                        + "Services\n" + "Extension Points\n" + "XML Source");
-        checkRequirements(null);
-        checkImplementationText("org.nuxeo.ecm.core.versioning.VersioningComponent");
+    public void checkSchedulerComponent() {
+        checkCommon("Component org.nuxeo.ecm.core.scheduler.SchedulerService",
+                "Component org.nuxeo.ecm.core.scheduler.SchedulerService", "In bundle org.nuxeo.ecm.core.event",
+                "Documentation\n" + "Requirements\n" + "Aliases\n" + "Resolution Order\n" + "Start Order\n" + "Implementation\n"
+                        + "Services\n" + "Extension Points\n" + "Contributions\n" + "XML Source");
+        checkRequirements(List.of("org.nuxeo.runtime.cluster.ClusterService"));
+        checkImplementationText("org.nuxeo.ecm.core.scheduler.SchedulerServiceImpl");
         checkResolutionOrder(true);
         checkStartOrder(true);
         checkDeclaredStartOrder(null);
         checkXMLSource(true);
-        checkAliases(List.of("org.nuxeo.ecm.core.versioning.VersioningService"));
+        checkAliases(List.of("org.nuxeo.ecm.platform.scheduler.core.service.SchedulerRegistryService"));
     }
 
     @Override

@@ -54,8 +54,8 @@ public class TestSnapshotListener extends AbstractApidocTest {
 
     @Test
     public void testStartOrders() {
-        check(212, listener.getStartTotal());
-        check(141, listener.getStartOrder(SNAPSHOT_COMP));
+        check(218, listener.getStartTotal());
+        check(147, listener.getStartOrder(SNAPSHOT_COMP));
         assertNull(listener.getDeclaredStartOrder(SNAPSHOT_COMP));
         // check XML comp
         assertNull(listener.getDeclaredStartOrder("org.nuxeo.apidoc.lifecycle.contrib"));
@@ -78,8 +78,8 @@ public class TestSnapshotListener extends AbstractApidocTest {
         // multiple contributions use case
         check(34, listener.getExtensionPointTotal(
                 ExtensionPointInfo.computeId("org.nuxeo.runtime.ConfigurationService", "configuration")));
-        check(11, listener.getExtensionRegistrationOrder(ExtensionInfo.computeId(SNAPSHOT_COMP, "configuration", 0)));
-        check(12, listener.getExtensionRegistrationOrder(ExtensionInfo.computeId(SNAPSHOT_COMP, "configuration", 1)));
+        check(10, listener.getExtensionRegistrationOrder(ExtensionInfo.computeId(SNAPSHOT_COMP, "configuration", 0)));
+        check(11, listener.getExtensionRegistrationOrder(ExtensionInfo.computeId(SNAPSHOT_COMP, "configuration", 1)));
         // self registration
         check(1, listener.getExtensionPointTotal(ExtensionPointInfo.computeId(SNAPSHOT_COMP, "exporters")));
         check(0, listener.getExtensionRegistrationOrder(ExtensionInfo.computeId(SNAPSHOT_COMP, "exporters")));

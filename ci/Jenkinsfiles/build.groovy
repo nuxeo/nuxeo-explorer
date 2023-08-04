@@ -21,7 +21,7 @@ library identifier: "platform-ci-shared-library@v0.0.26"
 
 pipeline {
   agent {
-    label 'jenkins-nuxeo-jsf-lts-2021'
+    label 'jenkins-nuxeo-jsf-lts-2023'
   }
   options {
     buildDiscarder(logRotator(daysToKeepStr: '60', numToKeepStr: '60', artifactNumToKeepStr: '5'))
@@ -31,7 +31,7 @@ pipeline {
   triggers {
     upstream(
       threshold: hudson.model.Result.SUCCESS,
-      upstreamProjects: "/nuxeo/lts/nuxeo/2021",
+      upstreamProjects: "/nuxeo/lts/nuxeo/2023",
     )
   }
   environment {
@@ -107,10 +107,17 @@ pipeline {
               ----------------------------------------
               Run Functional Tests
               ----------------------------------------"""
-              echo "MAVEN_OPTS=$MAVEN_OPTS"
-              sh "mvn ${MAVEN_ARGS} -f ftests verify"
-              nxUtils.lookupText(regexp: ".*ERROR.*(?=(?:\\n.*)*\\[.*FrameworkLoader\\] Nuxeo Platform is Trying to Shut Down)",
-                  fileSet: "ftests/**/log/server.log", unstableIfFound: true)
+              withCredentials([string(credentialsId: 'instance-clid', variable: 'INSTANCE_CLID')]) {
+                sh(script: '''#!/bin/bash +x
+                  echo -e "$INSTANCE_CLID" >| /tmp/instance.clid
+                ''')
+                withEnv(["TEST_CLID_PATH=/tmp/instance.clid"]) {
+                  echo "MAVEN_OPTS=$MAVEN_OPTS"
+                  sh "mvn ${MAVEN_ARGS} -f ftests verify"
+                  nxUtils.lookupText(regexp: ".*ERROR.*(?=(?:\\n.*)*\\[.*FrameworkLoader\\] Nuxeo Platform is Trying to Shut Down)",
+                      fileSet: "ftests/**/log/server.log", unstableIfFound: true)
+                }
+              }
             }
           }
         }

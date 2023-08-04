@@ -149,7 +149,6 @@ NXOperation: op:RunFileOperation *** /op:RunFileOperation
 NXOperation: op:RunInputScript *** /op:RunInputScript
 NXOperation: op:RunOperation *** /op:RunOperation
 NXOperation: op:RunOperationOnList *** /op:RunOperationOnList
-NXOperation: op:RunOperationOnListInNewTx *** /op:RunOperationOnListInNewTx
 NXOperation: op:RunOperationOnProvider *** /op:RunOperationOnProvider
 NXOperation: op:RunScript *** /op:RunScript
 NXOperation: op:Traces.Get *** /op:Traces.Get

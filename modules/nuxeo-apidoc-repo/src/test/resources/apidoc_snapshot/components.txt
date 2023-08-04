@@ -78,8 +78,9 @@ NXComponent: org.nuxeo.ecm.core.management.es.tests *** /grp:org.nuxeo.runtime/o
 NXComponent: org.nuxeo.ecm.core.management.runtime.management.contribs *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.management.runtime.management.contribs
 NXComponent: org.nuxeo.ecm.core.management.typesContrib *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.management.typesContrib
 NXComponent: org.nuxeo.ecm.core.managemment.standby *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.management/org.nuxeo.ecm.core.managemment.standby *** [org.nuxeo.runtime.management.ResourcePublisher, org.nuxeo.runtime.metrics.MetricsService, org.nuxeo.runtime.EventService]
+NXComponent: org.nuxeo.ecm.core.migration.bulk *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.migration.bulk
 NXComponent: org.nuxeo.ecm.core.operation.OperationServiceComponent *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.core/org.nuxeo.ecm.core.operation.OperationServiceComponent *** [org.nuxeo.runtime.management.ServerLocator]
-NXComponent: org.nuxeo.ecm.core.orphanVersionsCleanup *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.orphanVersionsCleanup
+NXComponent: org.nuxeo.ecm.core.orphanVersionsCleanup *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.orphanVersionsCleanup *** [org.nuxeo.ecm.core.bulk]
 NXComponent: org.nuxeo.ecm.core.proxy.creation.restricted.configuration *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.proxy.creation.restricted.configuration
 NXComponent: org.nuxeo.ecm.core.query.properties *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.query/org.nuxeo.ecm.core.query.properties
 NXComponent: org.nuxeo.ecm.core.repository.RepositoryService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.sql/org.nuxeo.ecm.core.repository.RepositoryService *** [org.nuxeo.ecm.core.storage.sql.RepositoryService]
@@ -90,14 +91,17 @@ NXComponent: org.nuxeo.ecm.core.scheduler.test.start.delay *** /grp:org.nuxeo.ru
 NXComponent: org.nuxeo.ecm.core.schedulers *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.schedulers
 NXComponent: org.nuxeo.ecm.core.schema.ObjectResolverService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.schema/org.nuxeo.ecm.core.schema.ObjectResolverService
 NXComponent: org.nuxeo.ecm.core.schema.TypeService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.schema/org.nuxeo.ecm.core.schema.TypeService *** [org.nuxeo.ecm.core.schema.ObjectResolverService]
+NXComponent: org.nuxeo.ecm.core.scroll.contrib *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.scroll.contrib *** [org.nuxeo.ecm.core.scroll.service]
 NXComponent: org.nuxeo.ecm.core.scroll.contrib.default *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.bulk/org.nuxeo.ecm.core.scroll.contrib.default *** [org.nuxeo.ecm.core.scroll.service]
 NXComponent: org.nuxeo.ecm.core.scroll.service *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.bulk/org.nuxeo.ecm.core.scroll.service
 NXComponent: org.nuxeo.ecm.core.security.SecurityService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.security.SecurityService
 NXComponent: org.nuxeo.ecm.core.security.acl.properties *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.api/org.nuxeo.ecm.core.security.acl.properties
 NXComponent: org.nuxeo.ecm.core.security.defaultPermissions *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.security.defaultPermissions
 NXComponent: org.nuxeo.ecm.core.security.defaultPolicies *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.security.defaultPolicies
+NXComponent: org.nuxeo.ecm.core.storage.bulk *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.bulk *** [org.nuxeo.ecm.core.bulk.config]
 NXComponent: org.nuxeo.ecm.core.storage.dbs.DBSRepositoryService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.dbs/org.nuxeo.ecm.core.storage.dbs.DBSRepositoryService *** [org.nuxeo.ecm.core.repository.RepositoryServiceComponent]
 NXComponent: org.nuxeo.ecm.core.storage.dbs.bulk.config *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.dbs/org.nuxeo.ecm.core.storage.dbs.bulk.config *** [org.nuxeo.runtime.stream.service]
+NXComponent: org.nuxeo.ecm.core.storage.dbs.migrator *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.dbs/org.nuxeo.ecm.core.storage.dbs.migrator
 NXComponent: org.nuxeo.ecm.core.storage.lock.LockManagerService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.lock.LockManagerService
 NXComponent: org.nuxeo.ecm.core.storage.mem.MemRepositoryService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.mem/org.nuxeo.ecm.core.storage.mem.MemRepositoryService *** [org.nuxeo.ecm.core.storage.dbs.DBSRepositoryService]
 NXComponent: org.nuxeo.ecm.core.storage.mongodb.MongoDBRepositoryService *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.mongodb/org.nuxeo.ecm.core.storage.mongodb.MongoDBRepositoryService *** [org.nuxeo.ecm.core.storage.dbs.DBSRepositoryService]
@@ -107,6 +111,7 @@ NXComponent: org.nuxeo.ecm.core.storage.sql.jdbc.QueryMakerService *** /grp:org.
 NXComponent: org.nuxeo.ecm.core.storage.sql.jdbc.querymaker.contrib *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.sql/org.nuxeo.ecm.core.storage.sql.jdbc.querymaker.contrib
 NXComponent: org.nuxeo.ecm.core.storage.sql.softdelete *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.sql/org.nuxeo.ecm.core.storage.sql.softdelete
 NXComponent: org.nuxeo.ecm.core.storage.sql.test.repo.repository *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.ecm.core.storage.sql.test.repo.repository
+NXComponent: org.nuxeo.ecm.core.stream.blobs *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.stream.blobs *** [org.nuxeo.ecm.core.bulk]
 NXComponent: org.nuxeo.ecm.core.test.blobmanager *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.ecm.core.test.blobmanager
 NXComponent: org.nuxeo.ecm.core.transientstore.TransientStorageComponent *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.cache/org.nuxeo.ecm.core.transientstore.TransientStorageComponent
 NXComponent: org.nuxeo.ecm.core.trash.TrashService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.trash.TrashService
@@ -151,7 +156,7 @@ NXComponent: org.nuxeo.ecm.platform.ui.web.auth.defaultConfig *** /grp:org.nuxeo
 NXComponent: org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.web.common/org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService
 NXComponent: org.nuxeo.ecm.platform.ui.web.cors *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.web.common/org.nuxeo.ecm.platform.ui.web.cors
 NXComponent: org.nuxeo.ecm.platform.ui.web.login *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.web.common/org.nuxeo.ecm.platform.ui.web.login
-NXComponent: org.nuxeo.ecm.platform.usermanager.UserManagerImpl *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.usermanager/org.nuxeo.ecm.platform.usermanager.UserManagerImpl
+NXComponent: org.nuxeo.ecm.platform.usermanager.UserManagerImpl *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.usermanager/org.nuxeo.ecm.platform.usermanager.UserManagerImpl *** [org.nuxeo.ecm.core.cache.CacheService]
 NXComponent: org.nuxeo.ecm.platform.usermanager.UserService *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.usermanager/org.nuxeo.ecm.platform.usermanager.UserService
 NXComponent: org.nuxeo.ecm.platform.usermanager.adapter *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.usermanager/org.nuxeo.ecm.platform.usermanager.adapter
 NXComponent: org.nuxeo.ecm.platform.usermanager.marshallers *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.usermanager/org.nuxeo.ecm.platform.usermanager.marshallers
@@ -200,6 +205,7 @@ NXComponent: org.nuxeo.runtime.metrics.MetricsService *** /grp:org.nuxeo.runtime
 NXComponent: org.nuxeo.runtime.migration.MigrationService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.migration/org.nuxeo.runtime.migration.MigrationService *** [org.nuxeo.runtime.kv.KeyValueService]
 NXComponent: org.nuxeo.runtime.model.persistence *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.model.persistence
 NXComponent: org.nuxeo.runtime.mongodb.MongoDBComponent *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.mongodb/org.nuxeo.runtime.mongodb.MongoDBComponent
+NXComponent: org.nuxeo.runtime.pubsub.ClusterActionService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.pubsub/org.nuxeo.runtime.pubsub.ClusterActionService *** [org.nuxeo.runtime.pubsub.PubSubService, org.nuxeo.runtime.cluster.ClusterService]
 NXComponent: org.nuxeo.runtime.pubsub.PubSubService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.pubsub/org.nuxeo.runtime.pubsub.PubSubService
 NXComponent: org.nuxeo.runtime.reload *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.reload/org.nuxeo.runtime.reload
 NXComponent: org.nuxeo.runtime.services.resource.ResourceService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.services.resource.ResourceService

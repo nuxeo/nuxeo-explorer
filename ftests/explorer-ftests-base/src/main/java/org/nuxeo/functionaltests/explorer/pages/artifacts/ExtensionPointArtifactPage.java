@@ -84,12 +84,12 @@ public class ExtensionPointArtifactPage extends ArtifactPage {
         checkAliases(null);
     }
 
-    public void checkVersioningPolicies() {
-        checkCommon("Extension point org.nuxeo.ecm.core.api.versioning.VersioningService--policies",
-                "Extension point policies", "In component org.nuxeo.ecm.core.api.versioning.VersioningService",
+    public void checkSchedulerServiceSchedule() {
+        checkCommon("Extension point org.nuxeo.ecm.core.scheduler.SchedulerService--schedule",
+                "Extension point schedule", "In component org.nuxeo.ecm.core.scheduler.SchedulerService",
                 "Documentation\n" + "Aliases\n" + "Contribution Descriptors\n" + "Existing Contributions");
-        checkDescriptorsText("org.nuxeo.ecm.core.versioning.VersioningPolicyDescriptor");
-        checkAliases(List.of("org.nuxeo.ecm.core.versioning.VersioningService--policies"));
+        checkDescriptorsText("org.nuxeo.ecm.core.scheduler.ScheduleImpl");
+        checkAliases(List.of("org.nuxeo.ecm.platform.scheduler.core.service.SchedulerRegistryService--schedule"));
     }
 
     @Override

@@ -178,10 +178,10 @@ public class ITExplorerTest extends AbstractExplorerTest {
     @Test
     public void testExtensionPointAliases() {
         openAndCheck(getArtifactURL(ExtensionPointInfo.TYPE_NAME, "foo"), true);
-        goToArtifact(ExtensionPointInfo.TYPE_NAME, "org.nuxeo.ecm.core.api.versioning.VersioningService--policies");
-        asPage(ExtensionPointArtifactPage.class).checkVersioningPolicies();
-        goToArtifact(ExtensionPointInfo.TYPE_NAME, "org.nuxeo.ecm.core.versioning.VersioningService--policies");
-        asPage(ExtensionPointArtifactPage.class).checkVersioningPolicies();
+        goToArtifact(ExtensionPointInfo.TYPE_NAME, "org.nuxeo.ecm.core.scheduler.SchedulerService--schedule");
+        asPage(ExtensionPointArtifactPage.class).checkSchedulerServiceSchedule();
+        goToArtifact(ExtensionPointInfo.TYPE_NAME, "org.nuxeo.ecm.platform.scheduler.core.service.SchedulerRegistryService--schedule");
+        asPage(ExtensionPointArtifactPage.class).checkSchedulerServiceSchedule();
     }
 
     @Test
@@ -274,10 +274,10 @@ public class ITExplorerTest extends AbstractExplorerTest {
     @Test
     public void testComponentAliases() {
         openAndCheck(getArtifactURL(ComponentInfo.TYPE_NAME, "foo"), true);
-        goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.ecm.core.api.versioning.VersioningService");
-        asPage(ComponentArtifactPage.class).checkVersioningComponent();
-        goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.ecm.core.versioning.VersioningService");
-        asPage(ComponentArtifactPage.class).checkVersioningComponent();
+        goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.ecm.core.scheduler.SchedulerService");
+        asPage(ComponentArtifactPage.class).checkSchedulerComponent();
+        goToArtifact(ComponentInfo.TYPE_NAME, "org.nuxeo.ecm.platform.scheduler.core.service.SchedulerRegistryService");
+        asPage(ComponentArtifactPage.class).checkSchedulerComponent();
     }
 
     @Test

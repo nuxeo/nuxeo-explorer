@@ -9,7 +9,7 @@
   <home-page>http://doc.nuxeo.com/x/VoVH</home-page>
   <target-platform>
     <name>@DISTRIBUTION_NAME@</name>
-    <version>[@NUXEO_PLATFORM_VERSION@, 2023.0)</version>
+    <version>[@NUXEO_PLATFORM_VERSION@, 2025.0)</version>
   </target-platform>
   <hotreload-support>false</hotreload-support>
   <supported>true</supported>
