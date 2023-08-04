@@ -21,7 +21,7 @@ library identifier: "platform-ci-shared-library@v0.0.26"
 
 pipeline {
   agent {
-    label 'jenkins-nuxeo-jsf-lts-2021'
+    label 'jenkins-nuxeo-jsf-lts-2023'
   }
   options {
     buildDiscarder(logRotator(daysToKeepStr: '60', numToKeepStr: '60', artifactNumToKeepStr: '5'))
@@ -31,7 +31,7 @@ pipeline {
   triggers {
     upstream(
       threshold: hudson.model.Result.SUCCESS,
-      upstreamProjects: "/nuxeo/lts/nuxeo/2021",
+      upstreamProjects: "/nuxeo/lts/nuxeo/2023",
     )
   }
   environment {
