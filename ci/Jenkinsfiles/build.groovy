@@ -28,12 +28,6 @@ pipeline {
     disableConcurrentBuilds(abortPrevious: true)
     githubProjectProperty(projectUrlStr: 'https://github.com/nuxeo/nuxeo-explorer')
   }
-  triggers {
-    upstream(
-      threshold: hudson.model.Result.SUCCESS,
-      upstreamProjects: "/nuxeo/lts/nuxeo/2023",
-    )
-  }
   environment {
     CURRENT_NAMESPACE = nxK8s.getCurrentNamespace()
     MAVEN_OPTS = "$MAVEN_OPTS -Xms512m -Xmx3072m"
