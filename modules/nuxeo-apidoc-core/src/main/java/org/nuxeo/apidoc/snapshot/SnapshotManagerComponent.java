@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -63,6 +64,7 @@ import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.validation.DocumentValidationException;
+import org.nuxeo.ecm.core.bulk.BulkService;
 import org.nuxeo.ecm.core.io.DocumentPipe;
 import org.nuxeo.ecm.core.io.DocumentReader;
 import org.nuxeo.ecm.core.io.DocumentWriter;
@@ -77,6 +79,7 @@ import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.model.ComponentContext;
 import org.nuxeo.runtime.model.ComponentManager;
 import org.nuxeo.runtime.model.DefaultComponent;
+import org.nuxeo.runtime.transaction.TransactionHelper;
 
 public class SnapshotManagerComponent extends DefaultComponent implements SnapshotManager {
 
@@ -309,7 +312,13 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
     @Override
     public void importSnapshot(CoreSession session, InputStream is, Map<String, Serializable> properties,
             List<String> reservedKeys) throws IOException, DocumentValidationException {
-        DocumentModel snapDoc = importTmpSnapshot(session, is);
+        DocumentModel snapDoc;
+        try {
+            snapDoc = importTmpSnapshot(session, is);
+        } catch (NuxeoException e) {
+            log.error("Failed importing NXDistribution: {}", properties);
+            throw e;
+        }
         validateImportedSnapshot(session, snapDoc.getId(), properties, reservedKeys);
     }
 
@@ -353,11 +362,30 @@ public class SnapshotManagerComponent extends DefaultComponent implements Snapsh
         snapDoc = session.saveDocument(snapDoc);
         snapDoc = session.move(snapDoc.getRef(), session.getParentDocumentRef(tmp.getRef()), null);
 
-        // cleanup tmp dir
+        // we need to submit the move, then wait for its completion in case of async implementation
+        commitOrRollbackAndRestartTransaction();
+        try {
+            int timeout = 10;
+            if (!Framework.getService(BulkService.class).await(Duration.ofMinutes(timeout))) {
+                // Interrupt the import
+                throw new NuxeoException("NXDistribution import timed out after " + timeout
+                        + " minutes while waiting for asynchronous processing.");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new NuxeoException(e);
+        }
+
+        // then we can remove the empty tmp dir
         session.removeDocument(tmp.getRef());
         session.save();
 
         return snapDoc;
+    }
+
+    protected void commitOrRollbackAndRestartTransaction() {
+        TransactionHelper.commitOrRollbackTransaction();
+        TransactionHelper.startTransaction();
     }
 
     @Override
