@@ -51,10 +51,14 @@ import org.nuxeo.ecm.core.api.validation.DocumentValidationException;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
+import org.nuxeo.runtime.test.runner.TransactionalFeature;
 
 @RunWith(FeaturesRunner.class)
 @Features(RuntimeSnaphotFeature.class)
 public class TestExportImport {
+
+    @Inject
+    protected TransactionalFeature txFeature;
 
     @Inject
     protected CoreSession session;
@@ -84,6 +88,7 @@ public class TestExportImport {
             tempExportFile.delete();
         }
         // cleanup all persisted distribs
+        txFeature.nextTransaction();
         session.removeDocument(new PathRef(SnapshotPersister.Root_PATH + SnapshotPersister.Root_NAME));
     }
 
