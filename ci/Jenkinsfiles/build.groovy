@@ -17,7 +17,7 @@
  *     Kevin Leturc <kleturc@nuxeo.com>
  *     Anahide Tchertchian
  */
-library identifier: "platform-ci-shared-library@v0.0.48"
+library identifier: "platform-ci-shared-library@v0.0.49"
 
 pipeline {
   agent {
