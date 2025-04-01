@@ -20,19 +20,18 @@ package org.nuxeo.apidoc.browse;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 
+import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.apidoc.api.ComponentInfo;
 import org.nuxeo.apidoc.api.ExtensionInfo;
 import org.nuxeo.apidoc.api.ExtensionPointInfo;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
-import org.nuxeo.ecm.webengine.forms.FormData;
 import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
 
@@ -77,13 +76,11 @@ public class ContributionWO extends NuxeoArtifactWebObject<ExtensionInfo> {
     @POST
     @Produces("text/xml")
     @Path("override")
-    public Object generateOverride() {
+    public Object generateOverride(MultiValuedMap<String, String> formData) {
         ExtensionInfo ei = getNxArtifact();
         ExtensionPointInfo ep = getTargetExtensionPoint(getSnapshot(), ei);
 
-        FormData formData = ctx.getForm();
-        Map<String, String[]> fields = formData.getFormFields();
-        List<String> selectedContribs = new ArrayList<>(fields.keySet());
+        List<String> selectedContribs = new ArrayList<>(formData.keySet());
         return getView("override").arg("contribution", ei).arg("selectedContribs", selectedContribs).arg("ep", ep);
     }
 

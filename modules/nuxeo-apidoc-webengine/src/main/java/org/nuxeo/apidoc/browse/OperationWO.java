@@ -34,7 +34,7 @@ import org.nuxeo.ecm.automation.OperationDocumentation;
 import org.nuxeo.ecm.automation.OperationDocumentation.Param;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.impl.OperationChainCompiler;
-import org.nuxeo.ecm.automation.jaxrs.io.JsonWriter;
+import org.nuxeo.ecm.automation.io.rest.JsonWriter;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;

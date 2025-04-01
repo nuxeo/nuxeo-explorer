@@ -33,21 +33,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.nuxeo.apidoc.export.ArchiveFile;
 import org.nuxeo.apidoc.introspection.RuntimeSnapshot;
 import org.nuxeo.apidoc.listener.AttributesExtractorStater;
@@ -81,7 +90,6 @@ import org.nuxeo.ecm.core.work.api.WorkManager;
 import org.nuxeo.ecm.platform.ui.web.auth.NXAuthConstants;
 import org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService;
 import org.nuxeo.ecm.platform.web.common.vh.VirtualHostHelper;
-import org.nuxeo.ecm.webengine.forms.FormData;
 import org.nuxeo.ecm.webengine.model.Resource;
 import org.nuxeo.ecm.webengine.model.Template;
 import org.nuxeo.ecm.webengine.model.WebObject;
@@ -89,8 +97,6 @@ import org.nuxeo.ecm.webengine.model.exceptions.WebResourceNotFoundException;
 import org.nuxeo.ecm.webengine.model.impl.ModuleRoot;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
-
-import com.sun.jersey.api.NotFoundException;
 
 @Path("/distribution")
 // needed for 5.4.1
@@ -254,7 +260,7 @@ public class Distribution extends ModuleRoot {
                                                    || snap.getAliases()
                                                           .contains(SnapshotManager.DISTRIBUTION_ALIAS_LATEST))
                                            .findFirst()
-                                           .map(distribution -> ctx.newObject(RedirectResource.TYPE,
+                                           .map(distribution -> ctx.<Resource> newObject(RedirectResource.TYPE,
                                                    SnapshotManager.DISTRIBUTION_ALIAS_LATEST, distribution.getKey()))
                                            .orElseGet(() -> ctx.newObject(Resource404.TYPE));
     }
@@ -341,8 +347,8 @@ public class Distribution extends ModuleRoot {
     @POST
     @Path(SAVE_ACTION)
     @Produces(MediaType.TEXT_HTML)
-    public Object doSave() {
-        return performSave(null, true);
+    public Object doSave(MultivaluedMap<String, String> formData) {
+        return performSave(null, formData, true);
     }
 
     /**
@@ -353,15 +359,15 @@ public class Distribution extends ModuleRoot {
     @POST
     @Path(SAVE_ACTION)
     @Produces(MediaType.TEXT_PLAIN)
-    public Object doSaveRequest() {
-        return performSave(null, false);
+    public Object doSaveRequest(MultivaluedMap<String, String> formData) {
+        return performSave(null, formData, false);
     }
 
     @POST
     @Path(SAVE_EXTENDED_ACTION)
     @Produces(MediaType.TEXT_HTML)
-    public Object doSaveExtended() {
-        return performSave(getSaveFilter(), true);
+    public Object doSaveExtended(MultivaluedMap<String, String> formData) {
+        return performSave(getSaveFilter(formData), formData, true);
     }
 
     /**
@@ -372,28 +378,26 @@ public class Distribution extends ModuleRoot {
     @POST
     @Path(SAVE_EXTENDED_ACTION)
     @Produces(MediaType.TEXT_PLAIN)
-    public Object doSaveExtendedRequest() {
-        return performSave(getSaveFilter(), false);
+    public Object doSaveExtendedRequest(MultivaluedMap<String, String> formData) {
+        return performSave(getSaveFilter(formData), formData, false);
     }
 
-    protected SnapshotFilter getSaveFilter() {
-        FormData formData = getContext().getForm();
-
-        String bundleList = formData.getString("bundles");
-        String ebundleList = formData.getString("excludedBundles");
-        String javaPkgList = formData.getString("javaPackages");
-        String ejavaPkgList = formData.getString("excludedJavaPackages");
-        String nxPkgList = formData.getString("nuxeoPackages");
-        String enxPkgList = formData.getString("excludedNuxeoPackages");
+    protected SnapshotFilter getSaveFilter(MultivaluedMap<String, String> formData) {
+        String bundleList = formData.getFirst("bundles");
+        String ebundleList = formData.getFirst("excludedBundles");
+        String javaPkgList = formData.getFirst("javaPackages");
+        String ejavaPkgList = formData.getFirst("excludedJavaPackages");
+        String nxPkgList = formData.getFirst("nuxeoPackages");
+        String enxPkgList = formData.getFirst("excludedNuxeoPackages");
 
         if (StringUtils.isAllBlank(bundleList, javaPkgList, nxPkgList, ebundleList, ejavaPkgList, enxPkgList)) {
             // no actual filtering
             return null;
         }
 
-        String distribLabel = formData.getString("name");
-        boolean checkAsPrefixes = "on".equals(formData.getString("checkAsPrefixes"));
-        boolean includeReferences = "on".equals(formData.getString("includeReferences"));
+        String distribLabel = formData.getFirst("name");
+        boolean checkAsPrefixes = "on".equals(formData.getFirst("checkAsPrefixes"));
+        boolean includeReferences = "on".equals(formData.getFirst("includeReferences"));
 
         PersistSnapshotFilter filter = new PersistSnapshotFilter(distribLabel, checkAsPrefixes,
                 includeReferences ? TargetExtensionPointSnapshotFilter.class : null);
@@ -424,16 +428,16 @@ public class Distribution extends ModuleRoot {
         return filter;
     }
 
-    protected Map<String, Serializable> readUploadFormData(FormData formData) {
+    protected Map<String, Serializable> readUploadFormData(MultivaluedMap<String, String> formData) {
         Map<String, Serializable> properties = new HashMap<>();
 
         // Release date
-        String released = formData.getString("released");
+        String released = formData.getFirst("released");
         if (StringUtils.isNotBlank(released)) {
             properties.put(DistributionSnapshot.PROP_RELEASED, RepositoryDistributionSnapshot.convertDate(released));
         }
         // Version
-        String version = formData.getString("version");
+        String version = formData.getFirst("version");
         if (StringUtils.isNotBlank(version)) {
             properties.put(DistributionSnapshot.PROP_VERSION, version);
         }
@@ -441,18 +445,17 @@ public class Distribution extends ModuleRoot {
         return properties;
     }
 
-    protected Object performSave(SnapshotFilter filter, boolean redirect) {
+    protected Object performSave(SnapshotFilter filter, MultivaluedMap<String, String> formData, boolean redirect) {
         if (!canSave()) {
             return show404();
         }
 
-        FormData formData = getContext().getForm();
-        String source = formData.getString("source");
+        String source = formData.getFirst("source");
         Template view;
         boolean hasError = false;
         String errorMessage = null;
         try {
-            getSnapshotManager().persistRuntimeSnapshot(getContext().getCoreSession(), formData.getString("name"),
+            getSnapshotManager().persistRuntimeSnapshot(getContext().getCoreSession(), formData.getFirst("name"),
                     readUploadFormData(formData), SUB_DISTRIBUTION_PATH_RESERVED, filter);
             hasError = false;
         } catch (NuxeoException e) {
@@ -520,6 +523,7 @@ public class Distribution extends ModuleRoot {
      */
     @GET
     @Path(VIEW_ADMIN)
+    @Produces(MediaType.TEXT_HTML)
     public Object getForms(
             @QueryParam(ApiBrowserConstants.SUCCESS_FEEBACK_MESSAGE_VARIABLE) String successFeedbackMessage,
             @QueryParam(ApiBrowserConstants.ERROR_FEEBACK_MESSAGE_VARIABLE) String errorFeedbackMessage) {
@@ -538,6 +542,7 @@ public class Distribution extends ModuleRoot {
      */
     @GET
     @Path(VIEW_STATS)
+    @Produces(MediaType.TEXT_HTML)
     public Object getStats() {
         return getView("stats");
     }
@@ -545,16 +550,27 @@ public class Distribution extends ModuleRoot {
     @POST
     @Path(UPLOAD_ACTION)
     @Produces(MediaType.TEXT_HTML)
-    public Object uploadDistrib() {
+    public Object uploadDistrib(FormDataMultiPart form) {
         if (!canImportOrExportDistributions()) {
             return show404();
         }
-        FormData formData = getContext().getForm();
-        Blob blob = formData.getFirstBlob();
-        Map<String, Serializable> updateProperties = RepositoryDistributionSnapshot.getUpdateProperties(
-                formData.getFormFields());
+        var formData = form.getFields()
+                           .entrySet()
+                           .stream()
+                           .filter(e -> e.getValue().stream().allMatch(FormDataBodyPart::isSimple))
+                           .collect(Collectors.toMap(Map.Entry::getKey,
+                                   e -> e.getValue().stream().map(part -> part.getValueAs(String.class)).toList()));
+        Map<String, Serializable> updateProperties = RepositoryDistributionSnapshot.getUpdateProperties(formData);
 
         try {
+            var blob = form.getFields()
+                           .values()
+                           .stream()
+                           .flatMap(List::stream)
+                           .filter(Predicate.not(FormDataBodyPart::isSimple))
+                           .map(part -> part.getValueAs(Blob.class))
+                           .findFirst()
+                           .orElseThrow(() -> new NotFoundException("No blob found"));
             getSnapshotManager().importSnapshot(getContext().getCoreSession(), blob.getStream(), updateProperties,
                     SUB_DISTRIBUTION_PATH_RESERVED);
         } catch (IOException | IllegalArgumentException | NuxeoException e) {
@@ -573,12 +589,10 @@ public class Distribution extends ModuleRoot {
     @POST
     @Path(UPLOAD_TMP_ACTION)
     @Produces(MediaType.TEXT_HTML)
-    public Object uploadDistribTmp() {
+    public Object uploadDistribTmp(@FormDataParam("archive") Blob blob, @FormParam("source") String source) {
         if (!canImportOrExportDistributions()) {
             return show404();
         }
-        FormData formData = getContext().getForm();
-        Blob blob = formData.getFirstBlob();
         if (blob == null || blob.getLength() == 0) {
             return null;
         }
@@ -599,22 +613,20 @@ public class Distribution extends ModuleRoot {
 
         commitOrRollbackAndRestartTransaction();
 
-        view.arg("source", formData.getString("source"));
+        view.arg("source", source);
         return view;
     }
 
     @POST
     @Path(UPLOAD_TMP_VALID_ACTION)
     @Produces(MediaType.TEXT_HTML)
-    public Object uploadDistribTmpValid() {
+    public Object uploadDistribTmpValid(MultivaluedMap<String, String> formData) {
         if (!canImportOrExportDistributions()) {
             return show404();
         }
 
-        FormData formData = getContext().getForm();
-        String distribDocId = formData.getFormProperty("distribDocId");
-        Map<String, Serializable> updateProperties = RepositoryDistributionSnapshot.getUpdateProperties(
-                formData.getFormFields());
+        String distribDocId = formData.getFirst("distribDocId");
+        Map<String, Serializable> updateProperties = RepositoryDistributionSnapshot.getUpdateProperties(formData);
         Template view;
         try {
             getSnapshotManager().validateImportedSnapshot(getContext().getCoreSession(), distribDocId, updateProperties,
@@ -627,7 +639,7 @@ public class Distribution extends ModuleRoot {
 
         commitOrRollbackAndRestartTransaction();
 
-        view.arg("source", formData.getString("source"));
+        view.arg("source", formData.getFirst("source"));
         return view;
     }
 
@@ -642,7 +654,7 @@ public class Distribution extends ModuleRoot {
         List<DistributionSnapshot> snapshots = getSnapshotManager().getPersistentSnapshots(ctx.getCoreSession(),
                 distribId, false);
         if (snapshots.size() == 1) {
-            return snapshots.get(0);
+            return snapshots.getFirst();
         }
         if (snapshots.size() > 1) {
             log.warn(String.format("Multiple distributions with key '%s': cannot retrieve one for sure", distribId));
@@ -669,10 +681,9 @@ public class Distribution extends ModuleRoot {
             return show404();
         }
         DistributionSnapshot snap = getPersistedDistrib(distribId, distribDocId);
-        if (!(snap instanceof RepositoryDistributionSnapshot)) {
+        if (!(snap instanceof RepositoryDistributionSnapshot repoSnap)) {
             return show404();
         }
-        RepositoryDistributionSnapshot repoSnap = (RepositoryDistributionSnapshot) snap;
         if (updateProperties == null) {
             updateProperties = repoSnap.getUpdateProperties();
         }
@@ -690,22 +701,19 @@ public class Distribution extends ModuleRoot {
     @POST
     @Path(DO_UPDATE_ACTION)
     @Produces(MediaType.TEXT_HTML)
-    public Object updateDistrib() {
+    public Object updateDistrib(MultivaluedMap<String, String> formData) {
         if (!showManageDistributions()) {
             return show404();
         }
-        FormData formData = getContext().getForm();
-        String distribId = formData.getFormProperty("distribId");
-        String distribDocId = formData.getFormProperty("distribDocId");
+        String distribId = formData.getFirst("distribId");
+        String distribDocId = formData.getFirst("distribDocId");
         DistributionSnapshot snap = getPersistedDistrib(distribId, distribDocId);
-        if (!(snap instanceof RepositoryDistributionSnapshot)) {
+        if (!(snap instanceof RepositoryDistributionSnapshot repoSnap)) {
             return show404();
         }
-        RepositoryDistributionSnapshot repoSnap = (RepositoryDistributionSnapshot) snap;
-        Map<String, Serializable> updateProperties = RepositoryDistributionSnapshot.getUpdateProperties(
-                formData.getFormFields());
+        Map<String, Serializable> updateProperties = RepositoryDistributionSnapshot.getUpdateProperties(formData);
         try {
-            repoSnap.updateDocument(getContext().getCoreSession(), updateProperties, formData.getString("comment"),
+            repoSnap.updateDocument(getContext().getCoreSession(), updateProperties, formData.getFirst("comment"),
                     SUB_DISTRIBUTION_PATH_RESERVED);
         } catch (DocumentValidationException e) {
             return updateDistribForm(distribId, repoSnap.getDoc().getId(), updateProperties, e.getMessage());
@@ -853,7 +861,7 @@ public class Distribution extends ModuleRoot {
      */
     @GET
     @Path(LOGIN_ACTION)
-    public Object handleLogin() throws URISyntaxException {
+    public Object handleLogin(@Context HttpServletRequest request) throws URISyntaxException {
         Framework.getService(PluggableAuthenticationService.class).invalidateSession(request);
         URI uri = new URI(URIUtils.addParametersToURIQuery(NXAuthConstants.LOGIN_PAGE, Map.of( //
                 NXAuthConstants.FORCE_ANONYMOUS_LOGIN, "true", //

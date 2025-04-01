@@ -534,12 +534,12 @@ public class RepositoryDistributionSnapshot extends BaseNuxeoArtifactDocAdapter 
      *
      * @since 20.0.0
      */
-    public static Map<String, Serializable> getUpdateProperties(Map<String, String[]> formFields) {
+    public static Map<String, Serializable> getUpdateProperties(Map<String, List<String>> formFields) {
         Map<String, Serializable> props = new HashMap<>();
         if (formFields != null) {
             Stream.of(TITLE_PROPERTY_PATH, PROP_NAME, PROP_VERSION, PROP_KEY, PROP_RELEASED, PROP_ALIASES)
                   .filter(formFields::containsKey)
-                  .forEach(p -> props.put(p, formFields.get(p)[0]));
+                  .forEach(p -> props.put(p, formFields.get(p).getFirst()));
             if (StringUtils.isBlank((String) props.get(TITLE_PROPERTY_PATH))
                     && StringUtils.isNotBlank((String) props.get(PROP_NAME))) {
                 props.put(TITLE_PROPERTY_PATH, props.get(PROP_NAME));
