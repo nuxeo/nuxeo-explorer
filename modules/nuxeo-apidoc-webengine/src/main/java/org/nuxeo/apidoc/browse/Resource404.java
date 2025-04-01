@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ package org.nuxeo.apidoc.browse;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.nuxeo.ecm.webengine.model.WebObject;
 import org.nuxeo.ecm.webengine.model.impl.DefaultObject;
@@ -43,7 +43,10 @@ public class Resource404 extends DefaultObject {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Object doGet() {
-        return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_HTML_TYPE).entity(Resource404.getPageContent()).build();
+        return Response.status(Status.NOT_FOUND)
+                       .type(MediaType.TEXT_HTML_TYPE)
+                       .entity(Resource404.getPageContent())
+                       .build();
     }
 
     public static String getPageContent() {
