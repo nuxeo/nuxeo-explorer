@@ -189,6 +189,8 @@ NXOperation: op:Scripting.TestUpdateComplexProperties *** /op:Scripting.TestUpda
 NXOperation: op:Scripting.TestUpdateProperties *** /op:Scripting.TestUpdateProperties
 NXOperation: op:Scripting.TestWrappers *** /op:Scripting.TestWrappers
 NXOperation: op:Scripting.UseConsoleHelper *** /op:Scripting.UseConsoleHelper
+NXOperation: op:Search.Index *** /op:Search.Index
+NXOperation: op:Search.WaitForIndexing *** /op:Search.WaitForIndexing
 NXOperation: op:Test.EchoParameter *** /op:Test.EchoParameter
 NXOperation: op:Test.Username *** /op:Test.Username
 NXOperation: op:Test.Wrappers *** /op:Test.Wrappers

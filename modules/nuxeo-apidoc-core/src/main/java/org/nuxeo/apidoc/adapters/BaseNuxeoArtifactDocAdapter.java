@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2006-2020 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2006-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,10 +48,10 @@ import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.PartialList;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.PropertyException;
+import org.nuxeo.ecm.core.search.SearchQuery;
+import org.nuxeo.ecm.core.search.SearchService;
 import org.nuxeo.ecm.platform.picture.listener.PictureViewsGenerationListener;
 import org.nuxeo.ecm.platform.thumbnail.ThumbnailConstants;
-import org.nuxeo.elasticsearch.api.ElasticSearchService;
-import org.nuxeo.elasticsearch.query.NxQueryBuilder;
 import org.nuxeo.runtime.api.Framework;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -62,18 +62,18 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
 
     protected DocumentModel doc;
 
-    protected static final ThreadLocal<CoreSession> localCoreSession = new ThreadLocal<>();
+    protected static final ThreadLocal<CoreSession> LOCAL_CORE_SESSION = new ThreadLocal<>();
 
     protected static final String LISTING_LIMIT_PROPERTY = "org.nuxeo.apidoc.listing.limit";
 
     protected static final String DEFAULT_LISTING_LIMIT = "2000";
 
     public static void setLocalCoreSession(CoreSession session) {
-        localCoreSession.set(session);
+        LOCAL_CORE_SESSION.set(session);
     }
 
     public static void releaseLocalCoreSession() {
-        localCoreSession.remove();
+        LOCAL_CORE_SESSION.remove();
     }
 
     protected BaseNuxeoArtifactDocAdapter(DocumentModel doc) {
@@ -85,7 +85,7 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
     }
 
     protected static int getListingLimit() {
-        return Integer.valueOf(Framework.getProperty(LISTING_LIMIT_PROPERTY, DEFAULT_LISTING_LIMIT));
+        return Integer.parseInt(Framework.getProperty(LISTING_LIMIT_PROPERTY, DEFAULT_LISTING_LIMIT));
     }
 
     protected static String getRootPath(CoreSession session, String basePath, String suffix) {
@@ -122,7 +122,7 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
             session = doc.getCoreSession();
         }
         if (session == null) {
-            session = localCoreSession.get();
+            session = LOCAL_CORE_SESSION.get();
         }
         return session;
     }
@@ -143,8 +143,7 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
     @SuppressWarnings("unchecked")
     protected <T> T safeGet(String xPath, Object defaultValue) {
         try {
-            T value = (T) doc.getPropertyValue(xPath);
-            return value;
+            return (T) doc.getPropertyValue(xPath);
         } catch (PropertyException e) {
             log.error("Error while getting property " + xPath, e);
             if (defaultValue == null) {
@@ -174,7 +173,7 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
         List<DocumentModel> parents = getCoreSession().getParentDocuments(doc.getRef());
         Collections.reverse(parents);
 
-        String path = "";
+        var path = new StringBuilder();
         for (DocumentModel doc : parents) {
             String type = doc.getType();
             if (DistributionSnapshot.TYPE_NAME.equals(type)) {
@@ -187,9 +186,9 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
             }
             NuxeoArtifact item = doc.getAdapter(NuxeoArtifact.class);
 
-            path = "/" + item.getId() + path;
+            path.insert(0, "/" + item.getId());
         }
-        return path;
+        return path.toString();
     }
 
     /**
@@ -210,8 +209,9 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
 
     protected static DocumentModelList query(CoreSession session, String query) {
         if (Framework.isBooleanPropertyTrue(SnapshotManager.PROPERTY_USE_ES)) {
-            ElasticSearchService ess = Framework.getService(ElasticSearchService.class);
-            return ess.query(new NxQueryBuilder(session).nxql(query).limit(getListingLimit()));
+            var searchService = Framework.getService(SearchService.class);
+            return searchService.search(SearchQuery.builder(session, query).limit(getListingLimit()).build())
+                                .loadDocuments(session);
         } else {
             return session.query(query);
         }

@@ -509,6 +509,8 @@
           "org.nuxeo.ecm.core.mimetype",
           "org.nuxeo.ecm.core.query",
           "org.nuxeo.ecm.core.schema",
+          "org.nuxeo.ecm.core.search",
+          "org.nuxeo.ecm.core.search.test",
           "org.nuxeo.ecm.core.test",
           "org.nuxeo.ecm.platform.el"
         ],
@@ -609,6 +611,8 @@
           "org.nuxeo.ecm.core.mimetype",
           "org.nuxeo.ecm.core.query",
           "org.nuxeo.ecm.core.schema",
+          "org.nuxeo.ecm.core.search",
+          "org.nuxeo.ecm.core.search.test",
           "org.nuxeo.ecm.core.test",
           "org.nuxeo.ecm.platform.el"
         ],
@@ -692,6 +696,8 @@
           "org.nuxeo.ecm.core.mimetype",
           "org.nuxeo.ecm.core.query",
           "org.nuxeo.ecm.core.schema",
+          "org.nuxeo.ecm.core.search",
+          "org.nuxeo.ecm.core.search.test",
           "org.nuxeo.ecm.core.test",
           "org.nuxeo.ecm.platform.el"
         ],
@@ -835,6 +841,8 @@
           "org.nuxeo.ecm.core.mimetype",
           "org.nuxeo.ecm.core.query",
           "org.nuxeo.ecm.core.schema",
+          "org.nuxeo.ecm.core.search",
+          "org.nuxeo.ecm.core.search.test",
           "org.nuxeo.ecm.core.test",
           "org.nuxeo.ecm.platform.el"
         ],
