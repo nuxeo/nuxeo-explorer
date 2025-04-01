@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2011-2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2011-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
 import org.nuxeo.apidoc.api.OperationInfo;
 import org.nuxeo.apidoc.documentation.JavaDocHelper;
