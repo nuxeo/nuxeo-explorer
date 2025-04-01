@@ -22,7 +22,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import jakarta.inject.Inject;
 
@@ -33,12 +32,9 @@ import org.nuxeo.apidoc.search.ArtifactSearcher;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.ecm.core.api.CoreSession;
-import org.nuxeo.ecm.core.event.EventService;
-import org.nuxeo.ecm.core.work.api.WorkManager;
-import org.nuxeo.elasticsearch.api.ElasticSearchAdmin;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
-import org.nuxeo.runtime.transaction.TransactionHelper;
+import org.nuxeo.runtime.test.runner.TransactionalFeature;
 
 @RunWith(FeaturesRunner.class)
 @Features(RuntimeSnaphotFeature.class)
@@ -54,28 +50,13 @@ public class TestSearcher {
     protected SnapshotManager snapshotManager;
 
     @Inject
-    protected EventService eventService;
-
-    @Inject
-    protected WorkManager workManager;
-
-    @Inject
-    protected ElasticSearchAdmin esa;
-
-    /** Wait for async worker completion and ES indexing completion. */
-    protected void waitForIndexing() throws Exception {
-        TransactionHelper.commitOrRollbackTransaction();
-        workManager.awaitCompletion(1, TimeUnit.MINUTES);
-        esa.prepareWaitForIndexing().get(1, TimeUnit.MINUTES);
-        esa.refresh();
-        TransactionHelper.startTransaction();
-    }
+    protected TransactionalFeature txFeature;
 
     @Test
-    public void testSearch() throws Exception {
+    public void testSearch() {
         DistributionSnapshot persistent = snapshotManager.persistRuntimeSnapshot(session);
         assertNotNull(persistent);
-        waitForIndexing();
+        txFeature.nextTransaction();
 
         List<String> componentIds = persistent.getComponentIds();
         assertNotEquals(0, componentIds.size());

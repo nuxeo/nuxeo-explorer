@@ -18,9 +18,9 @@ package org.nuxeo.apidoc.test;
 
 import org.nuxeo.ecm.automation.test.AutomationFeature;
 import org.nuxeo.ecm.core.test.CoreFeature;
+import org.nuxeo.ecm.core.test.CoreSearchFeature;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
-import org.nuxeo.elasticsearch.test.RepositoryElasticSearchFeature;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.RunnerFeature;
@@ -28,7 +28,7 @@ import org.nuxeo.runtime.test.runner.RunnerFeature;
 /**
  * @since 8.3
  */
-@Features({ CoreFeature.class, RepositoryElasticSearchFeature.class, AutomationFeature.class })
+@Features({ CoreFeature.class, CoreSearchFeature.class, AutomationFeature.class })
 @RepositoryConfig(cleanup = Granularity.METHOD)
 @Deploy("org.nuxeo.apidoc.core")
 @Deploy("org.nuxeo.apidoc.repo")

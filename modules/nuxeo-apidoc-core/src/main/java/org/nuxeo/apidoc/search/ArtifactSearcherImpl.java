@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2006-2018 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2006-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,8 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.query.sql.NXQL;
-import org.nuxeo.elasticsearch.api.ElasticSearchService;
-import org.nuxeo.elasticsearch.query.NxQueryBuilder;
+import org.nuxeo.ecm.core.search.SearchQuery;
+import org.nuxeo.ecm.core.search.SearchService;
 import org.nuxeo.runtime.api.Framework;
 
 public class ArtifactSearcherImpl implements ArtifactSearcher {
@@ -55,27 +55,27 @@ public class ArtifactSearcherImpl implements ArtifactSearcher {
         NuxeoArtifact artifact = null;
 
         switch (doc.getType()) {
-        case BundleGroup.TYPE_NAME:
-            artifact = new BundleGroupDocAdapter(doc);
-            break;
-        case BundleInfo.TYPE_NAME:
-            artifact = new BundleInfoDocAdapter(doc);
-            break;
-        case ComponentInfo.TYPE_NAME:
-            artifact = new ComponentInfoDocAdapter(doc);
-            break;
-        case ExtensionPointInfo.TYPE_NAME:
-            artifact = new ExtensionPointInfoDocAdapter(doc);
-            break;
-        case ExtensionInfo.TYPE_NAME:
-            artifact = new ExtensionInfoDocAdapter(doc);
-            break;
-        case DistributionSnapshot.TYPE_NAME:
-            artifact = new RepositoryDistributionSnapshot(doc);
-            break;
-        case ServiceInfo.TYPE_NAME:
-            artifact = new ServiceInfoDocAdapter(doc);
-            break;
+            case BundleGroup.TYPE_NAME:
+                artifact = new BundleGroupDocAdapter(doc);
+                break;
+            case BundleInfo.TYPE_NAME:
+                artifact = new BundleInfoDocAdapter(doc);
+                break;
+            case ComponentInfo.TYPE_NAME:
+                artifact = new ComponentInfoDocAdapter(doc);
+                break;
+            case ExtensionPointInfo.TYPE_NAME:
+                artifact = new ExtensionPointInfoDocAdapter(doc);
+                break;
+            case ExtensionInfo.TYPE_NAME:
+                artifact = new ExtensionInfoDocAdapter(doc);
+                break;
+            case DistributionSnapshot.TYPE_NAME:
+                artifact = new RepositoryDistributionSnapshot(doc);
+                break;
+            case ServiceInfo.TYPE_NAME:
+                artifact = new ServiceInfoDocAdapter(doc);
+                break;
         }
 
         return artifact;
@@ -96,8 +96,9 @@ public class ArtifactSearcherImpl implements ArtifactSearcher {
             query += " AND " + NXQL.ECM_FULLTEXT + " = " + NXQL.escapeString(fulltext);
         }
 
-        ElasticSearchService ess = Framework.getService(ElasticSearchService.class);
-        DocumentModelList docs = ess.query(new NxQueryBuilder(session).nxql(query).limit(MAX_RESULTS));
+        var searchService = Framework.getService(SearchService.class);
+        DocumentModelList docs = searchService.search(SearchQuery.builder(session, query).limit(MAX_RESULTS).build())
+                                              .loadDocuments(session);
         for (DocumentModel doc : docs) {
             NuxeoArtifact artifact = mapDoc2Artifact(doc);
             if (artifact != null) {

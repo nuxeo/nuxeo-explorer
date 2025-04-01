@@ -20,6 +20,10 @@ NXBundle: org.nuxeo.ecm.core.io *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.i
 NXBundle: org.nuxeo.ecm.core.mimetype *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.mimetype
 NXBundle: org.nuxeo.ecm.core.query *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.query
 NXBundle: org.nuxeo.ecm.core.schema *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.schema
+NXBundle: org.nuxeo.ecm.core.search *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.search
+NXBundle: org.nuxeo.ecm.core.search.client.opensearch1 *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.search.client/org.nuxeo.ecm.core.search.client.opensearch1
+NXBundle: org.nuxeo.ecm.core.search.client.opensearch1.test *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.search.client/org.nuxeo.ecm.core.search.client.opensearch1.test
+NXBundle: org.nuxeo.ecm.core.search.test *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.search.test
 NXBundle: org.nuxeo.ecm.core.storage *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage
 NXBundle: org.nuxeo.ecm.core.storage.sql *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.storage/org.nuxeo.ecm.core.storage.sql *** [javax.servlet]
 NXBundle: org.nuxeo.ecm.core.test *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.test *** [org.nuxeo.ecm.core]
@@ -37,7 +41,6 @@ NXBundle: org.nuxeo.ecm.platform.query.api *** /grp:org.nuxeo.ecm.platform/org.n
 NXBundle: org.nuxeo.ecm.platform.usermanager *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.usermanager
 NXBundle: org.nuxeo.ecm.platform.web.common *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.web.common
 NXBundle: org.nuxeo.ecm.webengine.core *** /grp:org.nuxeo.ecm.webengine/org.nuxeo.ecm.webengine.core
-NXBundle: org.nuxeo.elasticsearch.core *** /grp:org.nuxeo.elasticsearch/org.nuxeo.elasticsearch.core
 NXBundle: org.nuxeo.osgi.app *** /grp:org.nuxeo.ecm.platform/org.nuxeo.osgi.app
 NXBundle: org.nuxeo.runtime *** /grp:org.nuxeo.runtime/org.nuxeo.runtime
 NXBundle: org.nuxeo.runtime.cluster *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.cluster
@@ -47,6 +50,9 @@ NXBundle: org.nuxeo.runtime.kv *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.kv
 NXBundle: org.nuxeo.runtime.management *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.management
 NXBundle: org.nuxeo.runtime.metrics *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.metrics
 NXBundle: org.nuxeo.runtime.migration *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.migration
+NXBundle: org.nuxeo.runtime.opensearch1 *** /grp:org.nuxeo.runtime/grp:org.nuxeo.runtime.opensearch1/org.nuxeo.runtime.opensearch1
+NXBundle: org.nuxeo.runtime.opensearch1.embed *** /grp:org.nuxeo.runtime/grp:org.nuxeo.runtime.opensearch1/org.nuxeo.runtime.opensearch1.embed
+NXBundle: org.nuxeo.runtime.opensearch1.test *** /grp:org.nuxeo.runtime/grp:org.nuxeo.runtime.opensearch1/org.nuxeo.runtime.opensearch1.test
 NXBundle: org.nuxeo.runtime.pubsub *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.pubsub
 NXBundle: org.nuxeo.runtime.reload *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.reload *** [org.nuxeo.runtime]
 NXBundle: org.nuxeo.runtime.stream *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.stream
