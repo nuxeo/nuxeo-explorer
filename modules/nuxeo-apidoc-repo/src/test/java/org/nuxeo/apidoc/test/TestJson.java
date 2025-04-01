@@ -57,6 +57,7 @@ import org.nuxeo.apidoc.snapshot.PersistSnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotFilter;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.apidoc.snapshot.TargetExtensionPointSnapshotFilter;
+import org.nuxeo.common.test.ModuleUnderTest;
 import org.nuxeo.connect.update.PackageException;
 import org.nuxeo.connect.update.PackageType;
 import org.nuxeo.ecm.core.api.Blob;
@@ -103,7 +104,8 @@ public class TestJson extends AbstractApidocTest {
         try (ByteArrayOutputStream sink = new ByteArrayOutputStream()) {
             snap.writeJson(sink, null, null);
             checkSnapshot(snap, persisted, false);
-            try (OutputStream file = Files.newOutputStream(Paths.get(FeaturesRunner.getBuildDirectory() + "/test.json"),
+            try (OutputStream file = Files.newOutputStream(
+                    Paths.get(ModuleUnderTest.getOutputDirectory() + "/test.json"),
                     StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
                 file.write(sink.toByteArray());
             }
@@ -234,8 +236,8 @@ public class TestJson extends AbstractApidocTest {
         assertNotNull(parentReadme);
         checkContentEquals("apidoc_snapshot/apidoc_readme.txt", parentReadme.getString());
         assertEquals(List.of(), bundle.getRequirements());
-        assertEquals(Long.valueOf(68), bundle.getMinResolutionOrder());
-        assertEquals(Long.valueOf(74), bundle.getMaxResolutionOrder());
+        assertEquals(Long.valueOf(70), bundle.getMinResolutionOrder());
+        assertEquals(Long.valueOf(76), bundle.getMaxResolutionOrder());
         assertEquals(version, bundle.getVersion());
         // check readme on core bundle instead
         BundleInfo coreBundle = snapshot.getBundle("org.nuxeo.apidoc.core");
@@ -357,9 +359,9 @@ public class TestJson extends AbstractApidocTest {
         assertFalse(smcomp.isXmlPureComponent());
         checkContentEquals("apidoc_snapshot/processed-snapshot-service-framework.xml", smcomp.getXmlFileContent());
         assertEquals(List.of(), smcomp.getRequirements());
-        assertEquals(Long.valueOf(71), smcomp.getResolutionOrder());
+        assertEquals(Long.valueOf(73), smcomp.getResolutionOrder());
         assertNull(smcomp.getDeclaredStartOrder());
-        assertEquals(Long.valueOf(147), smcomp.getStartOrder());
+        assertEquals(Long.valueOf(152), smcomp.getStartOrder());
 
         // check component alias
         assertTrue(smcomp.getAliases().isEmpty());
@@ -513,7 +515,7 @@ public class TestJson extends AbstractApidocTest {
                 ext.getHierarchyPath());
         assertEquals(new ComponentName("service:org.nuxeo.ecm.core.schema.TypeService"), ext.getTargetComponentName());
         assertEquals(version, ext.getVersion());
-        assertEquals(Long.valueOf(2), ext.getRegistrationOrder());
+        assertEquals(Long.valueOf(1), ext.getRegistrationOrder());
         // check json back reference
         assertNotNull(ext.getComponent());
 

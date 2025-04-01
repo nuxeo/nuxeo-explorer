@@ -53,7 +53,6 @@ public class NodeImpl<T extends NuxeoArtifact> implements Node<T> {
         this(id, label, type, weight, null);
     }
 
-    @JsonCreator
     public NodeImpl(@JsonProperty("id") String id, @JsonProperty("label") String label,
             @JsonProperty("type") String type, @JsonProperty("weight") int weight, T object) {
         super();

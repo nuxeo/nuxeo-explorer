@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,7 @@ import org.nuxeo.runtime.model.ComponentName;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -77,13 +78,14 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 public class JsonMapper {
 
     protected static ObjectMapper createMapper() {
-        final ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
-              .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-        mapper.addMixIn(OperationDocumentation.Param.class, OperationDocParamMixin.class);
-        mapper.addMixIn(ComponentName.class, ComponentNameMixin.class);
-        mapper.addMixIn(Blob.class, BlobMixin.class);
-        return mapper;
+        return com.fasterxml.jackson.databind.json. //
+                JsonMapper.builder()
+                          .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
+                          .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
+                          .addMixIn(OperationDocumentation.Param.class, OperationDocParamMixin.class)
+                          .addMixIn(ComponentName.class, ComponentNameMixin.class)
+                          .addMixIn(Blob.class, BlobMixin.class)
+                          .build();
     }
 
     protected static SimpleModule createModule(SnapshotFilter filter, SnapshotFilter refFilter) {
@@ -176,6 +178,8 @@ public class JsonMapper {
         }
     }
 
+    // ignore the SimpleManagedBlob#blobProviderId field during serialization
+    @JsonIgnoreProperties(value = "blobProviderId")
     public static abstract class BlobMixin {
         @JsonCreator
         BlobMixin(@JsonProperty("content") String content, @JsonProperty("name") String name) {
@@ -204,10 +208,12 @@ public class JsonMapper {
         @JsonIgnore
         abstract CloseableFile getCloseableFile();
 
-        // persisted blob
+        // persisted blob - BinaryBlob, returned Blob object until LTS 2023
 
         @JsonIgnore
         abstract Binary getBinary();
+
+        // persisted blob - common fields/methods
 
         @JsonIgnore
         abstract String getKey();

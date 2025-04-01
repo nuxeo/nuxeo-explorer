@@ -12,6 +12,7 @@
     </chain>
   </extension>
 
+  <require>org.nuxeo.automation.scripting.testContrib</require>
   <extension target="org.nuxeo.automation.scripting.internals.AutomationScriptingComponent" point="operation">
     <scriptedOperation id="Scripting.HelloWorld">
       <inputType>string</inputType>

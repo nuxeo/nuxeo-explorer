@@ -21,7 +21,7 @@ library identifier: "platform-ci-shared-library@v0.0.55"
 
 pipeline {
   agent {
-    label 'jenkins-nuxeo-jsf-lts-2023'
+    label 'jenkins-nuxeo-package-lts-2025'
   }
   options {
     buildDiscarder(logRotator(daysToKeepStr: '60', numToKeepStr: '60', artifactNumToKeepStr: '5'))
@@ -88,7 +88,7 @@ pipeline {
                      ----------------------------------------
                      Check formatting
                      ----------------------------------------"""
-                    sh "git fetch origin 2023:origin/2023"
+                    sh "git fetch origin 2025:origin/2025"
                     sh "mvn -B -nsu -V -Dcustom.environment=spotless spotless:check"
                   }
                 }

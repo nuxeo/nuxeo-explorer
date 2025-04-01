@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,13 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 
-import org.jgrapht.ext.ComponentAttributeProvider;
-import org.jgrapht.ext.ComponentNameProvider;
-import org.jgrapht.ext.DOTExporter;
-import org.jgrapht.ext.ExportException;
 import org.jgrapht.graph.SimpleDirectedGraph;
+import org.jgrapht.nio.Attribute;
+import org.jgrapht.nio.DefaultAttribute;
+import org.jgrapht.nio.ExportException;
+import org.jgrapht.nio.dot.DOTExporter;
 import org.nuxeo.apidoc.export.api.ExporterDescriptor;
 import org.nuxeo.apidoc.export.graphs.api.Edge;
 import org.nuxeo.apidoc.export.graphs.api.GraphExport;
@@ -71,26 +72,29 @@ public class DOTGraphExporter extends AbstractGraphExporter {
         }
 
         try {
-            ComponentNameProvider<IdNode> vertexIDProvider = idNode -> String.valueOf(idNode.getId());
-            ComponentNameProvider<IdNode> vertexLabelProvider = idNode -> idNode.getNode().getLabel();
-            ComponentNameProvider<Edge> edgeLabelProvider = Edge::getValue;
-            ComponentAttributeProvider<IdNode> vertexAttributeProvider = idNode -> {
-                var map = new LinkedHashMap<String, String>();
+            Function<IdNode, String> vertexIDProvider = idNode -> String.valueOf(idNode.getId());
+            Function<IdNode, Map<String, Attribute>> vertexAttributeProvider = idNode -> {
+                var map = new LinkedHashMap<String, Attribute>();
                 Node<?> node = idNode.getNode();
-                map.put("weight", String.valueOf(node.getWeight()));
-                map.put("type", String.valueOf(node.getType()));
-                map.putAll(node.getAttributes());
+                map.put("label", DefaultAttribute.createAttribute(node.getLabel()));
+                map.put("weight", DefaultAttribute.createAttribute(node.getWeight()));
+                map.put("type", DefaultAttribute.createAttribute(node.getType()));
+                for (var entry : node.getAttributes().entrySet()) {
+                    map.put(entry.getKey(), DefaultAttribute.createAttribute(entry.getValue()));
+                }
                 return map;
             };
-            DOTExporter<IdNode, Edge> exporter = new DOTExporter<>(vertexIDProvider, vertexLabelProvider,
-                    edgeLabelProvider, vertexAttributeProvider, null);
+            var exporter = new DOTExporter<IdNode, Edge>(vertexIDProvider);
+            exporter.setVertexAttributeProvider(vertexAttributeProvider);
+            exporter.setEdgeAttributeProvider(
+                    edge -> Map.of("label", DefaultAttribute.createAttribute(edge.getValue())));
             exporter.exportGraph(g, out);
         } catch (ExportException e) {
             throw new NuxeoException(e);
         }
     }
 
-    class IdNode {
+    static class IdNode {
 
         int id;
 
