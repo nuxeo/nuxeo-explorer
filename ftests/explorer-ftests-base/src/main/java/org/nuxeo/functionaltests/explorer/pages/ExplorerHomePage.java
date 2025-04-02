@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,95 +19,140 @@
 package org.nuxeo.functionaltests.explorer.pages;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
-import org.nuxeo.functionaltests.AbstractTest;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import org.nuxeo.functionaltests.AbstractHtmlPage;
+import org.nuxeo.functionaltests.HtmlLink;
+
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 
 /**
  * Page representing home at /site/distribution.
  *
  * @since 11.1
  */
-public class ExplorerHomePage extends AbstractExplorerPage {
+public class ExplorerHomePage extends AbstractHtmlPage<ExplorerHomePage.Builder> {
 
-    public static final String URL = "/site/distribution/";
+    public static final String URL = "/site/distribution";
 
-    @FindBy(className = "current")
-    public WebElement currentPlatform;
+    protected final String currentPlatform;
 
-    @FindBy(className = "currentDistrib")
-    public WebElement currentDistrib;
+    protected final HtmlLink currentDistrib;
 
-    @FindBy(className = "distrib")
-    public WebElement firstPersistedDistrib;
+    protected final HtmlLink firstPersistedDistrib;
 
-    @FindBy(xpath = "//a[@class='distrib']//span[@class='detail']")
-    public WebElement firstPersistedDistribVersion;
+    protected final UploadFragment uploadFragment;
 
-    @FindBy(linkText = "Contribute to an Extension")
-    public WebElement firstExtensionPoints;
+    protected final HtmlLink manageDistribs;
 
-    @FindBy(linkText = "Override a Contribution")
-    public WebElement firstContributions;
+    protected ExplorerHomePage(Builder builder, Source html) {
+        super(builder, html);
+        currentPlatform = this.findElementsWithNameAndClass(HTMLElementName.SPAN, "current")
+                              .map(TEXT_EXTRACTOR)
+                              .findFirst()
+                              .orElse(null);
+        currentDistrib = this.findElementsWithNameAndClass(HTMLElementName.A, "currentDistrib")
+                             .map(HtmlLink::new)
+                             .findFirst()
+                             .orElse(null);
+        firstPersistedDistrib = this.findElementsWithNameAndClass(HTMLElementName.A, "distrib")
+                                    .map(HtmlLink::new)
+                                    .findFirst()
+                                    .orElse(null);
+        uploadFragment = this.findElementsWithNameAndClass(HTMLElementName.FORM, "upload-fragment")
+                             .map(UploadFragment::new)
+                             .findFirst()
+                             .orElse(null);
+        manageDistribs = this.findElementsWithNameAndClass(HTMLElementName.A, "manageDistributions")
+                             .map(HtmlLink::new)
+                             .findFirst()
+                             .orElse(null);
+    }
 
-    @FindBy(linkText = "Search Operations")
-    public WebElement firstOperations;
-
-    @FindBy(linkText = "Browse Services")
-    public WebElement firstServices;
-
-    @FindBy(linkText = "MANAGE DISTRIBUTIONS")
-    public WebElement manageDistribs;
-
-    public ExplorerHomePage(WebDriver driver) {
-        super(driver);
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override
-    public void check() {
-        checkTitle("Nuxeo Platform Explorer");
-    }
-
-    public void checkCurrentDistrib() {
-        assertEquals("Running Platform".toUpperCase(), currentPlatform.getText());
-        assertEquals(String.format("%s%s%s/", AbstractTest.NUXEO_URL, URL, SnapshotManager.DISTRIBUTION_ALIAS_CURRENT),
-                currentDistrib.getAttribute("href"));
-    }
-
-    public void checkFirstPersistedDistrib(String name, String version) {
-        assertEquals(String.format("%s %s", name, version), firstPersistedDistrib.getText());
-        assertEquals(version, firstPersistedDistribVersion.getText());
-        assertEquals(String.format("%s%s%s-%s/", AbstractTest.NUXEO_URL, URL, name.replaceAll(" ", "%20"), version),
-                firstPersistedDistrib.getAttribute("href"));
-    }
-
-    public void checkNoCurrentDistrib() {
-        try {
-            currentDistrib.getText();
-            fail("No current distrib should be found");
-        } catch (NoSuchElementException e) {
-            // ok
+    public void assertElement() {
+        super.assertElement();
+        if (builder.expectedCurrentDistribution) {
+            assertEquals("Running Platform", currentPlatform);
+            assertEquals('/' + SnapshotManager.DISTRIBUTION_ALIAS_CURRENT + '/', currentDistrib.getHrefAndStrip(URL));
+        } else {
+            assertNull(currentPlatform);
+            assertNull(currentDistrib);
+        }
+        if (StringUtils.isNotBlank(builder.expectedFirstPersistedDistributionName)) {
+            assertEquals(builder.expectedFirstPersistedDistributionName + ' '
+                    + builder.expectedFirstPersistedDistributionVersion, firstPersistedDistrib.getText());
+            assertEquals(
+                    '/' + builder.expectedFirstPersistedDistributionName + '-'
+                            + builder.expectedFirstPersistedDistributionVersion + '/',
+                    firstPersistedDistrib.getHrefAndStrip(URL));
+        } else {
+            assertNull(firstPersistedDistrib);
+        }
+        if (builder.expectedUploadFragmentPresence) {
+            assertNotNull(uploadFragment);
+        } else {
+            assertNull(uploadFragment);
+        }
+        if (builder.expectedManageDistributionsPresence) {
+            assertNotNull(manageDistribs);
+        } else {
+            assertNull(manageDistribs);
         }
     }
 
-    public void checkNoDistrib() {
-        checkNoCurrentDistrib();
-        try {
-            firstPersistedDistrib.getText();
-            fail("No distrib should be found");
-        } catch (NoSuchElementException e) {
-            // ok
+    public UploadFragment getUploadFragment() {
+        return uploadFragment;
+    }
+
+    public static class Builder extends AbstractHtmlPage.Builder<Builder> {
+
+        protected boolean expectedCurrentDistribution;
+
+        protected String expectedFirstPersistedDistributionName;
+
+        protected String expectedFirstPersistedDistributionVersion;
+
+        protected boolean expectedUploadFragmentPresence;
+
+        protected boolean expectedManageDistributionsPresence;
+
+        public Builder() {
+            super("Nuxeo Platform Explorer");
+        }
+
+        public Builder currentDistribution(boolean expectedCurrentDistribution) {
+            this.expectedCurrentDistribution = expectedCurrentDistribution;
+            return this;
+        }
+
+        public Builder firstPersistedDistribution(String expectedFirstPersistedDistributionName,
+                String expectedFirstPersistedDistributionVersion) {
+            this.expectedFirstPersistedDistributionName = expectedFirstPersistedDistributionName;
+            this.expectedFirstPersistedDistributionVersion = expectedFirstPersistedDistributionVersion;
+            return this;
+        }
+
+        public Builder uploadFragmentPresence(boolean expectedUploadFragmentPresence) {
+            this.expectedUploadFragmentPresence = expectedUploadFragmentPresence;
+            return this;
+        }
+
+        public Builder manageDistributionsPresence(boolean expectedManageDistributionsPresence) {
+            this.expectedManageDistributionsPresence = expectedManageDistributionsPresence;
+            return this;
+        }
+
+        public ExplorerHomePage build(Source html) {
+            return new ExplorerHomePage(this, html);
         }
     }
-
-    public void checkManageLink() {
-        assertTrue(manageDistribs.isEnabled());
-    }
-
 }

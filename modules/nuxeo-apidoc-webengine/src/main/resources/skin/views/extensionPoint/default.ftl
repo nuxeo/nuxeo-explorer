@@ -76,6 +76,8 @@
 
   <@tocTrigger />
 
+</div>
+
 </@block>
 
 <@block name="footer_scripts">

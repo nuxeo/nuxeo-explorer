@@ -1,0 +1,56 @@
+<div class="documentation"> 
+<p> Extension Point to register new document types and facets. </p>
+<p> Document types may implement several schemas and extends other document types. You can compare document types with java classes and schemas with java interfaces. Document types may also contains several facets that define a behavior. </p>
+<p> The prefetch element defines what fields are synchronously indexed, and are made available in search results listings. </p>
+<p> A doctype XML extension may contain several &#39;doctype&#39; elements. A doctype element may look like this: </p>
+<p> </p>
+<pre><code>    &lt;doctype extends&#61;&#34;Document&#34; name&#61;&#34;File&#34;&gt;
+        &lt;schema name&#61;&#34;common&#34;/&gt;
+        &lt;schema name&#61;&#34;file&#34;/&gt;
+        &lt;schema name&#61;&#34;dublincore&#34;/&gt;
+        &lt;schema name&#61;&#34;uid&#34;/&gt;
+        &lt;facet name&#61;&#34;Downloadable&#34;/&gt;
+        &lt;facet name&#61;&#34;Versionable&#34;/&gt;
+        &lt;prefetch&gt;dc:title, dc:modified, uid.uid&lt;/prefetch&gt;
+    &lt;/doctype&gt;
+</code></pre>
+<p> Document types may also specify subtypes, which are sets of other document types that can be created inside the this document type being defined. </p>
+<p> This configuration only applies in the UI and will not affect documents created through APIs (e.g. REST, Java) This can be achieved as follows: </p>
+<p> </p>
+<pre><code>    &lt;doctype extends&#61;&#34;Document&#34; name&#61;&#34;SomeFolder&#34;&gt;
+        &lt;subtypes&gt;
+            &lt;type&gt;File&lt;/type&gt;
+        &lt;/subtypes&gt;
+    &lt;/doctype&gt;
+</code></pre>
+<p> When extending a doctype, forbidden subtypes can also be specified to prevent a specific type from being created. </p>
+<p> This configuration only applies in the UI and will not affect documents created through APIs (e.g. REST, Java) </p>
+<p> </p>
+<pre><code>    &lt;doctype append&#61;&#34;true&#34; name&#61;&#34;SomeFolder&#34;&gt;
+        &lt;subtypes&gt;
+            &lt;type&gt;SomeOtherFile&lt;/type&gt;
+        &lt;/subtypes&gt;
+        &lt;subtypes-forbidden&gt;
+            &lt;type&gt;File&lt;/type&gt;
+        &lt;/subtypes-forbidden&gt;
+    &lt;/doctype&gt;
+</code></pre>
+<p> Facets are also defined by this extension point. They can have zero or more schemas: </p>
+<p> </p>
+<pre><code>    &lt;facet name&#61;&#34;MyFacet&#34; perDocumentQuery&#61;&#34;false&#34;/&gt;
+    &lt;facet name&#61;&#34;MyFacetWithData&#34;&gt;
+        &lt;schema name&#61;&#34;myschema&#34;/&gt;
+        &lt;schema name&#61;&#34;otherschema&#34;/&gt;
+    &lt;/facet&gt;
+    &lt;facet enabled&#61;&#34;false&#34; name&#61;&#34;MyOldFacet&#34;/&gt;
+</code></pre>
+<p> Queries using ecm:mixinType on facets marked with perDocumentQuery&#61;&#34;false&#34; will not match any document where this facet has been added using DocumentModel.addFacet() and does not belong to the document type (this is done for performance reasons). </p>
+<p> Facets with enabled&#61;false will be ignored in all document types still referencing them, and will not be returned when listing available facets. </p>
+<p> It&#39;s also possible to associate one or more schemas to all proxies: </p>
+<p></p>
+<pre><code>    &lt;proxies&gt;
+        &lt;schema name&#61;&#34;myschema&#34;/&gt;
+    &lt;/proxies&gt;
+</code></pre>
+<p></p>
+</div>

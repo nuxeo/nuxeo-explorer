@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,150 +19,89 @@
 package org.nuxeo.functionaltests.explorer.pages.artifacts;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+import org.nuxeo.functionaltests.HtmlTable;
 
-import org.nuxeo.functionaltests.Required;
-import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
-import org.nuxeo.functionaltests.explorer.testing.AbstractExplorerTest;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 
 /**
  * @since 11.1
  */
-public class BundleArtifactPage extends ArtifactPage {
+public class BundleArtifactPage extends ArtifactPage<BundleArtifactPage.Builder> {
+
+    protected final HtmlTable mavenDetails;
 
     /** @since 20.0.0 */
-    @FindBy(xpath = "//div[@id='resolutionOrder']")
-    public WebElement resolutionOrder;
+    protected final boolean resolutionOrderPresence;
 
-    @Required
-    @FindBy(xpath = "//table[@class='listTable']")
-    public WebElement mavenDetails;
+    protected final String packages;
 
-    @FindBy(xpath = "//ul[contains(@class, 'packages')]")
-    public WebElement packages;
+    protected BundleArtifactPage(Builder builder, Source html) {
+        super(builder, html);
+        mavenDetails = this.findElementsWithNameAndClass(HTMLElementName.TABLE, "listTable")
+                           .findFirst()
+                           .map(HtmlTable::new)
+                           .orElseThrow(() -> new AssertionError("Unable to find the maven details"));
+        resolutionOrderPresence = this.findElementWithId("resolutionOrder")
+                                      .map(TEXT_EXTRACTOR)
+                                      .filter(StringUtils::isNotBlank)
+                                      .isPresent();
+        packages = this.findElementsWithNameAndClass(HTMLElementName.UL, "packages")
+                       .map(TEXT_EXTRACTOR)
+                       .findFirst()
+                       .orElse(null);
+    }
 
-    @Required
-    @FindBy(xpath = "//ul[@class='exports']")
-    public WebElement exports;
-
-    public BundleArtifactPage(WebDriver driver) {
-        super(driver);
+    public static Builder builder(String bundleGroupId, String bundleId) {
+        return new Builder(bundleGroupId, bundleId);
     }
 
     @Override
-    public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
-        String groupTitle = "In bundle group org.nuxeo.apidoc";
-        String toc = "Documentation\n" //
-                + "Components\n" //
-                + "Packages\n" //
-                + "Maven Artifact\n"//
-                + "Manifest\n" //
-                + "Exports\n" //
-                + "Charts";
-        if (partial) {
-            groupTitle = "In bundle group my-partial-server";
+    public void assertElement() {
+        super.assertElement();
+        var mavenGroupId = mavenDetails.getCell(1, 1).getText();
+        var mavenArtifactId = mavenDetails.getCell(2, 1).getText();
+        assertEquals(builder.expectedMavenGroupId, mavenGroupId);
+        assertEquals(builder.expectedMavenArtifactId, mavenArtifactId);
+        assertEquals("Resolution order presence", builder.expectedResolutionOrderPresence, resolutionOrderPresence);
+        assertEquals(builder.expectedPackages, packages);
+    }
+
+    public static class Builder extends ArtifactPage.Builder<Builder> {
+
+        protected String expectedMavenGroupId;
+
+        protected String expectedMavenArtifactId;
+
+        protected boolean expectedResolutionOrderPresence;
+
+        protected String expectedPackages;
+
+        public Builder(String expectedBundleGroupId, String expectedBundleId) {
+            super("Bundle " + expectedBundleId);
+            contentInfoDescription("In bundle group " + expectedBundleGroupId);
         }
-        if (includeReferences) {
-            groupTitle = "In bundle group my-partial-ref-server";
+
+        public Builder mavenArtifact(String expectedMavenGroupId, String expectedMavenArtifactId) {
+            this.expectedMavenGroupId = expectedMavenGroupId;
+            this.expectedMavenArtifactId = expectedMavenArtifactId;
+            return this;
         }
-        if (legacy) {
-            groupTitle = "In bundle group apidoc";
-            // legacy does not hold packages
-            toc = "Documentation\n" //
-                    + "Components\n" //
-                    + "Maven Artifact\n" //
-                    + "Manifest\n" //
-                    + "Exports\n" //
-                    + "Charts";
+
+        public Builder resolutionOrderPresence(boolean expectedResolutionOrderPresence) {
+            this.expectedResolutionOrderPresence = expectedResolutionOrderPresence;
+            return this;
         }
-        checkCommon("Bundle org.nuxeo.apidoc.core", "Bundle org.nuxeo.apidoc.core", groupTitle, toc);
-        try {
-            String readmes = AbstractExplorerTest.getReferenceContent(
-                    Paths.get(legacy ? "data/apidoc_core_readmes_legacy.html" : "data/apidoc_core_readmes.html"));
-            checkDocumentationHTML(readmes);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+        public Builder packages(String expectedPackages) {
+            this.expectedPackages = expectedPackages;
+            return this;
         }
-        checkGroupId("org.nuxeo.ecm.platform");
-        checkArtifactId("nuxeo-apidoc-core");
-        checkRequirements(null);
-        checkResolutionOrder(false);
-        checkPackages(legacy ? null : "platform-explorer");
 
-        WebElement jsonExport = exports.findElement(By.linkText("Json Export"));
-        checkJsonLink(jsonExport);
-        WebElement graphExport = exports.findElement(By.linkText("Json Graph"));
-        checkJsonLink(graphExport);
+        public BundleArtifactPage build(Source html) {
+            return new BundleArtifactPage(this, html);
+        }
     }
-
-    @Override
-    public void checkAlternative() {
-        checkCommon("Bundle org.nuxeo.apidoc.webengine", "Bundle org.nuxeo.apidoc.webengine",
-                "In bundle group org.nuxeo.apidoc", "Documentation\n" //
-                        + "Requirements\n" //
-                        + "Components\n" //
-                        + "Packages\n" //
-                        + "Maven Artifact\n" //
-                        + "Manifest\n" //
-                        + "Exports\n" //
-                        + "Charts");
-        checkGroupId("org.nuxeo.ecm.platform");
-        checkArtifactId("nuxeo-apidoc-webengine");
-        checkRequirements(List.of("org.nuxeo.ecm.webengine.core", "org.nuxeo.apidoc.core"));
-        checkResolutionOrder(false);
-        checkPackages("platform-explorer");
-    }
-
-    public void checkAlternative2() {
-        checkCommon("Bundle org.nuxeo.apidoc.repo", "Bundle org.nuxeo.apidoc.repo", "In bundle group org.nuxeo.apidoc",
-                "Documentation\n" //
-                        + "Resolution Order\n" //
-                        + "Components\n" //
-                        + "Packages\n" //
-                        + "Maven Artifact\n" //
-                        + "Manifest\n" //
-                        + "Exports\n" //
-                        + "Charts");
-        checkGroupId("org.nuxeo.ecm.platform");
-        checkArtifactId("nuxeo-apidoc-repo");
-        checkRequirements(null);
-        checkResolutionOrder(true);
-        checkPackages("platform-explorer");
-    }
-
-    @Override
-    public void checkSelectedTab() {
-        DistributionHeaderFragment header = asPage(DistributionHeaderFragment.class);
-        header.checkSelectedTab(header.bundles);
-    }
-
-    public void checkGroupId(String id) {
-        WebElement groupId = mavenDetails.findElement(By.xpath(".//tr[2]//td"));
-        assertNotNull(groupId);
-        assertEquals(id, groupId.getText());
-    }
-
-    public void checkArtifactId(String id) {
-        WebElement artifactId = mavenDetails.findElement(By.xpath(".//tr[3]//td"));
-        assertNotNull(artifactId);
-        assertEquals(id, artifactId.getText());
-    }
-
-    /** @since 20.0.0 */
-    public void checkResolutionOrder(boolean set) {
-        checkSetIfExists(set, resolutionOrder);
-    }
-
-    public void checkPackages(String expected) {
-        checkTextIfExists(expected, packages);
-    }
-
 }

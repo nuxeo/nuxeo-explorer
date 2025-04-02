@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,165 +19,140 @@
 package org.nuxeo.functionaltests.explorer.pages;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.nuxeo.apidoc.browse.Distribution;
-import org.nuxeo.functionaltests.Locator;
-import org.nuxeo.functionaltests.Required;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.Wait;
+import org.nuxeo.functionaltests.AbstractHtmlPage;
+import org.nuxeo.functionaltests.HtmlTable;
+import org.nuxeo.functionaltests.HtmlTable.ExpectedRow;
 
-import com.google.common.base.Function;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 
 /**
  * Page representing the administration of distributions
  *
  * @since 11.1
  */
-public class DistribAdminPage extends AbstractExplorerPage {
+public class DistribAdminPage extends AbstractHtmlPage<DistribAdminPage.Builder> {
 
-    public static final String URL = String.format("%s%s/", ExplorerHomePage.URL, Distribution.VIEW_ADMIN);
-
-    /** @since 20.0.0 */
-    public static final String UPDATE_URL = String.format("%s%s/", ExplorerHomePage.URL, Distribution.UPDATE_ACTION);
+    public static final String URL = ExplorerHomePage.URL + '/' + Distribution.VIEW_ADMIN;
 
     /** @since 20.0.0 */
-    public static final String DELETE_URL = String.format("%s%s/", ExplorerHomePage.URL, Distribution.DELETE_ACTION);
+    public static final String UPDATE_URL = ExplorerHomePage.URL + '/' + Distribution.UPDATE_ACTION;
+
+    /** @since 20.0.0 */
+    public static final String DELETE_URL = ExplorerHomePage.URL + '/' + Distribution.DELETE_ACTION;
+
+    /** @since 2025 */
+    public static final String SAVE_URL = ExplorerHomePage.URL + '/' + Distribution.SAVE_ACTION;
+
+    /** @since 2025 */
+    public static final String SAVE_EXTENDED_URL = ExplorerHomePage.URL + '/' + Distribution.SAVE_EXTENDED_ACTION;
 
     protected static final String DUPLICATE_KEY_CLASS = "duplicateKey";
 
-    @Required
-    @FindBy(xpath = "//h1")
-    public WebElement distributionsTitle;
+    protected final List<String> duplicateKeys;
 
-    @FindBy(linkText = "UPDATE")
-    public WebElement firstUpdateLink;
+    protected final boolean savePresence;
 
-    @FindBy(linkText = "EXPORT AS ZIP")
-    public WebElement firstExportLink;
+    protected final boolean savePartialPresence;
 
-    @FindBy(linkText = "DELETE")
-    public WebElement firstDeleteLink;
+    protected final boolean stdFormPresence;
 
-    public DistribAdminPage(WebDriver driver) {
-        super(driver);
+    protected final boolean extendedFormPresence;
+
+    protected final HtmlTable distributions;
+
+    protected final UploadFragment uploadFragment;
+
+    public DistribAdminPage(Builder builder, Source html) {
+        super(builder, html);
+        duplicateKeys = this.findElementsWithNameAndClass(HTMLElementName.DIV, DUPLICATE_KEY_CLASS)
+                            .map(TEXT_EXTRACTOR)
+                            .toList();
+        savePresence = this.findElementWithId("save").isPresent();
+        savePartialPresence = this.findElementWithId("savePartial").isPresent();
+        stdFormPresence = this.findElementWithId("stdSave").isPresent();
+        extendedFormPresence = this.findElementWithId("extendedSave").isPresent();
+        distributions = this.firstWithNameAndClassAs(HTMLElementName.TABLE, "distributions", HtmlTable::new);
+        uploadFragment = this.firstWithNameAndClassAs(HTMLElementName.FORM, "upload-fragment", UploadFragment::new);
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override
-    public void check() {
-        checkTitle("Nuxeo Platform Explorer");
-        UploadFragment.checkCanSee();
-        assertTrue(driver.findElements(By.cssSelector("div." + DUPLICATE_KEY_CLASS)).isEmpty());
-        assertFalse(driver.getPageSource().contains("Duplicate key detected"));
+    public void assertElement() {
+        super.assertElement();
+        assertEquals(builder.expectedDuplicateKeys, duplicateKeys);
+        assertEquals(builder.expectedSavePresence, savePresence);
+        assertEquals(builder.expectedSavePresence, savePartialPresence);
+        assertEquals(builder.expectedSavePresence, stdFormPresence);
+        assertEquals(builder.expectedSavePresence, extendedFormPresence);
+        builder.containsDistributions.forEach(distributions::assertContainsRow);
+        builder.doesNotContainDistributions.forEach(distributions::assertDoesNotContainRow);
     }
 
-    /**
-     * Saves current live distribution with given name and returns the version.
-     */
-    public String saveCurrentLiveDistrib(String newName, boolean partial, boolean includeReferences) {
-        clickOn(driver.findElement(By.id(partial ? "savePartial" : "save")));
-        WebElement div = driver.findElement(By.id(partial ? "extendedSave" : "stdSave"));
-        if (newName != null) {
-            WebElement nameInput = div.findElement(By.xpath(".//input[@name='name']"));
-            nameInput.clear();
-            nameInput.sendKeys(newName);
+    public HtmlTable getDistributions() {
+        return distributions;
+    }
+
+    public UploadFragment getUploadFragment() {
+        return uploadFragment;
+    }
+
+    public String getLiveVersion() {
+        return this.findElementWithId("stdSave")
+                   .map(element -> element.getFirstElement("name", "version", true))
+                   .map(TEXT_EXTRACTOR)
+                   .orElseThrow(() -> new AssertionError("Unable to find the distribution version"));
+    }
+
+    public static class Builder extends AbstractHtmlPage.Builder<Builder> {
+
+        protected List<String> expectedDuplicateKeys = List.of();
+
+        protected boolean expectedSavePresence;
+
+        protected final List<ExpectedRow> containsDistributions = new ArrayList<>();
+
+        protected final List<ExpectedRow> doesNotContainDistributions = new ArrayList<>();
+
+        public Builder() {
+            super("Nuxeo Platform Explorer");
         }
-        if (partial) {
-            WebElement bundlesInput = div.findElement(By.xpath(".//textarea[@name='bundles']"));
-            bundlesInput.sendKeys("org.nuxeo.apidoc");
+
+        public Builder duplicateKeys(String expectedDuplicateKey, String... expectedDuplicateKeys) {
+            return duplicateKeys(toList(expectedDuplicateKey, expectedDuplicateKeys));
         }
-        if (includeReferences) {
-            WebElement includeInput = div.findElement(By.xpath(".//input[@name='includeReferences']"));
-            if (!includeInput.isSelected()) {
-                Locator.scrollAndForceClick(includeInput);
-            }
+
+        public Builder duplicateKeys(List<String> expectedDuplicateKeys) {
+            this.expectedDuplicateKeys = List.copyOf(expectedDuplicateKeys);
+            return this;
         }
-        String version = div.findElement(By.xpath(".//span[@name='version']")).getText();
-        clickOn(driver.findElement(By.id(partial ? "doSaveExtended" : "doSave")));
-        waitForAsyncWork();
-        By continueBy = By.linkText("CONTINUE");
-        Locator.waitUntilElementPresent(continueBy);
-        Locator.waitUntilEnabledAndClick(driver.findElement(continueBy));
-        return version;
-    }
 
-    /**
-     * Exports first persisted distribution and returns corresponding file.
-     */
-    public File exportFirstPersistedDistrib(File downloadDir, String filename) {
-        clickOn(firstExportLink);
-        File export = new File(downloadDir, filename);
-        // wait for download to happen
-        Wait<WebDriver> wait = getLongWait();
-        wait.until((new Function<WebDriver, Boolean>() {
-            @Override
-            public Boolean apply(WebDriver driver) {
-                try {
-                    return export.exists();
-                } catch (StaleElementReferenceException e) {
-                    return null;
-                }
-            }
-        }));
-        return export;
-    }
-
-    public DistributionUpdatePage updateFirstPersistedDistrib() {
-        clickOn(firstUpdateLink);
-        return asPage(DistributionUpdatePage.class);
-    }
-
-    /**
-     * Deletes first persisted distribution.
-     *
-     * @since 20.0.0
-     */
-    public void deleteFirstPersistedDistrib() {
-        clickOn(firstDeleteLink);
-        Alert confirmRemove = driver.switchTo().alert();
-        confirmRemove.accept();
-        waitForAsyncWork();
-        Locator.waitUntilElementPresent(By.id("successMessage"));
-        checkSuccessMessage("Deletion Done.");
-    }
-
-    public void checkCanSave() {
-        assertTrue(driver.findElement(By.id("savePartial")).isEnabled());
-        assertTrue(driver.findElement(By.id("save")).isEnabled());
-    }
-
-    public void checkCannotSave() {
-        // check we're an explorer page still
-        checkTitle("Nuxeo Platform Explorer");
-        try {
-            driver.findElement(By.id("savePartial"));
-            fail("Should not be able to save partial");
-        } catch (NoSuchElementException e) {
+        public Builder savePresence(boolean expectedSavePresence) {
+            this.expectedSavePresence = expectedSavePresence;
+            return this;
         }
-        try {
-            driver.findElement(By.id("save"));
-            fail("Should not be able to save");
-        } catch (NoSuchElementException e) {
+
+        public Builder hasDistribution(String distributionId, String version) {
+            this.containsDistributions.add(new ExpectedRow(distributionId, null, version, null, null, null, null));
+            return this;
+        }
+
+        public Builder hasNotDistribution(String distributionId, String version) {
+            this.doesNotContainDistributions.add(
+                    new ExpectedRow(distributionId, null, version, null, null, null, null));
+            return this;
+        }
+
+        public DistribAdminPage build(Source html) {
+            return new DistribAdminPage(this, html);
         }
     }
-
-    public void checkDuplicateKeyErrorMessages(String... messages) {
-        List<WebElement> elements = driver.findElements(By.cssSelector("div." + DUPLICATE_KEY_CLASS));
-        assertEquals(messages.length, elements.size());
-        for (int i = 0; i < messages.length; i++) {
-            assertEquals(messages[i], elements.get(i).getText());
-        }
-    }
-
 }

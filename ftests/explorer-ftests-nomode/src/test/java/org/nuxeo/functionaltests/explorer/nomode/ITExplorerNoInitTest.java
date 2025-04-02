@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2014-2020 Nuxeo SA (http://nuxeo.com/) and contributors.
+ * (C) Copyright 2014-2025 Nuxeo (http://nuxeo.com/) and contributors.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser General Public License
@@ -17,94 +17,110 @@
  */
 package org.nuxeo.functionaltests.explorer.nomode;
 
-import org.junit.After;
+import static org.nuxeo.functionaltests.explorer.ExplorerTestConstants.HTTP_STATUS_NOT_FOUND_CHECKER;
+import static org.nuxeo.functionaltests.explorer.ExplorerTestConstants.HTTP_STATUS_OK_CHECKER;
+import static org.nuxeo.functionaltests.explorer.ExplorerTestConstants.MANAGER_USERNAME;
+import static org.nuxeo.functionaltests.explorer.ExplorerTestConstants.READER_USERNAME;
+import static org.nuxeo.functionaltests.explorer.ExplorerTestConstants.TEST_PASSWORD;
+
+import jakarta.ws.rs.core.MediaType;
+
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.nuxeo.apidoc.browse.ApiBrowserConstants;
-import org.nuxeo.apidoc.security.SecurityHelper;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
-import org.nuxeo.functionaltests.RestHelper;
+import org.nuxeo.functionaltests.HtmlPageHandler;
+import org.nuxeo.functionaltests.explorer.ExplorerTestRule;
 import org.nuxeo.functionaltests.explorer.pages.DistribAdminPage;
 import org.nuxeo.functionaltests.explorer.pages.ExplorerHomePage;
 import org.nuxeo.functionaltests.explorer.pages.LiveSimplePage;
-import org.nuxeo.functionaltests.explorer.testing.AbstractExplorerTest;
+import org.nuxeo.http.test.HttpClientTestRule;
+import org.nuxeo.http.test.handler.JsonNodeHandler;
 
 /**
  * Checks access to some explorer pages without any persisted distributions.
  *
  * @since 20.0.0
  */
-public class ITExplorerNoInitTest extends AbstractExplorerTest {
+public class ITExplorerNoInitTest {
+
+    @Rule
+    public final ExplorerTestRule explorerHelper = new ExplorerTestRule();
+
+    @Rule
+    public final HttpClientTestRule adminHttpClient = HttpClientTestRule.builder()
+                                                                        .adminCredentials()
+                                                                        .accept(MediaType.TEXT_HTML)
+                                                                        .build();
+
+    @Rule
+    public final HttpClientTestRule managerHttpClient = HttpClientTestRule.builder()
+                                                                          .credentials(MANAGER_USERNAME, TEST_PASSWORD)
+                                                                          .accept(MediaType.TEXT_HTML)
+                                                                          .build();
+
+    @Rule
+    public final HttpClientTestRule readerHttpClient = HttpClientTestRule.builder()
+                                                                         .credentials(READER_USERNAME, TEST_PASSWORD)
+                                                                         .accept(MediaType.TEXT_HTML)
+                                                                         .build();
 
     @Before
     public void before() {
-        RestHelper.createGroupIfDoesNotExist(SecurityHelper.DEFAULT_APIDOC_MANAGERS_GROUP, "Apidoc Managers", null,
-                null);
-        RestHelper.createUserIfDoesNotExist(MANAGER_USERNAME, TEST_PASSWORD, null, null, null, null,
-                SecurityHelper.DEFAULT_APIDOC_MANAGERS_GROUP);
-        RestHelper.createUserIfDoesNotExist(READER_USERNAME, TEST_PASSWORD, null, null, null, null, null);
+        explorerHelper.createManagerUser();
+        explorerHelper.createReaderUser();
     }
 
-    @After
-    public void after() {
-        RestHelper.cleanup();
-    }
+    protected void checkPagesNoMode(HttpClientTestRule httpClient, boolean isAdmin, boolean isManager) {
+        httpClient.buildGetRequest(ExplorerHomePage.URL)
+                  .execute(new HtmlPageHandler<>(
+                          ExplorerHomePage.builder()
+                                          .currentDistribution(isAdmin)
+                                          .uploadFragmentPresence(isAdmin || isManager)
+                                          .manageDistributionsPresence(isAdmin || isManager)::build));
 
-    protected void checkPagesNoMode(boolean isAdmin) {
-        open(ExplorerHomePage.URL);
-        ExplorerHomePage home = asPage(ExplorerHomePage.class);
-        home.check();
-        if (isAdmin) {
-            home.checkCurrentDistrib();
-        } else {
-            home.checkNoDistrib();
-        }
-        openAndCheck(LiveSimplePage.URL, !isAdmin);
-        openAndCheck(String.format("%s%s/", ExplorerHomePage.URL, SnapshotManager.DISTRIBUTION_ALIAS_CURRENT),
-                !isAdmin);
-        checkJson(SnapshotManager.DISTRIBUTION_ALIAS_CURRENT, !isAdmin);
+        var statusChecker = isAdmin ? HTTP_STATUS_OK_CHECKER : HTTP_STATUS_NOT_FOUND_CHECKER;
+        var jsonHandler = isAdmin ? new JsonNodeHandler() : HTTP_STATUS_NOT_FOUND_CHECKER;
+        httpClient.buildGetRequest(LiveSimplePage.URL).execute(statusChecker);
+        httpClient.buildGetRequest(ExplorerHomePage.URL + '/' + SnapshotManager.DISTRIBUTION_ALIAS_CURRENT)
+                  .execute(statusChecker);
+        httpClient.buildGetRequest(ExplorerHomePage.URL + '/' + SnapshotManager.DISTRIBUTION_ALIAS_CURRENT + '/'
+                + ApiBrowserConstants.JSON_ACTION).accept(MediaType.APPLICATION_JSON).execute(jsonHandler);
         // no latest distrib if not using "nuxeo platform" title
-        openAndCheck(String.format("%s%s/", ExplorerHomePage.URL, SnapshotManager.DISTRIBUTION_ALIAS_LATEST), true);
-        checkJson(SnapshotManager.DISTRIBUTION_ALIAS_LATEST, true);
-        openAndCheck(String.format("%s%s/", ExplorerHomePage.URL, "foo-10.10"), true);
-        checkJson("foo-10.10", true);
-        openAndCheck(String.format("%s%s/%s", ExplorerHomePage.URL, ApiBrowserConstants.LIST_COMPONENTS, "foo-10.10"),
-                true);
+        httpClient.buildGetRequest(ExplorerHomePage.URL + '/' + SnapshotManager.DISTRIBUTION_ALIAS_LATEST)
+                  .execute(HTTP_STATUS_NOT_FOUND_CHECKER);
+        httpClient.buildGetRequest(ExplorerHomePage.URL + '/' + SnapshotManager.DISTRIBUTION_ALIAS_LATEST + '/'
+                + ApiBrowserConstants.JSON_ACTION)
+                  .accept(MediaType.APPLICATION_JSON)
+                  .execute(HTTP_STATUS_NOT_FOUND_CHECKER);
+        // non existing distrib
+        httpClient.buildGetRequest(ExplorerHomePage.URL + "/foo-10.10").execute(HTTP_STATUS_NOT_FOUND_CHECKER);
+        httpClient.buildGetRequest(ExplorerHomePage.URL + "/foo-10.10/" + ApiBrowserConstants.JSON_ACTION)
+                  .accept(MediaType.APPLICATION_JSON)
+                  .execute(HTTP_STATUS_NOT_FOUND_CHECKER);
+        httpClient.buildGetRequest(ExplorerHomePage.URL + '/' + ApiBrowserConstants.LIST_COMPONENTS + "/foo-10.10")
+                  .execute(HTTP_STATUS_NOT_FOUND_CHECKER);
     }
 
     @Test
     public void testPagesByAdmin() {
-        try {
-            loginAsAdmin();
-            open(DistribAdminPage.URL);
-            asPage(DistribAdminPage.class).check();
-            checkPagesNoMode(true);
-        } finally {
-            doLogout();
-        }
+        adminHttpClient.buildGetRequest(DistribAdminPage.URL)
+                       .execute(new HtmlPageHandler<>(DistribAdminPage.builder().savePresence(true)::build));
+        checkPagesNoMode(adminHttpClient, true, true);
     }
 
     @Test
     public void testPagesByManager() {
-        try {
-            getLoginPageStatic().login(MANAGER_USERNAME, TEST_PASSWORD);
-            open(DistribAdminPage.URL);
-            asPage(DistribAdminPage.class).check();
-            checkPagesNoMode(false);
-        } finally {
-            doLogout();
-        }
+        managerHttpClient.buildGetRequest(DistribAdminPage.URL)
+                         .execute(new HtmlPageHandler<>(DistribAdminPage.builder()::build));
+        checkPagesNoMode(managerHttpClient, false, true);
     }
 
     @Test
     public void testPagesByReader() {
-        try {
-            doLogin();
-            openAndCheck(DistribAdminPage.URL, true);
-            checkPagesNoMode(false);
-        } finally {
-            doLogout();
-        }
+        readerHttpClient.buildGetRequest(DistribAdminPage.URL).execute(HTTP_STATUS_NOT_FOUND_CHECKER);
+        checkPagesNoMode(readerHttpClient, false, false);
     }
 
 }

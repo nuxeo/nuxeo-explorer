@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,43 +18,48 @@
  */
 package org.nuxeo.functionaltests.explorer.pages;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
-import org.nuxeo.functionaltests.Required;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import org.nuxeo.functionaltests.AbstractHtmlPage;
+
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 
 /**
  * Page representing home at /site/distribution.
  *
  * @since 11.1
  */
-public class LiveSimplePage extends AbstractExplorerPage {
+public class LiveSimplePage extends AbstractHtmlPage<LiveSimplePage.Builder> {
 
-    public static final String URL = String.format("%s%s/", ExplorerHomePage.URL,
-            SnapshotManager.DISTRIBUTION_ALIAS_ADM);
+    public static final String URL = ExplorerHomePage.URL + '/' + SnapshotManager.DISTRIBUTION_ALIAS_ADM;
 
-    @Required
-    @FindBy(xpath = "//h1")
-    public WebElement header;
+    protected final String header;
 
-    @Required
-    @FindBy(xpath = "//table[@id='stats']")
-    public WebElement stats;
+    protected final String statsContent;
 
-    public LiveSimplePage(WebDriver driver) {
-        super(driver);
+    protected final ListingFragment bundles;
+
+    protected LiveSimplePage(Builder builder, Source html) {
+        super(builder, html);
+        header = this.findFirstElementWithName(HTMLElementName.H1)
+                     .map(TEXT_EXTRACTOR)
+                     .orElseThrow(() -> new AssertionError("Unable to find the header"));
+        statsContent = this.findElementWithId("stats")
+                           .map(TEXT_EXTRACTOR)
+                           .orElseThrow(() -> new AssertionError("Unable to find the stats"));
+        bundles = withIdAs("contentTable", ListingFragment::new);
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override
-    public void check() {
-        checkTitle("Nuxeo Platform Explorer");
-        assertTrue(header.getText(), header.getText().startsWith("Your current Nuxeo Distribution is"));
-        String statsContent = stats.getText();
-        assertNotNull(statsContent);
+    public void assertElement() {
+        super.assertElement();
+        assertTrue(header, header.startsWith("Your current Nuxeo Distribution is"));
         assertTrue(statsContent.contains("Number of Bundles"));
         assertTrue(statsContent.contains("Number of Components"));
         assertTrue(statsContent.contains("Number of Services"));
@@ -65,4 +70,18 @@ public class LiveSimplePage extends AbstractExplorerPage {
         assertTrue(statsContent.contains("Number of Packages"));
     }
 
+    public ListingFragment getBundles() {
+        return bundles;
+    }
+
+    public static class Builder extends AbstractHtmlPage.Builder<Builder> {
+
+        public Builder() {
+            super("Nuxeo Platform Explorer");
+        }
+
+        public LiveSimplePage build(Source html) {
+            return new LiveSimplePage(this, html);
+        }
+    }
 }

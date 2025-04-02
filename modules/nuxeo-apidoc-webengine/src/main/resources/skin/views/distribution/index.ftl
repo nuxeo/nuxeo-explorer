@@ -91,7 +91,7 @@
 <#if Root.isEditor()>
   <div class="fullspace">
     <h2>Add Your Distribution</h2>
-    <form class="box" method="POST" action="${Root.path}/uploadDistribTmp" enctype="multipart/form-data" >
+    <form class="box upload-fragment" method="POST" action="${Root.path}/uploadDistribTmp" enctype="multipart/form-data" >
       <p>Upload your distribution that has been exported as a zip:</p>
       <input type="file" name="archive" id="archive">
       <input type="hidden" name="source" value="home">
@@ -101,7 +101,7 @@
 </#if>
 <#if Root.showManageDistributions()>
   <div class="fullspace center">
-    <a class="button primary" href="${Root.path}/_admin">
+    <a class="button primary manageDistributions" href="${Root.path}/_admin">
       Manage Distributions
     </a>
   </div>

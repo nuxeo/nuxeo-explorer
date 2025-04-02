@@ -1,0 +1,18 @@
+<div class="documentation"> 
+<p> Extension allowing the registration of schedules. This is similar to a cron job sending events. Note that contrary to UNIX cron there is an additional &#34;seconds&#34; field in the cron expression. </p>
+<p> A scheduler definition contains information about what event is sent, when, and under what identity. </p>
+<p> For instance : </p>
+<p></p>
+<pre><code>    &lt;schedule id&#61;&#34;mySchedule&#34; jobFactoryClass&#61;&#34;org.nuxeo.ecm.core.scheduler.DefaultEventJobFactory&#34;&gt;
+        &lt;username&gt;Administrator&lt;/username&gt;
+        &lt;event&gt;myEvent&lt;/event&gt;
+        &lt;eventCategory&gt;default&lt;/eventCategory&gt;
+        &lt;!-- Every first of the month at 3am --&gt;
+        &lt;cronExpression&gt;0 0 3 1 * ?&lt;/cronExpression&gt;
+        &lt;timezone&gt;UTC&lt;/timezone&gt;
+    &lt;/schedule&gt;
+</code></pre>
+<p> jobFactoryClass is optional and defaults to org.nuxeo.ecm.core.scheduler.DefaultEventJobFactory. timezone is optional and defaults to system default. </p>
+<p> &#64;see org.quartz.CronTrigger &#64;see org.nuxeo.ecm.core.scheduler.EventJobFactory &#64;see http://www.quartz-scheduler.org/docs/api/1.8.1/org/quartz/CronExpression.html &#64;see http://www.quartz-scheduler.org/docs/tutorials/crontrigger.html </p>
+<p></p>
+</div>

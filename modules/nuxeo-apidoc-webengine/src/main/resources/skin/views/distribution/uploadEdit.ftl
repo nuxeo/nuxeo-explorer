@@ -11,7 +11,7 @@
     You can edit some of the properties of the distribution before you validate the upload:<br/>
   </div>
 
-  <form method="POST" action="${Root.path}/uploadDistribTmpValid">
+  <form class="upload-confirm-fragment" method="POST" action="${Root.path}/uploadDistribTmpValid">
     <table>
       <tr>
         <td class="label required">Title</td>

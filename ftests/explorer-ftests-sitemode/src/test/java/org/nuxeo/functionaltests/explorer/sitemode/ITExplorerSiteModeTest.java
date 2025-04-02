@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2014-2020 Nuxeo SA (http://nuxeo.com/) and contributors.
+ * (C) Copyright 2014-2025 Nuxeo (http://nuxeo.com/) and contributors.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser General Public License
@@ -17,33 +17,48 @@
  */
 package org.nuxeo.functionaltests.explorer.sitemode;
 
-import org.junit.After;
-import org.junit.Before;
+import static org.nuxeo.functionaltests.explorer.ExplorerTestConstants.HTTP_STATUS_NOT_FOUND_CHECKER;
+import static org.nuxeo.functionaltests.explorer.ExplorerTestConstants.READER_USERNAME;
+import static org.nuxeo.functionaltests.explorer.ExplorerTestConstants.TEST_PASSWORD;
+import static org.nuxeo.functionaltests.explorer.ExplorerTestRule.SAMPLE_EXPORT_DISTRIBUTION_NAME;
+import static org.nuxeo.functionaltests.explorer.ExplorerTestRule.SAMPLE_EXPORT_DISTRIBUTION_VERSION;
+
+import java.io.IOException;
+
+import jakarta.ws.rs.core.MediaType;
+
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
-import org.nuxeo.functionaltests.RestHelper;
+import org.nuxeo.functionaltests.HtmlPageHandler;
+import org.nuxeo.functionaltests.explorer.ExplorerTestRule;
 import org.nuxeo.functionaltests.explorer.pages.DistribAdminPage;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHomePage;
 import org.nuxeo.functionaltests.explorer.pages.ExplorerHomePage;
-import org.nuxeo.functionaltests.explorer.pages.UploadFragment;
+import org.nuxeo.http.test.HttpClientTestRule;
 
 /**
  * Test explorer in site mode.
  *
  * @since 20.0.0
  */
-public class ITExplorerSiteModeTest extends AbstractExplorerSiteModeTest {
+public class ITExplorerSiteModeTest {
 
-    @Before
-    public void before() {
-        RestHelper.createUserIfDoesNotExist(READER_USERNAME, TEST_PASSWORD, null, null, null, null, null);
-        doLogin();
-    }
+    @ClassRule
+    public static final ExplorerTestRule EXPLORER_HELPER = new ExplorerTestRule();
 
-    @After
-    public void after() {
-        doLogout();
-        RestHelper.cleanup();
+    @Rule
+    public final HttpClientTestRule readerHttpClient = HttpClientTestRule.builder()
+                                                                         .credentials(READER_USERNAME, TEST_PASSWORD)
+                                                                         .accept(MediaType.TEXT_HTML)
+                                                                         .build();
+
+    @BeforeClass
+    public static void initPersistedDistrib() throws IOException {
+        EXPLORER_HELPER.importSampleExportDistribution();
+        EXPLORER_HELPER.createReaderUser();
     }
 
     /**
@@ -51,7 +66,11 @@ public class ITExplorerSiteModeTest extends AbstractExplorerSiteModeTest {
      */
     @Test
     public void testLoginLogout() {
-        goHome();
+        readerHttpClient.buildGetRequest(ExplorerHomePage.URL)
+                        .execute(new HtmlPageHandler<>(
+                                ExplorerHomePage.builder()
+                                                .firstPersistedDistribution(SAMPLE_EXPORT_DISTRIBUTION_NAME,
+                                                        SAMPLE_EXPORT_DISTRIBUTION_VERSION)::build));
     }
 
     /**
@@ -59,37 +78,40 @@ public class ITExplorerSiteModeTest extends AbstractExplorerSiteModeTest {
      */
     @Test
     public void testDistribAdminPage() {
-        openAndCheck(DistribAdminPage.URL, true);
+        readerHttpClient.buildGetRequest(DistribAdminPage.URL).execute(HTTP_STATUS_NOT_FOUND_CHECKER);
     }
 
     @Test
     public void testHomePageCurrentDistrib() {
         // since 20.0.0: does not redirect to current live distrib anymore, only available to admins
-        openAndCheck(String.format("%s%s/", ExplorerHomePage.URL, SnapshotManager.DISTRIBUTION_ALIAS_CURRENT), true);
+        readerHttpClient.buildGetRequest(ExplorerHomePage.URL + '/' + SnapshotManager.DISTRIBUTION_ALIAS_CURRENT)
+                        .execute(HTTP_STATUS_NOT_FOUND_CHECKER);
     }
 
     @Test
     public void testHomePageLatestDistrib() {
-        open(String.format("%s%s/", ExplorerHomePage.URL, SnapshotManager.DISTRIBUTION_ALIAS_LATEST));
         // persisted distrib redirection
-        asPage(DistributionHomePage.class).check();
+        readerHttpClient.buildGetRequest(ExplorerHomePage.URL + '/' + SnapshotManager.DISTRIBUTION_ALIAS_LATEST)
+                        .execute(new HtmlPageHandler<>(DistributionHomePage.builder()::build));
     }
 
     @Test
     public void testDeleteDistrib() {
-        openAndCheck(DistribAdminPage.DELETE_URL + getDistribId(DISTRIB_NAME, DISTRIB_VERSION), true);
+        readerHttpClient.buildGetRequest(DistribAdminPage.DELETE_URL + '/' + SAMPLE_EXPORT_DISTRIBUTION_NAME + '-'
+                + SAMPLE_EXPORT_DISTRIBUTION_VERSION).execute(HTTP_STATUS_NOT_FOUND_CHECKER);
     }
 
     @Test
     public void testSampleDistrib() {
-        ExplorerHomePage home = goHome();
-        home.check();
-        home.checkFirstPersistedDistrib(DISTRIB_NAME, DISTRIB_VERSION);
-        UploadFragment.checkCannotSee();
+        readerHttpClient.buildGetRequest(ExplorerHomePage.URL)
+                        .execute(new HtmlPageHandler<>(
+                                ExplorerHomePage.builder()
+                                                .firstPersistedDistribution(SAMPLE_EXPORT_DISTRIBUTION_NAME,
+                                                        SAMPLE_EXPORT_DISTRIBUTION_VERSION)::build));
 
-        String distribId = getDistribId(DISTRIB_NAME, DISTRIB_VERSION);
-        asPage(ExplorerHomePage.class).checkPersistedDistrib(distribId);
-        checkDistrib(distribId, true, SAMPLE_BUNDLE_GROUP, false, true);
+        readerHttpClient.buildGetRequest(
+                ExplorerHomePage.URL + '/' + SAMPLE_EXPORT_DISTRIBUTION_NAME + '-' + SAMPLE_EXPORT_DISTRIBUTION_VERSION)
+                        .execute(new HtmlPageHandler<>(DistributionHomePage.builder()::build));
     }
 
 }

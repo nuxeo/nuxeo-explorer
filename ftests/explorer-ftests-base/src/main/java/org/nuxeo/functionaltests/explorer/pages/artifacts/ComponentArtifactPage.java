@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,125 +19,128 @@
 package org.nuxeo.functionaltests.explorer.pages.artifacts;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 
 /**
  * @since 11.1
  */
-public class ComponentArtifactPage extends ArtifactPage {
+public class ComponentArtifactPage extends ArtifactPage<ComponentArtifactPage.Builder> {
 
-    @FindBy(css = ".javadoc")
-    public WebElement javadoc;
+    protected final List<String> aliases;
 
-    @FindBy(css = ".resolutionOrder")
-    public WebElement resolutionOrder;
+    protected final boolean resolutionOrderPresence;
 
-    @FindBy(css = ".startOrder")
-    public WebElement startOrder;
+    protected final boolean startOrderPresence;
 
-    @FindBy(css = ".declaredStartOrder")
-    public WebElement declaredStartOrder;
+    protected final Integer declaredStartOrder;
 
-    @FindBy(xpath = "//div[@id='xmlSource']")
-    public WebElement xmlSource;
+    protected final String implementation;
 
-    public ComponentArtifactPage(WebDriver driver) {
-        super(driver);
+    protected final boolean xmlSourcePresence;
+
+    public ComponentArtifactPage(Builder builder, Source html) {
+        super(builder, html);
+        aliases = this.findElementsWithNameAndClass(HTMLElementName.UL, "aliases")
+                      .flatMap(ul -> ul.getAllElements(HTMLElementName.LI).stream())
+                      .map(TEXT_EXTRACTOR)
+                      .toList();
+        resolutionOrderPresence = this.findElementsWithNameAndClass(HTMLElementName.DIV, "resolutionOrder")
+                                      .map(TEXT_EXTRACTOR)
+                                      .anyMatch(StringUtils::isNotBlank);
+        startOrderPresence = this.findElementsWithNameAndClass(HTMLElementName.SPAN, "startOrder")
+                                 .map(TEXT_EXTRACTOR)
+                                 .anyMatch(StringUtils::isNotBlank);
+        declaredStartOrder = this.findElementsWithNameAndClass(HTMLElementName.SPAN, "declaredStartOrder")
+                                 .map(TEXT_EXTRACTOR)
+                                 .map(Integer::parseInt)
+                                 .findFirst()
+                                 .orElse(null);
+        implementation = this.findElementsWithNameAndClass(HTMLElementName.SPAN, "javadoc")
+                             .map(TEXT_EXTRACTOR)
+                             .findFirst()
+                             .orElse(null);
+        xmlSourcePresence = this.findElementWithId("xmlSource")
+                                .map(TEXT_EXTRACTOR)
+                                .filter(StringUtils::isNotBlank)
+                                .isPresent();
+    }
+
+    public static Builder builder(String componentName, String bundleId) {
+        return new Builder(componentName, bundleId);
     }
 
     @Override
-    public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
-        String toc = "Documentation\n" + "Resolution Order\n" + "Start Order\n" + "Implementation\n" + "Services\n"
-                + "Extension Points\n" + "Contributions\n" + "XML Source";
-        if (legacy) {
-            toc = "Documentation\n" + "Implementation\n" + "Services\n" + "Extension Points\n" + "XML Source";
+    public void assertElement() {
+        super.assertElement();
+        assertEquals(builder.expectedAliases, aliases);
+        assertTrue("Resolution order presence", resolutionOrderPresence);
+        assertEquals("Start order presence", builder.expectedStartOrderPresence, startOrderPresence);
+        assertEquals(builder.expectedDeclaredStartOrder, declaredStartOrder);
+        assertEquals(builder.expectedImplementation, implementation);
+        assertEquals("XML Source presence", builder.expectedXmlSourcePresence, xmlSourcePresence);
+    }
+
+    // @Override
+    // public void checkSelectedTab() {
+    // DistributionHeaderFragment header = asPage(DistributionHeaderFragment.class);
+    // header.checkSelectedTab(header.components);
+    // }
+
+    public static class Builder extends ArtifactPage.Builder<Builder> {
+
+        protected List<String> expectedAliases = List.of();
+
+        protected boolean expectedStartOrderPresence;
+
+        protected Integer expectedDeclaredStartOrder;
+
+        protected String expectedImplementation;
+
+        protected boolean expectedXmlSourcePresence;
+
+        public Builder(String expectedComponentName, String expectedBundleId) {
+            super("Component " + expectedComponentName);
+            contentInfoDescription("In bundle " + expectedBundleId);
         }
-        checkCommon("Component org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
-                "Component org.nuxeo.apidoc.snapshot.SnapshotManagerComponent", "In bundle org.nuxeo.apidoc.repo", toc);
-        checkRequirements(null);
-        checkDocumentationText(
-                "This component handles the introspection of the current live Runtime as a distribution.\n" //
-                        + "It can also persist this introspection as Nuxeo documents, to handle import and export of external distributions.");
-        checkImplementationText("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent");
-        checkResolutionOrder(!legacy);
-        checkStartOrder(!legacy);
-        checkDeclaredStartOrder(null);
-        checkXMLSource(true);
-        checkAliases(null);
-    }
 
-    @Override
-    public void checkAlternative() {
-        checkCommon("Component org.nuxeo.ecm.automation.server.marshallers",
-                "Component org.nuxeo.ecm.automation.server.marshallers", "In bundle org.nuxeo.ecm.automation.io",
-                "Requirements\n" + "Resolution Order\n" + "Contributions\n" + "XML Source");
-        checkRequirements(List.of("org.nuxeo.ecm.platform.contentview.json.marshallers"));
-        checkDocumentationText(null);
-        checkImplementationText(null);
-        checkJavadocLink(null);
-        checkResolutionOrder(true);
-        checkStartOrder(false);
-        checkDeclaredStartOrder(null);
-        checkXMLSource(true);
-        checkAliases(null);
-    }
+        public Builder aliases(String expectedAlias, String... expectedAliases) {
+            return aliases(toList(expectedAlias, expectedAliases));
+        }
 
-    public void checkSchedulerComponent() {
-        checkCommon("Component org.nuxeo.ecm.core.scheduler.SchedulerService",
-                "Component org.nuxeo.ecm.core.scheduler.SchedulerService", "In bundle org.nuxeo.ecm.core.event",
-                "Documentation\n" + "Requirements\n" + "Aliases\n" + "Resolution Order\n" + "Start Order\n" + "Implementation\n"
-                        + "Services\n" + "Extension Points\n" + "Contributions\n" + "XML Source");
-        checkRequirements(List.of("org.nuxeo.runtime.cluster.ClusterService"));
-        checkImplementationText("org.nuxeo.ecm.core.scheduler.SchedulerServiceImpl");
-        checkResolutionOrder(true);
-        checkStartOrder(true);
-        checkDeclaredStartOrder(null);
-        checkXMLSource(true);
-        checkAliases(List.of("org.nuxeo.ecm.platform.scheduler.core.service.SchedulerRegistryService"));
-    }
+        public Builder aliases(List<String> expectedAliases) {
+            this.expectedAliases = List.copyOf(expectedAliases);
+            return this;
+        }
 
-    @Override
-    public void checkSelectedTab() {
-        DistributionHeaderFragment header = asPage(DistributionHeaderFragment.class);
-        header.checkSelectedTab(header.components);
-    }
+        public Builder startOrderPresence(boolean expectedStartOrderPresence) {
+            this.expectedStartOrderPresence = expectedStartOrderPresence;
+            return this;
+        }
 
-    public void checkImplementationText(String expected) {
-        checkTextIfExists(expected, javadoc);
-    }
+        public Builder declaredStartOrder(Integer expectedDeclaredStartOrder) {
+            this.expectedDeclaredStartOrder = expectedDeclaredStartOrder;
+            return this;
+        }
 
-    public void checkJavadocLink(String expected) {
-        checkLink(expected, javadoc);
-    }
+        public Builder implementation(String expectedImplementation) {
+            this.expectedImplementation = expectedImplementation;
+            return this;
+        }
 
-    public void checkResolutionOrder(boolean set) {
-        checkSetIfExists(set, resolutionOrder);
-    }
+        public Builder xmlSourcePresence(boolean expectedXmlSourcePresence) {
+            this.expectedXmlSourcePresence = expectedXmlSourcePresence;
+            return this;
+        }
 
-    public void checkStartOrder(boolean set) {
-        checkSetIfExists(set, startOrder);
-    }
-
-    public void checkDeclaredStartOrder(Long value) {
-        checkTextIfExists(value != null ? value.toString() : null, declaredStartOrder);
-    }
-
-    /** @since 20.0.0 */
-    public void checkXMLSource(boolean set) {
-        try {
-            assertEquals(!set, StringUtils.isBlank(xmlSource.getText()));
-        } catch (NoSuchElementException e) {
-            assertFalse(set);
+        public ComponentArtifactPage build(Source html) {
+            return new ComponentArtifactPage(this, html);
         }
     }
-
 }

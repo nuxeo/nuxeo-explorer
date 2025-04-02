@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,148 +19,165 @@
 package org.nuxeo.functionaltests.explorer.pages.artifacts;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.nuxeo.functionaltests.Required;
-import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.nuxeo.functionaltests.HtmlTable;
+import org.nuxeo.functionaltests.HtmlTable.ExpectedRow;
+
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 
 /**
  * @since 11.1
  */
-public class OperationArtifactPage extends ArtifactPage {
+public class OperationArtifactPage extends ArtifactPage<OperationArtifactPage.Builder> {
 
-    @FindBy(xpath = "//div[@class='description']")
-    public WebElement opDescription;
+    protected final String description;
 
-    @Required
-    @FindBy(xpath = "//div[@class='info']")
-    public WebElement info;
+    protected final HtmlTable info;
 
-    @Required
-    @FindBy(xpath = "//div[@class='parameters']")
-    public WebElement parameters;
+    protected final HtmlTable parameters;
 
-    @Required
-    @FindBy(xpath = "//div[@class='signature']")
-    public WebElement signature;
+    protected final HtmlTable signature;
 
-    @Required
-    @FindBy(css = ".javadoc")
-    public WebElement javadoc;
+    protected final String implementation;
 
-    @Required
-    @FindBy(css = ".contributingComponent")
-    public WebElement contributingComponent;
+    protected final String contributingComponent;
 
-    @FindBy(xpath = "//div[@class='json']")
-    public WebElement json;
+    protected final String json;
 
-    public OperationArtifactPage(WebDriver driver) {
-        super(driver);
+    public OperationArtifactPage(Builder builder, Source html) {
+        super(builder, html);
+        description = this.findElementsWithNameAndClass(HTMLElementName.DIV, "description")
+                          .map(TEXT_EXTRACTOR)
+                          .findFirst()
+                          .orElse(null);
+        info = this.findElementsWithNameAndClass(HTMLElementName.DIV, "info")
+                   .findFirst()
+                   .map(el -> el.getFirstElement(HTMLElementName.TABLE))
+                   .map(HtmlTable::new)
+                   .orElseThrow(() -> new AssertionError("Unable to find the operation info"));
+        parameters = this.findElementsWithNameAndClass(HTMLElementName.DIV, "parameters")
+                         .findFirst()
+                         .map(el -> el.getFirstElement(HTMLElementName.TABLE))
+                         .map(HtmlTable::new)
+                         .orElse(null);
+        signature = this.findElementsWithNameAndClass(HTMLElementName.DIV, "signature")
+                        .findFirst()
+                        .map(el -> el.getFirstElement(HTMLElementName.TABLE))
+                        .map(HtmlTable::new)
+                        .orElseThrow(() -> new AssertionError("Unable to find the operation signature"));
+        implementation = this.findElementsWithNameAndClass(HTMLElementName.SPAN, "javadoc")
+                             .map(TEXT_EXTRACTOR)
+                             .findFirst()
+                             .orElseThrow(() -> new AssertionError("Unable to find the implementation"));
+        contributingComponent = this.findElementsWithNameAndClass(HTMLElementName.TR, "contributingComponent")
+                                    .map(el -> el.getFirstElement(HTMLElementName.TD))
+                                    .map(TEXT_EXTRACTOR)
+                                    .findFirst()
+                                    .orElseThrow(() -> new AssertionError("Unable to find the contributing component"));
+        json = this.findElementsWithNameAndClass(HTMLElementName.DIV, "json")
+                   .map(TEXT_EXTRACTOR)
+                   .findFirst()
+                   .orElse(null);
+    }
+
+    public static Builder builder(String operationId, String operationLabel, String componentName) {
+        return new Builder(operationId, operationLabel, componentName);
     }
 
     @Override
-    public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
-        checkCommon("Operation Document.AddFacet", "Operation Document.AddFacet (Add Facet)",
-                "In component org.nuxeo.ecm.core.automation.coreContrib",
-                "Description\n" + "Parameters\n" + "Signature\n" + "Implementation Information\n" + "JSON Definition");
-        checkOperationDescriptionText("Adds the facet to the document.\n" //
-                + "WARNING: The save parameter is true by default, which means the document is saved in "
-                + "the database after adding the facet. It must be set to false when the operation is used "
-                + "in the context of an event that will fail if the document is saved (empty document created, "
-                + "about to create, before modification, ...).");
-        checkInfoText("Operation id Document.AddFacet\n" //
-                + "Aliases Document.AddFacet\n" //
-                + "Category Document\n" //
-                + "Label Add Facet\n" //
-                + "Requires\n" //
-                + "Since");
-        checkParametersText("Name Description Type Required Default value\n" //
-                + "facet string yes  \n" //
-                + "save boolean no true ");
-        checkSignatureText("Inputs document, documents\n" //
-                + "Outputs document, documents");
-        checkImplementationText("org.nuxeo.ecm.automation.core.operations.document.AddFacet");
-        checkContributingComponentText("Contributing Component org.nuxeo.ecm.core.automation.coreContrib");
-        checkJsonText("{\n" //
-                + "  \"id\" : \"Document.AddFacet\",\n" //
-                + "  \"aliases\" : [ \"Document.AddFacet\" ],\n" //
-                + "  \"label\" : \"Add Facet\",\n" //
-                + "  \"category\" : \"Document\",\n" //
-                + "  \"requires\" : null,\n" //
-                + "  \"description\" : \"Adds the facet to the document. <p>WARNING: The save parameter is true by default, which means the document is saved in the database after adding the facet. It must be set to false when the operation is used in the context of an event that will fail if the document is saved (empty document created, about to create, before modification, ...).</p>\",\n" //
-                + "  \"url\" : \"Document.AddFacet\",\n" //
-                + "  \"signature\" : [ \"document\", \"document\", \"documents\", \"documents\" ],\n" //
-                + "  \"params\" : [ {\n" //
-                + "    \"name\" : \"facet\",\n" //
-                + "    \"description\" : \"\",\n" //
-                + "    \"type\" : \"string\",\n" //
-                + "    \"required\" : true,\n" //
-                + "    \"widget\" : null,\n" //
-                + "    \"order\" : 0,\n" //
-                + "    \"values\" : [ ]\n" //
-                + "  }, {\n" //
-                + "    \"name\" : \"save\",\n" //
-                + "    \"description\" : \"\",\n" //
-                + "    \"type\" : \"boolean\",\n" //
-                + "    \"required\" : false,\n" //
-                + "    \"widget\" : null,\n" //
-                + "    \"order\" : 0,\n" //
-                + "    \"values\" : [ \"true\" ]\n" //
-                + "  } ]\n" //
-                + "}");
+    public void assertElement() {
+        super.assertElement();
+        assertEquals(builder.expectedDescription, description);
+        assertEquals(builder.expectedId, info.getCell(0, 1).getText());
+        assertEquals(builder.expectedCategory, info.getCell(1, 1).getText());
+        assertEquals(builder.expectedLabel, info.getCell(2, 1).getText());
+        // TODO requires / since?
+        if (parameters == null) {
+            assertTrue("No operation parameters found", builder.containsOperationParameters.isEmpty());
+        } else {
+            builder.containsOperationParameters.forEach(parameters::assertContainsRow);
+        }
+        assertEquals(builder.expectedInputSignature, signature.getCell(0, 1).getText());
+        assertEquals(builder.expectedOutputSignature, signature.getCell(1, 1).getText());
+        assertEquals(builder.expectedImplementation, implementation);
+        assertEquals(builder.expectedComponentName, contributingComponent);
     }
 
-    @Override
-    public void checkAlternative() {
-        checkCommon("Operation FileManager.ImportWithMetaData",
-                "Operation FileManager.ImportWithMetaData (FileManager.ImportWithMetaData)",
-                // Non-regression test for NXP-29025 as this previously stated "In component BuiltIn" for all chains
-                "In component org.nuxeo.ecm.core.automation.features.operations",
-                "Parameters\n" + "Signature\n" + "Implementation Information\n" + "JSON Definition");
-        checkImplementationText("org.nuxeo.ecm.automation.core.impl.OperationChainCompiler.CompiledChainImpl");
-        checkContributingComponentText("Contributing Component org.nuxeo.ecm.core.automation.features.operations");
-    }
+    // @Override
+    // public void checkSelectedTab() {
+    // DistributionHeaderFragment header = asPage(DistributionHeaderFragment.class);
+    // header.checkSelectedTab(header.operations);
+    // }
 
-    @Override
-    public void checkSelectedTab() {
-        DistributionHeaderFragment header = asPage(DistributionHeaderFragment.class);
-        header.checkSelectedTab(header.operations);
-    }
+    // field positions are given by data position in the html page and not based on their final modifier
+    public static class Builder extends ArtifactPage.Builder<Builder> {
 
-    public void checkOperationDescriptionText(String expected) {
-        assertEquals(expected, opDescription.getText());
-    }
+        protected String expectedDescription;
 
-    public void checkInfoText(String expected) {
-        assertEquals(expected, info.getText());
-    }
+        protected final String expectedId;
 
-    public void checkParametersText(String expected) {
-        assertEquals(expected, parameters.getText());
-    }
+        protected final String expectedLabel;
 
-    public void checkSignatureText(String expected) {
-        assertEquals(expected, signature.getText());
-    }
+        protected String expectedCategory;
 
-    public void checkImplementationText(String expected) {
-        assertEquals(expected, javadoc.getText());
-    }
+        protected final List<ExpectedRow> containsOperationParameters = new ArrayList<>();
 
-    /** @since 20.2.0 */
-    public void checkContributingComponentText(String expected) {
-        assertEquals(expected, contributingComponent.getText());
-    }
+        protected String expectedInputSignature;
 
-    public void checkJavadocLink(String expected) {
-        checkLink(expected, javadoc);
-    }
+        protected String expectedOutputSignature;
 
-    public void checkJsonText(String expected) {
-        assertEquals(expected, json.getText());
-    }
+        protected String expectedImplementation;
 
+        protected final String expectedComponentName;
+
+        protected String expectedJson;
+
+        public Builder(String expectedId, String expectedLabel, String expectedComponentName) {
+            super("Operation " + expectedId, String.format("Operation %s (%s)", expectedId, expectedLabel));
+            contentInfoDescription("In component " + expectedComponentName);
+            this.expectedId = expectedId;
+            this.expectedLabel = expectedLabel;
+            this.expectedComponentName = expectedComponentName;
+        }
+
+        public Builder description(String expectedDescription) {
+            this.expectedDescription = expectedDescription;
+            return this;
+        }
+
+        public Builder additionalInfo(String expectedCategory) {
+            this.expectedCategory = expectedCategory;
+            return this;
+        }
+
+        public Builder hasParameterRow(String... columns) {
+            containsOperationParameters.add(new ExpectedRow(columns));
+            return this;
+        }
+
+        public Builder signature(String expectedInputSignature, String expectedOutputSignature) {
+            this.expectedInputSignature = expectedInputSignature;
+            this.expectedOutputSignature = expectedOutputSignature;
+            return this;
+        }
+
+        public Builder implementation(String expectedImplementation) {
+            this.expectedImplementation = expectedImplementation;
+            return this;
+        }
+
+        public Builder json(String expectedJson) {
+            this.expectedJson = expectedJson;
+            return this;
+        }
+
+        public OperationArtifactPage build(Source html) {
+            return new OperationArtifactPage(this, html);
+        }
+    }
 }

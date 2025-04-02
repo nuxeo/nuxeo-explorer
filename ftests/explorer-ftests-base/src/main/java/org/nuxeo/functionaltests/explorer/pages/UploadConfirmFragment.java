@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,68 +20,82 @@ package org.nuxeo.functionaltests.explorer.pages;
 
 import static org.junit.Assert.assertEquals;
 
-import org.nuxeo.functionaltests.Locator;
-import org.nuxeo.functionaltests.Required;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.nuxeo.functionaltests.HtmlForm;
+import org.nuxeo.http.test.HttpClientTestRule;
+
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.FormControl;
+import net.htmlparser.jericho.FormControlType;
 
 /**
  * Fragment upload confirmation.
  *
  * @since 11.1
  */
-public class UploadConfirmFragment extends AbstractExplorerPage {
+public class UploadConfirmFragment extends HtmlForm {
 
-    @Required
-    @FindBy(xpath = "//input[@name='nxdistribution:name']")
-    public WebElement nameInput;
+    protected final FormControl nameInput;
 
-    @Required
-    @FindBy(xpath = "//input[@name='nxdistribution:version']")
-    public WebElement versionInput;
+    protected final FormControl versionInput;
 
-    @Required
-    @FindBy(xpath = "//input[@name='nxdistribution:key']")
-    public WebElement keyInput;
+    protected final FormControl keyInput;
 
-    @Required
-    @FindBy(xpath = "//input[@name='dc:title']")
-    public WebElement titleInput;
+    protected final FormControl titleInput;
 
-    @Required
-    @FindBy(xpath = "//input[@id='doImport']")
-    public WebElement importButton;
+    protected final FormControl distributionDocIdInput;
 
-    public UploadConfirmFragment(WebDriver driver) {
-        super(driver);
+    protected final FormControl sourceInput;
+
+    protected final FormControl importButton;
+
+    public UploadConfirmFragment(Element element) {
+        super(element);
+        nameInput = this.findFormControlWithName("nxdistribution:name")
+                        .orElseThrow(() -> new AssertionError("Unable to find the name input"));
+        versionInput = this.findFormControlWithName("nxdistribution:version")
+                           .orElseThrow(() -> new AssertionError("Unable to find the version input"));
+        keyInput = this.findFormControlWithName("nxdistribution:key")
+                       .orElseThrow(() -> new AssertionError("Unable to find the key input"));
+        titleInput = this.findFormControlWithName("dc:title")
+                         .orElseThrow(() -> new AssertionError("Unable to find the key input"));
+        distributionDocIdInput = this.findFormControlWithName("distribDocId")
+                                     .orElseThrow(() -> new AssertionError("Unable to find the distribDocId input"));
+        sourceInput = this.findFormControlWithName("source")
+                          .orElseThrow(() -> new AssertionError("Unable to find the source input"));
+        importButton = this.findFormControlWithId("doImport")
+                           .orElseThrow(() -> new AssertionError("Unable to find the import button"));
     }
 
     @Override
-    public void check() {
-        // NOOP
+    public void assertElement() {
+        super.assertElement();
+        assertEquals(FormControlType.TEXT, nameInput.getFormControlType());
+        assertEquals(FormControlType.TEXT, versionInput.getFormControlType());
+        assertEquals(FormControlType.TEXT, keyInput.getFormControlType());
+        assertEquals(FormControlType.TEXT, titleInput.getFormControlType());
+        assertEquals(FormControlType.HIDDEN, distributionDocIdInput.getFormControlType());
+        assertEquals(FormControlType.HIDDEN, sourceInput.getFormControlType());
+        assertEquals(FormControlType.SUBMIT, importButton.getFormControlType());
     }
 
-    public void confirmUpload(String newName, String newVersion) {
-        if (newName != null) {
-            nameInput.clear();
-            nameInput.sendKeys(newName);
-            // just for display in tests
-            titleInput.clear();
-            titleInput.sendKeys(newName);
-        }
-        if (newVersion != null) {
-            versionInput.clear();
-            versionInput.sendKeys(newVersion);
-        }
-        keyInput.clear();
-        keyInput.sendKeys(String.format("%s-%s", nameInput.getAttribute("value"), versionInput.getAttribute("value")));
-        Locator.scrollAndForceClick(importButton);
-        By headerLocator = By.xpath("//h1");
-        Locator.waitUntilElementPresent(headerLocator);
-        assertEquals("Distribution uploaded successfully", driver.findElement(headerLocator).getText());
-        waitForAsyncWork();
+    public HttpClientTestRule.RequestBuilder buildFormRequest(HttpClientTestRule httpClient, String newName,
+            String newVersion) {
+        var builder = switch (getFormMethod()) {
+            case "POST" -> httpClient.buildPostRequest(getFormAction());
+            case "PUT" -> httpClient.buildPutRequest(getFormAction());
+            default -> throw new AssertionError("Unrecognized form method: " + getFormMethod());
+        };
+        String nameValue = StringUtils.defaultIfBlank(newName, nameInput.getPredefinedValue());
+        String versionValue = StringUtils.defaultIfBlank(newVersion, versionInput.getPredefinedValue());
+        return builder.entity(Map.of( //
+                nameInput.getName(), nameValue, //
+                versionInput.getName(), versionValue, //
+                keyInput.getName(), nameValue + '-' + versionValue, //
+                titleInput.getName(), nameValue, // just for display in tests
+                distributionDocIdInput.getName(), distributionDocIdInput.getValues().getFirst(), //
+                sourceInput.getName(), sourceInput.getValues().getFirst()));
     }
-
 }

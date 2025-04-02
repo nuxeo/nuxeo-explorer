@@ -170,10 +170,10 @@
             </a>
           </p>
           <p>
-            <a class="button" href="${Root.path}/download/${distrib.key}" onclick="$.fn.clickButton(this)">
+            <a class="button export-zip" href="${Root.path}/download/${distrib.key}" onclick="$.fn.clickButton(this)">
               Export as zip
             </a>
-            <a class="button" href="${Root.path}/${distrib.key}/json" onclick="$.fn.clickButton(this)" target="_blank">
+            <a class="button export-json" href="${Root.path}/${distrib.key}/json" onclick="$.fn.clickButton(this)" target="_blank">
               Export as json
             </a>
           </p>
@@ -186,7 +186,7 @@
   <h1>Upload Distribution</h1>
   <div class="box">
     <p>You can use the form below to upload a distribution that has been exported as a zip:</p>
-    <form method="POST" action="${Root.path}/uploadDistribTmp" enctype="multipart/form-data">
+    <form class="upload-fragment" method="POST" action="${Root.path}/uploadDistribTmp" enctype="multipart/form-data">
       <input type="file" name="archive" id="archive">
       <input type="hidden" name="source" value="admin">
       <input type="submit" value="Upload" id="upload" onclick="$.fn.clickButton(this)">

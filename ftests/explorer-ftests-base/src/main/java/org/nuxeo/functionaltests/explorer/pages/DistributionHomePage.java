@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,100 +21,55 @@ package org.nuxeo.functionaltests.explorer.pages;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.nuxeo.functionaltests.Required;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import org.apache.commons.lang3.StringUtils;
+import org.nuxeo.functionaltests.AbstractHtmlPage;
+
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 
 /**
  * @since 11.1
  */
-public class DistributionHomePage extends AbstractExplorerPage {
+public class DistributionHomePage extends AbstractHtmlPage<DistributionHomePage.Builder> {
 
-    @Required
-    @FindBy(xpath = "//h1")
-    public WebElement header;
+    protected final String header;
 
-    @Required
-    @FindBy(xpath = "//div[@class='tabscontent']//a[text()='Bundle Groups']")
-    public WebElement bundleGroups;
+    public DistributionHomePage(Builder builder, Source html) {
+        super(builder, html);
+        header = this.findFirstElementWithName(HTMLElementName.H1)
+                     .map(TEXT_EXTRACTOR)
+                     .orElseThrow(() -> new AssertionError("Unable to find the header"));
+    }
 
-    @Required
-    @FindBy(xpath = "//div[@class='tabscontent']//a[text()='Bundles']")
-    public WebElement bundles;
-
-    @Required
-    @FindBy(xpath = "//div[@class='tabscontent']//a[text()='Components']")
-    public WebElement components;
-
-    @Required
-    @FindBy(xpath = "//div[@class='tabscontent']//a[text()='Services']")
-    public WebElement services;
-
-    @Required
-    @FindBy(xpath = "//div[@class='tabscontent']//a[text()='Extension Points']")
-    public WebElement extensionPoints;
-
-    @Required
-    @FindBy(xpath = "//div[@class='tabscontent']//a[text()='Contributions']")
-    public WebElement contributions;
-
-    @Required
-    @FindBy(xpath = "//div[@class='tabscontent']//a[text()='Operations']")
-    public WebElement operations;
-
-    @Required
-    @FindBy(xpath = "//div[@class='tabscontent']//a[text()='Packages']")
-    public WebElement packages;
-
-    @Required
-    @FindBy(xpath = "//ul[@class='exports']")
-    public WebElement exports;
-
-    public DistributionHomePage(WebDriver driver) {
-        super(driver);
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override
-    public void check() {
-        checkTitle("Nuxeo Platform Explorer");
-        checkHeader(null);
-        // check export links presence but do not click (too costly)
-        exports.findElement(By.linkText("Json Export"));
-        exports.findElement(By.linkText("Json Graph"));
-        exports.findElement(By.linkText("DOT Graph"));
-    }
-
-    public void checkHeader(String distribId) {
-        String text = header.getText();
-        if (distribId != null) {
-            assertEquals(String.format("Browsing Distribution '%s'", distribId), text);
+    public void assertElement() {
+        super.assertElement();
+        if (StringUtils.isNotBlank(builder.expectedHeader)) {
+            assertEquals(builder.expectedHeader, header);
         } else {
-            assertTrue(text, text.startsWith("Browsing Distribution"));
+            assertTrue(header, header.startsWith("Browsing Distribution"));
         }
     }
 
-    protected int getChipNumber(WebElement elt) {
-        return Integer.valueOf(elt.findElement(By.xpath("following-sibling::*")).getText());
-    }
+    public static class Builder extends AbstractHtmlPage.Builder<DistributionHomePage.Builder> {
 
-    /** @since 20.1.0 */
-    public void checkNumber(int nb, WebElement elt) {
-        assertEquals(nb, getChipNumber(elt));
-    }
+        protected String expectedHeader;
 
-    /** @since 20.1.0 */
-    public void checkNumbers(int nbBundleGroups, int nbBundles, int nbComponents, int nbServices, int nbExtensionPoints,
-            int nbContributions, int nbOperations, int nbPackages) {
-        checkNumber(nbBundleGroups, bundleGroups);
-        checkNumber(nbBundles, bundles);
-        checkNumber(nbComponents, components);
-        checkNumber(nbServices, services);
-        checkNumber(nbExtensionPoints, extensionPoints);
-        checkNumber(nbContributions, contributions);
-        checkNumber(nbOperations, operations);
-        checkNumber(nbPackages, packages);
-    }
+        public Builder() {
+            super("Nuxeo Platform Explorer");
+        }
 
+        public Builder header(String expectedHeader) {
+            this.expectedHeader = expectedHeader;
+            return this;
+        }
+
+        public DistributionHomePage build(Source html) {
+            return new DistributionHomePage(this, html);
+        }
+    }
 }

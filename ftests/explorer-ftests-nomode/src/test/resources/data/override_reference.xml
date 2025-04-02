@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <component name="org.nuxeo.apidoc.listener.contrib.override">
 
   <require>org.nuxeo.apidoc.listener.contrib</require>
@@ -12,7 +12,10 @@
 
       Example listener:
       <code>
-    <listener async="false" class="org.nuxeo.ecm.platform.dublincore.listener.DublinCoreListener" enabled="true" name="mylistener" postCommit="false" priority="50" retryCount="1">
+    <listener async="false"
+        class="org.nuxeo.ecm.platform.dublincore.listener.DublinCoreListener"
+        enabled="true" name="mylistener" postCommit="false"
+        priority="50" retryCount="1">
         <event>documentCreated</event>
         <event>documentModified</event>
     </listener>
