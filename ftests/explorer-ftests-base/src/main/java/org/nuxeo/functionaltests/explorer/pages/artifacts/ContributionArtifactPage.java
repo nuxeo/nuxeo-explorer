@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,84 +18,54 @@
  */
 package org.nuxeo.functionaltests.explorer.pages.artifacts;
 
-import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import static org.junit.Assert.assertTrue;
+
+import org.apache.commons.lang3.StringUtils;
+
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 
 /**
  * @since 11.1
  */
-public class ContributionArtifactPage extends ArtifactPage {
+public class ContributionArtifactPage extends ArtifactPage<ContributionArtifactPage.Builder> {
 
-    @FindBy(xpath = "//ul[@class='block-list']")
-    public WebElement contributionsList;
+    protected final boolean registrationOrderPresence;
 
-    @FindBy(css = ".registrationOrder")
-    public WebElement regitrationOrder;
+    public ContributionArtifactPage(Builder builder, Source html) {
+        super(builder, html);
+        registrationOrderPresence = this.findElementsWithNameAndClass(HTMLElementName.DIV, "registrationOrder")
+                                        .map(TEXT_EXTRACTOR)
+                                        .anyMatch(StringUtils::isNotBlank);
+    }
 
-    public ContributionArtifactPage(WebDriver driver) {
-        super(driver);
+    public static Builder builder(String componentName, String extensionPoint) {
+        return new Builder(componentName, extensionPoint);
     }
 
     @Override
-    public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
-        String toc = "Documentation\n" + "Extension Point\n" + "Registration Order\n" + "Contributed Items\n"
-                + "XML Source";
-        if (legacy) {
-            toc = "Documentation\n" + "Extension Point\n" + "Contributed Items\n" + "XML Source";
+    public void assertElement() {
+        super.assertElement();
+        assertTrue("Registration order presence", registrationOrderPresence);
+    }
+
+    // @Override
+    // public void checkSelectedTab() {
+    // DistributionHeaderFragment header = asPage(DistributionHeaderFragment.class);
+    // header.checkSelectedTab(header.contributions);
+    // }
+
+    public static class Builder extends ArtifactPage.Builder<Builder> {
+
+        public Builder(String expectedComponentName, String expectedExtensionPoint) {
+            super(String.format("Contribution %s--%s", expectedComponentName, expectedExtensionPoint));
+            contentInfoDescription("In component " + expectedComponentName);
+            tableOfContents("Documentation", "Extension Point", "Registration Order", "Contributed Items",
+                    "XML Source");
         }
-        checkCommon("Contribution org.nuxeo.apidoc.adapterContrib--adapters",
-                "Contribution org.nuxeo.apidoc.adapterContrib--adapters",
-                "In component org.nuxeo.apidoc.adapterContrib", toc);
-        checkDocumentationText("These contributions provide a mapping between live introspections "
-                + "and persisted representations of a distribution.");
-        checkRegistrationOrder(!legacy);
-    }
 
-    @Override
-    public void checkAlternative() {
-        checkCommon("Contribution org.nuxeo.apidoc.listener.contrib--listener",
-                "Contribution org.nuxeo.apidoc.listener.contrib--listener",
-                "In component org.nuxeo.apidoc.listener.contrib", "Documentation\n" + "Extension Point\n"
-                        + "Registration Order\n" + "Contributed Items\n" + "XML Source");
-        checkDocumentationText("These contributions are used for latest distribution flag update "
-                + "and XML attributes extractions in extension points.");
-        checkContributionItemText(1,
-                "<listener async=\"false\" class=\"org.nuxeo.apidoc.listener.LatestDistributionsListener\" name=\"latestDistributionsListener\" postCommit=\"false\">\n" //
-                        + "      <documentation>\n" //
-                        + "        Updates latest distribution flag.\n" //
-                        + "      </documentation>\n" //
-                        + "      <event>aboutToCreate</event>\n" //
-                        + "      <event>beforeDocumentModification</event>\n" //
-                        + "    </listener>\n" //
-                        + "listener latestDistributionsListener\n" //
-                        + "Updates latest distribution flag.");
-        checkRegistrationOrder(true);
+        public ContributionArtifactPage build(Source html) {
+            return new ContributionArtifactPage(this, html);
+        }
     }
-
-    @Override
-    public void checkSelectedTab() {
-        DistributionHeaderFragment header = asPage(DistributionHeaderFragment.class);
-        header.checkSelectedTab(header.contributions);
-    }
-
-    public void checkContributionItemText(int index, String expected) {
-        WebElement element = contributionsList.findElement(By.xpath(".//li[" + index + "]"));
-        checkTextIfExists(expected, element);
-    }
-
-    public void checkRegistrationOrder(boolean set) {
-        checkSetIfExists(set, regitrationOrder);
-    }
-
-    public void toggleGenerateOverride() {
-        findElementWaitUntilEnabledAndClick(By.id("overrideStart"));
-    }
-
-    public void doGenerateOverride() {
-        findElementWaitUntilEnabledAndClick(By.id("overrideGen"));
-    }
-
 }

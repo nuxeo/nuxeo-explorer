@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,142 +19,119 @@
 package org.nuxeo.functionaltests.explorer.pages;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Objects;
 
-import org.nuxeo.functionaltests.Locator;
-import org.nuxeo.functionaltests.Required;
-import org.nuxeo.functionaltests.pages.AbstractPage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import org.nuxeo.functionaltests.AbstractHtmlElement;
+import org.nuxeo.functionaltests.HtmlLink;
 
-import com.google.common.base.Function;
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.TextExtractor;
 
 /**
  * Represents a listing fragment on the explorer page.
  *
  * @since 11.1
  */
-public class ListingFragment extends AbstractPage {
+public class ListingFragment extends AbstractHtmlElement {
 
-    @Required
-    @FindBy(xpath = "//input[@class='searchFilter']")
-    public WebElement searchFilter;
+    protected final List<Row> rows;
 
-    @FindBy(xpath = "//input[@id='filter-submit-button']")
-    public WebElement filterSubmit; // present only in some cases
-
-    @Required
-    @FindBy(id = "contentTable")
-    public WebElement listingTable;
-
-    @Required
-    @FindBy(xpath = "//table[@id='contentTable']//th[contains(@class, 'header')]")
-    public WebElement sort;
-
-    public ListingFragment(WebDriver driver) {
-        super(driver);
+    public ListingFragment(Element element) {
+        super(element);
+        // skip header
+        this.rows = getElementsWithName(HTMLElementName.TR).stream().skip(1).map(Row::new).toList();
     }
 
-    public WebElement getFirstItem() {
-        return listingTable.findElement(By.xpath("./tbody//tr"));
+    @Override
+    public void assertElement() {
+        assertEquals(HTMLElementName.TABLE, element.getStartTag().getName());
+        assertEquals("contentTable", element.getAttributeValue("id"));
     }
 
-    public List<WebElement> getItems() {
-        return listingTable.findElements(By.xpath("./tbody//tr"));
+    public void assertContainsRow(String linkText, String linkUrlEnd, String linkDetail) {
+        var actualRow = findRowOrThrow(linkText, linkDetail);
+        var link = actualRow.getLink();
+        assertTrue(link.getHref(), link.getHref().endsWith(linkUrlEnd));
+        assertEquals(linkDetail, actualRow.getDetailText());
     }
 
-    public WebElement getListingItemLink(WebElement item) {
-        return item.findElement(By.xpath(".//a[@class='itemLink']"));
+    public void assertContainsRow(ExpectedRow expectedRow) {
+        assertContainsRow(expectedRow.text(), expectedRow.urlEnd(), expectedRow.itemDetail());
     }
 
-    public String getListingItemDetail(WebElement item) {
-        try {
-            return item.findElement(By.xpath(".//div[@class='itemDetail']")).getText();
-        } catch (NoSuchElementException e) {
-            return null;
-        }
+    public Row getFirstRow() {
+        return rows.getFirst();
     }
 
-    public void navigateToFirstItem() {
-        Locator.scrollAndForceClick(getListingItemLink(getFirstItem()));
+    public Row findRowOrThrow(String linkText) {
+        return rows.stream()
+                   .filter(row -> linkText.equals(row.getLink().getText()))
+                   .findFirst()
+                   .orElseThrow(() -> new AssertionError("Unable to find the row with link text: " + linkText));
     }
 
-    class RequestManager {
-
-        protected JavascriptExecutor js;
-
-        protected String id;
-
-        protected String event;
-
-        public RequestManager(WebDriver driver, String id, String event) {
-            this.js = (JavascriptExecutor) driver;
-            this.id = id;
-            this.event = event;
-        }
-
-        public void begin() {
-            String beginCode = String.format(
-                    "window.%s = true; jQuery('#contentTable').bind('%s', () => { window.%s = false; });", id, event,
-                    id);
-            js.executeScript(beginCode);
-        }
-
-        public void waitForEnd() {
-            Locator.waitUntilGivenFunction(new Function<WebDriver, Boolean>() {
-                @Override
-                public Boolean apply(WebDriver driver) {
-                    String endCode = String.format("return window.%s == false;", id);
-                    Boolean res = (Boolean) ((JavascriptExecutor) driver).executeScript(endCode);
-                    return res;
-                }
-            });
-        }
-
+    public Row findRowOrThrow(String linkText, String linkDetail) {
+        return rows.stream()
+                   .filter(row -> linkText.equals(row.getLink().getText())
+                           && Objects.equals(linkDetail, row.getDetailText()))
+                   .findFirst()
+                   .orElseThrow(() -> new AssertionError(
+                           "Unable to find the row with link text: " + linkText + ", detail: " + linkDetail));
     }
 
-    public ListingFragment filterOn(String filterText) {
-        // check first if fulltext search, requiring explicit submit
-        if ("fulltext-box".contentEquals(searchFilter.getAttribute("id"))) {
-            searchFilter.sendKeys(filterText);
-            Locator.scrollAndForceClick(filterSubmit);
-        } else {
-            RequestManager rm = new RequestManager(driver, "nxexplorerFilterOngoing", "filterEnd");
-            rm.begin();
-            searchFilter.sendKeys(filterText);
-            rm.waitForEnd();
-        }
-        return asPage(ListingFragment.class);
-    }
-
-    public ListingFragment toggleSort() {
-        RequestManager rm = new RequestManager(driver, "nxexplorerSortOngoing", "sortEnd");
-        rm.begin();
-        Locator.scrollAndForceClick(sort);
-        rm.waitForEnd();
-        return asPage(ListingFragment.class);
+    public List<Row> getRows() {
+        return rows;
     }
 
     public void checkListing(int expectedSize, String firstLinkText, String firstLinkURLEnd, String firstLinkDetail) {
         if (expectedSize >= 0) {
-            assertEquals(expectedSize, getItems().size());
+            assertEquals(expectedSize, rows.size());
             if (expectedSize == 0) {
                 return;
             }
         } else {
-            assertTrue(getItems().size() > 0);
+            assertFalse(rows.isEmpty());
         }
-        WebElement item = getFirstItem();
-        WebElement link = getListingItemLink(item);
-        assertEquals(firstLinkText, link.getText());
-        assertTrue(link.getAttribute("href"), link.getAttribute("href").endsWith(firstLinkURLEnd));
-        assertEquals(firstLinkDetail, getListingItemDetail(item));
     }
 
+    public static class Row extends AbstractHtmlElement {
+
+        protected final HtmlLink link;
+
+        protected final String detailText;
+
+        protected Row(Element element) {
+            super(element);
+            this.link = this.findElementsWithNameAndClass(HTMLElementName.A, "itemLink")
+                            .findFirst()
+                            .map(HtmlLink::new)
+                            .orElseThrow(() -> new AssertionError("Unable to find the link"));
+            this.detailText = this.findElementsWithNameAndClass(HTMLElementName.DIV, "itemDetail")
+                                  .findFirst()
+                                  .map(Element::getTextExtractor)
+                                  .map(TextExtractor::toString)
+                                  .orElse(null);
+        }
+
+        @Override
+        public void assertElement() {
+            assertEquals(HTMLElementName.TR, element.getStartTag().getName());
+        }
+
+        public HtmlLink getLink() {
+            return link;
+        }
+
+        public String getDetailText() {
+            return detailText;
+        }
+    }
+
+    public record ExpectedRow(String text, String urlEnd, String itemDetail) {
+    }
 }

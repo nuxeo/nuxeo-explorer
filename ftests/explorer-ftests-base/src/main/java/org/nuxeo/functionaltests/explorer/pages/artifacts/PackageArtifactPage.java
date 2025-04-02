@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,184 +21,247 @@ package org.nuxeo.functionaltests.explorer.pages.artifacts;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
-import org.nuxeo.functionaltests.Required;
-import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import org.nuxeo.functionaltests.HtmlLink;
+
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 
 /**
  * @since 11.1
  */
-public class PackageArtifactPage extends ArtifactPage {
+public class PackageArtifactPage extends ArtifactPage<PackageArtifactPage.Builder> {
 
-    @Required
-    @FindBy(xpath = "//td[@id='packageId']")
-    public WebElement packageId;
+    protected final String packageId;
 
-    @Required
-    @FindBy(xpath = "//td[@id='packageName']")
-    public WebElement packageName;
+    protected final String packageName;
 
-    @Required
-    @FindBy(xpath = "//td[@id='packageVersion']")
-    public WebElement packageVersion;
+    protected final String packageVersion;
 
-    @FindBy(xpath = "//a[@id='marketplaceLink']")
-    public WebElement marketplaceLink;
+    protected final HtmlLink marketplaceLink;
 
-    @FindBy(xpath = "//ul[@id='dependencies']")
-    public WebElement dependencies;
+    protected final List<String> dependencies;
 
-    @FindBy(xpath = "//ul[@id='optionalDependencies']")
-    public WebElement optionalDependencies;
+    protected final List<String> optionalDependencies;
 
-    @FindBy(xpath = "//ul[@id='conflicts']")
-    public WebElement conflicts;
+    protected final List<String> conflicts;
 
-    @Required
-    @FindBy(xpath = "//div[@id='bundles']")
-    public WebElement bundles;
+    protected final List<String> bundles;
 
-    /** @since 20.0.0 */
-    @FindBy(xpath = "//div[@id='components']")
-    public WebElement components;
+    protected final List<String> components;
 
-    /** @since 20.0.0 */
-    @FindBy(xpath = "//div[@id='services']")
-    public WebElement services;
+    protected final List<String> services;
 
-    /** @since 20.0.0 */
-    @FindBy(xpath = "//div[@id='extensionpoints']")
-    public WebElement extensionpoints;
+    protected final List<String> extensionPoints;
 
-    /** @since 20.0.0 */
-    @FindBy(xpath = "//div[@id='contributions']")
-    public WebElement contributions;
+    protected final List<String> contributions;
 
-    @Required
-    @FindBy(xpath = "//ul[@class='exports']")
-    public WebElement exports;
+    protected final List<String> exports;
 
-    public PackageArtifactPage(WebDriver driver) {
-        super(driver);
+    public PackageArtifactPage(Builder builder, Source html) {
+        super(builder, html);
+        packageId = this.findElementWithId("packageId")
+                        .map(TEXT_EXTRACTOR)
+                        .orElseThrow(() -> new AssertionError("Unable to find the package id"));
+        packageName = this.findElementWithId("packageName")
+                          .map(TEXT_EXTRACTOR)
+                          .orElseThrow(() -> new AssertionError("Unable to find the package name"));
+        packageVersion = this.findElementWithId("packageVersion")
+                             .map(TEXT_EXTRACTOR)
+                             .orElseThrow(() -> new AssertionError("Unable to find the package version"));
+        marketplaceLink = this.findElementWithId("marketplaceLink")
+                              .map(HtmlLink::new)
+                              .orElseThrow(() -> new AssertionError("Unable to find the marketeplace link"));
+        dependencies = this.findElementWithId("dependencies")
+                           .stream()
+                           .flatMap(ul -> ul.getAllElements(HTMLElementName.LI).stream())
+                           .map(TEXT_EXTRACTOR)
+                           .toList();
+        optionalDependencies = this.findElementWithId("optionalDependencies")
+                                   .stream()
+                                   .flatMap(ul -> ul.getAllElements(HTMLElementName.LI).stream())
+                                   .map(TEXT_EXTRACTOR)
+                                   .toList();
+        conflicts = this.findElementWithId("conflicts")
+                        .stream()
+                        .flatMap(ul -> ul.getAllElements(HTMLElementName.LI).stream())
+                        .map(TEXT_EXTRACTOR)
+                        .toList();
+        bundles = this.findElementWithId("bundles")
+                      .stream()
+                      .flatMap(div -> div.getAllElements(HTMLElementName.LI).stream())
+                      .map(TEXT_EXTRACTOR)
+                      .toList();
+        components = this.findElementWithId("components")
+                         .stream()
+                         .flatMap(div -> div.getAllElements(HTMLElementName.LI).stream())
+                         .map(TEXT_EXTRACTOR)
+                         .toList();
+        services = this.findElementWithId("services")
+                       .stream()
+                       .flatMap(div -> div.getAllElements(HTMLElementName.LI).stream())
+                       .map(TEXT_EXTRACTOR)
+                       .toList();
+        extensionPoints = this.findElementWithId("extensionpoints")
+                              .stream()
+                              .flatMap(div -> div.getAllElements(HTMLElementName.LI).stream())
+                              .map(TEXT_EXTRACTOR)
+                              .toList();
+        contributions = this.findElementWithId("contributions")
+                            .stream()
+                            .flatMap(div -> div.getAllElements(HTMLElementName.LI).stream())
+                            .map(TEXT_EXTRACTOR)
+                            .toList();
+        exports = this.findElementsWithNameAndClass(HTMLElementName.UL, "exports")
+                      .flatMap(ul -> ul.getAllElements(HTMLElementName.LI).stream())
+                      .map(TEXT_EXTRACTOR)
+                      .toList();
+    }
+
+    public static Builder builder(String packageName, String packageTitle) {
+        return new Builder(packageName, packageTitle);
     }
 
     @Override
-    public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
-        checkCommon("Package Platform Explorer", "Package Platform Explorer (platform-explorer)", null,
-                "General Information\n" //
-                        + "Bundles\n" //
-                        + "Components\n" //
-                        + "Services\n" //
-                        + "Extension Points\n" //
-                        + "Contributions\n" //
-                        + "Exports\n" //
-                        + "Charts");
-        String version = packageVersion.getText();
-        assertFalse(StringUtils.isBlank(version));
-        checkPackageId("platform-explorer-" + version);
-        checkPackageName("platform-explorer");
-        checkMarketplaceLink(
-                "https://connect.nuxeo.com/nuxeo/site/marketplace/package/platform-explorer?version=" + version);
-        checkDependencies(null);
-        checkOptionalDependencies(null);
-        checkConflicts(null);
-        checkBundles("org.nuxeo.apidoc.core\n" //
-                + "org.nuxeo.apidoc.repo\n" //
-                + "org.nuxeo.apidoc.webengine\n"//
-                + "org.nuxeo.ecm.webengine.ui");
-        checkComponents("org.nuxeo.apidoc.doctypeContrib\n" //
-                + "org.nuxeo.apidoc.lifecycle.contrib\n" //
-                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent\n" //
-                + "org.nuxeo.apidoc.adapterContrib\n" //
-                + "org.nuxeo.apidoc.listener.contrib\n" //
-                + "org.nuxeo.apidoc.schemaContrib");
-        checkServices("ArtifactSearcher\n" //
-                + "SnapshotListener\n" //
-                + "SnapshotManager");
-        checkExtensionPoints("org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters\n" //
-                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins");
-        checkContributions("org.nuxeo.apidoc.adapterContrib--adapters\n" //
-                + "org.nuxeo.apidoc.doctypeContrib--doctype\n" //
-                + "org.nuxeo.apidoc.lifecycle.contrib--lifecycle\n" //
-                + "org.nuxeo.apidoc.lifecycle.contrib--types\n" //
-                + "org.nuxeo.apidoc.listener.contrib--listener\n" //
-                + "org.nuxeo.apidoc.schemaContrib--schema\n" //
-                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration\n" //
-                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration1\n" //
-                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration2\n" //
-                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--configuration3\n" //
-                + "org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--exporters");
-        WebElement jsonExport = exports.findElement(By.linkText("Json Export"));
-        checkJsonLink(jsonExport);
-        WebElement graphExport = exports.findElement(By.linkText("Json Graph"));
-        checkJsonLink(graphExport);
+    public void assertElement() {
+        super.assertElement();
+        assertEquals(builder.expectedPackageName, packageName);
+        assertFalse(StringUtils.isBlank(packageVersion));
+        assertEquals(builder.expectedPackageName + '-' + packageVersion, packageId);
+        var expectedMarketplaceLink = "https://connect.nuxeo.com/nuxeo/site/marketplace/package/platform-explorer?version="
+                + packageVersion;
+        assertEquals(expectedMarketplaceLink, marketplaceLink.getHref());
+        assertEquals(expectedMarketplaceLink, marketplaceLink.getText());
+        assertEquals(builder.expectedDependencies, dependencies);
+        assertEquals(builder.expectedOptionalDependencies, optionalDependencies);
+        assertEquals(builder.expectedConflicts, conflicts);
+        assertEquals(builder.expectedBundles, bundles);
+        assertEquals(builder.expectedComponents, components);
+        assertEquals(builder.expectedServices, services);
+        assertEquals(builder.expectedExtensionPoints, extensionPoints);
+        assertEquals(builder.expectedContributions, contributions);
+        assertEquals(builder.expectedExports, exports);
     }
+    //
+    // @Override
+    // public void checkSelectedTab() {
+    // DistributionHeaderFragment header = asPage(DistributionHeaderFragment.class);
+    // header.checkSelectedTab(header.packages);
+    // }
 
-    @Override
-    public void checkAlternative() {
-        // NOOP
+    public static class Builder extends ArtifactPage.Builder<Builder> {
+
+        protected final String expectedPackageName;
+
+        protected List<String> expectedDependencies = List.of();
+
+        protected List<String> expectedOptionalDependencies = List.of();
+
+        protected List<String> expectedConflicts = List.of();
+
+        protected List<String> expectedBundles = List.of();
+
+        protected List<String> expectedComponents = List.of();
+
+        protected List<String> expectedServices = List.of();
+
+        protected List<String> expectedExtensionPoints = List.of();
+
+        protected List<String> expectedContributions = List.of();
+
+        protected List<String> expectedExports = List.of();
+
+        public Builder(String expectedPackageName, String expectedPackageTitle) {
+            super("Package " + expectedPackageTitle,
+                    String.format("Package %s (%s)", expectedPackageTitle, expectedPackageName));
+            this.expectedPackageName = expectedPackageName;
+        }
+
+        public Builder dependencies(String expectedDependency, String... expectedDependencies) {
+            return dependencies(toList(expectedDependency, expectedDependencies));
+        }
+
+        public Builder dependencies(List<String> expectedDependencies) {
+            this.expectedDependencies = List.copyOf(expectedDependencies);
+            return this;
+        }
+
+        public Builder optionalDependencies(String expectedOptionalDependency, String... expectedOptionalDependencies) {
+            return optionalDependencies(toList(expectedOptionalDependency, expectedOptionalDependencies));
+        }
+
+        public Builder optionalDependencies(List<String> expectedOptionalDependencies) {
+            this.expectedOptionalDependencies = List.copyOf(expectedOptionalDependencies);
+            return this;
+        }
+
+        public Builder conflicts(String expectedConflict, String... expectedConflicts) {
+            return conflicts(toList(expectedConflict, expectedConflicts));
+        }
+
+        public Builder conflicts(List<String> expectedConflicts) {
+            this.expectedConflicts = List.copyOf(expectedConflicts);
+            return this;
+        }
+
+        public Builder bundles(String expectedBundle, String... expectedBundles) {
+            return bundles(toList(expectedBundle, expectedBundles));
+        }
+
+        public Builder bundles(List<String> expectedBundles) {
+            this.expectedBundles = List.copyOf(expectedBundles);
+            return this;
+        }
+
+        public Builder components(String expectedComponent, String... expectedComponents) {
+            return components(toList(expectedComponent, expectedComponents));
+        }
+
+        public Builder components(List<String> expectedComponents) {
+            this.expectedComponents = List.copyOf(expectedComponents);
+            return this;
+        }
+
+        public Builder services(String expectedService, String... expectedServices) {
+            return services(toList(expectedService, expectedServices));
+        }
+
+        public Builder services(List<String> expectedServices) {
+            this.expectedServices = List.copyOf(expectedServices);
+            return this;
+        }
+
+        public Builder extensionPoints(String expectedExtensionPoint, String... expectedExtensionPoints) {
+            return extensionPoints(toList(expectedExtensionPoint, expectedExtensionPoints));
+        }
+
+        public Builder extensionPoints(List<String> expectedExtensionPoints) {
+            this.expectedExtensionPoints = List.copyOf(expectedExtensionPoints);
+            return this;
+        }
+
+        public Builder contributions(String expectedContribution, String... expectedContributions) {
+            return contributions(toList(expectedContribution, expectedContributions));
+        }
+
+        public Builder contributions(List<String> expectedContributions) {
+            this.expectedContributions = List.copyOf(expectedContributions);
+            return this;
+        }
+
+        public Builder exports(String expectedExport, String... expectedExports) {
+            return exports(toList(expectedExport, expectedExports));
+        }
+
+        public Builder exports(List<String> expectedExports) {
+            this.expectedExports = List.copyOf(expectedExports);
+            return this;
+        }
+
+        public PackageArtifactPage build(Source html) {
+            return new PackageArtifactPage(this, html);
+        }
     }
-
-    @Override
-    public void checkSelectedTab() {
-        DistributionHeaderFragment header = asPage(DistributionHeaderFragment.class);
-        header.checkSelectedTab(header.packages);
-    }
-
-    public void checkPackageId(String expected) {
-        assertEquals(expected, packageId.getText());
-    }
-
-    public void checkPackageName(String expected) {
-        assertEquals(expected, packageName.getText());
-    }
-
-    public void checkPackageVersion(String expected) {
-        assertEquals(expected, packageVersion.getText());
-    }
-
-    public void checkMarketplaceLink(String expected) {
-        checkLink(expected, marketplaceLink);
-    }
-
-    public void checkBundles(String expected) {
-        assertEquals(expected, bundles.getText());
-    }
-
-    public void checkDependencies(String expected) {
-        checkTextIfExists(expected, dependencies);
-    }
-
-    public void checkOptionalDependencies(String expected) {
-        checkTextIfExists(expected, optionalDependencies);
-    }
-
-    public void checkConflicts(String expected) {
-        checkTextIfExists(expected, conflicts);
-    }
-
-    /** @since 20.0.0 */
-    public void checkComponents(String expected) {
-        checkTextIfExists(expected, components);
-    }
-
-    /** @since 20.0.0 */
-    public void checkServices(String expected) {
-        checkTextIfExists(expected, services);
-    }
-
-    /** @since 20.0.0 */
-    public void checkExtensionPoints(String expected) {
-        checkTextIfExists(expected, extensionpoints);
-    }
-
-    /** @since 20.0.0 */
-    public void checkContributions(String expected) {
-        checkTextIfExists(expected, contributions);
-    }
-
 }

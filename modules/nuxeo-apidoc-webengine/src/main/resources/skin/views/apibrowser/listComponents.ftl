@@ -32,6 +32,7 @@
             <span title="Component Type" class="sticker">Java</span>
             <span title="Component ID">${component.id}</span>
           </div>
+        </div>
       </td>
       <td>
         <#if component.order??>

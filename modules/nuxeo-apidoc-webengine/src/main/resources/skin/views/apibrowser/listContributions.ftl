@@ -26,7 +26,7 @@
           <h4><a title="Contribution" href="${Root.path}/${distId}/viewContribution/${contrib.id}" class="itemLink">${contrib.id}</a></h4>
           <div class="itemDetail">
             <span title="Target Extension Point">${contrib.extensionPoint?split("--")[1]}</span> -
-            <span title="Target Component Name">${contrib.targetComponentName.name}</<span>
+            <span title="Target Component Name">${contrib.targetComponentName.name}</span>
           </div>
         </div>
       </td>

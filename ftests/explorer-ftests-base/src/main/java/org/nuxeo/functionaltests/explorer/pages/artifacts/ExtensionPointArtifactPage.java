@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,99 +18,94 @@
  */
 package org.nuxeo.functionaltests.explorer.pages.artifacts;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.nuxeo.functionaltests.Required;
-import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 
 /**
  * @since 11.1
  */
-public class ExtensionPointArtifactPage extends ArtifactPage {
+public class ExtensionPointArtifactPage extends ArtifactPage<ExtensionPointArtifactPage.Builder> {
 
-    @Required
-    @FindBy(xpath = "//ul[@class='descriptors']")
-    public WebElement descriptors;
+    protected final List<String> aliases;
 
-    @Required
-    @FindBy(css = ".javadoc")
-    public WebElement javadoc;
+    protected final List<String> descriptors;
 
-    public ExtensionPointArtifactPage(WebDriver driver) {
-        super(driver);
+    public ExtensionPointArtifactPage(Builder builder, Source html) {
+        super(builder, html);
+        aliases = this.findElementsWithNameAndClass(HTMLElementName.UL, "aliases")
+                      .flatMap(ul -> ul.getAllElements(HTMLElementName.LI).stream())
+                      .map(TEXT_EXTRACTOR)
+                      .toList();
+        descriptors = this.findElementsWithNameAndClass(HTMLElementName.UL, "descriptors")
+                          .flatMap(ul -> ul.getAllElements(HTMLElementName.LI).stream())
+                          .map(TEXT_EXTRACTOR)
+                          .toList();
+    }
+
+    public static Builder builder(String extensionTarget, String extensionPoint) {
+        return new Builder(extensionTarget, extensionPoint);
     }
 
     @Override
-    public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
-        checkCommon("Extension point org.nuxeo.apidoc.snapshot.SnapshotManagerComponent--plugins",
-                "Extension point plugins", "In component org.nuxeo.apidoc.snapshot.SnapshotManagerComponent",
-                "Documentation\n" + "Contribution Descriptors\n" + "Contributions");
-        checkDocumentationText(
-                "A plugin can introspect and persist information related to the current runtime environment.\n" //
-                        + "Sample contribution:\n" //
-                        + "        <extension point=\"plugins\" target=\"org.nuxeo.apidoc.snapshot.SnapshotManagerComponent\">\n" //
-                        + "            <plugin class=\"org.nuxeo.apidoc.seam.plugin.SeamPlugin\"\n" //
-                        + "                id=\"seam\" snapshotClass=\"org.nuxeo.apidoc.seam.introspection.SeamRuntimeSnapshot\">\n" //
-                        + "                <ui>\n" //
-                        + "                    <label>Seam Components</label>\n" //
-                        + "                    <viewType>seam</viewType>\n" //
-                        + "                    <homeView>listSeamComponents</homeView>\n" //
-                        + "                    <styleClass>seam</styleClass>\n" //
-                        + "                </ui>\n" //
-                        + "            </plugin>\n" //
-                        + "        </extension>\n" //
-                        + "The class should implement the org.nuxeo.apidoc.plugin.Plugin interface.\n" //
-                        + "UI elements are used for rendering on webengine pages. The view type should match a webengine resource type, and the module holding this resource should be contributed to the main webengine module as a fragment using:\n" //
-                        + "          Fragment-Host: org.nuxeo.apidoc.webengine");
-        checkDescriptorsText("org.nuxeo.apidoc.plugin.PluginDescriptor");
-        checkAliases(null);
+    public void assertElement() {
+        super.assertElement();
+        assertEquals(builder.expectedAliases, aliases);
+        assertEquals(builder.expectedDescriptors, descriptors);
     }
 
-    @Override
-    public void checkAlternative() {
-        checkCommon("Extension point org.nuxeo.ecm.core.schema.TypeService--doctype", "Extension point doctype",
-                "In component org.nuxeo.ecm.core.schema.TypeService",
-                "Documentation\n" + "Contribution Descriptors\n" + "Existing Contributions");
-        checkDescriptorsText("org.nuxeo.ecm.core.schema.DocumentTypeDescriptor");
-        checkDescriptorsText("org.nuxeo.ecm.core.schema.FacetDescriptor");
-        checkDescriptorsText("org.nuxeo.ecm.core.schema.ProxiesDescriptor");
-        checkAliases(null);
-    }
+    // @Override
+    // public void checkAlternative() {
+    // checkCommon("Extension point org.nuxeo.ecm.core.schema.TypeService--doctype", "Extension point doctype",
+    // "In component org.nuxeo.ecm.core.schema.TypeService",
+    // "Documentation\n" + "Contribution Descriptors\n" + "Existing Contributions");
+    // checkDescriptorsText("org.nuxeo.ecm.core.schema.DocumentTypeDescriptor");
+    // checkDescriptorsText("org.nuxeo.ecm.core.schema.FacetDescriptor");
+    // checkDescriptorsText("org.nuxeo.ecm.core.schema.ProxiesDescriptor");
+    // checkAliases(null);
+    // }
 
-    public void checkSchedulerServiceSchedule() {
-        checkCommon("Extension point org.nuxeo.ecm.core.scheduler.SchedulerService--schedule",
-                "Extension point schedule", "In component org.nuxeo.ecm.core.scheduler.SchedulerService",
-                "Documentation\n" + "Aliases\n" + "Contribution Descriptors\n" + "Existing Contributions");
-        checkDescriptorsText("org.nuxeo.ecm.core.scheduler.ScheduleImpl");
-        checkAliases(List.of("org.nuxeo.ecm.platform.scheduler.core.service.SchedulerRegistryService--schedule"));
-    }
+    // @Override
+    // public void checkSelectedTab() {
+    // DistributionHeaderFragment header = asPage(DistributionHeaderFragment.class);
+    // header.checkSelectedTab(header.extensionPoints);
+    // }
 
-    @Override
-    public void checkSelectedTab() {
-        DistributionHeaderFragment header = asPage(DistributionHeaderFragment.class);
-        header.checkSelectedTab(header.extensionPoints);
-    }
+    public static class Builder extends ArtifactPage.Builder<Builder> {
 
-    public void generateOverride(String contributionId) {
-        WebElement li = driver.findElement(By.id(contributionId));
-        clickOn(li.findElement(By.className("override")));
-    }
+        protected List<String> expectedAliases = List.of();
 
-    public void checkDescriptorsText(String expected) {
-        String txt = descriptors.getText();
-        assertNotNull(txt);
-        assertTrue(String.format("Expected '%s' to contain '%s'", txt, expected), txt.contains(expected));
-    }
+        protected List<String> expectedDescriptors = List.of();
 
-    public void checkFirstJavadocLink(String expected) {
-        checkLink(expected, javadoc);
-    }
+        public Builder(String expectedExtensionTarget, String expectedExtensionPoint) {
+            super(String.format("Extension point %s--%s", expectedExtensionTarget, expectedExtensionPoint),
+                    "Extension point " + expectedExtensionPoint);
+            contentInfoDescription("In component " + expectedExtensionTarget);
+        }
 
+        public Builder aliases(String expectedAlias, String... expectedAliases) {
+            return aliases(toList(expectedAlias, expectedAliases));
+        }
+
+        public Builder aliases(List<String> expectedAliases) {
+            this.expectedAliases = List.copyOf(expectedAliases);
+            return this;
+        }
+
+        public Builder descriptors(String expectedDescriptor, String... expectedDescriptors) {
+            return descriptors(toList(expectedDescriptor, expectedDescriptors));
+        }
+
+        public Builder descriptors(List<String> expectedDescriptors) {
+            this.expectedDescriptors = List.copyOf(expectedDescriptors);
+            return this;
+        }
+
+        public ExtensionPointArtifactPage build(Source html) {
+            return new ExtensionPointArtifactPage(this, html);
+        }
+    }
 }

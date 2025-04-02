@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,134 +18,176 @@
  */
 package org.nuxeo.functionaltests.explorer.pages.artifacts;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.function.Predicate;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.nuxeo.functionaltests.Required;
-import org.nuxeo.functionaltests.explorer.pages.AbstractExplorerPage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import org.nuxeo.functionaltests.AbstractHtmlPage;
+import org.nuxeo.functionaltests.explorer.ExplorerTestRule;
+
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
+import net.htmlparser.jericho.SourceFormatter;
 
 /**
  * Page representing a selected artifact.
  *
  * @since 11.1
  */
-public abstract class ArtifactPage extends AbstractExplorerPage {
+public abstract class ArtifactPage<B extends ArtifactPage.Builder<B>> extends AbstractHtmlPage<B> {
 
-    @Required
-    @FindBy(xpath = "//section/article[@role='contentinfo']/h1")
-    public WebElement header;
+    protected final String contentInfoHeader;
 
-    @FindBy(xpath = "//section/article[@role='contentinfo']/div[contains(@class, 'include-in')]")
-    public WebElement description;
+    protected final String contentInfoDescription;
 
-    @FindBy(xpath = "//div[contains(@class, 'documentation')]")
-    public WebElement documentation;
+    protected final List<String> tableOfContents;
 
-    @FindBy(xpath = "//div[@id='tocDiv']")
-    public WebElement toc;
+    protected final String documentation;
 
-    public ArtifactPage(WebDriver driver) {
-        super(driver);
+    protected final String documentationHtml;
+
+    protected final List<String> requirements;
+
+    protected ArtifactPage(B builder, Source html) {
+        super(builder, html);
+        Predicate<Element> contentInfoFilter = el -> "contentinfo".equals(el.getAttributeValue("role"));
+        contentInfoHeader = this.getElementsWithName(HTMLElementName.ARTICLE)
+                                .stream()
+                                .filter(contentInfoFilter)
+                                .map(el -> el.getFirstElement(HTMLElementName.H1))
+                                .map(TEXT_EXTRACTOR)
+                                .findFirst()
+                                .orElseThrow(() -> new AssertionError("Unable to find artifact header"));
+        contentInfoDescription = this.getElementsWithName(HTMLElementName.ARTICLE)
+                                     .stream()
+                                     .filter(contentInfoFilter)
+                                     .flatMap(el -> el.getAllElements(HTMLElementName.DIV).stream())
+                                     .filter(el -> hasClass(el, "include-in"))
+                                     .map(TEXT_EXTRACTOR)
+                                     .findFirst()
+                                     .orElse(null);
+        tableOfContents = this.findElementsWithNameAndClass(HTMLElementName.H2, "toc").map(TEXT_EXTRACTOR).toList();
+        documentation = this.findElementsWithNameAndClass(HTMLElementName.DIV, "documentation")
+                            .findAny()
+                            .stream()
+                            .flatMap(div -> div.getAllElements(HTMLElementName.P).stream())
+                            .map(TEXT_EXTRACTOR)
+                            .filter(StringUtils::isNotBlank)
+                            .reduce((p1, p2) -> String.join(System.lineSeparator(), p1, p2))
+                            .orElse(null);
+        documentationHtml = this.findElementsWithNameAndClass(HTMLElementName.DIV, "documentation")
+                                .findAny()
+                                // .map(el -> el.getChildElements().getFirst())
+                                .map(el -> new SourceFormatter(el).setTidyTags(true).setCollapseWhiteSpace(true))
+                                .map(Object::toString)
+                                .orElse(null);
+        requirements = this.findElementWithId("requirements")
+                           .stream()
+                           .flatMap(element -> element.getAllElements(HTMLElementName.LI).stream())
+                           .map(TEXT_EXTRACTOR)
+                           .toList();
     }
 
     @Override
-    public void check() {
-        checkReference(false, false, false);
+    public void assertElement() {
+        super.assertElement();
+        assertEquals(builder.expectedContentInfoHeader, contentInfoHeader);
+        assertEquals(builder.expectedContentInfoDescription, contentInfoDescription);
+        assertEquals(builder.expectedTableOfContents, tableOfContents);
+        if (builder.expectedDocumentation != null) {
+            assertEquals(builder.expectedDocumentation, documentation);
+        } else {
+            assertEquals(builder.expectedDocumentationHtml, documentationHtml);
+        }
+        assertEquals(builder.expectedRequirements, requirements);
     }
 
-    public abstract void checkReference(boolean partial, boolean includeReferences, boolean legacy);
+    @SuppressWarnings("unchecked")
+    public static class Builder<B extends Builder<B>> extends AbstractHtmlPage.Builder<B> {
 
-    public abstract void checkAlternative();
+        protected final String expectedContentInfoHeader;
 
-    public void checkCommon(String title, String headerText, String description, String toc) {
-        checkTitle(title);
-        checkHeaderText(headerText);
-        checkDescription(description);
-        checkTableOfContents(toc);
-    }
+        protected String expectedContentInfoDescription;
 
-    protected abstract void checkSelectedTab();
+        protected List<String> expectedTableOfContents = List.of();
 
-    public void checkHeaderText(String expected) {
-        assertEquals(expected, header.getText());
-    }
+        protected String expectedDocumentation;
 
-    public void checkDescription(String expected) {
-        checkTextIfExists(expected, description);
-    }
+        protected String expectedDocumentationHtml;
 
-    /**
-     * @since 20.0.0
-     */
-    public void checkDocumentationHTML(String expected) {
-        try {
-            String expectedStripped = expected != null ? expected.trim() : null;
-            String html = documentation.getAttribute("innerHTML").trim();
-            assertEquals(expectedStripped, html);
-        } catch (NoSuchElementException e) {
-            assertNull(expected);
+        protected List<String> expectedRequirements = List.of();
+
+        public Builder(String expectedTitle) {
+            this(expectedTitle, expectedTitle);
         }
 
-    }
-
-    public void checkDocumentationText(String expected) {
-        checkTextIfExists(expected, documentation);
-    }
-
-    public void checkTableOfContents(String expected) {
-        checkTextIfExists(expected, toc);
-    }
-
-    public void checkRequirements(List<String> ids) {
-        WebElement requirements = null;
-        try {
-            requirements = driver.findElement(By.id("requirements"));
-        } catch (NoSuchElementException e) {
-            assertNull(ids);
-            return;
+        public Builder(String expectedTitle, String expectedContentInfoHeader) {
+            super(expectedTitle);
+            this.expectedContentInfoHeader = expectedContentInfoHeader;
         }
-        assertNotNull(ids);
-        List<WebElement> bundles = requirements.findElements(By.xpath(".//li"));
-        assertEquals(ids.size(), bundles.size());
-        IntStream.range(0, bundles.size()).forEach(i -> assertEquals(ids.get(i), bundles.get(i).getText()));
-    }
 
-    protected void checkLink(String expected, WebElement link) {
-        try {
-            String href = link.getAttribute("href");
-            assertNotNull(href);
-            assertFalse("Actual href: " + href, StringUtils.isBlank(expected));
-            assertTrue("Actual href: " + href, href.endsWith(expected));
-        } catch (NoSuchElementException e) {
-            assertNull(expected);
+        public B contentInfoDescription(String expectedContentInfoDescription) {
+            this.expectedContentInfoDescription = expectedContentInfoDescription;
+            return (B) this;
+        }
+
+        public B tableOfContents(String expectedTableOfContent, String... expectedTableOfContents) {
+            return tableOfContents(toList(expectedTableOfContent, expectedTableOfContents));
+        }
+
+        public B tableOfContents(List<String> expectedTableOfContents) {
+            this.expectedTableOfContents = List.copyOf(expectedTableOfContents);
+            return (B) this;
+        }
+
+        /**
+         * Assert the given documentation text against the retrieved page.
+         * <p>
+         * Only one method can be used among {@link #documentation(String)} or {@link #documentationHtml}.
+         */
+        public B documentation(String expectedDocumentation) {
+            if (this.expectedDocumentationHtml != null) {
+                throw new IllegalStateException("Only one of documentation and documentationHtml can be set");
+            }
+            this.expectedDocumentation = expectedDocumentation;
+            return (B) this;
+        }
+
+        /**
+         * Assert the given documentation HMTL against the retrieved page.
+         * <p>
+         * Only one method can be used among {@link #documentation(String)} or {@link #documentationHtml}.
+         */
+        public B documentationHtml(String expectedDocumentationHtml) {
+            if (this.expectedDocumentation != null) {
+                throw new IllegalStateException("Only one of documentation and documentationHtml can be set");
+            }
+            this.expectedDocumentationHtml = expectedDocumentationHtml;
+            return (B) this;
+        }
+
+        public B documentationHtmlFromResource(String expectedResource) {
+            try (var stream = ExplorerTestRule.getReferenceStream(expectedResource)) {
+                assert stream != null;
+                return documentationHtml(IOUtils.toString(stream, UTF_8));
+            } catch (IOException e) {
+                throw new IllegalStateException("Unable to read expected file", e);
+            }
+        }
+
+        public B requirements(String expectedRequirement, String... expectedRequirements) {
+            return requirements(toList(expectedRequirement, expectedRequirements));
+        }
+
+        public B requirements(List<String> expectedRequirements) {
+            this.expectedRequirements = List.copyOf(expectedRequirements);
+            return (B) this;
         }
     }
-
-    /** @since 22.0.0 */
-    public void checkAliases(List<String> ids) {
-        WebElement aliases = null;
-        try {
-            aliases = driver.findElement(By.xpath("//ul[@class='aliases']"));
-        } catch (NoSuchElementException e) {
-            assertNull(ids);
-            return;
-        }
-        assertNotNull(ids);
-        List<WebElement> aliasElements = aliases.findElements(By.xpath(".//li"));
-        assertEquals(ids.size(), aliasElements.size());
-        IntStream.range(0, aliasElements.size()).forEach(i -> assertEquals(ids.get(i), aliasElements.get(i).getText()));
-    }
-
 }

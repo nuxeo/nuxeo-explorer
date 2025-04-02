@@ -29,7 +29,7 @@
       <type>zip</type>
     </dependency>
     <dependency>
-      <groupId>org.nuxeo.ecm.distribution</groupId>
+      <groupId>org.nuxeo.ftests</groupId>
       <artifactId>nuxeo-functional-tests</artifactId>
       <scope>test</scope>
     </dependency>
@@ -46,7 +46,19 @@
     </dependency>
     <dependency>
       <groupId>org.nuxeo.packages</groupId>
+      <artifactId>nuxeo-opensearch1-embed-package</artifactId>
+      <type>zip</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.nuxeo.packages</groupId>
       <artifactId>nuxeo-platform-explorer-package</artifactId>
+      <type>zip</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.nuxeo.packages</groupId>
+      <artifactId>nuxeo-search-client-opensearch1-package</artifactId>
       <type>zip</type>
       <scope>test</scope>
     </dependency>

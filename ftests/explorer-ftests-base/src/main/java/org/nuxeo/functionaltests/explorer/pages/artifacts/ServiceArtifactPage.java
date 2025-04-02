@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,55 +20,56 @@ package org.nuxeo.functionaltests.explorer.pages.artifacts;
 
 import static org.junit.Assert.assertEquals;
 
-import org.nuxeo.functionaltests.Required;
-import org.nuxeo.functionaltests.explorer.pages.DistributionHeaderFragment;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 
 /**
  * @since 11.1
  */
-public class ServiceArtifactPage extends ArtifactPage {
+public class ServiceArtifactPage extends ArtifactPage<ServiceArtifactPage.Builder> {
 
-    @Required
-    @FindBy(css = ".javadoc")
-    public WebElement javadoc;
+    protected final String implementation;
 
-    public ServiceArtifactPage(WebDriver driver) {
-        super(driver);
+    public ServiceArtifactPage(Builder builder, Source html) {
+        super(builder, html);
+        implementation = this.findElementsWithNameAndClass(HTMLElementName.SPAN, "javadoc")
+                             .map(TEXT_EXTRACTOR)
+                             .findFirst()
+                             .orElse(null);
+    }
+
+    public static Builder builder(String serviceAndComponentName) {
+        return builder(serviceAndComponentName, serviceAndComponentName);
+    }
+
+    public static Builder builder(String serviceName, String componentName) {
+        return new Builder(serviceName, componentName);
     }
 
     @Override
-    public void checkReference(boolean partial, boolean includeReferences, boolean legacy) {
-        checkCommon("Service org.nuxeo.apidoc.snapshot.SnapshotManager",
-                "Service org.nuxeo.apidoc.snapshot.SnapshotManager",
-                "In component org.nuxeo.apidoc.snapshot.SnapshotManagerComponent", null);
-        checkDocumentationText(null);
-        checkImplementationText("org.nuxeo.apidoc.snapshot.SnapshotManager");
+    public void assertElement() {
+        super.assertElement();
+        assertEquals(builder.expectedImplementation, implementation);
     }
 
-    @Override
-    public void checkAlternative() {
-        checkCommon("Service org.nuxeo.ecm.platform.types.TypeManager",
-                "Service org.nuxeo.ecm.platform.types.TypeManager",
-                "In component org.nuxeo.ecm.platform.types.TypeService", null);
-        checkDocumentationText(null);
-        checkImplementationText("org.nuxeo.ecm.platform.types.TypeManager");
-    }
+    // @Override
+    // public void checkSelectedTab() {
+    // DistributionHeaderFragment header = asPage(DistributionHeaderFragment.class);
+    // header.checkSelectedTab(header.services);
+    // }
 
-    @Override
-    public void checkSelectedTab() {
-        DistributionHeaderFragment header = asPage(DistributionHeaderFragment.class);
-        header.checkSelectedTab(header.services);
-    }
+    public static class Builder extends ArtifactPage.Builder<Builder> {
 
-    public void checkImplementationText(String expected) {
-        assertEquals(expected, javadoc.getText());
-    }
+        protected String expectedImplementation;
 
-    public void checkJavadocLink(String expected) {
-        checkLink(expected, javadoc);
-    }
+        public Builder(String expectedServiceName, String expectedComponentName) {
+            super("Service " + expectedServiceName);
+            contentInfoDescription("In component " + expectedComponentName);
+            expectedImplementation = expectedServiceName;
+        }
 
+        public ServiceArtifactPage build(Source html) {
+            return new ServiceArtifactPage(this, html);
+        }
+    }
 }

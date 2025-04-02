@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,60 +18,73 @@
  */
 package org.nuxeo.functionaltests.explorer.pages;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 
-import org.nuxeo.functionaltests.AbstractTest;
-import org.nuxeo.functionaltests.Locator;
-import org.nuxeo.functionaltests.Required;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.nuxeo.common.function.ThrowableRunnable;
+import org.nuxeo.functionaltests.HtmlForm;
+import org.nuxeo.http.test.HttpClientTestRule;
+
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.FormControl;
+import net.htmlparser.jericho.FormControlType;
 
 /**
  * Fragment for both main page and admin page, showing a similar upload form.
  *
  * @since 11.1
  */
-public class UploadFragment extends AbstractExplorerPage {
+public class UploadFragment extends HtmlForm {
 
-    @Required
-    @FindBy(xpath = "//input[@id='archive']")
-    public WebElement input;
+    protected final FormControl input;
 
-    @Required
-    @FindBy(xpath = "//input[@id='upload']")
-    public WebElement upload;
+    protected final FormControl source;
+
+    protected final FormControl upload;
+
+    public UploadFragment(Element element) {
+        super(element);
+        input = this.findFormControlWithName("archive")
+                    .orElseThrow(() -> new AssertionError("Unable to find the archive input"));
+        source = this.findFormControlWithName("source")
+                     .orElseThrow(() -> new AssertionError("Unable to find the source input"));
+        upload = this.findFormControlWithId("upload")
+                     .orElseThrow(() -> new AssertionError("Unable to find the upload button"));
+    }
 
     @Override
-    public void check() {
-        // NOOP
+    public void assertElement() {
+        super.assertElement();
+        assertEquals(FormControlType.FILE, input.getFormControlType());
+        assertEquals(FormControlType.HIDDEN, source.getFormControlType());
+        assertEquals(FormControlType.SUBMIT, upload.getFormControlType());
     }
 
-    public UploadFragment(WebDriver driver) {
-        super(driver);
-    }
-
-    public void uploadArchive(File file) {
-        input.sendKeys(file.getAbsolutePath());
-        Locator.scrollAndForceClick(upload);
-        waitForAsyncWork();
-    }
-
-    public static void checkCanSee() {
-        AbstractTest.asPage(UploadFragment.class);
-    }
-
-    public static void checkCannotSee() {
+    public HttpClientTestRule.RequestBuilder buildFormRequest(HttpClientTestRule httpClient, File file) {
+        var entity = MultipartEntityBuilder.create()
+                                           .addBinaryBody(input.getName(), file)
+                                           .addTextBody(source.getName(), source.getValues().getFirst())
+                                           .build();
+        var builder = switch (getFormMethod()) {
+            case "POST" -> httpClient.buildPostRequest(getFormAction());
+            case "PUT" -> httpClient.buildPutRequest(getFormAction());
+            default -> throw new AssertionError("Unrecognized form method: " + getFormMethod());
+        };
         try {
-            AbstractTest.driver.findElement(By.xpath("//input[@id='upload']"));
-            fail("Should not be able to upload");
-        } catch (NoSuchElementException e) {
-            // ok
+            // don't use entity#getContent as it as a maximum content length limit
+            var pipedInputStream = new PipedInputStream();
+            new Thread(ThrowableRunnable.asRunnable(() -> {
+                try (var pipedOutputStream = new PipedOutputStream(pipedInputStream)) {
+                    entity.writeTo(pipedOutputStream);
+                }
+            })).start();
+            return builder.contentType(entity.getContentType().getValue()).entity(pipedInputStream);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to instantiate multipart entity", e);
         }
     }
-
 }

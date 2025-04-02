@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2020-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,39 +18,45 @@
  */
 package org.nuxeo.functionaltests.explorer.sitemode;
 
-import java.io.File;
+import static org.nuxeo.functionaltests.explorer.ExplorerTestConstants.HTTP_STATUS_NOT_FOUND_CHECKER;
+import static org.nuxeo.functionaltests.explorer.ExplorerTestRule.SAMPLE_EXPORT_DISTRIBUTION_NAME;
+import static org.nuxeo.functionaltests.explorer.ExplorerTestRule.SAMPLE_EXPORT_DISTRIBUTION_VERSION;
+
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Before;
+import jakarta.ws.rs.core.MediaType;
+
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.nuxeo.apidoc.snapshot.SnapshotManager;
+import org.nuxeo.functionaltests.HtmlPageHandler;
+import org.nuxeo.functionaltests.explorer.ExplorerTestRule;
 import org.nuxeo.functionaltests.explorer.pages.DistribAdminPage;
 import org.nuxeo.functionaltests.explorer.pages.DistributionHomePage;
-import org.nuxeo.functionaltests.explorer.pages.DistributionUpdatePage;
 import org.nuxeo.functionaltests.explorer.pages.ExplorerHomePage;
-import org.nuxeo.functionaltests.explorer.pages.UploadFragment;
+import org.nuxeo.http.test.HttpClientTestRule;
 
 /**
  * Test Explorer pages usually handled by admins.
  *
  * @since 20.0.0
  */
-public class ITExplorerAdminSiteModeTest extends AbstractExplorerSiteModeTest {
+public class ITExplorerAdminSiteModeTest {
 
-    @Before
-    public void before() {
-        doLogin();
-    }
+    @ClassRule
+    public static final ExplorerTestRule EXPLORER_HELPER = new ExplorerTestRule();
 
-    @After
-    public void after() {
-        doLogout();
-    }
+    @Rule
+    public final HttpClientTestRule adminHttpClient = HttpClientTestRule.builder()
+                                                                        .adminCredentials()
+                                                                        .accept(MediaType.TEXT_HTML)
+                                                                        .build();
 
-    @Override
-    protected void doLogin() {
-        loginAsAdmin();
+    @BeforeClass
+    public static void initPersistedDistrib() throws IOException {
+        EXPLORER_HELPER.importSampleExportDistribution();
     }
 
     /**
@@ -58,96 +64,49 @@ public class ITExplorerAdminSiteModeTest extends AbstractExplorerSiteModeTest {
      */
     @Test
     public void testLoginLogout() {
-        goHome();
+        adminHttpClient.buildGetRequest(ExplorerHomePage.URL)
+                       .execute(new HtmlPageHandler<>(
+                               ExplorerHomePage.builder()
+                                               .firstPersistedDistribution(SAMPLE_EXPORT_DISTRIBUTION_NAME,
+                                                       SAMPLE_EXPORT_DISTRIBUTION_VERSION)
+                                               .manageDistributionsPresence(true)::build));
     }
 
     @Test
     public void testDistribAdminPage() {
-        open(DistribAdminPage.URL);
-        DistribAdminPage page = asPage(DistribAdminPage.class);
-        page.check();
-        page.checkCannotSave();
+        adminHttpClient.buildGetRequest(DistribAdminPage.URL)
+                       .execute(new HtmlPageHandler<>(DistribAdminPage.builder()::build));
     }
 
     @Test
     public void testHomePageCurrentDistrib() {
         // since 20.0.0: cannot see current live distrib anymore
-        openAndCheck(String.format("%s%s/", ExplorerHomePage.URL, SnapshotManager.DISTRIBUTION_ALIAS_CURRENT), true);
+        adminHttpClient.buildGetRequest(ExplorerHomePage.URL + '/' + SnapshotManager.DISTRIBUTION_ALIAS_CURRENT)
+                       .execute(HTTP_STATUS_NOT_FOUND_CHECKER);
     }
 
     @Test
     public void testHomePageLatestDistrib() {
-        open(String.format("%s%s/", ExplorerHomePage.URL, SnapshotManager.DISTRIBUTION_ALIAS_LATEST));
         // persisted distrib redirection
-        asPage(DistributionHomePage.class).check();
-    }
-
-    @Test
-    public void testSampleDistrib() {
-        ExplorerHomePage home = goHome();
-        home.check();
-        home.checkFirstPersistedDistrib(DISTRIB_NAME, DISTRIB_VERSION);
-        UploadFragment.checkCannotSee();
-
-        String distribId = getDistribId(DISTRIB_NAME, DISTRIB_VERSION);
-        home.checkPersistedDistrib(distribId);
-        checkDistrib(distribId, true, SAMPLE_BUNDLE_GROUP, false, true);
-    }
-
-    @Test
-    public void testSampleDistribImport() throws IOException {
-        try {
-            File file = createSampleZip(true);
-            String newVersion = "2.0.0";
-            String newDistribName = "apidoc-site-mode-newer";
-            open(DistribAdminPage.URL);
-            asPage(DistribAdminPage.class).importPersistedDistrib(file, newDistribName, newVersion, null);
-
-            open(ExplorerHomePage.URL);
-            String newDistribId = getDistribId(newDistribName, newVersion);
-            asPage(ExplorerHomePage.class).checkPersistedDistrib(newDistribId);
-            checkDistrib(newDistribId, true, SAMPLE_BUNDLE_GROUP, false, true);
-
-            // edit persisted distrib
-            open(DistribAdminPage.UPDATE_URL + newDistribId);
-            DistributionUpdatePage upage = asPage(DistributionUpdatePage.class);
-            upage.check();
-
-            String newerDistribName = newDistribName + "-updated";
-            String newerDistribId = getDistribId(newerDistribName, newVersion);
-            upage.updateString(upage.name, newerDistribName);
-            upage.updateString(upage.key, newerDistribId);
-            upage.updateString(upage.aliases, "alias");
-            upage.submit();
-
-            DistribAdminPage adminPage = asPage(DistribAdminPage.class);
-            adminPage.checkSuccessMessage("Update Done.");
-            adminPage.checkPersistedDistrib(newerDistribId);
-
-            open(ExplorerHomePage.URL);
-            asPage(ExplorerHomePage.class).checkPersistedDistrib(newerDistribId);
-            open(String.format("%s%s/", ExplorerHomePage.URL, newerDistribId));
-            asPage(DistributionHomePage.class).checkHeader(newerDistribId);
-            open(String.format("%s%s/", ExplorerHomePage.URL, "alias"));
-            asPage(DistributionHomePage.class).checkHeader(newerDistribId);
-        } finally {
-            // avoid conflict with testSample
-            cleanupPersistedDistributions();
-            // recreate the deleted sample, as expected by other tests
-            doLogout();
-            ITExplorerApidocManagerSiteModeTest.initPersistedDistrib();
-        }
+        adminHttpClient.buildGetRequest(ExplorerHomePage.URL + '/' + SnapshotManager.DISTRIBUTION_ALIAS_LATEST)
+                       .execute(new HtmlPageHandler<>(DistributionHomePage.builder()::build));
     }
 
     @Test
     public void testSampleDistribDelete() throws IOException {
-        open(DistribAdminPage.URL);
-        asPage(DistribAdminPage.class).deleteFirstPersistedDistrib();
-        String distribId = getDistribId(DISTRIB_NAME, DISTRIB_VERSION);
-        asPage(DistribAdminPage.class).checkPersistedDistribNotPresent(distribId);
+        adminHttpClient.buildGetRequest(DistribAdminPage.URL)
+                       .execute(new HtmlPageHandler<>(
+                               DistribAdminPage.builder()
+                                               .hasDistribution(SAMPLE_EXPORT_DISTRIBUTION_NAME,
+                                                       SAMPLE_EXPORT_DISTRIBUTION_VERSION)::build));
+        adminHttpClient.buildGetRequest(DistribAdminPage.DELETE_URL + '/' + SAMPLE_EXPORT_DISTRIBUTION_NAME + '-'
+                + SAMPLE_EXPORT_DISTRIBUTION_VERSION)
+                       .execute(new HtmlPageHandler<>(
+                               DistribAdminPage.builder()
+                                               .hasNotDistribution(SAMPLE_EXPORT_DISTRIBUTION_NAME,
+                                                       SAMPLE_EXPORT_DISTRIBUTION_VERSION)::build));
         // recreate the deleted sample, as expected by other tests
-        doLogout();
-        ITExplorerApidocManagerSiteModeTest.initPersistedDistrib();
+        EXPLORER_HELPER.importSampleExportDistribution();
     }
 
 }
