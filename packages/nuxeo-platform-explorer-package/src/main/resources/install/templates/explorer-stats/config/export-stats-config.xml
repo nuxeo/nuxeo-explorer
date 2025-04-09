@@ -10,7 +10,7 @@
           org.nuxeo.automation.scripting.internals.AutomationScriptingComponent--operation,
           org.nuxeo.ecm.platform.commandline.executor.service.CommandLineExecutorComponent--command,
           org.nuxeo.ecm.platform.ec.notification.service.NotificationService--templates,
-          org.nuxeo.ecm.platform.audit.service.NXAuditEventsService--event,
+          org.nuxeo.audit.service.AuditComponent--event,
           org.nuxeo.ecm.platform.rendition.service.RenditionService--defaultRendition,
         </property>
         <property name="javalikeCodeType">
@@ -56,7 +56,7 @@
           org.nuxeo.ecm.platform.ec.notification.service.NotificationService--notificationListenerHook,
           org.nuxeo.ecm.platform.ec.notification.service.NotificationService--notificationListenerVeto,
           org.nuxeo.ecm.core.opencmis.bindings.NuxeoCmisServiceFactoryManager--factory,
-          org.nuxeo.ecm.platform.audit.service.NXAuditEventsService--backend,
+          org.nuxeo.audit.service.AuditComponent--backendFactory,
           org.nuxeo.ecm.core.schema.ObjectResolverService--resolvers,
           org.nuxeo.ecm.core.operation.OperationServiceComponent--adapters,
           org.nuxeo.ecm.core.operation.OperationServiceComponent--contextHelpers,
@@ -108,7 +108,7 @@
           org.nuxeo.automation.scripting.internals.AutomationScriptingComponent--operation,
           org.nuxeo.ecm.platform.commandline.executor.service.CommandLineExecutorComponent--command,
           org.nuxeo.ecm.platform.ec.notification.service.NotificationService--templates,
-          org.nuxeo.ecm.platform.audit.service.NXAuditEventsService--event,
+          org.nuxeo.audit.service.AuditComponent--event,
           org.nuxeo.ecm.platform.rendition.service.RenditionService--defaultRendition,
         </property>
         <property name="javalikeCodeType">
@@ -154,7 +154,7 @@
           org.nuxeo.ecm.platform.ec.notification.service.NotificationService--notificationListenerHook,
           org.nuxeo.ecm.platform.ec.notification.service.NotificationService--notificationListenerVeto,
           org.nuxeo.ecm.core.opencmis.bindings.NuxeoCmisServiceFactoryManager--factory,
-          org.nuxeo.ecm.platform.audit.service.NXAuditEventsService--backend,
+          org.nuxeo.audit.service.AuditComponent--backendFactory,
           org.nuxeo.ecm.core.schema.ObjectResolverService--resolvers,
           org.nuxeo.ecm.core.operation.OperationServiceComponent--adapters,
           org.nuxeo.ecm.core.operation.OperationServiceComponent--contextHelpers,

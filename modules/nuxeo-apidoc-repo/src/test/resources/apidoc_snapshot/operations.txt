@@ -1,7 +1,6 @@
 NXOperation: op:Actions.GET *** /op:Actions.GET
 NXOperation: op:AttachFiles *** /op:AttachFiles
 NXOperation: op:Audit.LogEvent *** /op:Audit.LogEvent
-NXOperation: op:Audit.Query *** /op:Audit.Query
 NXOperation: op:Audit.QueryWithPageProvider *** /op:Audit.QueryWithPageProvider
 NXOperation: op:Audit.Restore *** /op:Audit.Restore
 NXOperation: op:Auth.LoginAs *** /op:Auth.LoginAs

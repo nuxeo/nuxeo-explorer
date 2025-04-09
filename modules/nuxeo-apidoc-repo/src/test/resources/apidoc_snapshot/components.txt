@@ -6,6 +6,7 @@ NXComponent: org.nuxeo.apidoc.listener.contrib *** /grp:org.nuxeo.ecm.platform/g
 NXComponent: org.nuxeo.apidoc.schemaContrib *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.schemaContrib *** [org.nuxeo.ecm.core.CoreExtensions]
 NXComponent: org.nuxeo.apidoc.snapshot.SnapshotManagerComponent *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.snapshot.SnapshotManagerComponent
 NXComponent: org.nuxeo.apidoc.test.works *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.apidoc/org.nuxeo.apidoc.repo/org.nuxeo.apidoc.test.works
+NXComponent: org.nuxeo.audit.PageProviderService.automation.contrib *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.features/org.nuxeo.audit.PageProviderService.automation.contrib
 NXComponent: org.nuxeo.automation.scripting.classfilter *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.scripting/org.nuxeo.automation.scripting.classfilter
 NXComponent: org.nuxeo.automation.scripting.internals.AutomationScriptingComponent *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.scripting/org.nuxeo.automation.scripting.internals.AutomationScriptingComponent *** [org.nuxeo.ecm.core.operation.OperationServiceComponent]
 NXComponent: org.nuxeo.automation.scripting.testContrib *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.automation.scripting.testContrib
@@ -139,7 +140,6 @@ NXComponent: org.nuxeo.ecm.directory.sql.SQLDirectoryFactory *** /grp:org.nuxeo.
 NXComponent: org.nuxeo.ecm.directory.types *** /grp:org.nuxeo.ecm.platform/grp:org.nuxeo.ecm.directory/org.nuxeo.ecm.directory.types.contrib/org.nuxeo.ecm.directory.types *** [org.nuxeo.ecm.core.schema.common]
 NXComponent: org.nuxeo.ecm.platform.actions.ActionService *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.actions/org.nuxeo.ecm.platform.actions.ActionService
 NXComponent: org.nuxeo.ecm.platform.actions.ActionService.properties *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.actions/org.nuxeo.ecm.platform.actions.ActionService.properties
-NXComponent: org.nuxeo.ecm.platform.audit.PageProviderservice.automation.contrib *** /grp:org.nuxeo.ecm.automation/org.nuxeo.ecm.automation.features/org.nuxeo.ecm.platform.audit.PageProviderservice.automation.contrib
 NXComponent: org.nuxeo.ecm.platform.commandline.executor.service.CommandLineExecutorComponent *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.commandline.executor/org.nuxeo.ecm.platform.commandline.executor.service.CommandLineExecutorComponent
 NXComponent: org.nuxeo.ecm.platform.commandline.executor.service.defaultContrib *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.commandline.executor/org.nuxeo.ecm.platform.commandline.executor.service.defaultContrib
 NXComponent: org.nuxeo.ecm.platform.computedgroups.ComputedGroupsServiceImpl *** /grp:org.nuxeo.ecm.platform/org.nuxeo.ecm.platform.usermanager/org.nuxeo.ecm.platform.computedgroups.ComputedGroupsServiceImpl
