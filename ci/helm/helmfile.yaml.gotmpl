@@ -1,0 +1,40 @@
+environments:
+  preview:
+    values:
+    - environments/preview.yaml
+---
+repositories:
+- name: nuxeo
+  url: https://packages.nuxeo.com/repository/helm-releases-public/
+- name: opensearch
+  url: https://opensearch-project.github.io/helm-charts/
+
+helmDefaults:
+  timeout: 600
+  wait: true
+
+releases:
+- name: nuxeo
+  chart: nuxeo/nuxeo
+  version: ~3.1.0
+  condition: nuxeo.enabled
+  {{ if eq .Environment.Name "preview" }}
+  needs:
+  - mongodb
+  - opensearch
+  {{ end }}
+  values:
+  - values/values-nuxeo.yaml.gotmpl
+- name: mongodb
+  chart: oci://registry-1.docker.io/bitnamicharts/mongodb
+  version: 16.1.1
+  condition: mongodb.enabled
+  values:
+  - values/values-mongodb.yaml.gotmpl
+- name: opensearch
+  chart: opensearch/opensearch
+  version: 1.30.0
+  namespace: {{ requiredEnv "NAMESPACE" }}
+  condition: opensearch.enabled
+  values:
+  - values/values-opensearch.yaml.gotmpl
