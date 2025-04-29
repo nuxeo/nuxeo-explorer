@@ -19,6 +19,14 @@
  */
 library identifier: "platform-ci-shared-library@v0.0.55"
 
+String getCLIDSecret() {
+  container('maven') {
+    def nuxeoParentVersion = readMavenPom().getParent().getVersion()
+    // target connect preprod if nuxeo-parent is a snapshot version or a build version
+    return nuxeoParentVersion.matches("^\\d+\\.\\d+(-SNAPSHOT|\\.\\d+)\$") ? 'instance-clid-preprod' : 'instance-clid'
+  }
+}
+
 pipeline {
   agent {
     label 'jenkins-nuxeo-package-lts-2025'
@@ -29,10 +37,12 @@ pipeline {
     githubProjectProperty(projectUrlStr: 'https://github.com/nuxeo/nuxeo-explorer')
   }
   environment {
+    CONNECT_CLID_SECRET = getCLIDSecret()
     CURRENT_NAMESPACE = nxK8s.getCurrentNamespace()
     MAVEN_OPTS = "$MAVEN_OPTS -Xms512m -Xmx3072m"
     MAVEN_ARGS = '-B -nsu'
     VERSION = nxUtils.getVersion()
+    NUXEO_EXPLORER_PACKAGE_PATH = "packages/nuxeo-platform-explorer-package/target/nuxeo-platform-explorer-package-${VERSION}.zip"
   }
   stages {
     stage('Set Labels') {
@@ -127,7 +137,7 @@ pipeline {
               ----------------------------------------
               Run Functional Tests
               ----------------------------------------"""
-              withCredentials([string(credentialsId: 'instance-clid', variable: 'INSTANCE_CLID')]) {
+              withCredentials([string(credentialsId: env.CONNECT_CLID_SECRET, variable: 'INSTANCE_CLID')]) {
                 sh(script: '''#!/bin/bash +x
                   echo -e "$INSTANCE_CLID" >| /tmp/instance.clid
                 ''')
@@ -146,6 +156,24 @@ pipeline {
         always {
           archiveArtifacts artifacts: '**/target/**/*.log, **/target/*.png, **/target/*.html'
           junit testResults: '**/target/failsafe-reports/*.xml', allowEmptyResults: true
+        }
+      }
+    }
+    stage('Build Docker image') {
+      when {
+        // only needed for preview
+        expression { nxUtils.isPullRequest() && pullRequest.labels.contains('preview') }
+      }
+      steps {
+        container('maven') {
+          nxWithGitHubStatus(context: 'docker/build') {
+            script {
+              sh "mkdir -p ci/docker/target && cp ${NUXEO_EXPLORER_PACKAGE_PATH} ci/docker/target"
+              def nuxeoVersion = sh(returnStdout: true,
+                  script: 'mvn org.apache.maven.plugins:maven-help-plugin:3.3.0:evaluate -Dexpression=nuxeo.platform.version -q -DforceStdout')
+              nxDocker.build(skaffoldFile: 'ci/docker/skaffold.yaml', envVars: ["NUXEO_VERSION=${nuxeoVersion}"])
+            }
+          }
         }
       }
     }
@@ -184,7 +212,7 @@ pipeline {
         }
       }
     }
-    stage('Deploy Nuxeo packages') {
+    stage('Deploy Nuxeo package') {
       when {
         expression { !nxUtils.isPullRequest() }
       }
@@ -193,16 +221,54 @@ pipeline {
           nxWithGitHubStatus(context: 'explorer/package/deploy') {
             echo """
             ----------------------------------------
-            Upload Nuxeo Packages to ${CONNECT_PREPROD_SITE_URL}
+            Upload Nuxeo Package to ${CONNECT_PREPROD_SITE_URL}
             ----------------------------------------"""
             script {
-              def nxPackages = findFiles(glob: 'packages/nuxeo-*-package/target/nuxeo-*-package*.zip')
-              for (nxPackage in nxPackages) {
-                nxUtils.postForm(credentialsId: 'connect-preprod', url: "${CONNECT_PREPROD_SITE_URL}marketplace/upload?batch=true",
-                    form: ["package=@${nxPackage.path}"])
-              }
+              nxUtils.postForm(credentialsId: 'connect-preprod', url: "${CONNECT_PREPROD_SITE_URL}marketplace/upload?batch=true",
+                  form: ["package=@${NUXEO_EXPLORER_PACKAGE_PATH}"])
             }
           }
+        }
+      }
+    }
+    stage('Deploy Preview') {
+      when {
+        expression { nxUtils.isPullRequest() && pullRequest.labels.contains('preview') }
+      }
+      steps {
+        container('maven') {
+          nxWithGitHubStatus(context: 'preview', message: 'Deploy preview') {
+            script {
+              echo """
+              ----------------------------------------
+              Deploy preview environment
+              ----------------------------------------"""
+              // Kubernetes namespace, requires lower case alphanumeric characters
+              def previewNamespace = "${CURRENT_NAMESPACE}-explorer-${BRANCH_NAME}-preview".replaceAll('\\.', '-').toLowerCase()
+              nxHelmfile.template(namespace: previewNamespace, environment: 'preview', outputDir: 'target')
+              nxHelmfile.deploy(namespace: previewNamespace, environment: "preview",
+                  secrets: [[name: env.CONNECT_CLID_SECRET, namespace: 'platform'], [name: 'platform-cluster-tls', namespace: 'platform']])
+              def host = sh(returnStdout: true, script: """
+                kubectl get ingress nuxeo \
+                  --namespace=${previewNamespace} \
+                  -ojsonpath='{.spec.rules[*].host}'
+              """)
+              def previewURL = "https://${host}"
+              echo """
+              -----------------------------------------------
+              Preview available at: ${previewURL}
+              -----------------------------------------------"""
+              nxGitHub.commentPullRequest(
+                  branch: CHANGE_BRANCH,
+                  body: ":star: PR built and available in a preview environment **${previewNamespace}** [here](${previewURL})"
+              )
+            }
+          }
+        }
+      }
+      post {
+        always {
+          archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/**/*.yaml'
         }
       }
     }

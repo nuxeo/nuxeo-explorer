@@ -1,0 +1,11 @@
+# enabled conditions
+nuxeo:
+  enabled: true
+mongodb:
+  enabled: true
+opensearch:
+  enabled: true
+
+# values definition
+labels:
+  usage: preview
