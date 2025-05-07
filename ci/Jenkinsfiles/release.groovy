@@ -21,7 +21,7 @@
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-library identifier: "platform-ci-shared-library@v0.0.53"
+library identifier: "platform-ci-shared-library@v0.0.55"
 
 pipeline {
   agent {
@@ -118,15 +118,10 @@ pipeline {
     }
   }
   post {
-    success {
+    always {
       script {
-        currentBuild.description = "Release ${VERSION}"
-        nxSlack.success(message: "Successfully released nuxeo/nuxeo-explorer ${VERSION}: ${BUILD_URL}")
-      }
-    }
-    unsuccessful {
-      script {
-        nxSlack.error(message: "Failed to release nuxeo/nuxeo-explorer ${VERSION}: ${BUILD_URL}")
+        nxUtils.setReleaseDescription()
+        nxUtils.notifyReleaseStatusIfNecessary()
       }
     }
   }
