@@ -17,7 +17,7 @@
  *     Kevin Leturc <kleturc@nuxeo.com>
  *     Anahide Tchertchian
  */
-library identifier: "platform-ci-shared-library@v0.0.53"
+library identifier: "platform-ci-shared-library@v0.0.55"
 
 pipeline {
   agent {
@@ -178,24 +178,9 @@ pipeline {
   post {
     always {
       script {
-        currentBuild.description = "Build ${VERSION}"
+        nxUtils.setBuildDescription()
         nxJira.updateIssues()
-      }
-    }
-    success {
-      script {
-        if (!nxUtils.isPullRequest()
-            && !hudson.model.Result.SUCCESS.toString().equals(currentBuild.getPreviousBuild()?.getResult())) {
-          nxSlack.success(message: "Successfully built <${BUILD_URL}|nuxeo-explorer ${BRANCH_NAME} #${BUILD_NUMBER}>")
-        }
-      }
-    }
-    failure { // use failure instead of "unsuccessful" because of frequent UNSTABLE status on ftests
-      script {
-        if (!nxUtils.isPullRequest()
-            && ![hudson.model.Result.ABORTED.toString(), hudson.model.Result.NOT_BUILT.toString()].contains(currentBuild.result)) {
-          nxSlack.error(message: "Failed to build <${BUILD_URL}|nuxeo-explorer ${BRANCH_NAME} #${BUILD_NUMBER}>")
-        }
+        nxUtils.notifyBuildStatusIfNecessary()
       }
     }
   }
