@@ -52,33 +52,16 @@ import org.nuxeo.runtime.api.Framework;
 public class ArtifactSearcherImpl implements ArtifactSearcher {
 
     protected NuxeoArtifact mapDoc2Artifact(DocumentModel doc) {
-        NuxeoArtifact artifact = null;
-
-        switch (doc.getType()) {
-            case BundleGroup.TYPE_NAME:
-                artifact = new BundleGroupDocAdapter(doc);
-                break;
-            case BundleInfo.TYPE_NAME:
-                artifact = new BundleInfoDocAdapter(doc);
-                break;
-            case ComponentInfo.TYPE_NAME:
-                artifact = new ComponentInfoDocAdapter(doc);
-                break;
-            case ExtensionPointInfo.TYPE_NAME:
-                artifact = new ExtensionPointInfoDocAdapter(doc);
-                break;
-            case ExtensionInfo.TYPE_NAME:
-                artifact = new ExtensionInfoDocAdapter(doc);
-                break;
-            case DistributionSnapshot.TYPE_NAME:
-                artifact = new RepositoryDistributionSnapshot(doc);
-                break;
-            case ServiceInfo.TYPE_NAME:
-                artifact = new ServiceInfoDocAdapter(doc);
-                break;
-        }
-
-        return artifact;
+        return switch (doc.getType()) {
+            case BundleGroup.TYPE_NAME -> new BundleGroupDocAdapter(doc);
+            case BundleInfo.TYPE_NAME -> new BundleInfoDocAdapter(doc);
+            case ComponentInfo.TYPE_NAME -> new ComponentInfoDocAdapter(doc);
+            case ExtensionPointInfo.TYPE_NAME -> new ExtensionPointInfoDocAdapter(doc);
+            case ExtensionInfo.TYPE_NAME -> new ExtensionInfoDocAdapter(doc);
+            case DistributionSnapshot.TYPE_NAME -> new RepositoryDistributionSnapshot(doc);
+            case ServiceInfo.TYPE_NAME -> new ServiceInfoDocAdapter(doc);
+            default -> null;
+        };
     }
 
     @Override
