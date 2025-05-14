@@ -11,10 +11,6 @@
     <name>@DISTRIBUTION_NAME@</name>
     <version>[@NUXEO_PLATFORM_VERSION@, 2026.0)</version>
   </target-platform>
-  <!-- Dependencies on other packages -->
-  <dependencies>
-    <package>nuxeo-search-client-opensearch1</package>
-  </dependencies>
   <hotreload-support>false</hotreload-support>
   <supported>true</supported>
   <require-terms-and-conditions-acceptance>true

@@ -38,7 +38,6 @@ import org.nuxeo.apidoc.api.BaseNuxeoArtifact;
 import org.nuxeo.apidoc.api.NuxeoArtifact;
 import org.nuxeo.apidoc.api.QueryHelper;
 import org.nuxeo.apidoc.snapshot.DistributionSnapshot;
-import org.nuxeo.apidoc.snapshot.SnapshotManager;
 import org.nuxeo.common.utils.IdUtils;
 import org.nuxeo.common.utils.Path;
 import org.nuxeo.ecm.core.api.Blob;
@@ -208,13 +207,9 @@ public abstract class BaseNuxeoArtifactDocAdapter extends BaseNuxeoArtifact {
     }
 
     protected static DocumentModelList query(CoreSession session, String query) {
-        if (Framework.isBooleanPropertyTrue(SnapshotManager.PROPERTY_USE_ES)) {
-            var searchService = Framework.getService(SearchService.class);
-            return searchService.search(SearchQuery.builder(session, query).limit(getListingLimit()).build())
-                                .loadDocuments(session);
-        } else {
-            return session.query(query);
-        }
+        return Framework.getService(SearchService.class)
+                        .search(SearchQuery.builder(query, session).limit(getListingLimit()).build())
+                        .loadDocuments(session);
     }
 
     protected static List<String> queryAndFetchIds(CoreSession session, String idProp, String type,

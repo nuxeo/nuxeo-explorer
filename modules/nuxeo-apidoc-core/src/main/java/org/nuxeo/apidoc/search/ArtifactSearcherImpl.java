@@ -79,9 +79,9 @@ public class ArtifactSearcherImpl implements ArtifactSearcher {
             query += " AND " + NXQL.ECM_FULLTEXT + " = " + NXQL.escapeString(fulltext);
         }
 
-        var searchService = Framework.getService(SearchService.class);
-        DocumentModelList docs = searchService.search(SearchQuery.builder(session, query).limit(MAX_RESULTS).build())
-                                              .loadDocuments(session);
+        DocumentModelList docs = Framework.getService(SearchService.class)
+                                          .search(SearchQuery.builder(query, session).limit(MAX_RESULTS).build())
+                                          .loadDocuments(session);
         for (DocumentModel doc : docs) {
             NuxeoArtifact artifact = mapDoc2Artifact(doc);
             if (artifact != null) {
