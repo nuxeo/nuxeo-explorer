@@ -439,10 +439,8 @@ public class ITExplorerTest {
                             var packages = node.get("packages");
                             assertNotNull(packages);
                             assertTrue(packages.isArray());
-                            assertEquals(3, packages.size());
-                            assertEquals("nuxeo-opensearch1-embed", packages.get(0).asText());
-                            assertEquals("nuxeo-search-client-opensearch1", packages.get(1).asText());
-                            assertEquals("platform-explorer", packages.get(2).asText());
+                            assertEquals(1, packages.size());
+                            assertEquals("platform-explorer", packages.get(0).asText());
                         });
     }
 

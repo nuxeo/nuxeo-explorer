@@ -93,17 +93,12 @@ NXComponent: org.nuxeo.ecm.core.scroll.contrib *** /grp:org.nuxeo.ecm.core/org.n
 NXComponent: org.nuxeo.ecm.core.scroll.contrib.default *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.bulk/org.nuxeo.ecm.core.scroll.contrib.default *** [org.nuxeo.ecm.core.scroll.service]
 NXComponent: org.nuxeo.ecm.core.scroll.service *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.bulk/org.nuxeo.ecm.core.scroll.service
 NXComponent: org.nuxeo.ecm.core.search *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.search/org.nuxeo.ecm.core.search
-NXComponent: org.nuxeo.ecm.core.search.client.opensearch1 *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.search.client/org.nuxeo.ecm.core.search.client.opensearch1/org.nuxeo.ecm.core.search.client.opensearch1
-NXComponent: org.nuxeo.ecm.core.search.client.opensearch1.factory.contrib *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.search.client/org.nuxeo.ecm.core.search.client.opensearch1/org.nuxeo.ecm.core.search.client.opensearch1.factory.contrib
-NXComponent: org.nuxeo.ecm.core.search.client.opensearch1.hint.contrib *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.search.client/org.nuxeo.ecm.core.search.client.opensearch1/org.nuxeo.ecm.core.search.client.opensearch1.hint.contrib
-NXComponent: org.nuxeo.ecm.core.search.client.opensearch1.scroll.contrib *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.search.client/org.nuxeo.ecm.core.search.client.opensearch1/org.nuxeo.ecm.core.search.client.opensearch1.scroll.contrib
 NXComponent: org.nuxeo.ecm.core.search.client.repository *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.search/org.nuxeo.ecm.core.search.client.repository
 NXComponent: org.nuxeo.ecm.core.search.client.repository.factory.contrib *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.search/org.nuxeo.ecm.core.search.client.repository.factory.contrib
 NXComponent: org.nuxeo.ecm.core.search.client.repository.scroll.contrib *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.search/org.nuxeo.ecm.core.search.client.repository.scroll.contrib
 NXComponent: org.nuxeo.ecm.core.search.client.repository.test *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.search.test/org.nuxeo.ecm.core.search.client.repository.test
 NXComponent: org.nuxeo.ecm.core.search.indexing *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.search/org.nuxeo.ecm.core.search.indexing
 NXComponent: org.nuxeo.ecm.core.search.indexing.stream.processor *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.search/org.nuxeo.ecm.core.search.indexing.stream.processor
-NXComponent: org.nuxeo.ecm.core.search.opensearch1.test *** /grp:org.nuxeo.ecm.core/grp:org.nuxeo.ecm.core.search.client/org.nuxeo.ecm.core.search.client.opensearch1.test/org.nuxeo.ecm.core.search.opensearch1.test
 NXComponent: org.nuxeo.ecm.core.search.scroll.contrib *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.search/org.nuxeo.ecm.core.search.scroll.contrib *** [org.nuxeo.ecm.core.scroll.contrib.default]
 NXComponent: org.nuxeo.ecm.core.security.SecurityService *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core/org.nuxeo.ecm.core.security.SecurityService
 NXComponent: org.nuxeo.ecm.core.security.acl.properties *** /grp:org.nuxeo.ecm.core/org.nuxeo.ecm.core.api/org.nuxeo.ecm.core.security.acl.properties
@@ -198,10 +193,6 @@ NXComponent: org.nuxeo.runtime.management.tests.isolated-server-contrib *** /grp
 NXComponent: org.nuxeo.runtime.metrics.MetricsService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.metrics/org.nuxeo.runtime.metrics.MetricsService
 NXComponent: org.nuxeo.runtime.migration.MigrationService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.migration/org.nuxeo.runtime.migration.MigrationService *** [org.nuxeo.runtime.kv.KeyValueService]
 NXComponent: org.nuxeo.runtime.model.persistence *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.model.persistence
-NXComponent: org.nuxeo.runtime.opensearch1.OpenSearchComponent *** /grp:org.nuxeo.runtime/grp:org.nuxeo.runtime.opensearch1/org.nuxeo.runtime.opensearch1/org.nuxeo.runtime.opensearch1.OpenSearchComponent
-NXComponent: org.nuxeo.runtime.opensearch1.client.test.contrib *** /grp:org.nuxeo.runtime/grp:org.nuxeo.runtime.opensearch1/org.nuxeo.runtime.opensearch1.test/org.nuxeo.runtime.opensearch1.client.test.contrib
-NXComponent: org.nuxeo.runtime.opensearch1.embed.OpenSearchEmbedComponent *** /grp:org.nuxeo.runtime/grp:org.nuxeo.runtime.opensearch1/org.nuxeo.runtime.opensearch1.embed/org.nuxeo.runtime.opensearch1.embed.OpenSearchEmbedComponent
-NXComponent: org.nuxeo.runtime.opensearch1.embed.test.contrib *** /grp:org.nuxeo.runtime/org.nuxeo.runtime/org.nuxeo.runtime.opensearch1.embed.test.contrib
 NXComponent: org.nuxeo.runtime.pubsub.ClusterActionService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.pubsub/org.nuxeo.runtime.pubsub.ClusterActionService *** [org.nuxeo.runtime.pubsub.PubSubService, org.nuxeo.runtime.cluster.ClusterService]
 NXComponent: org.nuxeo.runtime.pubsub.PubSubService *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.pubsub/org.nuxeo.runtime.pubsub.PubSubService
 NXComponent: org.nuxeo.runtime.reload *** /grp:org.nuxeo.runtime/org.nuxeo.runtime.reload/org.nuxeo.runtime.reload

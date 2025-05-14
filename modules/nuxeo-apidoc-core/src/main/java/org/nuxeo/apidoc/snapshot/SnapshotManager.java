@@ -77,6 +77,10 @@ public interface SnapshotManager {
 
     public static String PROPERTY_SITE_MODE = "org.nuxeo.apidoc.site.mode";
 
+    /**
+     * @deprecated since 2025.0, the property has no effect anymore as Explorer delegate its search to
+     *             {@link org.nuxeo.ecm.core.search.SearchService} that roots the query to the appropriate client.
+     */
     public static String PROPERTY_USE_ES = "org.nuxeo.apidoc.use.elasticsearch";
 
     static Comparator<DistributionSnapshotDesc> DISTRIBUTION_COMPARATOR = Comparator.comparing(

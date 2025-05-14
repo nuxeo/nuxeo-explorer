@@ -310,10 +310,9 @@ public class ITExplorerSimpleTest {
         adminHttpClient.buildGetRequest(explorerPackagePath)
                        .execute(new HtmlPageHandler<>(
                                PackageArtifactPage.builder("platform-explorer", "Platform Explorer")
-                                                  .tableOfContents("General Information", "Dependencies", "Bundles",
-                                                          "Components", "Services", "Extension Points", "Contributions",
-                                                          "Exports", "Charts")
-                                                  .dependencies("nuxeo-search-client-opensearch1")
+                                                  .tableOfContents("General Information", "Bundles", "Components",
+                                                          "Services", "Extension Points", "Contributions", "Exports",
+                                                          "Charts")
                                                   .bundles("org.nuxeo.apidoc.core", "org.nuxeo.apidoc.repo",
                                                           "org.nuxeo.apidoc.webengine")
                                                   .components("org.nuxeo.apidoc.doctypeContrib",
