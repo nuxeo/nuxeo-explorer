@@ -20,8 +20,6 @@ mongodb:
 elasticsearch:
   enabled: true
   host: {{ printf "opensearch-cluster-master.%s" $localDomain }}
-#customProperties:
-packages: /packages/nuxeo-platform-explorer-package-*.zip
 customEnvs:
 {{- if (contains "preprod" (env "CONNECT_CLID_SECRET")) }}
 - name: NUXEO_CONNECT_URL

@@ -10,4 +10,5 @@ LABEL org.nuxeo.explorer.build-tag=$BUILD_TAG
 LABEL org.nuxeo.explorer.scm-ref=$SCM_REF
 LABEL org.nuxeo.explorer.version=$VERSION
 
-COPY --chown=900:0 target/nuxeo-platform-explorer-package-$VERSION.zip /packages/
+RUN --mount=type=bind,source=./target,target=/tmp/local-packages  \
+    /install-packages.sh --offline /tmp/local-packages/*.zip
