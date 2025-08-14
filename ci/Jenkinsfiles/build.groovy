@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2018-2023 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2018-2025 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ pipeline {
     CONNECT_CLID_SECRET = getCLIDSecret()
     CURRENT_NAMESPACE = nxK8s.getCurrentNamespace()
     MAVEN_OPTS = "$MAVEN_OPTS -Xms512m -Xmx3072m"
-    MAVEN_ARGS = '-B -nsu'
+    MAVEN_CLI_ARGS = "-B -V -nsu -Dnuxeo.skip.enforcer=true -Prelease"
     VERSION = nxUtils.getVersion()
     NUXEO_EXPLORER_PACKAGE_PATH = "packages/nuxeo-platform-explorer-package/target/nuxeo-platform-explorer-package-${VERSION}.zip"
   }
@@ -68,13 +68,13 @@ pipeline {
         stage('Compile') {
           steps {
             container('maven') {
-              nxWithGitHubStatus(context: 'explorer/compile') {
+              nxWithGitHubStatus(context: 'maven/compile') {
                 echo """
                 ----------------------------------------
                 Compile
                 ----------------------------------------"""
                 echo "MAVEN_OPTS=$MAVEN_OPTS"
-                sh "mvn ${MAVEN_ARGS} -DskipTests -DskipDocker install"
+                sh "mvn ${MAVEN_CLI_ARGS} -DskipTests -DskipDocker install"
               }
             }
           }
@@ -92,14 +92,31 @@ pipeline {
           steps {
             container('maven') {
               warnError(message: 'Formatting check has failed') {
-                nxWithGitHubStatus(context: 'explorer/lint', message: 'Lint') {
+                nxWithGitHubStatus(context: 'maven/lint', message: 'Lint') {
                   script {
                     echo """
                      ----------------------------------------
                      Check formatting
                      ----------------------------------------"""
                     sh "git fetch origin 2025:origin/2025"
-                    sh "mvn -B -nsu -V -Dcustom.environment=spotless spotless:check"
+                    sh "mvn ${MAVEN_CLI_ARGS} -Dcustom.environment=spotless spotless:check"
+                  }
+                }
+              }
+            }
+          }
+        }
+        stage('Enforcer check') {
+          steps {
+            container('maven') {
+              warnError(message: 'Enforcer check has failed') {
+                nxWithGitHubStatus(context: 'maven/enforcer', message: 'Enforce') {
+                  script {
+                    echo """
+                    ----------------------------------------
+                    Check enforcer rules
+                    ----------------------------------------""".stripIndent()
+                    sh "mvn ${MAVEN_CLI_ARGS} -Dcustom.environment=enforcer enforcer:enforce"
                   }
                 }
               }
@@ -111,13 +128,13 @@ pipeline {
     stage('Run Unit Tests') {
       steps {
         container('maven') {
-          nxWithGitHubStatus(context: 'explorer/utests') {
+          nxWithGitHubStatus(context: 'utests') {
             echo """
             ----------------------------------------
             Run Unit Tests
             ----------------------------------------"""
             echo "MAVEN_OPTS=$MAVEN_OPTS"
-            sh "mvn  ${MAVEN_ARGS} -f modules test"
+            sh "mvn  ${MAVEN_CLI_ARGS} -f modules test"
           }
         }
       }
@@ -131,7 +148,7 @@ pipeline {
     stage('Run Functional Tests') {
       steps {
         container('maven') {
-          nxWithGitHubStatus(context: 'explorer/ftests') {
+          nxWithGitHubStatus(context: 'ftests') {
             script {
               echo """
               ----------------------------------------
@@ -143,7 +160,7 @@ pipeline {
                 ''')
                 withEnv(["TEST_CLID_PATH=/tmp/instance.clid"]) {
                   echo "MAVEN_OPTS=$MAVEN_OPTS"
-                  sh "mvn ${MAVEN_ARGS} -f ftests verify"
+                  sh "mvn ${MAVEN_CLI_ARGS} -f ftests verify"
                   nxUtils.lookupText(regexp: ".*ERROR.*(?=(?:\\n.*)*\\[.*FrameworkLoader\\] Nuxeo Platform is Trying to Shut Down)",
                       fileSet: "ftests/**/log/server.log", unstableIfFound: true)
                 }
@@ -200,7 +217,7 @@ pipeline {
       }
       steps {
         container('maven') {
-          nxWithGitHubStatus(context: 'explorer/maven/deploy', message: 'Deploy Maven artifacts') {
+          nxWithGitHubStatus(context: 'maven/deploy', message: 'Deploy Maven artifacts') {
             script {
               echo """
               ----------------------------------------
@@ -218,7 +235,7 @@ pipeline {
       }
       steps {
         container('maven') {
-          nxWithGitHubStatus(context: 'explorer/package/deploy') {
+          nxWithGitHubStatus(context: 'package/deploy') {
             echo """
             ----------------------------------------
             Upload Nuxeo Package to ${CONNECT_PREPROD_SITE_URL}
