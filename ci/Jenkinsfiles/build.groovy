@@ -17,7 +17,7 @@
  *     Kevin Leturc <kleturc@nuxeo.com>
  *     Anahide Tchertchian
  */
-library identifier: "platform-ci-shared-library@v0.0.67"
+library identifier: "platform-ci-shared-library@v0.0.71"
 
 String getCLIDSecret() {
   container('maven') {
@@ -41,6 +41,7 @@ pipeline {
     CURRENT_NAMESPACE = nxK8s.getCurrentNamespace()
     MAVEN_OPTS = "$MAVEN_OPTS -Xms512m -Xmx3072m"
     MAVEN_CLI_ARGS = "-B -V -nsu -Dnuxeo.skip.enforcer=true -Prelease"
+    NUXEO_VERSION = nxMvn.getProperty(key: 'project.parent.version')
     VERSION = nxUtils.getVersion()
     NUXEO_EXPLORER_PACKAGE_PATH = "packages/nuxeo-platform-explorer-package/target/nuxeo-platform-explorer-package-${VERSION}.zip"
   }
