@@ -2,39 +2,13 @@ environments:
   preview:
     values:
     - environments/preview.yaml
+    - git::https://{{ requiredEnv "GITHUB_USER" }}:{{ requiredEnv "GITHUB_PASSWORD" }}@github.com/nuxeo/nuxeo-lts.git@ci/helm/apps/base/values/env-values-nuxeo-ingress.yaml.gotmpl?ref=v{{ requiredEnv "NUXEO_VERSION" }}&depth=1
+    - values/env-values-nuxeo.yaml.gotmpl
+values: # values for all environments and helmfiles
+- git::https://{{ requiredEnv "GITHUB_USER" }}:{{ requiredEnv "GITHUB_PASSWORD" }}@github.com/nuxeo/nuxeo-lts.git@ci/helm/apps/base/values/env-values-global.yaml.gotmpl?ref=v{{ requiredEnv "NUXEO_VERSION" }}&depth=1
+- values/env-values-global.yaml
 ---
-repositories:
-- name: nuxeo
-  url: https://packages.nuxeo.com/repository/helm-releases-public/
-- name: opensearch
-  url: https://opensearch-project.github.io/helm-charts/
-
-helmDefaults:
-  timeout: 600
-  wait: true
-
-releases:
-- name: nuxeo
-  chart: nuxeo/nuxeo
-  version: ~3.1.0
-  condition: nuxeo.enabled
-  {{ if eq .Environment.Name "preview" }}
-  needs:
-  - mongodb
-  - opensearch
-  {{ end }}
+helmfiles:
+- path: git::https://{{ requiredEnv "GITHUB_USER" }}:{{ requiredEnv "GITHUB_PASSWORD" }}@github.com/nuxeo/nuxeo-lts.git@ci/helm/apps/helmfile-base.yaml.gotmpl?ref=v{{ requiredEnv "NUXEO_VERSION" }}&depth=1
   values:
-  - values/values-nuxeo.yaml.gotmpl
-- name: mongodb
-  chart: oci://registry-1.docker.io/bitnamicharts/mongodb
-  version: 16.1.1
-  condition: mongodb.enabled
-  values:
-  - values/values-mongodb.yaml.gotmpl
-- name: opensearch
-  chart: opensearch/opensearch
-  version: 1.30.0
-  namespace: {{ requiredEnv "NAMESPACE" }}
-  condition: opensearch.enabled
-  values:
-  - values/values-opensearch.yaml.gotmpl
+  - {{ toYaml .Values | nindent 4 }}
