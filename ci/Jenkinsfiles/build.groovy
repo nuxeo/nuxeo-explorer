@@ -56,7 +56,7 @@ pipeline {
     stage('Compile') {
       steps {
         container('maven') {
-          nxWithGitHubStatus(context: 'explorer/compile') {
+          nxWithGitHubStatus(context: 'maven/compile') {
             echo """
             ----------------------------------------
             Compile
@@ -75,7 +75,7 @@ pipeline {
     stage('Run Unit Tests') {
       steps {
         container('maven') {
-          nxWithGitHubStatus(context: 'explorer/utests') {
+          nxWithGitHubStatus(context: 'utests') {
             echo """
             ----------------------------------------
             Run Unit Tests
@@ -95,7 +95,7 @@ pipeline {
     stage('Run Functional Tests') {
       steps {
         container('maven') {
-          nxWithGitHubStatus(context: 'explorer/ftests') {
+          nxWithGitHubStatus(context: 'ftests') {
             script {
               echo """
               ----------------------------------------
@@ -146,7 +146,7 @@ pipeline {
       }
       steps {
         container('maven') {
-          nxWithGitHubStatus(context: 'explorer/maven/deploy', message: 'Deploy Maven artifacts') {
+          nxWithGitHubStatus(context: 'maven/deploy', message: 'Deploy Maven artifacts') {
             script {
               echo """
               ----------------------------------------
@@ -164,7 +164,7 @@ pipeline {
       }
       steps {
         container('maven') {
-          nxWithGitHubStatus(context: 'explorer/package/deploy') {
+          nxWithGitHubStatus(context: 'package/deploy') {
             echo """
             ----------------------------------------
             Upload Nuxeo Packages to ${CONNECT_PREPROD_SITE_URL}
