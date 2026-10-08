@@ -17,7 +17,7 @@
  *     Kevin Leturc <kleturc@nuxeo.com>
  *     Anahide Tchertchian
  */
-library identifier: "platform-ci-shared-library@v0.0.78"
+library identifier: "platform-ci-shared-library@v0.0.91"
 
 pipeline {
   agent {
@@ -175,6 +175,35 @@ pipeline {
                 nxUtils.postForm(credentialsId: 'connect-preprod', url: "${CONNECT_PREPROD_SITE_URL}marketplace/upload?batch=true",
                     form: ["package=@${nxPackage.path}"])
               }
+            }
+          }
+        }
+      }
+    }
+    stage('Scan Nuxeo Packages') {
+      when {
+        expression {
+          !nxUtils.isPullRequest()
+        }
+      }
+      steps {
+        container('maven') {
+          nxWithGitHubStatus(context: 'maven/scan', message: 'Scan Nuxeo packages') {
+            script {
+              echo """
+              ----------------------------------------
+              Scan Nuxeo packages
+              ----------------------------------------""".stripIndent()
+              def parameters = [
+                string(name: 'NUXEO_BRANCH', value: BRANCH_NAME),
+              ]
+              nxUtils.buildWrapped(
+                job: 'explorer/scan-nuxeo-explorer',
+                parameters: parameters,
+                // Don't wait, as the downstream job doesn't fail if it finds some vulnerabilities, it just creates
+                // some Jira issues and notifies in Teams. Thus, the current build cannot be blocked.
+                wait: false,
+              )
             }
           }
         }
