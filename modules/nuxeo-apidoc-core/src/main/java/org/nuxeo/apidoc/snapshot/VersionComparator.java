@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 public class VersionComparator implements Comparator<String> {
 
     protected static final Pattern VERSION_REGEX = Pattern.compile(
-            "^(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:-(\\D+))?(?:(\\d+))?$", Pattern.CASE_INSENSITIVE);
+            "^(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:-(\\D+)(\\d+)?)?$", Pattern.CASE_INSENSITIVE);
 
     public static boolean isVersion(String candidate) {
         return candidate != null && VERSION_REGEX.matcher(candidate).matches();
