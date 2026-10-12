@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.nuxeo.apidoc.snapshot.VersionComparator;;
+import org.nuxeo.apidoc.snapshot.VersionComparator;
 
 /**
  * @since 20.0.0
@@ -75,6 +75,15 @@ public class TestVersionComparator {
         assertTrue(VersionComparator.isVersion("1.1-BLA"));
         assertTrue(VersionComparator.isVersion("1.1-SNAPSHOT"));
         assertTrue(VersionComparator.isVersion("100.10.12-DS"));
+    }
+
+    /**
+     * Checks that matching a long non-version input does not backtrack: the regex must not make the digits preceding
+     * and following the optional marker group ambiguous.
+     */
+    @Test(timeout = 5000)
+    public void testVersionMatchesIsNotSlowOnLongInput() {
+        assertFalse(VersionComparator.isVersion("0".repeat(50000) + "!"));
     }
 
 }
