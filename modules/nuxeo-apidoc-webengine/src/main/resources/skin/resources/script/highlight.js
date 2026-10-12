@@ -11,6 +11,10 @@ var hljs = new function() {
     return value.replace(/&/gm, '&amp;').replace(/</gm, '&lt;').replace(/>/gm, '&gt;');
   }
 
+  function escapeAttribute(value) {
+    return escape(value).replace(/"/gm, '&quot;').replace(/'/gm, '&#39;');
+  }
+
   function contains(array, item) {
     if (!array)
       return false;
@@ -335,7 +339,7 @@ var hljs = new function() {
     function open(node) {
       var result = '<' + node.nodeName.toLowerCase();
       for (var i = 0; i < node.attributes.length; i++) {
-        result += ' ' + node.attributes[i].nodeName.toLowerCase()  + '="' + escape(node.attributes[i].nodeValue) + '"';
+        result += ' ' + node.attributes[i].nodeName.toLowerCase()  + '="' + escapeAttribute(node.attributes[i].nodeValue) + '"';
       }
       return result + '>';
     }
