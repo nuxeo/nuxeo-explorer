@@ -1,12 +1,13 @@
 (function ($) {
 
   $.fn.toc = function (tocList) {
-    $(tocList).empty();
+    const $tocList = $(document).find(tocList);
+    $tocList.empty();
     $(".toc").each(function (index) {
       const name = `toc${index}`;
       const text = $(this).text();
-      $(this).before(`<a name="${name}" class="anchor"></a>`);
-      $(tocList).append(`<li><a href="#${name}">${text}</a></li>`);
+      $(this).before($("<a>").attr({ name: name, class: "anchor" }));
+      $tocList.append($("<li>").append($("<a>").attr("href", `#${name}`).text(text)));
     });
   }
 

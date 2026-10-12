@@ -562,7 +562,7 @@ public class Distribution extends ModuleRoot {
             TransactionHelper.setTransactionRollbackOnly();
             return Response.status(Status.INTERNAL_SERVER_ERROR)
                            .type(MediaType.TEXT_PLAIN)
-                           .entity("Upload not done: " + e.getMessage())
+                           .entity("Upload not done.")
                            .build();
         }
 

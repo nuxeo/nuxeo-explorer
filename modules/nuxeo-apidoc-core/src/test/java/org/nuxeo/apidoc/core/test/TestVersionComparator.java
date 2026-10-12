@@ -68,6 +68,7 @@ public class TestVersionComparator {
         assertFalse(VersionComparator.isVersion(null));
         assertFalse(VersionComparator.isVersion(" "));
         assertFalse(VersionComparator.isVersion("foo"));
+        assertFalse(VersionComparator.isVersion("0".repeat(50_000) + "x"));
         assertTrue(VersionComparator.isVersion("1"));
         assertTrue(VersionComparator.isVersion("1.0"));
         assertTrue(VersionComparator.isVersion("1.1.3"));
