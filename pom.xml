@@ -14,8 +14,8 @@
   <packaging>pom</packaging>
 
   <properties>
-    <jgrapht.version>1.5.2</jgrapht.version>
-    <commonmark.version>0.15.2</commonmark.version>
+    <jgrapht.version>1.5.3</jgrapht.version>
+    <commonmark.version>0.17.0</commonmark.version>
   </properties>
 
   <modules>
